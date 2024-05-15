@@ -25,6 +25,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+		"@pachi/tsconfig": "workspace:^0.1.0"
 	}
 }
