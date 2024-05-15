@@ -1,0 +1,36 @@
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+
+import { users } from "./user";
+
+export const addresses = pgTable(
+	"addresses",
+	{
+		id: varchar("id").notNull().primaryKey(),
+		replicachePK: varchar("replicache_pk").notNull(),
+		type: text("type", { enum: ["shipping", "billing", "living"] }),
+		address: varchar("address"),
+		city: varchar("city"),
+		countryCode: varchar("country_code", { length: 2 }).notNull(),
+		userID: varchar("user_id").references(() => users.id),
+		postalCode: varchar("postal_code"),
+		province: varchar("province"),
+		cartID: varchar("cart_id"),
+		version: integer("version").notNull().default(0),
+		createdAt: varchar("created_at").notNull(),
+	},
+	(address) => ({
+		userIDIndex: index("user_id_index").on(address.userID),
+		cartIDIndex: index("cart_index_on_addr").on(address.cartID),
+	}),
+);
+export const addressesRelations = relations(addresses, ({ one }) => ({
+	user: one(users, {
+		fields: [addresses.userID],
+		references: [users.id],
+	}),
+	cart: one(addresses, {
+		fields: [addresses.cartID],
+		references: [addresses.id],
+	}),
+}));

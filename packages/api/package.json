@@ -1,0 +1,30 @@
+{
+	"name": "@pachi/api",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"license": "MIT",
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"clean": "rm -rf .turbo node_modules",
+		"lint": "biome lint ./src",
+		"beautify": "biome format ./src --write",
+		"format": "biome format ./src"
+	},
+	"dependencies": {
+		"@pachi/auth": "workspace:*",
+		"@pachi/db": "workspace:*",
+		"@pachi/validators": "workspace:*",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"typescript": "^5.4.5"
+	}
+}

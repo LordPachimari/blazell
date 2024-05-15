@@ -1,0 +1,32 @@
+{
+	"name": "pachi",
+	"private": true,
+	"engines": {
+		"node": ">=20.12.0"
+	},
+	"packageManager": "pnpm@8.10.2",
+	"scripts": {
+		"beautify": "turbo beautify",
+		"build": "turbo build",
+		"clean": "git clean -xdf node_modules",
+		"clean:workspaces": "turbo clean",
+		"postinstall": "pnpm lint:ws",
+		"db:push": "pnpm -F db push",
+		"db:studio": "pnpm -F db studio",
+		"dev": "turbo dev --parallel",
+		"format": "turbo format --continue",
+		"lint": "turbo lint --continue",
+		"lint:fix": "turbo lint --apply --continue",
+		"lint:ws": "pnpm dlx sherif@latest",
+		"typecheck": "turbo typecheck"
+	},
+	"devDependencies": {
+		"@turbo/gen": "^1.13.2",
+		"turbo": "^1.13.2"
+	},
+	"pnpm": {
+		"overrides": {
+			"@auth/core": "0.18.0"
+		}
+	}
+}
