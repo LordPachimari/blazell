@@ -7,6 +7,6 @@ import type { Config } from "tailwindcss";
 import baseConfig from "@pachi/tailwind-config/web";
 
 export default {
-  content: ["./src/**/*.tsx"],
-  presets: [baseConfig],
+	content: ["./src/**/*.{ts,tsx}"],
+	presets: [baseConfig],
 } satisfies Config;

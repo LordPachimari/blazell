@@ -15,7 +15,7 @@ import {
 	pushRequestSchema,
 	type SpaceRecord,
 } from "@pachi/validators";
-import type { InsertOrder, LineItem, User } from "@pachi/validators/server";
+import type { InsertOrder, LineItem } from "@pachi/validators/server";
 import { z } from "zod";
 import { cartSubtotal, generateID, generateReplicachePK } from "@pachi/utils";
 import { eq, sql } from "drizzle-orm";
@@ -37,7 +37,7 @@ app.use(
 	"*",
 	cors({
 		origin: [
-			"http://localhost:3000",
+			"http://localhost:5173",
 			"https://pachi-dev.vercel.app",
 			"https://pachi.vercel.app",
 		],

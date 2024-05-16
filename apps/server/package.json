@@ -16,7 +16,7 @@
 		"create:KV": "wrangler kv:namespace create KV"
 	},
 	"dependencies": {
-		"@clerk/backend": "^1.1.5",
+		"@clerk/backend": "^0.38.6",
 		"@hono/clerk-auth": "^1.0.1",
 		"@pachi/api": "^0.1.0",
 		"@pachi/core": "^0.1.0",
