@@ -14,7 +14,7 @@
 		"beautify": "biome format ./src --write",
 		"lint": "biome lint src",
 		"format": "biome format ./src",
-		"typecheck": "tsc "
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.3.4",
