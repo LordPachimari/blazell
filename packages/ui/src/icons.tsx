@@ -20,8 +20,11 @@ import {
 	Sun,
 	WalletCards,
 	X,
+	Minus,
+	Plus,
 	type LucideIcon,
 	type LucideProps,
+	Trash,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -47,6 +50,9 @@ export const Icons = {
 	edit: SquarePen,
 	copy: Copy,
 	copyCheck: CopyCheck,
+	minus: Minus,
+	plus: Plus,
+	trash: Trash,
 	nextjs: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
 			<title>Nextjs</title>
