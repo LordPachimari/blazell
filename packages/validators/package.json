@@ -15,7 +15,7 @@
 		"beautify": "biome format ./src --write",
 		"lint": "biome lint src",
 		"format": "biome format ./src",
-		"typecheck": "tsc "
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@pachi/db": "^0.1.0",
