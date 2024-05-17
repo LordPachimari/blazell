@@ -191,7 +191,6 @@ app.post("/upload-file/:key", async (c) => {
 	const key = c.req.param("key");
 
 	const effect = Effect.tryPromise(() =>
-		//@ts-ignore
 		c.env.BUCKET.put(`images/${key}`, c.req.raw.body, {
 			httpMetadata: {
 				contentType: c.req.header("content-type"),
@@ -254,8 +253,11 @@ app.get("/images/:key", async (c) => {
 
 app.get("/user", async (c) => {
 	const db = c.get("db" as never) as Db;
+
 	const auth = getAuth(c);
 	if (!auth?.userId) return c.json(null, 200);
+	const cachedUser = await c.env.KV.get(auth.userId);
+	if (cachedUser) return c.json(JSON.parse(cachedUser), 200);
 	const result = await Effect.runPromise(
 		Effect.tryPromise(() =>
 			db.query.users.findFirst({
@@ -266,12 +268,16 @@ app.get("/user", async (c) => {
 
 	if (!result) return c.json(null, 200);
 
+	await c.env.KV.put(auth.userId, JSON.stringify(result));
+
 	return c.json(result, 200);
 });
 
 app.get("/product/:handle", async (c) => {
 	const db = c.get("db" as never) as Db;
 	const handle = c.req.param("handle");
+	const cachedProduct = await c.env.KV.get(handle);
+	if (cachedProduct) return c.json(JSON.parse(cachedProduct), 200);
 	const result = await Effect.runPromise(
 		Effect.tryPromise(() =>
 			db.query.products.findFirst({
@@ -281,6 +287,10 @@ app.get("/product/:handle", async (c) => {
 	);
 
 	if (!result) return c.json(null, 200);
+
+	await c.env.KV.put(handle, JSON.stringify(result), {
+		expirationTtl: 60 * 60 * 24,
+	});
 
 	return c.json(result, 200);
 });

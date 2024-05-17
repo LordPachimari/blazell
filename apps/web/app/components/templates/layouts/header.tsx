@@ -4,11 +4,17 @@ import { CartSheet } from "../cart/cart-sheet";
 import { Link } from "@remix-run/react";
 import { buttonVariants } from "@pachi/ui/button";
 import { Logo } from "~/components/molecules/logo";
+import type { User } from "@pachi/validators/client";
 
 function Header({
-	userID,
+	authID,
 	cartID,
-}: { userID: string | undefined; cartID: string | null | undefined }) {
+	user,
+}: {
+	authID: string | undefined;
+	cartID: string | null | undefined;
+	user: User | undefined;
+}) {
 	return (
 		<Navbar>
 			{/* Left corner */}
@@ -22,7 +28,7 @@ function Header({
 				<CartSheet cartID={cartID} />
 				{/* <CartToggle /> */}
 				<Link
-					to={!userID ? "/sign-in" : "/dashboard"}
+					to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 					className={buttonVariants()}
 				>
 					Dashboard

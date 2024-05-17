@@ -7,9 +7,7 @@ import type { loader } from "~/root";
 function Navbar(props: { children: React.ReactNode }) {
 	const isScrolled = useIsWindowScrolled();
 	const location = useLocation();
-	const { sidebarIsOpen } = useLoaderData<typeof loader>();
-	console.log("location", location.pathname);
-	console.log("isScrolled", isScrolled);
+	const { sidebarState } = useLoaderData<typeof loader>();
 
 	return (
 		<header
@@ -17,7 +15,7 @@ function Navbar(props: { children: React.ReactNode }) {
 			className={cn(
 				"group hidden backdrop-blur-md fixed px-20 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  md:flex items-center justify-between border border-mauve-6 py-2 transition-all duration-300 hover:border bg-component",
 				noHeaderPaths(location.pathname) && "hidden md:hidden",
-				sidebarIsOpen &&
+				sidebarState &&
 					!noSidebarPaths.has(location.pathname) &&
 					"md:ml-24 w-4/12",
 				isScrolled || !noSidebarPaths.has(location.pathname)

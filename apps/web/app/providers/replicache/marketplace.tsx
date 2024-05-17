@@ -22,7 +22,6 @@ function MarketplaceReplicacheProvider({
 
 		const r = new Replicache({
 			name: "marketplace",
-			//@ts-ignore
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
@@ -42,7 +41,6 @@ function MarketplaceReplicacheProvider({
 				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
-					//@ts-ignore
 					`${window.ENV.WORKER_URL}/pull/marketplace`,
 					{
 						method: "POST",
@@ -69,7 +67,6 @@ function MarketplaceReplicacheProvider({
 				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
-					//@ts-ignore
 					`${window.ENV.WORKER_URL}/push/marketplace`,
 					{
 						method: "POST",

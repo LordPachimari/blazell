@@ -25,7 +25,6 @@ function DashboardReplicacheProvider({
 
 		const r = new Replicache({
 			name: `dashboard_${user.id}`,
-			//@ts-ignore
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
@@ -40,19 +39,15 @@ function DashboardReplicacheProvider({
 			puller: async (req) => {
 				const start = performance.now();
 				const token = await getToken();
-				const result = await fetch(
-					//@ts-ignore
-					`${window.ENV.WORKER_URL}/pull/dashboard`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
-						body: JSON.stringify(req),
-						credentials: "include",
+				const result = await fetch(`${window.ENV.WORKER_URL}/pull/dashboard`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
 					},
-				);
+					body: JSON.stringify(req),
+					credentials: "include",
+				});
 				const end = performance.now();
 				console.log("pull time", end - start);
 
@@ -67,18 +62,14 @@ function DashboardReplicacheProvider({
 			pusher: async (req) => {
 				const start = performance.now();
 				const token = await getToken();
-				const result = await fetch(
-					//@ts-ignore
-					`${window.ENV.WORKER_URL}/push/dashboard`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
-						body: JSON.stringify(req),
+				const result = await fetch(`${window.ENV.WORKER_URL}/push/dashboard`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
 					},
-				);
+					body: JSON.stringify(req),
+				});
 
 				const end = performance.now();
 				console.log("pull time", end - start);

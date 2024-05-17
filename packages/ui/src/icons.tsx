@@ -25,6 +25,7 @@ import {
 	type LucideIcon,
 	type LucideProps,
 	Trash,
+	Laptop,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -53,6 +54,7 @@ export const Icons = {
 	minus: Minus,
 	plus: Plus,
 	trash: Trash,
+	laptop: Laptop,
 	nextjs: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
 			<title>Nextjs</title>

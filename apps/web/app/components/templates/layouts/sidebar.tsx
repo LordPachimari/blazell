@@ -1,10 +1,13 @@
-import { useHotkeys } from "react-hotkeys-hook";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
-import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
+import { getFormProps, useForm } from "@conform-to/react";
 import { cn } from "@pachi/ui";
 import { Button } from "@pachi/ui/button";
+import { Icons, strokeWidth } from "@pachi/ui/icons";
+import { Link, useFetcher, useLocation } from "@remix-run/react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";
+import { useUserPreferences } from "~/hooks/use-user-preferences";
+import type { action } from "~/routes/action.set-sidebar";
 import { ThemeToggle } from "./theme-toggle";
-import type { loader } from "~/root";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -41,25 +44,34 @@ const items: SidebarItem[] = [
 
 const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/create-user"]);
 const Sidebar = () => {
-	const fetcher = useFetcher();
-	const { sidebarIsOpen } = useLoaderData<typeof loader>();
+	const fetcher = useFetcher<typeof action>();
+	const userPreference = useUserPreferences();
+	const optimisticMode = useOptimisticSidebarMode();
+
+	const mode = optimisticMode ?? userPreference.sidebarState ?? "closed";
+	console.log("userPreference", userPreference);
+	console.log("mode", mode);
+	const nextMode = mode === "open" ? "closed" : "open";
+	console.log("nextMode", nextMode);
+
 	useHotkeys(["s"], () => {
 		fetcher.submit(
-			{ sidebarIsOpen: sidebarIsOpen ? "closed" : "open" },
-			{ method: "post", action: "/action/set-sidebar" },
+			{ sidebarState: nextMode },
+			{ method: "post", action: "/action/set-sidebar", navigate: false },
 		);
 	});
 	const location = useLocation();
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
+	console.log(mode === "open");
 
 	return (
-		<div className="flex">
+		<div className="flex pb-1">
 			<nav
 				className={cn(
-					"group m-1 rounded-xl bg-component justify-between flex h-screen flex-col fixed z-40 w-14  overflow-hidden border border-mauve-6  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
+					"group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-6  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
-						"w-44": sidebarIsOpen,
+						"w-44": mode === "open",
 						hidden: noSidebarPaths.has(location.pathname),
 					},
 				)}
@@ -68,19 +80,29 @@ const Sidebar = () => {
 					className={cn(
 						"w-full flex justify-center pt-2 group-hover:justify-end group-hover:pr-2",
 						{
-							"justify-end pr-2": sidebarIsOpen,
+							"justify-end pr-2": mode === "open",
 						},
 					)}
 				>
-					<fetcher.Form method="post" action="/action/set-sidebar">
-						<Button
-							size={"icon"}
-							variant={"ghost"}
-							className="text-mauve-11 text-lg"
-						>
-							s
-						</Button>
-					</fetcher.Form>
+					<Button
+						size={"icon"}
+						variant={"ghost"}
+						className="text-mauve-11 text-lg"
+						type="submit"
+						onClick={() =>
+							fetcher.submit(
+								{ sidebarState: nextMode },
+								{
+									method: "post",
+									action: "/action/set-sidebar",
+									navigate: false,
+									fetcherKey: "sidebar-fetcher",
+								},
+							)
+						}
+					>
+						s
+					</Button>
 				</div>
 				<div />
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">
@@ -113,7 +135,7 @@ const Sidebar = () => {
 										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out group-hover:opacity-100",
 
 										`/${mainPath}` === item.href && "text-crimson-9",
-										sidebarIsOpen ? "opacity-100" : "opacity-0",
+										mode === "open" ? "opacity-100" : "opacity-0",
 									)}
 								>
 									{item.title}
@@ -126,7 +148,7 @@ const Sidebar = () => {
 					className={cn(
 						"w-full flex justify-center mb-6 pt-2 group-hover:justify-end group-hover:pr-2",
 						{
-							"justify-end pr-2": sidebarIsOpen,
+							"justify-end pr-2": mode === "open",
 						},
 					)}
 				>

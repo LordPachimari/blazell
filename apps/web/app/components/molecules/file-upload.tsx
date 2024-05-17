@@ -120,7 +120,6 @@ export function FileUpload(props: FileUploaderProps) {
 						id: imageKey,
 						name: file.name,
 						order: files?.length ?? 0 + index + 1,
-						//@ts-ignore
 						url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
 					};
 				});
@@ -145,10 +144,9 @@ export function FileUpload(props: FileUploaderProps) {
 							(file) => {
 								return Effect.tryPromise(() =>
 									fetch(
-										`${
-											//@ts-ignore
-											window.ENV.NEXT_PUBLIC_WORKER_URL
-										}/upload-file/${nameToIDMap.get(file.name)}`,
+										`${window.ENV.WORKER_URL}/upload-file/${nameToIDMap.get(
+											file.name,
+										)}`,
 										{
 											body: file,
 											method: "POST",

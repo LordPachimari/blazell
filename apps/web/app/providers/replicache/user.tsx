@@ -25,7 +25,6 @@ export default function UserReplicacheProvider({
 
 		const r = new Replicache({
 			name: "user",
-			//@ts-ignore
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: UserMutators,
 			pullInterval: null,
@@ -39,20 +38,16 @@ export default function UserReplicacheProvider({
 			puller: async (req) => {
 				const now = performance.now();
 				const token = await getToken();
-				const result = await fetch(
-					//@ts-ignore
-					`${window.ENV.WORKER_URL}/pull/user`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-							...(cartID && { "x-cart-id": cartID }),
-						},
-						body: JSON.stringify(req),
-						credentials: "include",
+				const result = await fetch(`${window.ENV.WORKER_URL}/pull/user`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+						...(cartID && { "x-cart-id": cartID }),
 					},
-				);
+					body: JSON.stringify(req),
+					credentials: "include",
+				});
 				const end = performance.now();
 				console.log("pull time", end - now);
 
@@ -67,18 +62,14 @@ export default function UserReplicacheProvider({
 			pusher: async (req) => {
 				const now = performance.now();
 				const token = await getToken();
-				const result = await fetch(
-					//@ts-ignore
-					`${window.ENV.WORKER_URL}/push/user`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
-						body: JSON.stringify(req),
+				const result = await fetch(`${window.ENV.WORKER_URL}/push/user`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
 					},
-				);
+					body: JSON.stringify(req),
+				});
 
 				const end = performance.now();
 				console.log("push time", end - now);

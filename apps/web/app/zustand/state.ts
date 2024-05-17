@@ -1,15 +1,5 @@
 import { create } from "zustand";
 
-interface GlobalState {
-	sidebarOpen: boolean;
-	setSidebarOpen: (val: boolean) => void;
-}
-
-export const useSidebarState = create<GlobalState>((set, get) => ({
-	sidebarOpen: false,
-	setSidebarOpen: (val: boolean) => set({ sidebarOpen: val }),
-}));
-
 interface GalleryState {
 	opened: boolean;
 	setOpened(newValue: boolean): void;

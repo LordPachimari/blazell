@@ -14,7 +14,6 @@ export default function GlobalReplicacheProvider({
 		if (globalRep) return;
 		const r = new Replicache({
 			name: "global",
-			//@ts-ignore
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			pullInterval: null,
 			indexes: {
@@ -26,17 +25,13 @@ export default function GlobalReplicacheProvider({
 			//@ts-ignore
 			puller: async (req) => {
 				const now = performance.now();
-				const result = await fetch(
-					//@ts-ignore
-					`${window.ENV.WORKER_URL}/static-pull`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(req),
+				const result = await fetch(`${window.ENV.WORKER_URL}/static-pull`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
 					},
-				);
+					body: JSON.stringify(req),
+				});
 				const end = performance.now();
 				console.log("pull time", end - now);
 

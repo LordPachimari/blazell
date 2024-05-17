@@ -8,7 +8,7 @@ export default {
 		extend: {
 			fontFamily: {
 				display: ["Freeman", "sans-serif"],
-				body: ["Freeman", "sans-serif"],
+				body: ["Roboto", "sans-serif"],
 			},
 		},
 	},
