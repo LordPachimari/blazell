@@ -1,24 +1,9 @@
-import { useState, useEffect } from "react";
+import { useWindowScroll } from "@uidotdev/usehooks";
 
 function useIsWindowScrolled() {
-	const [isScrolled, setIsScrolled] = useState(false);
+	const scrollY = useWindowScroll()[0].y ?? 0;
 
-	useEffect(() => {
-		const handleScroll = () => {
-			setIsScrolled(window.scrollY > 64); // The height of the header
-		};
-
-		window.addEventListener("scroll", handleScroll);
-
-		// Call handleScroll to set the initial state based on the initial scroll position
-		handleScroll();
-
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, []);
-
-	return isScrolled;
+	return scrollY > 64; // The height of the header
 }
 
 export { useIsWindowScrolled };

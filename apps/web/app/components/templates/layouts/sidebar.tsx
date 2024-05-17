@@ -1,5 +1,3 @@
-"use client";
-
 import { useHotkeys } from "react-hotkeys-hook";
 import { Icons, strokeWidth } from "@pachi/ui/icons";
 import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";

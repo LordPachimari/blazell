@@ -1,5 +1,3 @@
-"use client";
-
 import { Cross2Icon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 
@@ -8,17 +6,7 @@ import { Input } from "@pachi/ui/input";
 
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
-
-export interface DataTableSearchableColumn<TData> {
-	id: keyof TData;
-	title: string;
-}
-
-export type Option = {
-	label: string;
-	value: string;
-	icon?: React.ComponentType<{ className?: string }>;
-};
+import type { DataTableSearchableColumn, Option } from "~/types/table";
 
 export interface DataTableFilterableColumn<TData>
 	extends DataTableSearchableColumn<TData> {

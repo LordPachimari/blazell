@@ -1,11 +1,9 @@
-"use client";
-
 import { Button } from "@pachi/ui/button";
 import { Icons, strokeWidth } from "@pachi/ui/icons";
 import { Theme, useTheme } from "remix-themes";
 
 export function ThemeToggle() {
-	const [theme, setTheme] = useTheme();
+	const [_, setTheme] = useTheme();
 
 	const toggleTheme = () => {
 		setTheme((prevTheme) =>

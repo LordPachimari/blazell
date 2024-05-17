@@ -1,4 +1,3 @@
-"use client";
 import { cn } from "@pachi/utils";
 import type { Image as ImageType } from "@pachi/validators";
 import Image from "next/image";

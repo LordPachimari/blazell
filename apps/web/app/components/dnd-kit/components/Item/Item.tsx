@@ -5,10 +5,10 @@ import type { Transform } from "@dnd-kit/utilities";
 import { Handle, Remove } from "./components";
 
 import styles from "./Item.module.css";
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/ui";
 import type { ItemProps } from "../../Sortable/Sortable";
-import Image from "next/image";
 import { Loader2Icon } from "lucide-react";
+import { Image } from "~/components/image";
 
 export interface Props {
 	dragOverlay?: boolean;
@@ -159,8 +159,7 @@ export const Item = React.memo(
 											className="aspect-square rounded-md object-cover"
 											alt={item.name ?? "Uploaded image"}
 											src={item.preview ?? item.url ?? ""}
-											fill
-											sizes="20rem"
+											fit="fill"
 										/>
 									) : null}
 									{(item?.preview || !item.url) && (

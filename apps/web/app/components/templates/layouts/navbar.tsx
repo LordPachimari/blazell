@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@pachi/ui";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import { noHeaderPaths, noSidebarPaths } from "~/constants";
@@ -10,6 +8,8 @@ function Navbar(props: { children: React.ReactNode }) {
 	const isScrolled = useIsWindowScrolled();
 	const location = useLocation();
 	const { sidebarIsOpen } = useLoaderData<typeof loader>();
+	console.log("location", location.pathname);
+	console.log("isScrolled", isScrolled);
 
 	return (
 		<header

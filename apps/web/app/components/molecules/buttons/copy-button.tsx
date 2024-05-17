@@ -1,5 +1,3 @@
-"use client";
-
 import { Button, type ButtonProps } from "@pachi/ui/button";
 import { Icons } from "@pachi/ui/icons";
 import * as React from "react";

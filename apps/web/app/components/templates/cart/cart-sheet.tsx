@@ -1,4 +1,3 @@
-"use client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { ShoppingCart } from "lucide-react";
 import {
