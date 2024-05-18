@@ -1,0 +1,19 @@
+/* Wrapper */
+.Wrapper {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  
+}
+
+.Wrapper.center {
+  justify-content: center;
+}
+
+/* @media (max-width: 650px) {
+.Wrapper{
+  width: 100px;
+  height:100px;
+}
+} */

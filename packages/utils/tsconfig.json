@@ -1,0 +1,11 @@
+{
+	"extends": "@pachi/tsconfig/base.json",
+	"exclude": ["node_modules"],
+	"compilerOptions": {
+		"lib": ["dom", "dom.iterable", "ES2022"],
+		"paths": {
+			"~/*": ["./src/*"]
+		}
+	},
+	"include": ["src", "*.mjs", "*.ts"]
+}

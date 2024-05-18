@@ -5,11 +5,11 @@
 	"types": "src/index.ts",
 	"license": "MIT",
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		}
+		".": "./src/index.ts",
+		"./client": "./src/client/entities.ts",
+		"./server": "./src/server/entities.ts"
 	},
+
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
 		"beautify": "biome format ./src --write",
@@ -21,7 +21,7 @@
 		"@pachi/db": "^0.1.0",
 		"drizzle-orm": "^0.30.7",
 		"drizzle-zod": "^0.5.1",
-		"effect": "^3.0.4",
+		"effect": "^3.1.5",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
