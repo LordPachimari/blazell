@@ -4,12 +4,12 @@
 	"sideEffects": false,
 	"type": "module",
 	"scripts": {
+		"beautify": "biome format ./app --write",
 		"build": "remix vite:build",
 		"dev": "pnpm with-env remix vite:dev",
-		"start": "remix-serve ./build/server/index.js",
 		"format": "biome format ./app",
 		"lint": "dotenv -v SKIP_ENV_VALIDATION=1 biome lint ./app",
-		"beautify": "biome format ./app --write",
+		"start": "remix-serve ./build/server/index.js",
 		"with-env": "dotenv -e ../../.env --"
 	},
 	"dependencies": {
@@ -39,6 +39,7 @@
 		"framer-motion": "^11.2.2",
 		"isbot": "^4.1.0",
 		"lodash.debounce": "^4.0.8",
+		"partysocket": "^1.0.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-dropzone": "^14.2.3",

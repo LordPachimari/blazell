@@ -18,6 +18,7 @@ export const env = createEnv({
 		REPLICACHE_KEY: z.string(),
 		WORKER_URL: z.string(),
 		SESSION_SECRET: z.string(),
+		PARTYKIT_HOST: z.string(),
 	},
 
 	/**
@@ -34,6 +35,7 @@ export const env = createEnv({
 		REPLICACHE_KEY: process.env.REPLICACHE_KEY,
 		WORKER_URL: process.env.WORKER_URL,
 		SESSION_SECRET: process.env.SESSION_SECRET,
+		PARTYKIT_HOST: process.env.PARTYKIT_HOST,
 
 		// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 	},

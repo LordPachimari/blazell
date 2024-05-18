@@ -11,17 +11,13 @@
  * This means it's very good at handling images of any size, and is extremely performant.
  * Further improvements could be done by implementing ETags, but that is out of scope for this demo.
  */
-import { PassThrough, Readable, pipeline } from "node:stream";
-import { promisify } from "node:util";
-import {
-	createReadableStreamFromReadable,
-	type LoaderFunctionArgs,
-} from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import type { Params } from "@remix-run/react";
+import { createReadStream, statSync } from "node:fs";
+import path from "node:path";
+import { PassThrough, Readable } from "node:stream";
 import type { FitEnum } from "sharp";
 import sharp from "sharp";
-import { createReadStream, statSync, type ReadStream } from "node:fs";
-import path from "node:path";
 
 type ContentType = "image/jpeg" | "image/png" | "image/avif" | "image/webp";
 const ASSETS_ROOT = "assets";

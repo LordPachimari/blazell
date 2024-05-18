@@ -54,6 +54,7 @@ export const loader: LoaderFunction = (args) => {
 			ENV: {
 				REPLICACHE_KEY: env.REPLICACHE_KEY,
 				WORKER_URL: env.WORKER_URL,
+				PARTYKIT_HOST: env.PARTYKIT_HOST,
 			},
 			requestInfo: {
 				hints: getHints(request),
