@@ -10,6 +10,7 @@ import type { Product, Store as StoreType } from "@pachi/validators/client";
 import { Image } from "~/components/image";
 import { ProductCard } from "../product/product-card";
 import { Link } from "@remix-run/react";
+import { AspectRatio } from "@pachi/ui/aspect-ratio";
 
 export function Store({
 	store,
@@ -29,9 +30,10 @@ export function Store({
 				Select stores
 			</Button>
 			{store?.headerImage?.croppedUrl ? (
-				<div
+				<AspectRatio
+					ratio={4 / 1}
 					className={cn(
-						"h-[210px] rounded-lg relative w-full grid grid-cols-1 border border-mauve-6",
+						"max-h-fit rounded-lg relative w-full grid grid-cols-1 border border-mauve-6",
 					)}
 				>
 					<Image
@@ -39,8 +41,9 @@ export function Store({
 						src={store.headerImage.croppedUrl}
 						alt="header"
 						className="rounded-lg"
+						height={208}
 					/>
-				</div>
+				</AspectRatio>
 			) : (
 				<div className="h-[210px] rounded-lg w-full grid grid-cols-1 border bg-crimson-7 border-mauve-6">
 					<Noise />

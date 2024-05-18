@@ -9,6 +9,7 @@ export default {
 			fontFamily: {
 				display: ["Freeman", "sans-serif"],
 				body: ["Roboto", "sans-serif"],
+				freeman: ["Freeman", "sans-serif"],
 			},
 		},
 	},

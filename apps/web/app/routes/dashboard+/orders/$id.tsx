@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@pachi/ui/card";
 import { Icons } from "@pachi/ui/icons";
 import { Separator } from "@pachi/ui/separator";
 import type { LineItem as LineItemType, Order } from "@pachi/validators/client";
-import { useParams } from "@remix-run/react";
+import { useNavigate, useParams } from "@remix-run/react";
 import { OrderStatus } from "~/components/molecules/order-status";
 import { PaymentStatus } from "~/components/molecules/payment-status";
 import { ShippingStatus } from "~/components/molecules/shipping-status";
@@ -16,6 +16,7 @@ const OrderRoute = () => {
 	const params = useParams();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const order = ReplicacheStore.getByID<Order>(dashboardRep, params.id!);
+	const navigate = useNavigate();
 	return (
 		<main className="w-full relative flex p-4 md:p-10 justify-center">
 			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-4">
@@ -24,9 +25,10 @@ const OrderRoute = () => {
 						variant="ghost"
 						href="/dashboard/orders"
 						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
+						onClick={() => navigate(-1)}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
-						Back to orders
+						Back
 					</Button>
 					<OrderInfo order={order} />
 					<PaymentInfo paymentStatus={order?.paymentStatus ?? "paid"} />

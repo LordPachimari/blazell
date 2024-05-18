@@ -44,7 +44,7 @@
 		"react-dropzone": "^14.2.3",
 		"react-hotkeys-hook": "^4.5.0",
 		"react-image-crop": "^11.0.5",
-		"react-textarea-autosize": "^8.3.0",
+		"react-textarea-autosize": "^8.5.3",
 		"remix-development-tools": "^4.1.6",
 		"remix-flat-routes": "^0.6.5",
 		"remix-utils": "^7.6.0",

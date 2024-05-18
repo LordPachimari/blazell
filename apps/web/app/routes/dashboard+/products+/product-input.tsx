@@ -19,6 +19,7 @@ import { Variants } from "./input/product-variants";
 import { Pricing } from "./input/product-pricing";
 import { Media } from "./input/product-media";
 import { ProductInfo } from "./input/product-info";
+import { useNavigate } from "@remix-run/react";
 export interface ProductInputProps {
 	product: Product | undefined | null;
 	productID: string;
@@ -65,6 +66,7 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 		},
 		[dashboardRep, productID],
 	);
+	const navigate = useNavigate();
 
 	const deleteProduct = useCallback(async () => {
 		await dashboardRep?.mutate.deleteProduct({ id: productID });
@@ -97,9 +99,10 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 						variant="ghost"
 						href="/dashboard/products"
 						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
+						onClick={() => navigate(-1)}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
-						Back to products
+						Back
 					</Button>
 					<AlertDialogComponent
 						open={isOpen}

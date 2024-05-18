@@ -15,7 +15,7 @@ function Hero() {
 				/>
 			</div>
 			<div>
-				<h1 className="text-balance text-center text-5xl font-bold lg:text-left lg:text-6xl lg:tracking-tight xl:text-7xl">
+				<h1 className="text-balance font-freeman text-center text-5xl font-bold lg:text-left lg:text-6xl lg:tracking-tight xl:text-7xl">
 					Welcome to{" "}
 					<span className="text-balance bg-gradient-to-b from-crimson-9 to-crimson-11 bg-clip-text text-5xl font-bold text-transparent lg:text-6xl lg:tracking-tight xl:text-7xl">
 						Pachi

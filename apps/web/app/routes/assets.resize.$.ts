@@ -11,23 +11,21 @@
  * This means it's very good at handling images of any size, and is extremely performant.
  * Further improvements could be done by implementing ETags, but that is out of scope for this demo.
  */
-
 import { PassThrough, Readable, pipeline } from "node:stream";
 import { promisify } from "node:util";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import {
+	createReadableStreamFromReadable,
+	type LoaderFunctionArgs,
+} from "@remix-run/node";
 import type { Params } from "@remix-run/react";
 import type { FitEnum } from "sharp";
 import sharp from "sharp";
 import { createReadStream, statSync, type ReadStream } from "node:fs";
 import path from "node:path";
-import { setRequestCache } from "effect/Layer";
 
 type ContentType = "image/jpeg" | "image/png" | "image/avif" | "image/webp";
 const ASSETS_ROOT = "assets";
-type ImageStream = { contentType: ContentType } & (
-	| { type: "remote"; body: ReadableStream | null }
-	| { type: "local"; body: ReadStream }
-);
+type ImageStream = { contentType: ContentType; body: Readable };
 
 interface ResizeParams {
 	src: string;
@@ -87,7 +85,6 @@ function extractParams(params: Params<string>, request: Request): ResizeParams {
 	}
 	return { src, width, height, fit };
 }
-const pipelineAsync = promisify(pipeline);
 async function streamingResize(
 	imageStream: ImageStream,
 	width: number | undefined,
@@ -141,29 +138,16 @@ async function streamingResize(
 	// without buffering the entire image in memory
 	const passthroughStream = new PassThrough();
 
-	if (imageStream.type === "remote") {
-		if (!imageStream.body) {
-			return new Response("image not found", {
-				status: 404,
-				headers: {
-					"Content-Type": format,
-					"Cache-Control": "no-cache, no-store, must-revalidate",
-				},
-			});
-		}
-		// Convert Web ReadableStream to Node.js Readable Stream
-		//@ts-ignore
-		const nodeReadableStream = Readable.fromWeb(imageStream);
-		// Use the pipeline utility to handle the piping
-		await pipelineAsync(nodeReadableStream, sharpTransforms, passthroughStream);
-
-		return new Response(passthroughStream as any, {
+	if (!imageStream.body) {
+		return new Response("image not found", {
+			status: 404,
 			headers: {
 				"Content-Type": format,
-				"Cache-Control": "public, max-age=31536000, immutable",
+				"Cache-Control": "no-cache, no-store, must-revalidate",
 			},
 		});
 	}
+
 	imageStream.body.pipe(sharpTransforms).pipe(passthroughStream);
 
 	return new Response(passthroughStream as any, {
@@ -187,13 +171,30 @@ function getFileExtension(filename: string) {
 }
 
 async function readFileAsStream(src: string): Promise<ImageStream> {
-	console.log("src", src);
 	if (src.startsWith("http")) {
 		const result = await fetch(src);
-		const type = result.headers.get("Content-type");
+		const type = result.headers.get("Content-type") || "image/jpeg";
+		if (!result.body) throw new Error("Image not found");
+		const bodyIterable: AsyncIterable<any> = {
+			[Symbol.asyncIterator]() {
+				const reader = result.body?.getReader();
+				return {
+					async next() {
+						const { done, value } = (await reader?.read()) ?? {
+							done: true,
+							value: undefined,
+						};
+						return { done, value };
+					},
+				};
+			},
+		};
+		const stream = Readable.from(bodyIterable, {
+			objectMode: false,
+			highWaterMark: 16,
+		});
 		return {
-			type: "remote",
-			body: result.body,
+			body: stream,
 			contentType: type as ContentType,
 		};
 	}
@@ -207,7 +208,6 @@ async function readFileAsStream(src: string): Promise<ImageStream> {
 	}
 	// create a readable stream from the image file
 	return {
-		type: "local",
 		body: createReadStream(path.join(ASSETS_ROOT, src)),
 		contentType: `image/${getFileExtension(src)}` as ContentType,
 	};

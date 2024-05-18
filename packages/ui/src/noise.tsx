@@ -3,7 +3,7 @@ export const Noise = () => {
 		<div
 			className="w-full h-full transform opacity-10"
 			style={{
-				backgroundImage: "url(noise.webp)",
+				backgroundImage: "url(/assets/noise.webp)",
 				backgroundSize: "30%",
 			}}
 		/>
