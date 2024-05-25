@@ -1,12 +1,12 @@
-"use client";
-
+import { cn } from "@blazell/ui";
+import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
+import type { Store } from "@blazell/validators/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { cn } from "@pachi/ui";
-import { Card, CardContent, CardFooter, CardTitle } from "@pachi/ui/card";
-import type { Store } from "@pachi/validators/client";
 import { useNavigate } from "@remix-run/react";
-import { Image } from "~/components/image";
+import Image from "~/components/molecules/image";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { ReplicacheStore } from "~/replicache/store";
+import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 
 export default function SelectStores() {
@@ -44,15 +44,26 @@ export default function SelectStores() {
 							navigate("/dashboard/store");
 						}}
 					>
-						<Card className="p-4 text-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[500px]">
+						<Card className="p-4 text-center flex justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[500px]">
 							<CardContent className="p-0">
-								<Image
-									src={"https://github.com/shadcn.png"}
-									alt={_store.name}
-									width={500}
-									height={500}
-									className="rounded-xl"
-								/>
+								{!_store.storeImage ? (
+									<ImagePlaceholder />
+								) : _store.storeImage.uploaded ? (
+									<Image
+										src={_store.storeImage.url}
+										alt={_store.name}
+										className="rounded-xl"
+									/>
+								) : (
+									<img
+										src={toImageURL(
+											_store.storeImage.base64,
+											_store.storeImage.fileType,
+										)}
+										alt={_store.name}
+										className="rounded-xl"
+									/>
+								)}
 							</CardContent>
 							<CardFooter className="flex flex-row items-center justify-between fill-current h-14 p-0 pt-4">
 								<span className="flex flex-col items-start">

@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/ui",
+	"name": "@blazell/ui",
 	"private": true,
 	"version": "0.1.0",
 	"type": "module",
@@ -54,9 +54,9 @@
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.1",
-		"@pachi/tailwind-config": "workspace:^0.1.0",
-		"@pachi/tsconfig": "workspace:^0.1.0",
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tailwind-config": "workspace:^0.1.0",
+		"@blazell/tsconfig": "workspace:^0.1.0",
 		"@types/react": "^18.3.2",
 		"react": "^18.3.1",
 		"tailwindcss": "^3.4.3",

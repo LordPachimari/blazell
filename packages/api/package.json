@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/api",
+	"name": "@blazell/api",
 	"version": "0.1.0",
 	"private": true,
 	"main": "./src/index.ts",
@@ -13,20 +13,19 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@pachi/core": "workspace:*",
-		"@pachi/db": "workspace:*",
-		"@pachi/utils": "workspace:*",
-		"@pachi/validators": "workspace:*",
+		"@blazell/shared": "workspace:*",
+		"@blazell/db": "workspace:*",
+		"@blazell/utils": "workspace:*",
+		"@blazell/validators": "workspace:*",
 		"drizzle-orm": "^0.30.7",
 		"effect": "^3.1.5",
-		"remeda": "^1.60.1",
 		"replicache": "14.2.2",
 		"ulidx": "^2.3.0",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.1",
-		"@pachi/tsconfig": "workspace:*",
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tsconfig": "workspace:*",
 		"typescript": "^5.4.5"
 	}
 }

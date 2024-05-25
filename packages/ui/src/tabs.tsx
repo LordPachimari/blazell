@@ -10,7 +10,7 @@ const tabsListVariants = cva("inline-flex ", {
 		variant: {
 			default:
 				"items-center justify-center h-10 rounded-md bg-muted p-1 text-muted-foreground",
-			outline: "gap-3 border-b border-mauve-6",
+			outline: "gap-3 border-b border-mauve-7",
 			// Add more variants here
 		},
 	},

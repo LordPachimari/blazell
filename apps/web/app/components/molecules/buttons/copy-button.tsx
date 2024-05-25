@@ -1,5 +1,5 @@
-import { Button, type ButtonProps } from "@pachi/ui/button";
-import { Icons } from "@pachi/ui/icons";
+import { Button, type ButtonProps } from "@blazell/ui/button";
+import { Icons } from "@blazell/ui/icons";
 import * as React from "react";
 
 export function CopyButton({ value, ...props }: ButtonProps) {

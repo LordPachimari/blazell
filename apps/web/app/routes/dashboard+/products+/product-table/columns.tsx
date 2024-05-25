@@ -7,9 +7,11 @@ import { DataTableColumnHeader } from "~/components/templates/table/data-table-c
 import type { DataTableFilterableColumn } from "~/types/table";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { RowActions } from "./row-actions";
-import type { Product } from "@pachi/validators/client";
-import { Checkbox } from "@pachi/ui/checkbox";
-import { Image } from "~/components/image";
+import type { Product } from "@blazell/validators/client";
+import { Checkbox } from "@blazell/ui/checkbox";
+import { productStatuses } from "@blazell/validators";
+import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (
@@ -69,18 +71,31 @@ export function getProductsColumns({
 				<div className="w-[100px]">
 					<AspectRatio
 						ratio={1}
-						className="flex items-center border border-mauve-6 rounded-md"
+						className="flex items-center border border-mauve-7 rounded-md"
 					>
-						{row.original.thumbnail?.url ? (
+						{!row.original.defaultVariant?.thumbnail ? (
+							<ImagePlaceholder />
+						) : row.original.defaultVariant?.thumbnail?.uploaded ? (
 							<Image
-								src={row.original.thumbnail.url}
-								alt={row.original.thumbnail.name || "Uploaded image"}
-								width={100}
-								height={80}
-								className="rounded-md h-full object-cover "
+								src={row.original.defaultVariant?.thumbnail?.url}
+								alt={
+									row.original.defaultVariant?.thumbnail?.name ||
+									"Uploaded image"
+								}
+								fit="cover"
+								className="rounded-md h-full object-cover"
 							/>
 						) : (
-							<ImagePlaceholder />
+							<img
+								src={toImageURL(
+									row.original.defaultVariant.thumbnail.base64,
+									row.original.defaultVariant.thumbnail.fileType,
+								)}
+								alt={
+									row.original.defaultVariant.thumbnail.name || "Uploaded image"
+								}
+								className="rounded-md h-full object-cover"
+							/>
 						)}
 					</AspectRatio>
 				</div>
@@ -157,8 +172,7 @@ export const filterableColumns: DataTableFilterableColumn<Product>[] = [
 	{
 		id: "status",
 		title: "Status",
-		//TODO: GET ENUM
-		options: ["draft", "published"].map((status) => ({
+		options: productStatuses.map((status) => ({
 			label: status[0]?.toUpperCase() + status.slice(1),
 			value: status,
 		})),

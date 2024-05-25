@@ -1,10 +1,10 @@
-import { index, integer, json, pgTable, varchar } from "drizzle-orm/pg-core";
-import { carts } from "./cart";
-import { variants, type Image } from "./variant";
-import { products } from "./product";
 import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { carts } from "./cart";
 import { orders } from "./order";
+import { products } from "./product";
 import { stores } from "./store";
+import { variants } from "./variant";
 
 export const lineItems = pgTable(
 	"line_items",
@@ -13,10 +13,13 @@ export const lineItems = pgTable(
 		replicachePK: varchar("replicache_pk").notNull(),
 		cartID: varchar("cart_id").references(() => carts.id),
 		orderID: varchar("order_id").references(() => orders.id),
-		thumbnail: json("thumbnail").$type<Image>(),
 		title: varchar("title").notNull(),
-		variantID: varchar("variant_id").references(() => variants.id),
-		productID: varchar("product_id").references(() => products.id),
+		variantID: varchar("variant_id")
+			.notNull()
+			.references(() => variants.id),
+		productID: varchar("product_id")
+			.notNull()
+			.references(() => products.id),
 		createdAt: varchar("created_at").notNull(),
 		updatedAt: varchar("updated_at").$onUpdate(() => new Date().toISOString()),
 		storeID: varchar("store_id").notNull(),

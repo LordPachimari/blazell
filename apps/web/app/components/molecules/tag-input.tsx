@@ -1,8 +1,8 @@
 import type React from "react";
 import { useRef, useState } from "react";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { cn } from "@pachi/ui";
-import { inputBaseStyles } from "@pachi/ui/input";
+import { cn } from "@blazell/ui";
+import { inputBaseStyles } from "@blazell/ui/input";
 
 type TagInputProps = {
 	onChange: (values: string[]) => void;

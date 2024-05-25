@@ -1,16 +1,16 @@
-import { Icons } from "@pachi/ui/icons";
-import { Noise } from "@pachi/ui/noise";
+import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
+import { Icons } from "@blazell/ui/icons";
+import { Noise } from "@blazell/ui/noise";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@blazell/ui/tabs";
+import type { Product, Store as StoreType } from "@blazell/validators/client";
+import { Link, useNavigate } from "@remix-run/react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
-import { StoreInfo } from "./store-info";
-import { cn } from "@pachi/ui";
-import { Button } from "@pachi/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pachi/ui/tabs";
-import type { Product, Store as StoreType } from "@pachi/validators/client";
-import { Image } from "~/components/image";
 import { ProductCard } from "../product/product-card";
-import { Link } from "@remix-run/react";
-import { AspectRatio } from "@pachi/ui/aspect-ratio";
+import { StoreInfo } from "./store-info";
+import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 export function Store({
 	store,
@@ -19,33 +19,46 @@ export function Store({
 }) {
 	const rep = useReplicache((state) => state.dashboardRep);
 	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
+	const navigate = useNavigate();
+	console.log("header", store?.headerImage);
 	return (
 		<div className="relative">
 			<Button
 				variant="ghost"
-				href="/dashboard/select-stores"
 				className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
+				onClick={() => navigate("/dashboard/select-stores")}
 			>
 				<Icons.left size={20} className="text-black dark:text-white" />
 				Select stores
 			</Button>
-			{store?.headerImage?.croppedUrl ? (
-				<AspectRatio
-					ratio={4 / 1}
+			{store?.headerImage ? (
+				<div
 					className={cn(
-						"max-h-fit rounded-lg relative w-full grid grid-cols-1 border border-mauve-6",
+						"max-h-[210px] w-fit min-w-[10rem] rounded-lg p-0 relative grid grid-cols-1 border border-mauve-7",
 					)}
 				>
-					<Image
-						fit="fill"
-						src={store.headerImage.croppedUrl}
-						alt="header"
-						className="rounded-lg"
-						height={208}
-					/>
-				</AspectRatio>
+					{store.headerImage.croppedImage?.uploaded ? (
+						<Image
+							fit="contain"
+							quality={100}
+							src={store.headerImage.croppedImage?.url}
+							alt="header"
+							className="rounded-lg"
+							height={210}
+						/>
+					) : (
+						<img
+							src={toImageURL(
+								store.headerImage.croppedImage?.base64,
+								store.headerImage.croppedImage?.fileType,
+							)}
+							alt="header"
+							className="rounded-lg object-contain"
+						/>
+					)}
+				</div>
 			) : (
-				<div className="h-[210px] rounded-lg w-full grid grid-cols-1 border bg-crimson-7 border-mauve-6">
+				<div className="h-[210px] rounded-lg w-full grid grid-cols-1 border bg-crimson-7 border-mauve-7">
 					<Noise />
 				</div>
 			)}

@@ -5,10 +5,10 @@ import type { Transform } from "@dnd-kit/utilities";
 import { Handle, Remove } from "./components";
 
 import styles from "./Item.module.css";
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 import type { ItemProps } from "../../Sortable/Sortable";
 import { Loader2Icon } from "lucide-react";
-import { Image } from "~/components/image";
+import Image from "~/components/molecules/image";
 
 export interface Props {
 	dragOverlay?: boolean;
@@ -154,15 +154,14 @@ export const Item = React.memo(
 						>
 							{isImage ? (
 								<div className={cn("w-full h-full")}>
-									{item?.preview || item.url ? (
+									{item?.base64 || item.url ? (
 										<Image
+											src={item.base64 ?? item.url ?? ""}
 											className="aspect-square rounded-md object-cover"
 											alt={item.name ?? "Uploaded image"}
-											src={item.preview ?? item.url ?? ""}
-											fit="fill"
 										/>
 									) : null}
-									{(item?.preview || !item.url) && (
+									{!item?.uploaded && (
 										<div className="absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-30 dark:bg-white">
 											<Loader2Icon className="animate-spin text-white dark:text-black" />
 										</div>

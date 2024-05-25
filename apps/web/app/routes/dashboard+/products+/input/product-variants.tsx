@@ -1,4 +1,4 @@
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	Card,
 	CardContent,
@@ -6,14 +6,10 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@pachi/ui/card";
-import { generateID, generateReplicachePK } from "@pachi/utils";
-import type { UpdateVariant } from "@pachi/validators";
-import type {
-	InsertVariant,
-	ProductOption,
-	Variant,
-} from "@pachi/validators/client";
+} from "@blazell/ui/card";
+import { generateID, generateReplicachePK } from "@blazell/utils";
+import type { InsertVariant, UpdateVariant } from "@blazell/validators";
+import type { ProductOption, Variant } from "@blazell/validators/client";
 import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { ReplicacheStore } from "~/replicache/store";
@@ -26,8 +22,13 @@ import { useSearchParams } from "@remix-run/react";
 interface ProductVariantsProps {
 	options: ProductOption[] | undefined;
 	productID: string | undefined;
+	updateVariant: (props: UpdateVariant) => Promise<void>;
 }
-export function Variants({ options, productID }: ProductVariantsProps) {
+export function Variants({
+	options,
+	productID,
+	updateVariant,
+}: ProductVariantsProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const variants = ReplicacheStore.scan<Variant>(
 		dashboardRep,
@@ -62,7 +63,6 @@ export function Variants({ options, productID }: ProductVariantsProps) {
 				prefix: "variant",
 				filterID: productID,
 			}),
-			prices: [],
 		};
 		await dashboardRep?.mutate.createVariant({
 			variant: newVariant,
@@ -70,17 +70,7 @@ export function Variants({ options, productID }: ProductVariantsProps) {
 
 		setVariantID(newID);
 	}, [dashboardRep, productID, setVariantID]);
-	const updateVariant = useCallback(
-		async (props: UpdateVariant) => {
-			if (dashboardRep) {
-				await dashboardRep.mutate.updateVariant({
-					id: props.id,
-					updates: props.updates,
-				});
-			}
-		},
-		[dashboardRep],
-	);
+
 	const deleteVariant = useCallback(
 		async (id: string) => {
 			if (dashboardRep) {
@@ -130,14 +120,16 @@ export function Variants({ options, productID }: ProductVariantsProps) {
 					<PlusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant
 				</Button>
-				<ProductVariant
-					isOpen={isOpen}
-					options={options ?? []}
-					variantID={variantID}
-					setIsOpen={setIsOpen}
-					productID={productID}
-					setVariantID={setVariantID}
-				/>
+				{productID && (
+					<ProductVariant
+						isOpen={isOpen}
+						options={options ?? []}
+						variantID={variantID}
+						setIsOpen={setIsOpen}
+						productID={productID}
+						setVariantID={setVariantID}
+					/>
+				)}
 			</CardFooter>
 		</Card>
 	);

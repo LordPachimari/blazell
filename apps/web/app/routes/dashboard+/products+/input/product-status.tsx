@@ -1,13 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@pachi/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@pachi/ui/select";
-import { productStatuses, type UpdateProduct } from "@pachi/validators";
-import type { Product } from "@pachi/validators/client";
+} from "@blazell/ui/select";
+import { productStatuses, type UpdateProduct } from "@blazell/validators";
+import type { Product } from "@blazell/validators/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AlertDialogComponent } from "~/components/molecules/alert";

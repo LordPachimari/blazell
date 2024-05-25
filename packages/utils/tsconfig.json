@@ -1,11 +1,12 @@
 {
-	"extends": "@pachi/tsconfig/base.json",
+	"extends": "@blazell/tsconfig/base.json",
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "ES2022"],
 		"paths": {
 			"~/*": ["./src/*"]
-		}
+		},
+		"types": ["@cloudflare/workers-types"]
 	},
 	"include": ["src", "*.mjs", "*.ts"]
 }

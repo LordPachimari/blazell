@@ -1,9 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@pachi/ui/avatar";
-import { Button } from "@pachi/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@pachi/ui/card";
-import { Icons } from "@pachi/ui/icons";
-import { Separator } from "@pachi/ui/separator";
-import type { LineItem as LineItemType, Order } from "@pachi/validators/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import { Button } from "@blazell/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
+import { Separator } from "@blazell/ui/separator";
+import type {
+	LineItem as LineItemType,
+	Order,
+} from "@blazell/validators/client";
 import { useNavigate, useParams } from "@remix-run/react";
 import { OrderStatus } from "~/components/molecules/order-status";
 import { PaymentStatus } from "~/components/molecules/payment-status";
@@ -12,6 +15,7 @@ import { Total } from "~/components/templates/cart/total-info";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
+
 const OrderRoute = () => {
 	const params = useParams();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -25,10 +29,10 @@ const OrderRoute = () => {
 						variant="ghost"
 						href="/dashboard/orders"
 						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
-						onClick={() => navigate(-1)}
+						onClick={() => navigate("/dashboard/orders")}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
-						Back
+						Back to orders
 					</Button>
 					<OrderInfo order={order} />
 					<PaymentInfo paymentStatus={order?.paymentStatus ?? "paid"} />

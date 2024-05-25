@@ -1,16 +1,20 @@
-import { generateID } from "@pachi/utils";
-import { currencies, type CreatePrices } from "@pachi/validators";
+import { generateID } from "@blazell/utils";
+import {
+	currencies,
+	type CreatePrices,
+	type InsertPrice,
+} from "@blazell/validators";
 import { useMemo, useState } from "react";
-import { Button } from "@pachi/ui/button";
-import { ScrollArea } from "@pachi/ui/scroll-area";
+import { Button } from "@blazell/ui/button";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import {
 	SheetContent,
 	SheetRoot,
 	SheetTitle,
 	SheetTrigger,
-} from "@pachi/ui/sheet";
-import { ToggleGroup, ToggleGroupItem } from "@pachi/ui/toggle-group";
-import type { InsertPrice, Price } from "@pachi/validators/client";
+} from "@blazell/ui/sheet";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { Price } from "@blazell/validators/client";
 
 function Currencies({
 	children,

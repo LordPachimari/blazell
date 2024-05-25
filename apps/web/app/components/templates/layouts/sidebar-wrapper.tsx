@@ -1,4 +1,4 @@
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 import { useLocation } from "@remix-run/react";
 import { noSidebarPaths } from "~/constants";
 import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";

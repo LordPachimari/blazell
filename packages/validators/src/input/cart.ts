@@ -1,9 +1,10 @@
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { ShippingAddressSchema } from "./form";
-import { schema } from "@pachi/db";
+import { schema } from "@blazell/db";
 
 const CartSchema = createInsertSchema(schema.carts);
+export type InsertCart = z.infer<typeof CartSchema>;
 export const CreateCartSchema = z.object({
 	cart: CartSchema,
 });

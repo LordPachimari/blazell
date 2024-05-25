@@ -1,6 +1,4 @@
-"use client";
-
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
 function ProductContainer(props: React.HtmlHTMLAttributes<HTMLDivElement>) {
 	return (

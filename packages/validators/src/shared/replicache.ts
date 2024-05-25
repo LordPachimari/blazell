@@ -2,7 +2,10 @@ import { createInsertSchema } from "drizzle-zod";
 import type { PatchOperation } from "replicache";
 import { z } from "zod";
 
-import { schema, type TableName } from "@pachi/db";
+import { schema, type TableName } from "@blazell/db";
+import { Schema } from "@effect/schema";
+import { Effect, flow } from "effect";
+import { decodeUnknown, decodeUnknownSync } from "@effect/schema/Schema";
 
 export const clientGroupSchema = createInsertSchema(
 	schema.replicacheClientGroups,
@@ -27,48 +30,54 @@ export type Row = Record<string, unknown> & {
 	version: number;
 };
 export type RowsWTableName = { tableName: TableName; rows: Row[] };
-export const SpaceIDSchema = z.enum([
-	"dashboard",
-	"marketplace",
-	"user",
-] as const);
-export type SpaceID = z.infer<typeof SpaceIDSchema>;
 export const SPACE_RECORD = {
-	user: ["user" as const, "cart" as const, "orders" as const],
+	user: [
+		"user" as const,
+		"cart" as const,
+		"orders" as const,
+		"errors" as const,
+	],
 	dashboard: ["store" as const],
 	marketplace: ["products" as const],
 };
+export const SpaceIDSchema = Schema.Literal("dashboard", "marketplace", "user");
+export type SpaceID = Schema.Schema.Type<typeof SpaceIDSchema>;
+
 export type SpaceRecord = typeof SPACE_RECORD;
-export type Mutation = z.infer<typeof mutationSchema>;
-export const mutationSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	args: z.unknown(),
-	clientID: z.string(),
-});
-export const pushRequestSchema = z.object({
-	clientGroupID: z.string(),
-	mutations: z.array(mutationSchema),
-});
-export type PushRequest = z.infer<typeof pushRequestSchema>;
+export class Mutation extends Schema.Class<Mutation>("Mutation")({
+	id: Schema.Number,
+	name: Schema.String,
+	args: Schema.Unknown,
+	clientID: Schema.String,
+}) {
+	static decodeUnknownSync = decodeUnknownSync(this);
+	static decodeUnknown = decodeUnknown(this);
+}
+
+export class PushRequest extends Schema.Class<PushRequest>("PushRequest")({
+	clientGroupID: Schema.String,
+	mutations: Schema.Array(Mutation),
+}) {
+	static decodeUnknownSync = decodeUnknownSync(this);
+}
+
 export type PullResponse = {
 	cookie: string;
 	lastMutationIDChanges: Record<string, number>;
 	patch: PatchOperation[];
 };
-export const cookieSchema = z.object({
-	spaceRecordKey: z.optional(z.string()),
-	clientRecordKey: z.optional(z.string()),
-	staticPullKey: z.optional(z.string()),
-	order: z.number(),
-});
-export type Cookie = z.infer<typeof cookieSchema>;
-export const pullRequestSchema = z.object({
-	clientGroupID: z.string(),
-	cookie: z.union([cookieSchema, z.null()]),
-});
-export type PullRequest = z.infer<typeof pullRequestSchema>;
-export const RequestHeadersSchema = z.object({
-	countryCode: z.string().nullable(),
-});
-export type RequestHeaders = z.infer<typeof RequestHeadersSchema>;
+export class Cookie extends Schema.Class<Cookie>("Cookie")({
+	spaceRecordKey: Schema.optional(Schema.String),
+	clientRecordKey: Schema.optional(Schema.String),
+	staticPullKey: Schema.optional(Schema.String),
+	order: Schema.Number,
+}) {
+	static decodeUnknownSync = decodeUnknownSync(this);
+}
+
+export class PullRequest extends Schema.Class<PullRequest>("PullRequest")({
+	clientGroupID: Schema.String,
+	cookie: Schema.Union(Cookie, Schema.Null),
+}) {
+	static decodeUnknownSync = decodeUnknownSync(this);
+}

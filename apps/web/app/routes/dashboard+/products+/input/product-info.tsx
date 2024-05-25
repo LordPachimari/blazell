@@ -1,24 +1,27 @@
-import type { UpdateProduct } from "@pachi/validators";
-import { useFormContext } from "react-hook-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@pachi/ui/card";
-import { Input } from "@pachi/ui/input";
-import { Label } from "@pachi/ui/label";
-import { Textarea } from "@pachi/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
+import { Input } from "@blazell/ui/input";
+import { Label } from "@blazell/ui/label";
+import { Textarea } from "@blazell/ui/textarea";
+import type { UpdateProduct, UpdateVariant } from "@blazell/validators";
 import type { DebouncedFunc } from "~/types/debounce";
-import type { PublishedProduct } from "../product-input";
 
 export function ProductInfo({
 	title,
 	description,
-	onInputChange,
+	onProductInputChange,
+	onVariantInputChange,
+	defaultVariantID,
 }: {
 	title: string | null | undefined;
 	description: string | null | undefined;
-	onInputChange: DebouncedFunc<
+	onProductInputChange: DebouncedFunc<
 		(props: UpdateProduct["updates"]) => Promise<void>
 	>;
+	onVariantInputChange: DebouncedFunc<
+		(updates: UpdateVariant) => Promise<void>
+	>;
+	defaultVariantID: string | undefined;
 }) {
-	const { register, formState } = useFormContext<PublishedProduct>();
 	return (
 		<Card className="mb-4">
 			<CardHeader>
@@ -34,7 +37,11 @@ export function ProductInfo({
 						// state={formState.errors.title ? "error" : "neutral"}
 						// stateText={formState.errors.title?.message}
 						onChange={async (e) => {
-							await onInputChange({ title: e.currentTarget.value });
+							defaultVariantID &&
+								(await onVariantInputChange({
+									updates: { title: e.currentTarget.value },
+									id: defaultVariantID,
+								}));
 						}}
 						className="w-full my-2"
 					/>
@@ -48,7 +55,9 @@ export function ProductInfo({
 						defaultValue={description ?? ""}
 						className="min-h-32 mt-2"
 						onChange={async (e) => {
-							await onInputChange({ description: e.currentTarget.value });
+							await onProductInputChange({
+								description: e.currentTarget.value,
+							});
 						}}
 					/>
 				</div>

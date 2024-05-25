@@ -2,9 +2,9 @@ import type React from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 
 interface DataTableFloatingBarProps<TData>
 	extends React.HTMLAttributes<HTMLElement> {

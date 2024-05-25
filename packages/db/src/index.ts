@@ -3,6 +3,7 @@ import * as schema from "../schema";
 import { Pool } from "@neondatabase/serverless";
 export * as schema from "../schema";
 export * from "../table-name";
+export * from "../types";
 
 const tableName = [
 	"users",
@@ -21,6 +22,7 @@ const tableName = [
 	"lineItems",
 	"addresses",
 	"orders",
+	"clientErrors",
 ] as const;
 
 export const client = new Pool();

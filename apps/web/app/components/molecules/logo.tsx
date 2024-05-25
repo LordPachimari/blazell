@@ -11,7 +11,7 @@ function Logo({ className = "", ...props }: LogoProps) {
 			to="/"
 		>
 			<span className="text-balance font-freeman  bg-black bg-gradient-to-b from-crimson-9 to-crimson-11 bg-clip-text text-4xl font-bold text-transparent lg:tracking-tight">
-				Pachi
+				Blazell
 			</span>
 		</Link>
 	);

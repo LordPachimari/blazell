@@ -1,10 +1,8 @@
-"use client";
-
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
-import { Avatar, AvatarFallback, AvatarImage } from "@pachi/ui/avatar";
-import type { Customer } from "@pachi/validators/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import type { Customer } from "@blazell/validators/client";
 
 export function getCustomersColumns(): ColumnDef<Customer, unknown>[] {
 	return [

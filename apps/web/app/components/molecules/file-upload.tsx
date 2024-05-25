@@ -1,16 +1,15 @@
+import { cn } from "@blazell/ui";
+import { formatBytes, generateID } from "@blazell/utils";
+import type { Image } from "@blazell/validators";
 import { UploadIcon } from "@radix-ui/react-icons";
+import * as base64 from "base64-arraybuffer";
+import { Effect } from "effect";
 import * as React from "react";
 import Dropzone, {
 	type DropzoneProps,
 	type FileRejection,
 } from "react-dropzone";
 import { toast } from "sonner";
-import { useAuth } from "@clerk/remix";
-import { formatBytes, generateID } from "@pachi/utils";
-import { Effect } from "effect";
-import type { Image } from "@pachi/validators";
-import { cn } from "@pachi/ui";
-
 //Shout out to sadman7
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
 	/**
@@ -98,8 +97,6 @@ export function FileUpload(props: FileUploaderProps) {
 		...dropzoneProps
 	} = props;
 
-	const { getToken } = useAuth();
-
 	const onDrop = React.useCallback(
 		async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
 			const effect = Effect.gen(function* (_) {
@@ -113,21 +110,31 @@ export function FileUpload(props: FileUploaderProps) {
 					return;
 				}
 
-				const dbImages = acceptedFiles.map((file, index) => {
-					const imageKey = generateID({ prefix: "img" });
-					return {
-						preview: URL.createObjectURL(file),
-						id: imageKey,
-						name: file.name,
-						order: files?.length ?? 0 + index + 1,
-						url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
-					};
-				});
+				const dbImages = (yield* Effect.forEach(
+					acceptedFiles,
+					(file, index) =>
+						Effect.async(() => {
+							const fileReader = new FileReader();
+							fileReader.onloadend = () => {
+								if (fileReader.result instanceof ArrayBuffer) {
+									const imageKey = generateID({ prefix: "img" });
+									const base64String = base64.encode(fileReader.result);
+									return {
+										id: imageKey,
+										name: file.name,
+										order: files?.length ?? 0 + index + 1,
+										url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
+										uploaded: false,
+										base64: base64String,
+										fileType: file.type,
+									} satisfies Image;
+								}
+							};
+							fileReader.readAsArrayBuffer(file);
+						}),
+					{ concurrency: "unbounded" },
+				)) as Image[];
 
-				const nameToIDMap = new Map();
-				for (const dbImage of dbImages) {
-					nameToIDMap.set(dbImage.name, dbImage.id);
-				}
 				yield* _(Effect.tryPromise(() => onFilesChange(dbImages)));
 
 				if (rejectedFiles.length > 0) {
@@ -135,39 +142,12 @@ export function FileUpload(props: FileUploaderProps) {
 						toast.error(`File ${file.file.name} was rejected`);
 					}
 				}
-
-				if (acceptedFiles.length > 0 && acceptedFiles.length <= maxFiles) {
-					const token = yield* _(Effect.tryPromise(() => getToken()));
-					yield* _(
-						Effect.forEach(
-							acceptedFiles,
-							(file) => {
-								return Effect.tryPromise(() =>
-									fetch(
-										`${window.ENV.WORKER_URL}/upload-file/${nameToIDMap.get(
-											file.name,
-										)}`,
-										{
-											body: file,
-											method: "POST",
-											headers: {
-												"Content-Type": file.type,
-												Authorization: `Bearer ${token}`,
-											},
-										},
-									),
-								);
-							},
-							{ concurrency: "unbounded" },
-						),
-					);
-				}
-			});
+			}).pipe(Effect.orDie);
 			await Effect.runPromise(effect);
 			await onUploadCompleted?.();
 		},
 
-		[files, maxFiles, multiple, onFilesChange, getToken, onUploadCompleted],
+		[files, maxFiles, multiple, onFilesChange, onUploadCompleted],
 	);
 
 	const isDisabled = disabled || (files?.length ?? 0) >= maxFiles;
@@ -186,7 +166,7 @@ export function FileUpload(props: FileUploaderProps) {
 					<div
 						{...getRootProps()}
 						className={cn(
-							"group relative grid h-[10rem] w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-mauve-6 px-5 py-2.5 text-center transition hover:bg-mauve-2",
+							"group relative grid h-[10rem] w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-mauve-7 px-5 py-2.5 text-center transition hover:bg-mauve-2",
 							"ring-offset-background focus-visible:outline outline-none focus:border-crimson-7 focus-visible:ring-2 outline-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 							isDragActive && "border-mauve-3",
 							isDisabled && "pointer-events-none opacity-60",

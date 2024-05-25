@@ -26,6 +26,10 @@ import {
 	type LucideProps,
 	Trash,
 	Laptop,
+	LoaderPinwheel,
+	CircleCheck,
+	CircleX,
+	Info,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -55,6 +59,10 @@ export const Icons = {
 	plus: Plus,
 	trash: Trash,
 	laptop: Laptop,
+	loader: LoaderPinwheel,
+	circleCheck: CircleCheck,
+	circleError: CircleX,
+	circleInfo: Info,
 	nextjs: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
 			<title>Nextjs</title>

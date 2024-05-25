@@ -1,10 +1,12 @@
-import { Button } from "@pachi/ui/button";
-import { Card } from "@pachi/ui/card";
-import { Icons } from "@pachi/ui/icons";
-import { Separator } from "@pachi/ui/separator";
-import { generateLineItemPrice, truncateString } from "@pachi/utils";
-import type { LineItem as LineItemType } from "@pachi/validators/client";
-import { Image } from "~/components/image";
+import { Button } from "@blazell/ui/button";
+import { Card } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
+import { Separator } from "@blazell/ui/separator";
+import { toast } from "@blazell/ui/toast";
+import { getLineItemPriceAmount, truncateString } from "@blazell/utils";
+import type { LineItem as LineItemType } from "@blazell/validators/client";
+import { Effect } from "effect";
+import Image from "~/components/molecules/image";
 
 export const LineItem = ({
 	lineItem,
@@ -19,15 +21,27 @@ export const LineItem = ({
 	currencyCode: string;
 	readonly?: boolean;
 }) => {
+	const amount =
+		Effect.runSync(
+			getLineItemPriceAmount(lineItem, currencyCode).pipe(
+				Effect.catchTags({
+					PriceNotFound: (e) =>
+						Effect.try(() => {
+							deleteItem?.(lineItem.id).then(() => toast.error(e.message));
+						}),
+				}),
+			),
+		) ?? 0;
 	return (
 		<>
 			<li className="w-full flex gap-2">
 				<Card className="aspect-square flex items-center justify-center rounded-lg relative">
 					<Image
-						src={lineItem.thumbnail?.url ?? ""}
-						fit={"fill"}
+						width={50}
+						height={50}
+						src={lineItem.variant.thumbnail?.url}
 						className="rounded-lg"
-						alt={lineItem.thumbnail?.name ?? ""}
+						alt={lineItem.variant.thumbnail?.name ?? ""}
 					/>
 				</Card>
 				<div className="flex gap-2 w-full justify-between">
@@ -81,10 +95,7 @@ export const LineItem = ({
 						<span className="flex gap-1 font-bold">
 							<h2 className="text-sm text-balance">{currencyCode}</h2>
 
-							<h2 className="text-sm text-balance">
-								{generateLineItemPrice(lineItem, currencyCode) *
-									lineItem.quantity}
-							</h2>
+							<h2 className="text-sm text-balance">{amount}</h2>
 						</span>
 						{!readonly && (
 							<Button

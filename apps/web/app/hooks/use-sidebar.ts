@@ -1,5 +1,5 @@
 import { parseWithZod } from "@conform-to/zod";
-import { SidebarFormSchema } from "@pachi/validators";
+import { SidebarFormSchema } from "@blazell/validators";
 import { useFetchers } from "@remix-run/react";
 import { z } from "zod";
 import { useRequestInfo } from "~/hooks/use-request-info";

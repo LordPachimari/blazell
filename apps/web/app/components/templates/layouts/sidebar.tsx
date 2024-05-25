@@ -1,7 +1,6 @@
-import { getFormProps, useForm } from "@conform-to/react";
-import { cn } from "@pachi/ui";
-import { Button } from "@pachi/ui/button";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
+import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";
@@ -53,7 +52,6 @@ const Sidebar = () => {
 	console.log("mode", mode);
 	const nextMode = mode === "open" ? "closed" : "open";
 	console.log("nextMode", nextMode);
-
 	useHotkeys(["s"], () => {
 		fetcher.submit(
 			{ sidebarState: nextMode },
@@ -66,10 +64,10 @@ const Sidebar = () => {
 	console.log(mode === "open");
 
 	return (
-		<div className="flex pb-1">
+		<div className="flex">
 			<nav
 				className={cn(
-					"group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-6  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
+					"group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
 						"w-44": mode === "open",
 						hidden: noSidebarPaths.has(location.pathname),

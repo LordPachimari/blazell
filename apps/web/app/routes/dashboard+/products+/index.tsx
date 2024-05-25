@@ -1,14 +1,13 @@
-"use client";
-
-import { generateID, generateReplicachePK } from "@pachi/utils";
+import { generateID, generateReplicachePK } from "@blazell/utils";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { ReplicacheStore } from "~/replicache/store";
 import { ACTIVE_STORE_ID } from "~/constants";
-import { toast } from "@pachi/ui/toast";
-import type { ActiveStoreID, Product, Store } from "@pachi/validators/client";
+import { toast } from "@blazell/ui/toast";
+import type { Product, Store } from "@blazell/validators/client";
 import { PageHeader } from "~/components/page-header";
 import { ProductsTable } from "./product-table/table";
+import type { ActiveStoreID } from "@blazell/validators";
 
 function ProductsPage() {
 	const rep = useReplicache((state) => state.dashboardRep);
@@ -18,8 +17,7 @@ function ProductsPage() {
 	);
 	const stores = ReplicacheStore.scan<Store>(rep, "store");
 	const store =
-		stores.find((store) => store.id === activeStoreID?.value.storeID ?? "") ??
-		stores[0];
+		stores.find((store) => store.id === activeStoreID?.value) ?? stores[0];
 	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 
 	return (
@@ -57,6 +55,8 @@ function Products({
 						filterID: storeID,
 						id: productID,
 					}),
+
+					defaultVariantID: generateID({ prefix: "variant" }),
 				},
 			});
 			toast.success("Product created successfully");

@@ -1,5 +1,5 @@
 import { ShoppingBag } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "@pachi/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
 import { ProductTypeCards } from "./wobble-cards";
 
 function Features() {
@@ -34,7 +34,7 @@ function Features() {
 		{
 			title: "Community",
 			description:
-				"Our most powerful feature. Pachi provides easy reach which makes it easy to connect and build your community.",
+				"Our most powerful feature. Blazell provides easy reach which makes it easy to connect and build your community.",
 			icon: <ShoppingBag />,
 		},
 	];
@@ -46,7 +46,8 @@ function Features() {
 					Everything you need to start selling
 				</h2>
 				<p className="mt-8 text-center text-lg text-mauve-11">
-					Pachi comes with a lot of features that will help you to start selling
+					Blazell comes with a lot of features that will help you to start
+					selling
 				</p>
 				<ul className="mt-8 grid w-full gap-4 sm:grid-cols-2 md:w-10/12 md:grid-cols-3">
 					{features.map((item, i) => (
@@ -69,7 +70,7 @@ function Features() {
 			</section>
 			<section className="w-full flex flex-col items-center mt-20">
 				<h2 className="text-center text-4xl font-bold py-20 lg:text-5xl lg:tracking-tight">
-					What can you sell on Pachi?
+					What can you sell on Blazell?
 				</h2>
 				<ProductTypeCards />
 			</section>
@@ -86,7 +87,7 @@ function Features() {
 
 			<section className="w-full flex flex-col items-center mt-20">
 				<h2 className="text-center text-4xl font-bold pt-20 lg:text-5xl lg:tracking-tight">
-					Creators selling on Pachi
+					Creators selling on Blazell
 				</h2>
 			</section>
 		</div>

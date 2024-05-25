@@ -1,5 +1,5 @@
 {
-	"name": "pachi",
+	"name": "blazell",
 	"main": "src/server.ts",
 	"compatibilityDate": "2023-12-19"
 }

@@ -1,5 +1,5 @@
-import { cn } from "@pachi/ui";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
+import { cn } from "@blazell/ui";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
 
 export type DashboardSidebarItem = {
@@ -45,7 +45,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 		<div className="w-full h-full flex relative inset-0 ">
 			<nav
 				className={cn(
-					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-6 backdrop-blur-3xl transition-all duration-200 ease-in-out ",
+					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-3xl transition-all duration-200 ease-in-out ",
 				)}
 			>
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">
@@ -58,9 +58,14 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 								prefetch="viewport"
 								key={item.title}
 								className={cn(
-									"group flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2",
+									"group relative flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2",
 								)}
 							>
+								{item.title === "Orders" && (
+									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-crimson-9">
+										1
+									</div>
+								)}
 								<div className="flex justify-center ">
 									<Icon
 										className={cn(
@@ -74,7 +79,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 								</div>
 								<span
 									className={cn(
-										"w-[350px] text-mauve-11 font-light",
+										"relative text-mauve-11 font-light",
 
 										pathname === item.href
 											? "text-crimson-9"

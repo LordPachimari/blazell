@@ -1,7 +1,7 @@
 import type React from "react";
 import { forwardRef } from "react";
 
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
 import styles from "./List.module.css";
 

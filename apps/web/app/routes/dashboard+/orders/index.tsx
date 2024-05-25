@@ -5,9 +5,9 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@pachi/ui/card";
-import { Progress } from "@pachi/ui/progress";
-import type { Order } from "@pachi/validators/client";
+} from "@blazell/ui/card";
+import { Progress } from "@blazell/ui/progress";
+import type { Order } from "@blazell/validators/client";
 import { useCallback, useState } from "react";
 import { PageHeader } from "~/components/page-header";
 import { ReplicacheStore } from "~/replicache/store";

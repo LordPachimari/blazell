@@ -1,38 +1,38 @@
 import { DndContext } from "@dnd-kit/core";
-import type { Image } from "@pachi/validators";
+import type { Image } from "@blazell/validators";
 import { useCallback } from "react";
 import { LargeFirstTile } from "~/components/dnd-kit/Sortable/large-first-tile";
 import { FileUpload } from "~/components/molecules/file-upload";
-import { Card, CardContent, CardHeader, CardTitle } from "@pachi/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import { useReplicache } from "~/zustand/replicache";
 
 export function Media({
 	images,
-	id,
+	variantID,
 }: Readonly<{
 	images: Image[] | undefined;
-	id: string | undefined;
+	variantID: string | undefined;
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const uploadImages = useCallback(
 		async (images: Image[]) => {
-			id &&
+			variantID &&
 				(await dashboardRep?.mutate.uploadImages({
 					images,
-					id,
+					entityID: variantID,
 				}));
 		},
-		[dashboardRep, id],
+		[dashboardRep, variantID],
 	);
 	const deleteImage = useCallback(
 		async (imageID: string) => {
-			id &&
+			variantID &&
 				(await dashboardRep?.mutate.deleteImage({
 					imageID,
-					id,
+					entityID: variantID,
 				}));
 		},
-		[id, dashboardRep],
+		[variantID, dashboardRep],
 	);
 
 	const updateImagesOrder = useCallback(
@@ -41,13 +41,13 @@ export function Media({
 		}: {
 			order: Record<string, number>;
 		}) => {
-			if (id && dashboardRep)
+			if (variantID && dashboardRep)
 				await dashboardRep.mutate.updateImagesOrder({
 					order,
-					id: id,
+					entityID: variantID,
 				});
 		},
-		[dashboardRep, id],
+		[dashboardRep, variantID],
 	);
 	return (
 		<Card className="overflow-hidden my-4">
@@ -59,7 +59,7 @@ export function Media({
 					files={images}
 					onFilesChange={uploadImages}
 					maxFiles={8}
-					maxSize={8 * 1024 * 1024}
+					maxSize={10 * 1024 * 1024}
 				/>
 				<DndContext>
 					{images && images.length > 0 && (

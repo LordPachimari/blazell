@@ -1,12 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@pachi/ui/avatar";
-import { Button } from "@pachi/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@pachi/ui/card";
-import { Icons } from "@pachi/ui/icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import { Button } from "@blazell/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
+import type { Customer, Order } from "@blazell/validators/client";
+import { useNavigate, useParams } from "@remix-run/react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
-import type { Customer, Order } from "@pachi/validators/client";
-import { useNavigate, useParams } from "@remix-run/react";
 import { OrdersTable } from "../orders/orders-table/table";
+
 export default function CustomerRoute() {
 	const params = useParams();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -24,10 +25,10 @@ export default function CustomerRoute() {
 						variant="ghost"
 						href={"/dashboard/customers"}
 						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
-						onClick={() => navigate(-1)}
+						onClick={() => navigate("/dashboard/customers")}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
-						Back
+						Back to customers
 					</Button>
 					<OrdersTable orders={orders} />
 				</section>

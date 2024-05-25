@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
 import styles from "./Wrapper.module.css";
 

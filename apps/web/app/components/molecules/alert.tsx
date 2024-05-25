@@ -8,7 +8,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@pachi/ui/alert-dialog";
+} from "@blazell/ui/alert-dialog";
 
 interface AlertDialogProps {
 	title: string;

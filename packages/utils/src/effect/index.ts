@@ -1,6 +1,6 @@
 import type { Effect } from "effect";
 
-type ExtractEffectValue<E> = E extends Effect.Effect<infer Value, never, any>
+type ExtractEffectValue<E> = E extends Effect.Effect<infer Value, Error, any>
 	? Value
 	: never;
 

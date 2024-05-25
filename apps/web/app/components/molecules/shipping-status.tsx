@@ -1,5 +1,5 @@
-import { Badge } from "@pachi/ui/badge";
-import type { Order } from "@pachi/validators/client";
+import { Badge } from "@blazell/ui/badge";
+import type { Order } from "@blazell/validators/client";
 
 export function ShippingStatus({
 	status,

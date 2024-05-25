@@ -1,14 +1,15 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { UpdateVariant } from "@pachi/validators";
+import type { UpdateVariant } from "@blazell/validators";
 
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import type { DataTableFilterableColumn } from "~/types/table";
 import { RowActions } from "./row-actions";
-import { Image } from "~/components/image";
-import type { Product, Variant } from "@pachi/validators/client";
-import { AspectRatio } from "@pachi/ui/aspect-ratio";
+import type { Product, Variant } from "@blazell/validators/client";
+import { AspectRatio } from "@blazell/ui/aspect-ratio";
+import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 export function getVariantColumns({
 	setVariantID,
@@ -28,16 +29,23 @@ export function getVariantColumns({
 			cell: ({ row }) => (
 				<div className="w-[100px]">
 					<AspectRatio ratio={1} className="flex items-center rounded-md">
-						{row.original.images?.[0]?.url ? (
+						{!row.original.images?.[0] ? (
+							<ImagePlaceholder />
+						) : row.original.images?.[0]?.uploaded ? (
 							<Image
 								src={row.original.images[0]?.url}
 								alt={row.original.images[0]?.name || "Uploaded image"}
-								width={100}
-								height={80}
 								className="rounded-md h-full object-cover "
 							/>
 						) : (
-							<ImagePlaceholder />
+							<img
+								src={toImageURL(
+									row.original.images[0]?.base64,
+									row.original.images[0]?.fileType,
+								)}
+								alt={row.original.images[0]?.name || "Uploaded image"}
+								className="rounded-md h-full object-cover "
+							/>
 						)}
 					</AspectRatio>
 				</div>

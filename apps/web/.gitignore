@@ -1,8 +1,18 @@
 node_modules
-
-/.cache
-/build
 .env
 
-# sst
-.sst
+# Remix
+/.cache
+/build
+
+# Cloudflare
+.wrangler
+.dev.vars
+worker-configuration.d.ts
+
+# Playwright
+/test-results
+/playwright-report
+
+# Remix stacks
+/package-lock.json

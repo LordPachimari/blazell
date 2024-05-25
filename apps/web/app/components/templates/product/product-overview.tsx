@@ -1,23 +1,22 @@
-"use client";
 import type {
 	Product,
 	ProductOption,
-	PublishedProduct,
 	Variant,
-} from "@pachi/validators/client";
+} from "@blazell/validators/client";
 import { useEffect, useState } from "react";
 import { Gallery } from "./gallery";
 import { ProductContainer } from "./product-container";
 import { GeneralInfo } from "./product-info";
-import { Separator } from "@pachi/ui/separator";
+import { Separator } from "@blazell/ui/separator";
 import { AddToCart } from "./add-to-cart";
-import { ToggleGroup, ToggleGroupItem } from "@pachi/ui/toggle-group";
-import { AspectRatio } from "@pachi/ui/aspect-ratio";
-import { Image } from "~/components/image";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import { AspectRatio } from "@blazell/ui/aspect-ratio";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 interface ProductOverviewProps {
-	product: Product | PublishedProduct | null | undefined;
+	product: Product | null | undefined;
 	isDashboard?: boolean;
 	variants: Variant[];
 	selectedVariantIDOrHandle: string | null;
@@ -39,7 +38,11 @@ const ProductOverview = ({
 	console.log("product", product);
 	return (
 		<main className="relative lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] mt-12  p-2 md:p-4">
-			<Gallery images={selectedVariant?.images ?? product?.images ?? []} />
+			<Gallery
+				images={
+					selectedVariant?.images ?? product?.defaultVariant?.images ?? []
+				}
+			/>
 			<ProductContainer>
 				<div className="min-h-[60vh]">
 					<GeneralInfo product={product} />
@@ -61,7 +64,7 @@ const ProductOverview = ({
 				<AddToCart
 					{...(cartID && { cartID })}
 					product={product}
-					{...(selectedVariant && { variant: selectedVariant })}
+					variant={selectedVariant ?? product?.defaultVariant}
 					{...(isDashboard && { isDashboard })}
 				/>
 			</ProductContainer>
@@ -102,16 +105,20 @@ const ProductVariants = ({
 						className="bg-white min-w-[6rem] min-h-[9rem] p-0 rounded-xl hover:border-brand-3"
 					>
 						<AspectRatio ratio={2 / 3}>
-							{v.images?.[0] ? (
+							{!v.images?.[0] ? (
+								<ImagePlaceholder />
+							) : v.images?.[0].uploaded ? (
 								<Image
-									fit="fill"
-									src={v.images?.[0]?.preview ?? v.images?.[0]?.url ?? ""}
-									alt={v.images?.[0]?.name ?? ""}
+									src={v.images?.[0].url}
+									alt={v.images?.[0].name ?? "Product image"}
 									className="rounded-xl"
-									sizes="12rem"
 								/>
 							) : (
-								<ImagePlaceholder />
+								<img
+									src={toImageURL(v.images?.[0].base64, v.images?.[0].fileType)}
+									alt={v.images?.[0].name ?? "Product image"}
+									className="rounded-xl"
+								/>
 							)}
 						</AspectRatio>
 					</ToggleGroupItem>

@@ -1,20 +1,24 @@
-import { Button } from "@pachi/ui/button";
-import { Card, CardContent, CardFooter, CardTitle } from "@pachi/ui/card";
-import { Input } from "@pachi/ui/input";
-import { Label } from "@pachi/ui/label";
-import type { CreatePrices, UpdatePrice } from "@pachi/validators";
-import type { InsertPrice, Price } from "@pachi/validators/client";
+import { Button } from "@blazell/ui/button";
+import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
+import { Input } from "@blazell/ui/input";
+import { Label } from "@blazell/ui/label";
+import type {
+	CreatePrices,
+	InsertPrice,
+	UpdatePrice,
+} from "@blazell/validators";
+import type { Price } from "@blazell/validators/client";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
-import { Icons } from "@pachi/ui/icons";
+import { Icons } from "@blazell/ui/icons";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
-	id: string | undefined;
+	variantID: string | undefined;
 }
-function Pricing({ prices, id }: ProductPricingProps) {
+function Pricing({ prices, variantID }: ProductPricingProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const updatePrice = useCallback(
@@ -33,15 +37,15 @@ function Pricing({ prices, id }: ProductPricingProps) {
 		},
 		[dashboardRep],
 	);
-	const deleteVariantPrice = useCallback(
+	const deletePrices = useCallback(
 		async (priceID: string) => {
-			id &&
+			variantID &&
 				(await dashboardRep?.mutate.deletePrices({
-					id: id,
+					id: variantID,
 					priceIDs: [priceID],
 				}));
 		},
-		[dashboardRep, id],
+		[dashboardRep, variantID],
 	);
 	return (
 		<Card className="min-h-[6rem] my-4">
@@ -66,27 +70,27 @@ function Pricing({ prices, id }: ProductPricingProps) {
 									valueInCents = 0;
 								}
 
-								id &&
+								variantID &&
 									(await updatePrice({
 										priceID: price.id,
 										updates: { amount: valueInCents },
-										id,
+										id: variantID,
 									}));
 							}}
 						/>
 						<Button
 							size="icon"
 							variant={"ghost"}
-							onClick={async () => await deleteVariantPrice(price.id)}
+							onClick={async () => await deletePrices(price.id)}
 						>
-							<Icons.close className="text-red-500" />
+							<Icons.close className="text-ruby-9" />
 						</Button>
 					</div>
 				))}
 			</CardContent>
 
 			<CardFooter className="justify-center">
-				<Currencies createPrices={createPrices} prices={prices} id={id}>
+				<Currencies createPrices={createPrices} prices={prices} id={variantID}>
 					<Button
 						size="md"
 						variant="ghost"

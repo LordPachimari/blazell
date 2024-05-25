@@ -1,4 +1,4 @@
-import { Button } from "~/components/ui/button";
+import { Button } from "@blazell/ui/button";
 
 export function UserNotCreated() {
 	return (

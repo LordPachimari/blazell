@@ -1,24 +1,27 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import { cn } from "@pachi/ui";
-import { Button } from "@pachi/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@pachi/ui/dialog";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
-import { ScrollArea } from "@pachi/ui/scroll-area";
-import { ToggleGroup, ToggleGroupItem } from "@pachi/ui/toggle-group";
-import type { ProductOption, Variant } from "@pachi/validators/client";
+import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
+import { ScrollArea } from "@blazell/ui/scroll-area";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { ProductOption, Variant } from "@blazell/validators/client";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { Media } from "./product-media";
 import { Pricing } from "./product-pricing";
 import Stock from "./product-stock";
+import type { UpdateVariant } from "@blazell/validators";
+import debounce from "lodash.debounce";
+import { generateReplicachePK } from "@blazell/utils";
 
 interface ProductVariantProps {
 	setIsOpen: (value: boolean) => void;
 	isOpen: boolean;
 	options: ProductOption[];
 	variantID: string | null;
-	productID: string | undefined;
+	productID: string;
 	setVariantID: (id: string | null) => void;
 }
 
@@ -31,15 +34,42 @@ export default function ProductVariant({
 	setVariantID,
 }: Readonly<ProductVariantProps>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variant = ReplicacheStore.getByPK<Variant>(
-		dashboardRep,
-		`variant_${productID}_${variantID}`,
+	const variant = variantID
+		? ReplicacheStore.getByPK<Variant>(
+				dashboardRep,
+				generateReplicachePK({
+					id: variantID,
+					prefix: "variant",
+					filterID: productID,
+				}),
+			)
+		: undefined;
+
+	const updateVariant = useCallback(
+		async (props: UpdateVariant) => {
+			if (dashboardRep) {
+				await dashboardRep.mutate.updateVariant({
+					id: props.id,
+					updates: props.updates,
+				});
+			}
+		},
+		[dashboardRep],
+	);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onVariantInputChange = useCallback(
+		debounce(async (props: UpdateVariant) => {
+			await updateVariant({ id: props.id, updates: props.updates });
+		}, 800),
+		[updateVariant],
 	);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!variantID || !productID) setIsOpen(false);
-	}, [productID, variantID]);
-	if (!variant || !productID) return null;
+		if (!productID || variantID === null) setIsOpen(false);
+	}, [variantID, productID]);
+	if (!variant) return null;
+	if (!productID) return null;
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="md:w-[800px] bg-mauve-2 p-4 pt-4 gap-0">
@@ -60,9 +90,13 @@ export default function ProductVariant({
 						variant={variant}
 						productID={productID}
 					/>
-					<Media images={variant.images ?? []} id={variant.id} />
-					<Pricing prices={variant.prices ?? []} id={variant.id} />
-					<Stock entity={variant} />
+					<Media images={variant.images ?? []} variantID={variant.id} />
+					<Pricing prices={variant.prices ?? []} variantID={variant.id} />
+					<Stock
+						variant={variant}
+						updateVariant={updateVariant}
+						onVariantInputChange={onVariantInputChange}
+					/>
 				</ScrollArea>
 			</DialogContent>
 		</Dialog>

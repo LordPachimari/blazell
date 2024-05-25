@@ -1,8 +1,10 @@
-import { schema } from "@pachi/db";
+import { schema } from "@blazell/db";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const AddressSchema = createInsertSchema(schema.addresses);
+
+export type InsertAddress = z.infer<typeof AddressSchema>;
 export const UpdateAddressSchema = z.object({
 	updates: AddressSchema.pick({
 		address: true,

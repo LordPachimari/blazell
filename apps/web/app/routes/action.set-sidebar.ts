@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
-import { SidebarFormSchema } from "@pachi/validators";
-import { json, type ActionFunctionArgs } from "@remix-run/node";
+import { SidebarFormSchema } from "@blazell/validators";
+import { json, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { prefs } from "~/sessions.server";
 
 export async function action({ request }: ActionFunctionArgs) {

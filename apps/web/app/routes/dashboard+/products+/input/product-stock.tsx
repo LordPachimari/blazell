@@ -1,57 +1,38 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import type { UpdateProduct, UpdateVariant } from "@pachi/validators";
+import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 
-import { Card, CardContent, CardTitle } from "@pachi/ui/card";
-import { Checkbox } from "@pachi/ui/checkbox";
-import { Input } from "@pachi/ui/input";
-import { Label } from "@pachi/ui/label";
-import type { InsertVariant, Product, Variant } from "@pachi/validators/client";
-import { useReplicache } from "~/zustand/replicache";
+import { Card, CardContent, CardTitle } from "@blazell/ui/card";
+import { Checkbox } from "@blazell/ui/checkbox";
+import { Input } from "@blazell/ui/input";
+import { Label } from "@blazell/ui/label";
+import type { Variant } from "@blazell/validators/client";
+import type { DebouncedFunc } from "~/types/debounce";
 
 interface StockProps {
-	entity: Variant | InsertVariant | Product | undefined | null;
+	variant: Variant | InsertVariant | undefined | null;
+	updateVariant: (props: UpdateVariant) => Promise<void>;
+	onVariantInputChange: DebouncedFunc<
+		(updates: UpdateVariant) => Promise<void>
+	>;
 }
 
-const Stock = ({ entity }: StockProps) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const updateEntity = useCallback(
-		async (props: UpdateProduct["updates"] | UpdateVariant["updates"]) => {
-			if (dashboardRep && entity) {
-				if (entity.id.startsWith("product")) {
-					return await dashboardRep.mutate.updateProduct({
-						updates: props,
-						id: entity.id,
-					});
-				}
-				return await dashboardRep.mutate.updateVariant({
-					updates: props,
-					id: entity.id,
-				});
-			}
-		},
-		[dashboardRep, entity],
-	);
+const Stock = ({
+	variant,
+	updateVariant,
+	onVariantInputChange,
+}: StockProps) => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const onInputChange = useCallback(
-		debounce(
-			async (updates: UpdateProduct["updates"] | UpdateVariant["updates"]) => {
-				await updateEntity(updates);
-			},
-			500,
-		),
-		[entity],
-	);
+
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const [hasCode, setHasCode] = useState(false);
 
 	useEffect(() => {
-		if (entity?.barcode ?? entity?.sku) {
+		if (variant?.barcode ?? variant?.sku) {
 			setHasCode(true);
 		}
-	}, [entity]);
+	}, [variant]);
 
 	return (
 		<Card className="my-4">
@@ -60,20 +41,26 @@ const Stock = ({ entity }: StockProps) => {
 				<Input
 					type="number"
 					className="my-2 w-20"
-					defaultValue={entity?.quantity ?? 1}
+					defaultValue={variant?.quantity ?? 1}
 					min={1}
 					onChange={async (e) => {
-						await onInputChange({ quantity: e.currentTarget.valueAsNumber });
+						variant &&
+							(await onVariantInputChange({
+								updates: { quantity: e.currentTarget.valueAsNumber },
+								id: variant.id,
+							}));
 					}}
 				/>
 				<span className="flex items-center gap-2">
 					<Checkbox
 						className="my-2"
-						defaultChecked={entity?.allowBackorder ?? false}
+						defaultChecked={variant?.allowBackorder ?? false}
 						onCheckedChange={async (e) =>
-							await updateEntity({
-								allowBackorder: e as boolean,
-							})
+							variant &&
+							(await updateVariant({
+								id: variant.id,
+								updates: { allowBackorder: e as boolean },
+							}))
 						}
 					/>
 					<p className="text-sm">Continue selling when out of stock</p>
@@ -92,22 +79,30 @@ const Stock = ({ entity }: StockProps) => {
 							<span className="w-full">
 								<Label>SKU</Label>
 								<Input
-									defaultValue={entity?.sku ?? ""}
+									defaultValue={variant?.sku ?? ""}
 									onChange={async (e) =>
-										await onInputChange({
-											sku: e.currentTarget.value,
-										})
+										variant &&
+										(await onVariantInputChange({
+											updates: {
+												sku: e.currentTarget.value,
+											},
+											id: variant.id,
+										}))
 									}
 								/>
 							</span>
 							<span className="w-full">
 								<Label>Barcode</Label>
 								<Input
-									defaultValue={entity?.barcode ?? ""}
+									defaultValue={variant?.barcode ?? ""}
 									onChange={async (e) =>
-										await onInputChange({
-											barcode: e.currentTarget.value,
-										})
+										variant &&
+										(await onVariantInputChange({
+											updates: {
+												barcode: e.currentTarget.value,
+											},
+											id: variant.id,
+										}))
 									}
 								/>
 							</span>

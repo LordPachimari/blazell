@@ -1,8 +1,10 @@
-import { schema } from "@pachi/db";
+import { schema } from "@blazell/db";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 const OrderSchema = createInsertSchema(schema.orders);
+
+export type InsertOrder = z.infer<typeof OrderSchema>;
 export const CreateOrderSchema = z.object({
 	order: OrderSchema,
 });

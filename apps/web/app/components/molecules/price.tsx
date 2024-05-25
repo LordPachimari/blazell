@@ -1,4 +1,4 @@
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
 const Price = ({
 	amount,

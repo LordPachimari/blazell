@@ -1,17 +1,23 @@
-import { vitePlugin as remix } from "@remix-run/dev";
-import { installGlobals } from "@remix-run/node";
+import {
+	vitePlugin as remix,
+	cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
+} from "@remix-run/dev";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { remixDevTools } from "remix-development-tools";
 import { flatRoutes } from "remix-flat-routes";
-installGlobals();
+import { getLoadContext } from "./load-context";
 
 export default defineConfig({
+	ssr: {
+		noExternal: ["react-easy-crop", "tslib"],
+	},
 	build: {
 		target: "ES2022",
 	},
 	plugins: [
 		remixDevTools(),
+		remixCloudflareDevProxy({ getLoadContext }),
 		remix({
 			serverModuleFormat: "esm",
 			ignoredRouteFiles: ["**/.*"],

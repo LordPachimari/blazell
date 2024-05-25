@@ -1,53 +1,55 @@
-import { cn } from "@pachi/ui";
-import type { RefObject } from "react";
-import ReactCrop, {
-	centerCrop,
-	makeAspectCrop,
-	type Crop,
-	type PixelCrop,
-} from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
-import { Image } from "~/components/image";
-
+import { cn } from "@blazell/ui";
+import { useState } from "react";
+import Cropper from "react-easy-crop";
+import type { Area, Point } from "~/types/crop";
+import type { View } from "./edit-store";
+export const ASPECT_RATIO = 5 / 2;
 const CropImage = ({
 	src,
-	setCompletedCrop,
-	imgRef,
-	isCropOpen,
+	view,
 	crop,
 	setCrop,
+	setCroppedArea,
+	onCropComplete,
+	type,
 }: {
-	src: string | null;
-	setCompletedCrop: (crop: PixelCrop) => void;
-	imgRef: RefObject<HTMLImageElement>;
-	isCropOpen: boolean;
-	crop: Crop | undefined;
-	setCrop: (crop: Crop) => void;
+	src: string;
+	setCroppedArea: React.Dispatch<React.SetStateAction<Area>>;
+	onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void;
+	setCrop: React.Dispatch<React.SetStateAction<Point | undefined>>;
+	view: View;
+	crop: Point | undefined;
+	type: "store" | "header";
 }) => {
+	const [zoom, setZoom] = useState(1);
+	console.log(
+		"check",
+		(type === "store" &&
+			view !== "cropStoreImage" &&
+			//@ts-ignore
+			type === "header" &&
+			view !== "cropHeaderImage") ||
+			view === "default",
+	);
+
 	return (
-		<div
-			className={cn("w-[590px border-2 border-dashed border-mauve-7 m-2]", {
-				hidden: !isCropOpen,
-			})}
-		>
-			{src && (
-				<ReactCrop
-					{...(crop && { crop })}
-					ruleOfThirds
-					onChange={(_, percentCrop) => setCrop(percentCrop)}
-					onComplete={(c) => setCompletedCrop(c)}
-					aspect={3 / 1}
-					minHeight={100}
-				>
-					<Image
-						src={src}
-						ref={imgRef}
-						alt="image for crop"
-						width={597}
-						height={200}
-					/>
-				</ReactCrop>
-			)}
+		<div className={cn("w-[600px] max-h-[500px] h-[500px]")}>
+			<Cropper
+				image={src}
+				aspect={ASPECT_RATIO}
+				crop={crop ?? { x: 0, y: 0 }}
+				zoom={zoom}
+				onCropChange={setCrop}
+				classes={{ containerClassName: "h-[500px]" }}
+				onZoomChange={setZoom}
+				onCropAreaChange={setCroppedArea}
+				onCropComplete={onCropComplete}
+				{...(type === "store" && {
+					cropShape: "round",
+					aspect: 1,
+					showGrid: false,
+				})}
+			/>
 		</div>
 	);
 };

@@ -1,5 +1,5 @@
 {
-	"extends": "@pachi/tsconfig/base.json",
+	"extends": "@blazell/tsconfig/base.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
