@@ -1,5 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+
+Dockerfile
 # dependencies
 /node_modules
 /.pnp
@@ -29,6 +31,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+fly.toml
 
 # vercel
 .vercel
