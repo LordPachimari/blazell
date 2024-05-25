@@ -1,13 +1,12 @@
-import { cn } from "@pachi/utils";
-import type { Image as ImageType } from "@pachi/validators";
-import Image from "next/image";
-import { Link } from "next-view-transitions";
+import { cn } from "@blazell/ui";
+import type { Image as ImageType } from "@blazell/validators";
 import { memo, useEffect, useMemo, useState } from "react";
-import { isDefined } from "remeda";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { Card, CardContent, CardFooter } from "~/components/ui/card";
+import { Card, CardContent, CardFooter } from "@blazell/ui/card";
 import { useWindowSize } from "~/hooks/use-window-size";
-import { generateGrid, type SquareCounts } from "~/libs/grid-generator";
+import { generateGrid, type SquareCounts } from "~/utils/grid-generator";
+import { Link } from "@remix-run/react";
+import Image from "~/components/molecules/image";
 
 function useResponsiveGrid() {
 	const size = useWindowSize();
@@ -99,7 +98,7 @@ const GridComponentRaw = <_, T>({ data }: GridComponentProps<T>) => {
 				for (let i = 0; i < grid.length; i++) {
 					for (let j = 0; j < grid[0]!.length; j++) {
 						const value = grid[i]?.[j];
-						if (isDefined.strict(value) && !idSet.has(value.id)) {
+						if (value && !idSet.has(value.id)) {
 							flattedGrid.push(value);
 							idSet.add(value.id);
 						}
@@ -121,7 +120,10 @@ const GridComponentRaw = <_, T>({ data }: GridComponentProps<T>) => {
 										"col-span-2 row-span-2": gridValue.size === 2,
 									})}
 								>
-									<Link href={`/marketplace/products/${entity.handle}`}>
+									<Link
+										to={`/marketplace/products/${entity.handle}`}
+										unstable_viewTransition
+									>
 										<CardContent
 											className={cn(
 												"relative min-w-[4rem] h-[calc(100%-4rem)] rounded-xl",
@@ -133,12 +135,8 @@ const GridComponentRaw = <_, T>({ data }: GridComponentProps<T>) => {
 										>
 											{entity.thumbnail ? (
 												<Image
-													src={entity.thumbnail.url ?? ""}
+													src={entity.thumbnail.url}
 													alt={entity.thumbnail.name}
-													quality={100}
-													fill
-													priority
-													sizes="20rem"
 													className={cn("rounded-lg border", {
 														"rounded-2x": gridValue.size >= 2,
 													})}

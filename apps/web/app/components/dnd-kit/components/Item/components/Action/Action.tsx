@@ -2,8 +2,8 @@ import type React from "react";
 import { forwardRef, type CSSProperties } from "react";
 
 import styles from "./Action.module.css";
-import { Button } from "@pachi/ui/button";
-import { cn } from "@pachi/ui";
+import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
 
 export interface Props extends React.HTMLAttributes<HTMLButtonElement> {
 	active?: {

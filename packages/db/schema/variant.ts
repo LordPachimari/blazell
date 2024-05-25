@@ -12,13 +12,8 @@ import {
 import { prices } from "./price";
 import { products } from "./product";
 import { productOptionValuesToVariants } from "./product-option-value";
+import type { Image } from "../types/image";
 
-export type Image = {
-	id: string;
-	url?: string;
-	name: string;
-	order: number;
-};
 const weightUnits = ["kg", "g", "lb", "oz"] as const;
 export const variants = pgTable(
 	"variants",

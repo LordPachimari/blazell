@@ -2,7 +2,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
 import {
@@ -12,11 +12,11 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@pachi/ui/table";
+} from "@blazell/ui/table";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { getCustomersColumns } from "./columns";
-import type { Customer } from "@pachi/validators/client";
+import type { Customer } from "@blazell/validators/client";
 
 interface CustomersTableProps {
 	customers: Customer[];
@@ -94,8 +94,8 @@ function CustomersTable({
 									className="h-24 text-center"
 								>
 									<div className="flex flex-col items-center gap-1 py-4 text-center">
-										<h3 className="text-2xl font-bold tracking-tight">
-											You have no products
+										<h3 className="text-2xl font-bold font-freeman tracking-tight">
+											You have no customers
 										</h3>
 										<p className="text-sm text-muted-foreground">
 											You can start selling as soon as you add a product.

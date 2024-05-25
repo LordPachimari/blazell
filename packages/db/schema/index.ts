@@ -14,3 +14,4 @@ export * from "./categories";
 export * from "./cart";
 export * from "./line-item";
 export * from "./order";
+export * from "./error";

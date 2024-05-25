@@ -5,15 +5,18 @@ import {
 	SheetRoot,
 	SheetTitle,
 	SheetTrigger,
-} from "@pachi/ui/sheet";
+} from "@blazell/ui/sheet";
 import { Total } from "./total-info";
-import type { Cart, LineItem as LineItemType } from "@pachi/validators/client";
-import { strokeWidth } from "@pachi/ui/icons";
+import type {
+	Cart,
+	LineItem as LineItemType,
+} from "@blazell/validators/client";
+import { strokeWidth } from "@blazell/ui/icons";
 import { useCartState } from "~/zustand/state";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { LineItem } from "../line-item/line-item";
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 
 export const CartSheet = ({
 	cartID,

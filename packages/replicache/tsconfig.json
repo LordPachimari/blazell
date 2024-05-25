@@ -1,0 +1,9 @@
+{
+	"extends": "@blazell/tsconfig/base.json",
+	"compilerOptions": {
+		"tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+		"types": ["@cloudflare/workers-types"]
+	},
+	"include": ["."],
+	"exclude": ["node_modules"]
+}

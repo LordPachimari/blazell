@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/utils",
+	"name": "@blazell/utils",
 	"version": "0.1.0",
 	"main": "src/index.ts",
 	"types": "src/index.ts",
@@ -13,15 +13,16 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@pachi/validators": "workspace:*",
+		"@blazell/validators": "workspace:*",
 		"dayjs": "^1.11.10",
 		"effect": "^3.1.5",
 		"ulidx": "^2.3.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.1",
-		"@pachi/tsconfig": "workspace:*",
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tsconfig": "workspace:*",
 		"dotenv-cli": "^7.3.0",
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+		"@cloudflare/workers-types": "^4.20240405.0"
 	}
 }

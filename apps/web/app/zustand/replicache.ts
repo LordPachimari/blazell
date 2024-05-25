@@ -1,7 +1,9 @@
+import type {
+	DashboardMutatorsType,
+	UserMutatorsType,
+} from "@blazell/replicache";
 import type { Replicache } from "replicache";
 import { create } from "zustand";
-
-import type { DashboardMutatorsType, UserMutatorsType } from "@pachi/core";
 
 interface ReplicacheState {
 	globalRep: Replicache | null;

@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import baseConfig from "@pachi/tailwind-config/web";
+import baseConfig from "@blazell/tailwind-config/web";
 
 export default {
 	content: ["./app/**/*.{ts,tsx}", "../../packages/ui/**/*.{ts,tsx}"],

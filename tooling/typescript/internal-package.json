@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"declaration": true,
 		"declarationMap": true,
-		"noEmit": false
+		"noEmit": false,
+		"types": ["@cloudflare/workers-types"]
 	}
 }

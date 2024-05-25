@@ -1,5 +1,5 @@
-import type { Order } from "@pachi/validators/client";
-import { Badge } from "@pachi/ui/badge";
+import type { Order } from "@blazell/validators/client";
+import { Badge } from "@blazell/ui/badge";
 
 export function OrderStatus({ status }: { status: Order["status"] }) {
 	return status === "pending" ? (

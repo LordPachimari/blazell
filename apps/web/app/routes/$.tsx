@@ -5,7 +5,7 @@
 // ensure the user gets the right status code and we can display a nicer error
 // message for them than the Remix and/or browser default.
 
-import { Icons } from "@pachi/ui/icons";
+import { Icons } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
 

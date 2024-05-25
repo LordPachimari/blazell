@@ -1,27 +1,27 @@
 {
-  "name": "@pachi/tailwind-config",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    "./native": "./native.ts",
-    "./web": "./web.ts"
-  },
-  "license": "MIT",
-  "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "lint": "biome lint .",
+	"name": "@blazell/tailwind-config",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./native": "./native.ts",
+		"./web": "./web.ts"
+	},
+	"license": "MIT",
+	"scripts": {
+		"clean": "rm -rf .turbo node_modules",
+		"lint": "biome lint .",
 		"typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
-  },
-  "devDependencies": {
-    "@pachi/tsconfig": "workspace:*",
-    "typescript": "^5.4.5",
-    "@tailwindcss/forms": "^0.5.6",
+	},
+	"dependencies": {
+		"postcss": "^8.4.38",
+		"tailwindcss": "^3.4.3"
+	},
+	"devDependencies": {
+		"@blazell/tsconfig": "workspace:*",
+		"typescript": "^5.4.5",
+		"@tailwindcss/forms": "^0.5.6",
 		"@tailwindcss/typography": "^0.5.10",
-    "tailwindcss-animate": "^1.0.7"
-  }
+		"tailwindcss-animate": "^1.0.7"
+	}
 }

@@ -2,7 +2,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
 import { toast } from "sonner";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,8 +10,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@pachi/ui/dropdown-menu";
-import type { Product } from "@pachi/validators/client";
+} from "@blazell/ui/dropdown-menu";
+import type { Product } from "@blazell/validators/client";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;

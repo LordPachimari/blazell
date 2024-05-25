@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
 
-import { DashboardMutators } from "@pachi/core";
-
 import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
+import { DashboardMutators } from "@blazell/replicache";
 
 function MarketplaceReplicacheProvider({
 	children,

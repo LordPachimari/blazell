@@ -1,5 +1,5 @@
-import { Button } from "@pachi/ui/button";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
+import { Button } from "@blazell/ui/button";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { useFetcher } from "@remix-run/react";
 import { useOptimisticThemeMode } from "~/hooks/use-theme";
 import { useUserPreferences } from "~/hooks/use-user-preferences";

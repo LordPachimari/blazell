@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-
-import { DashboardMutators } from "@pachi/core";
-
+import { DashboardMutators } from "@blazell/replicache";
 import { useAuth } from "@clerk/remix";
-import type { User } from "@pachi/validators/client";
+import type { User } from "@blazell/validators/client";
 import { useReplicache } from "~/zustand/replicache";
 import { ReplicacheStore } from "~/replicache/store";
 

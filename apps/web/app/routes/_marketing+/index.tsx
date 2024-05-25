@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/cloudflare";
 import { Features } from "~/components/templates/landing/features";
 import { Hero } from "~/components/templates/landing/hero";
 

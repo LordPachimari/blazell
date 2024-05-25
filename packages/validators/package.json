@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/validators",
+	"name": "@blazell/validators",
 	"version": "0.1.0",
 	"main": "src/index.ts",
 	"types": "src/index.ts",
@@ -9,7 +9,6 @@
 		"./client": "./src/client/entities.ts",
 		"./server": "./src/server/entities.ts"
 	},
-
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
 		"beautify": "biome format ./src --write",
@@ -18,15 +17,17 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@pachi/db": "^0.1.0",
+		"@effect/schema": "^0.67.9",
+		"@blazell/db": "^0.1.0",
 		"drizzle-orm": "^0.30.7",
 		"drizzle-zod": "^0.5.1",
 		"effect": "^3.1.5",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.1",
-		"@pachi/tsconfig": "workspace:^0.1.0",
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tsconfig": "workspace:^0.1.0",
+		"@cloudflare/workers-types": "^4.20240405.0",
 		"typescript": "^5.4.5"
 	}
 }

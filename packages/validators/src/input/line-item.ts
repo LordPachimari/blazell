@@ -1,12 +1,14 @@
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { schema } from "@pachi/db";
-import { ImageSchema } from "../shared";
+import { schema } from "@blazell/db";
+import { ProductSchema } from "./product";
+import { VariantSchema } from "./variant";
 
 const LineItemSchema = createInsertSchema(schema.lineItems);
 export const CreateLineItemSchema = z.object({
 	lineItem: LineItemSchema.extend({
-		thumbnail: ImageSchema.optional(),
+		variant: VariantSchema.optional(),
+		product: ProductSchema.optional(),
 	}),
 });
 export const UpdateLineItemSchema = LineItemSchema.pick({

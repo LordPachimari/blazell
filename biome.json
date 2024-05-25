@@ -8,13 +8,17 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"noNonNullAssertion": "warn"
+				"noNonNullAssertion": "warn",
+				"useSingleVarDeclarator":"off"
 			},
 			"suspicious": {
 				"noExplicitAny": "warn"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"
+			},
+			"complexity": {
+				"noStaticOnlyClass": "off"
 			}
 		}
 	},

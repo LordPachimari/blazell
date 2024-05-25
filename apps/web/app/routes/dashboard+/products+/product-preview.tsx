@@ -1,4 +1,4 @@
-import type { Product, Variant } from "@pachi/validators/client";
+import type { Product, Variant } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
 import { ReplicacheStore } from "~/replicache/store";

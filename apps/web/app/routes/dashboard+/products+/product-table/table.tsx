@@ -2,7 +2,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import { filterableColumns, getProductsColumns } from "./columns";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
@@ -13,10 +13,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@pachi/ui/table";
+} from "@blazell/ui/table";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { Link, useNavigate, useNavigation } from "@remix-run/react";
-import type { Product } from "@pachi/validators/client";
+import type { Product } from "@blazell/validators/client";
 
 interface ProductsTableProps {
 	products: Product[];
@@ -99,7 +99,7 @@ function ProductsTable({
 									className="h-24 text-center"
 								>
 									<div className="flex flex-col items-center gap-1 py-4 text-center">
-										<h3 className="text-2xl font-bold tracking-tight">
+										<h3 className="text-2xl font-bold font-freeman tracking-tight">
 											You have no products
 										</h3>
 										<p className="text-sm text-muted-foreground">

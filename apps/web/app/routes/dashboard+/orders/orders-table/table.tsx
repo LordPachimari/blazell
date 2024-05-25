@@ -3,8 +3,8 @@ import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Button } from "@pachi/ui/button";
-import { Ping } from "@pachi/ui/ping";
+import { Button } from "@blazell/ui/button";
+import { Ping } from "@blazell/ui/ping";
 import {
 	Table,
 	TableBody,
@@ -12,8 +12,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@pachi/ui/table";
-import type { Order } from "@pachi/validators/client";
+} from "@blazell/ui/table";
+import type { Order } from "@blazell/validators/client";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
@@ -109,7 +109,7 @@ function OrdersTable({
 									className="h-24 text-center"
 								>
 									<div className="flex flex-col items-center gap-1 py-4 text-center">
-										<h3 className="text-2xl font-bold tracking-tight">
+										<h3 className="text-2xl font-bold font-freeman tracking-tight">
 											You have no orders
 										</h3>
 										<p className="text-sm text-muted-foreground">

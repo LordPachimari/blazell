@@ -1,5 +1,10 @@
-import { Toaster } from "@pachi/ui/toaster";
-import { json, type LinksFunction, type LoaderFunction } from "@remix-run/node";
+import { Toaster } from "@blazell/ui/toaster";
+import {
+	json,
+	type LinksFunction,
+	type LoaderFunction,
+	type TypedResponse,
+} from "@remix-run/cloudflare";
 import {
 	Links,
 	Meta,
@@ -8,86 +13,116 @@ import {
 	ScrollRestoration,
 	useLoaderData,
 } from "@remix-run/react";
-import { HoneypotProvider } from "remix-utils/honeypot/react";
 //@ts-ignore
 import stylesheet from "./tailwind.css?url";
-
+import { ClientOnly } from "remix-utils/client-only";
 import { ClerkApp } from "@clerk/remix";
 import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
-import type { User } from "@pachi/validators/client";
+import type { User } from "@blazell/validators/client";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
 import Sidebar from "./components/templates/layouts/sidebar";
-import { env } from "./env";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
 import { useUser } from "./hooks/use-user";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
 import UserReplicacheProvider from "./providers/replicache/user";
-import { prefs } from "./sessions.server";
+import { prefs, userContext } from "./sessions.server";
 import { getDomainUrl } from "./utils/helpers";
-import { honeypot } from "./utils/honeypot.server";
-import type { Theme } from "@pachi/validators";
+import type { Theme } from "@blazell/validators";
+//@ts-ignore
+import sonnerStyles from "./sonner.css?url";
+import type { Env } from "load-context";
+import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
+import { PartykitProvider } from "./routes/partykit.client";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
 		//TODO: ADD ICON
 		{ rel: "stylesheet", href: stylesheet },
+		...(process.env.NODE_ENV === "development"
+			? [{ rel: "stylesheet", href: sonnerStyles }]
+			: []),
 	].filter(Boolean);
+};
+export type RootLoaderData = {
+	ENV: Omit<
+		Env,
+		"CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY" | "SESSION_SECRET"
+	>;
+	requestInfo: {
+		hints: ReturnType<typeof getHints>;
+		origin: string;
+		path: string;
+		userPrefs: {
+			theme?: Theme;
+			sidebarState?: string;
+		};
+	};
+	user?: User;
+	authID: string | null;
+	cartID?: string;
 };
 
 export const loader: LoaderFunction = (args) => {
-	return rootAuthLoader(args, async ({ request }) => {
-		const cookieHeader = request.headers.get("Cookie");
-		const cookie = (await prefs.parse(cookieHeader)) || {};
-		const { getToken, userId } = await getAuth(args);
-		const token = await getToken();
-		const user = await fetch(`${env.WORKER_URL}/user`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		}).then((res) => res.json() as Promise<User | undefined>);
-		const honeyProps = honeypot.getInputProps();
-		return json({
-			ENV: {
-				REPLICACHE_KEY: env.REPLICACHE_KEY,
-				WORKER_URL: env.WORKER_URL,
-				PARTYKIT_HOST: env.PARTYKIT_HOST,
-			},
-			requestInfo: {
-				hints: getHints(request),
-				origin: getDomainUrl(request),
-				path: new URL(request.url).pathname,
-				userPrefs: {
-					theme: cookie.theme,
-					sidebarState: cookie.sidebarState,
+	return rootAuthLoader(
+		args,
+		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
+			const cookieHeader = request.headers.get("Cookie");
+			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
+			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
+			const { getToken, userId } = await getAuth(args);
+			const token = await getToken();
+			const user = await fetch(`${context.env.WORKER_URL}/users`, {
+				method: "GET",
+				headers: {
+					Authorization: `Bearer ${token}`,
 				},
-			},
-			user,
-			authID: userId,
-			honeyProps,
-		});
-	});
+			}).then((res) => res.json() as Promise<User | undefined>);
+			return json({
+				ENV: {
+					REPLICACHE_KEY: context.env.REPLICACHE_KEY,
+					WORKER_URL: context.env.WORKER_URL,
+					PARTYKIT_HOST: context.env.PARTYKIT_HOST,
+					TRANSFORMER_URL: context.env.TRANSFORMER_URL,
+				},
+				requestInfo: {
+					hints: getHints(request),
+					origin: getDomainUrl(request),
+					path: new URL(request.url).pathname,
+					userPrefs: {
+						theme: prefsCookie.theme,
+						sidebarState: prefsCookie.sidebarState,
+					},
+				},
+				...(user && { user }),
+				authID: userId,
+				cartID: userContextCookie.cartID,
+			});
+		},
+	);
 };
 function App() {
-	const data = useLoaderData<typeof loader>();
+	const data = useLoaderData<RootLoaderData>();
 	const nonce = useNonce();
 	const user = useUser();
 	const theme = useTheme();
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>
-			<HoneypotProvider {...data.honeyProps}>
-				<MarketplaceReplicacheProvider>
-					<UserReplicacheProvider cartID={data.cartID}>
+			<MarketplaceReplicacheProvider>
+				<UserReplicacheProvider cartID={data.cartID}>
+					<DashboardReplicacheProvider>
 						<Sidebar />
 						<Header cartID={data.cartID} authID={data.authID} user={user} />
 						<Outlet />
 						<Toaster />
-					</UserReplicacheProvider>
-				</MarketplaceReplicacheProvider>
-			</HoneypotProvider>
+						<ClientOnly>
+							{() => <PartykitProvider cartID={data.cartID} />}
+						</ClientOnly>
+					</DashboardReplicacheProvider>
+				</UserReplicacheProvider>
+			</MarketplaceReplicacheProvider>
 		</Document>
 	);
 }

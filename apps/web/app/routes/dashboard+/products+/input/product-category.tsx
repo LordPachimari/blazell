@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@pachi/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
 	DropdownMenuSub,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@pachi/ui/dropdown-menu";
+} from "@blazell/ui/dropdown-menu";
 
 export function ProductCategory() {
 	return (

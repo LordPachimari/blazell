@@ -1,2 +1,2 @@
 export * from "./calculate-price-tax-amount";
-export * from "./generate-line-item-price";
+export * from "./get-line-item-price";

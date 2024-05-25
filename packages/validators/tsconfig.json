@@ -1,9 +1,10 @@
 {
-	"extends": "@pachi/tsconfig/internal-package.json",
+	"extends": "@blazell/tsconfig/internal-package.json",
 	"compilerOptions": {
 		"outDir": "dist",
 		"tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-		"lib": ["DOM", "DOM.Iterable", "ES2022"]
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"types": ["@cloudflare/workers-types"]
 	},
 	"include": ["*.ts", "src"],
 	"exclude": ["node_modules"]

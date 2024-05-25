@@ -12,11 +12,11 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { collections } from "./collection";
+import { prices } from "./price";
 import { productOptions } from "./product-option";
 import { stores } from "./store";
 import { tags } from "./tag";
-import { variants, type Image } from "./variant";
-import { prices } from "./price";
+import { variants } from "./variant";
 
 export const productStatus = ["draft", "published", "archived"] as const;
 const weightUnits = ["kg", "g", "lb", "oz"] as const;
@@ -26,22 +26,13 @@ export const products = pgTable(
 	{
 		id: varchar("id").notNull().primaryKey(),
 		replicachePK: varchar("replicache_pk").notNull(),
-		title: varchar("title"),
-		handle: varchar("handle"),
-		barcode: varchar("barcode"),
-		quantity: integer("quantity").notNull().default(0),
+		defaultVariantID: varchar("default_variant_id").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		description: text("description"),
 		collectionID: varchar("collection_pk").references(() => collections.id),
 		score: integer("score").default(0),
 		discountable: boolean("discountable").notNull().default(false),
-		thumbnail: json("thumbnail").$type<Image>(),
-		images: json("images").$type<Image[]>(),
 		originCountry: varchar("origin_country"),
-		sku: varchar("sku"),
-		weight: integer("weight"),
-		weightUnit: text("weight_unit", { enum: weightUnits }),
-		allowBackorder: boolean("allow_backorder").default(false),
 		status: text("status", {
 			enum: productStatus,
 		})
@@ -57,10 +48,12 @@ export const products = pgTable(
 	},
 	(product) => ({
 		collectionIDIndex: index("collection_id_index1").on(product.collectionID),
-		handleIndex: uniqueIndex("handle_index1").on(product.handle),
 		statusIndex: index("status_index1").on(product.status),
 		storeIDIndex: index("store_id_index1").on(product.storeID),
 		scoreIndex: index("score_index").on(product.score),
+		defaultVariantIDIndex: index("default_variant_id_index").on(
+			product.defaultVariantID,
+		),
 	}),
 );
 export const productsRelations = relations(products, ({ one, many }) => ({
@@ -75,7 +68,10 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 		fields: [products.storeID],
 		references: [stores.id],
 	}),
-	prices: many(prices),
+	defaultVariant: one(variants, {
+		fields: [products.defaultVariantID],
+		references: [variants.id],
+	}),
 }));
 export const productsToTags = pgTable(
 	"products_to_tags",

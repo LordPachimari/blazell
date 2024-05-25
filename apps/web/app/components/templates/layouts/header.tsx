@@ -2,16 +2,16 @@ import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
 import { CartSheet } from "../cart/cart-sheet";
 import { Link } from "@remix-run/react";
-import { buttonVariants } from "@pachi/ui/button";
+import { buttonVariants } from "@blazell/ui/button";
 import { Logo } from "~/components/molecules/logo";
-import type { User } from "@pachi/validators/client";
+import type { User } from "@blazell/validators/client";
 
 function Header({
 	authID,
 	cartID,
 	user,
 }: {
-	authID: string | undefined;
+	authID: string | null;
 	cartID: string | null | undefined;
 	user: User | undefined;
 }) {

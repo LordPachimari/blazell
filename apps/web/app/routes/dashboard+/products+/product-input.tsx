@@ -1,25 +1,25 @@
-import type { UpdateProduct } from "@pachi/validators";
+import type { UpdateProduct, UpdateVariant } from "@blazell/validators";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Badge } from "@blazell/ui/badge";
+import { Button } from "@blazell/ui/button";
+import { Icons } from "@blazell/ui/icons";
+import type { Product } from "@blazell/validators/client";
+import { useNavigate } from "@remix-run/react";
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
-import { Badge } from "@pachi/ui/badge";
-import { Button } from "@pachi/ui/button";
 import { useReplicache } from "~/zustand/replicache";
-import type { Product } from "@pachi/validators/client";
-import { Icons } from "@pachi/ui/icons";
-import { ProductStatus } from "./input/product-status";
 import { ProductCategory } from "./input/product-category";
+import { ProductInfo } from "./input/product-info";
+import { Media } from "./input/product-media";
+import { Pricing } from "./input/product-pricing";
+import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
-import { Pricing } from "./input/product-pricing";
-import { Media } from "./input/product-media";
-import { ProductInfo } from "./input/product-info";
-import { useNavigate } from "@remix-run/react";
 export interface ProductInputProps {
 	product: Product | undefined | null;
 	productID: string;
@@ -39,18 +39,11 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 	});
 
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const prefill = (product: Product) => {
-		methods.setValue("title", product.title ?? "");
-	};
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (product) {
-			prefill(product);
-		}
-	}, [product]);
 	const onSubmit = (data: PublishedProduct) => {
-		if (!product?.prices || product.prices.length === 0)
+		if (
+			!product?.defaultVariant?.prices ||
+			product?.defaultVariant.prices.length === 0
+		)
 			return toast.error("Please add a price to the product");
 		return setIsOpen(true);
 	};
@@ -66,6 +59,18 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 		},
 		[dashboardRep, productID],
 	);
+
+	const updateVariant = useCallback(
+		async (props: UpdateVariant) => {
+			if (dashboardRep) {
+				await dashboardRep.mutate.updateVariant({
+					id: props.id,
+					updates: props.updates,
+				});
+			}
+		},
+		[dashboardRep],
+	);
 	const navigate = useNavigate();
 
 	const deleteProduct = useCallback(async () => {
@@ -75,12 +80,20 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 		await dashboardRep?.mutate.publishProduct({ id: productID });
 	}, [dashboardRep, productID]);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const onInputChange = useCallback(
+	const onProductInputChange = useCallback(
 		debounce(async (updates: UpdateProduct["updates"]) => {
 			methods.clearErrors();
 			await updateProduct(updates);
 		}, 800),
 		[updateProduct],
+	);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onVariantInputChange = useCallback(
+		debounce(async (props: UpdateVariant) => {
+			await updateVariant({ id: props.id, updates: props.updates });
+		}, 800),
+		[updateVariant],
 	);
 
 	return (
@@ -99,10 +112,10 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 						variant="ghost"
 						href="/dashboard/products"
 						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
-						onClick={() => navigate(-1)}
+						onClick={() => navigate("/dashboard/products")}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
-						Back
+						Back to products
 					</Button>
 					<AlertDialogComponent
 						open={isOpen}
@@ -139,13 +152,29 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 						<section className="w-full table gap-0">
 							<ProductInfo
 								description={product?.description}
-								onInputChange={onInputChange}
-								title={product?.title}
+								onProductInputChange={onProductInputChange}
+								title={product?.defaultVariant.title}
+								defaultVariantID={product?.defaultVariant.id}
+								onVariantInputChange={onVariantInputChange}
 							/>
-							<Media images={product?.images ?? []} id={product?.id} />
-							<Pricing id={product?.id} prices={product?.prices ?? []} />
-							<Variants options={product?.options} productID={product?.id} />
-							<Stock entity={product} />
+							<Media
+								images={product?.defaultVariant.images ?? []}
+								variantID={product?.defaultVariant.id}
+							/>
+							<Pricing
+								variantID={product?.defaultVariant.id}
+								prices={product?.defaultVariant.prices ?? []}
+							/>
+							<Variants
+								options={product?.options}
+								productID={product?.id}
+								updateVariant={updateVariant}
+							/>
+							<Stock
+								variant={product?.defaultVariant}
+								updateVariant={updateVariant}
+								onVariantInputChange={onVariantInputChange}
+							/>
 						</section>
 					</div>
 

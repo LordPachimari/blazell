@@ -1,10 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@pachi/ui/avatar";
-import type { Order } from "@pachi/validators/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import type { Order } from "@blazell/validators/client";
 import { OrderStatus } from "~/components/molecules/order-status";
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import type { DataTableFilterableColumn } from "~/types/table";
+import { orderStatuses } from "@blazell/validators";
 
 export function getOrdersColumns(): ColumnDef<Order, unknown>[] {
 	return [
@@ -91,8 +92,7 @@ export const filterableColumns: DataTableFilterableColumn<Order>[] = [
 	{
 		id: "status",
 		title: "Status",
-		//TODO: GET ENUM
-		options: ["shipped", "delivered", "pending", "cancelled"].map((status) => ({
+		options: orderStatuses.map((status) => ({
 			label: status[0]?.toUpperCase() + status.slice(1),
 			value: status,
 		})),

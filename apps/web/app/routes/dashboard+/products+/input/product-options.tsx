@@ -2,23 +2,23 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
 
-import type { DeleteProductOption } from "@pachi/validators";
+import type {
+	DeleteProductOption,
+	InsertProductOption,
+	InsertProductOptionValue,
+} from "@blazell/validators";
 
 import { useEffect, useState } from "react";
 
-import { Input } from "@pachi/ui/input";
+import { Input } from "@blazell/ui/input";
 import TagInput from "~/components/molecules/tag-input";
 
-import { Button } from "@pachi/ui/button";
-import { generateID } from "@pachi/utils";
-import type {
-	InsertProductOption,
-	InsertProductOptionValue,
-	ProductOption,
-} from "@pachi/validators/client";
+import { Button } from "@blazell/ui/button";
+import { generateID } from "@blazell/utils";
+import type { ProductOption } from "@blazell/validators/client";
 import type { DebouncedFunc } from "~/types/debounce";
 import { useReplicache } from "~/zustand/replicache";
-import { Icons } from "@pachi/ui/icons";
+import { Icons } from "@blazell/ui/icons";
 
 interface CreateOptionProps {
 	productID: string;

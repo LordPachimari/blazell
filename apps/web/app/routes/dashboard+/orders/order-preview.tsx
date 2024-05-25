@@ -1,6 +1,6 @@
 import { Copy, CreditCard, MoreVertical } from "lucide-react";
 import { useSubscribe } from "replicache-react";
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	Card,
 	CardContent,
@@ -8,18 +8,21 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@pachi/ui/card";
+} from "@blazell/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@pachi/ui/dropdown-menu";
-import { ScrollArea } from "@pachi/ui/scroll-area";
-import { Separator } from "@pachi/ui/separator";
+} from "@blazell/ui/dropdown-menu";
+import { ScrollArea } from "@blazell/ui/scroll-area";
+import { Separator } from "@blazell/ui/separator";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
-import type { LineItem as LineItemType, Order } from "@pachi/validators/client";
+import type {
+	LineItem as LineItemType,
+	Order,
+} from "@blazell/validators/client";
 import { OrderStatus } from "~/components/molecules/order-status";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { Total } from "~/components/templates/cart/total-info";
@@ -44,7 +47,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 			className="overflow-hidden w-[28rem] p-0 sticky top-20"
 			x-chunk="dashboard-05-chunk-4"
 		>
-			<CardHeader className="flex border-b border-mauve-6 p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
+			<CardHeader className="flex border-b border-mauve-7 p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
 				<div className="flex flex-col">
 					<CardTitle className="flex items-center text-sm">
 						{`Order ${orderID}`}
@@ -160,7 +163,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 					Manage
 				</Button>
 			</CardContent>
-			<CardFooter className="flex p-6 flex-row items-center border-t border-mauve-6 bg-mauve-a-2 h-[3rem]">
+			<CardFooter className="flex p-6 flex-row items-center border-t border-mauve-7 bg-mauve-a-2 h-[3rem]">
 				<div className="text-xs text-mauve-11">
 					Updated <time dateTime="2023-11-23">{order?.updatedAt}</time>
 				</div>

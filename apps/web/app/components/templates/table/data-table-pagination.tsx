@@ -1,14 +1,14 @@
 import type { Table } from "@tanstack/react-table";
 
-import { Button } from "@pachi/ui/button";
-import { Icons, strokeWidth } from "@pachi/ui/icons";
+import { Button } from "@blazell/ui/button";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@pachi/ui/select";
+} from "@blazell/ui/select";
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>;

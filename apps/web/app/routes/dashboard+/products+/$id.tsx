@@ -1,10 +1,11 @@
-import { cn } from "@pachi/ui";
-import type { Product } from "@pachi/validators/client";
+import { cn } from "@blazell/ui";
+import type { Product } from "@blazell/validators/client";
 import { Form, useParams, useSearchParams } from "@remix-run/react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductInput } from "./product-input";
 import { ProductPreview } from "./product-preview";
+
 function ProductRoute() {
 	const params = useParams();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -37,7 +38,7 @@ function PreviewTab({
 				value="preview"
 				type="submit"
 				className={cn(
-					"cursor-pointer flex h-full rounded-l-xl justify-center items-center w-full border border-mauve-6  hover:bg-mauve-a-2",
+					"cursor-pointer flex h-full rounded-l-xl justify-center items-center w-full border border-mauve-7  hover:bg-mauve-a-2",
 					{
 						"bg-mauve-3 text-crimson-9": view === "preview",
 					},
@@ -50,7 +51,7 @@ function PreviewTab({
 				value="input"
 				type="submit"
 				className={cn(
-					"cursor-pointer rounded-r-xl flex h-full justify-center items-center w-full border border-mauve-6  hover:bg-mauve-a-2",
+					"cursor-pointer rounded-r-xl flex h-full justify-center items-center w-full border border-mauve-7  hover:bg-mauve-a-2",
 					{
 						"bg-mauve-3 text-crimson-9": view === "input",
 					},

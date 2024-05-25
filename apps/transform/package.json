@@ -1,0 +1,19 @@
+{
+	"name": "@blazell/transform",
+	"type": "module",
+	"module": "src/index.js",
+	"scripts": {
+		"start": "bun run index.ts",
+		"dev": "bun run --watch index.ts",
+		"typecheck": "tsc"
+	},
+	"devDependencies": {
+		"@types/bun": "1",
+		"typescript": "^5.4.5"
+	},
+	"dependencies": {
+		"elysia": "1",
+		"@blazell/tsconfig": "workspace:*",
+		"sharp": "^0.33.4"
+	}
+}

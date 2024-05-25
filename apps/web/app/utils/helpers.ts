@@ -19,3 +19,10 @@ export function getErrorMessage(error: unknown) {
 	console.error("Unable to get error message for error", error);
 	return "Unknown Error";
 }
+
+export function toImageURL(
+	base64: string | undefined,
+	fileType: string | undefined,
+) {
+	return `data:${fileType};base64,${base64}`;
+}

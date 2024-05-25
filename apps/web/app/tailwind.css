@@ -33,7 +33,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --ring: #eaacc3;
+    --ring: #e93d82;
 
     --radius: 0.5rem;
 
@@ -104,6 +104,32 @@
         --mauve-a10: #0500197d;
         --mauve-a11: #0400119c;
         --mauve-a12: #020008e0;
+
+          --jade-1: #fbfefd;
+          --jade-2: #f4fbf7;
+          --jade-3: #e6f7ed;
+          --jade-4: #d6f1e3;
+          --jade-5: #c3e9d7;
+          --jade-6: #acdec8;
+          --jade-7: #8bceb6;
+          --jade-8: #56ba9f;
+          --jade-9: #29a383;
+          --jade-10: #26997b;
+          --jade-11: #208368;
+          --jade-12: #1d3b31;
+
+            --iris-1: #fdfdff;
+            --iris-2: #f8f8ff;
+            --iris-3: #f0f1fe;
+            --iris-4: #e6e7ff;
+            --iris-5: #dadcff;
+            --iris-6: #cbcdff;
+            --iris-7: #b8baf8;
+            --iris-8: #9b9ef0;
+            --iris-9: #5b5bd6;
+            --iris-10: #5151cd;
+            --iris-11: #5753c6;
+            --iris-12: #272962;
 
   }
 
@@ -198,7 +224,33 @@
           --mauve-a10: #ece9fd7c;
           --mauve-a11: #f5f1ffb7;
           --mauve-a12: #fdfdffef;
-  }
+
+            --jade-1: #0d1512;
+            --jade-2: #121c18;
+            --jade-3: #0f2e22;
+            --jade-4: #0b3b2c;
+            --jade-5: #114837;
+            --jade-6: #1b5745;
+            --jade-7: #246854;
+            --jade-8: #2a7e68;
+            --jade-9: #29a383;
+            --jade-10: #27b08b;
+            --jade-11: #1fd8a4;
+            --jade-12: #adf0d4;
+
+              --iris-1: #13131e;
+              --iris-2: #171625;
+              --iris-3: #202248;
+              --iris-4: #262a65;
+              --iris-5: #303374;
+              --iris-6: #3d3e82;
+              --iris-7: #4a4a95;
+              --iris-8: #5958b1;
+              --iris-9: #5b5bd6;
+              --iris-10: #6e6ade;
+              --iris-11: #b1a9ff;
+              --iris-12: #e0dffe;
+              }
 }
 
 @layer base {

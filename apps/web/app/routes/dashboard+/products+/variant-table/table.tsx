@@ -1,4 +1,4 @@
-import type { UpdateVariant } from "@pachi/validators";
+import type { UpdateVariant } from "@blazell/validators";
 import { useMemo } from "react";
 import {
 	Table,
@@ -7,17 +7,18 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@pachi/ui/table";
+} from "@blazell/ui/table";
 import { getVariantColumns } from "./columns";
 import { useDataTable } from "~/components/templates/table/use-data-table";
 import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { Variant } from "@pachi/validators/client";
+import type { Variant } from "@blazell/validators/client";
 
 interface VariantTableProps {
 	variants: Variant[];
 	setVariantID: (variant: string | null) => void;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
+
 	deleteVariant: (id: string) => Promise<void>;
 }
 export default function VariantTable({

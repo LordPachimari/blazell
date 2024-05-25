@@ -6,15 +6,15 @@ import {
 } from "@radix-ui/react-icons";
 import type { Column } from "@tanstack/react-table";
 
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@pachi/ui/dropdown-menu";
-import { cn } from "@pachi/ui";
+} from "@blazell/ui/dropdown-menu";
+import { cn } from "@blazell/ui";
 
 interface DataTableColumnHeaderProps<TData, TValue>
 	extends React.HTMLAttributes<HTMLDivElement> {

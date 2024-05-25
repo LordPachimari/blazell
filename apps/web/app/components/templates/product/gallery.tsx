@@ -1,24 +1,23 @@
-"use client";
-
-import { cn } from "@pachi/ui";
+import { cn } from "@blazell/ui";
 
 import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 import { useGalleryState } from "~/zustand/state";
-import type { Image as ImageType } from "@pachi/validators";
-import { ParallaxContainer } from "@pachi/ui/parallax-container";
-import { Button } from "@pachi/ui/button";
-import { Icons } from "@pachi/ui/icons";
-import { AspectRatio } from "@pachi/ui/aspect-ratio";
-import { Card, CardContent } from "@pachi/ui/card";
+import type { Image as ImageType } from "@blazell/validators";
+import { ParallaxContainer } from "@blazell/ui/parallax-container";
+import { Button } from "@blazell/ui/button";
+import { Icons } from "@blazell/ui/icons";
+import { AspectRatio } from "@blazell/ui/aspect-ratio";
+import { Card, CardContent } from "@blazell/ui/card";
 import {
 	Carousel,
 	CarouselContent,
 	CarouselItem,
 	CarouselNext,
 	CarouselPrevious,
-} from "@pachi/ui/carousel";
+} from "@blazell/ui/carousel";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { Image } from "~/components/image";
+import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 interface GalleryProps {
 	images: ImageType[];
@@ -43,7 +42,7 @@ function GalleryForDesktop({ images }: GalleryProps) {
 				"hidden lg:grid col-span-4 min-w-[20rem] max-w-[45rem] lg:max-w-[40rem] gap-4",
 			)}
 		>
-			{images.map(({ id, url, preview, name }) => (
+			{images.map(({ id, url, base64, name, uploaded, fileType }) => (
 				<AspectRatio
 					ratio={2 / 3}
 					key={id}
@@ -52,13 +51,15 @@ function GalleryForDesktop({ images }: GalleryProps) {
 					onKeyDown={({ key }) => setOpened(opened && !(key === "Escape"))}
 				>
 					<Card className="flex items-center p-4 h-full justify-center">
-						<Image
-							alt={name}
-							className="rounded-xl border"
-							fit="fill"
-							sizes="20rem"
-							src={preview ?? url ?? ""}
-						/>
+						{!uploaded ? (
+							<img
+								alt={name}
+								className="rounded-xl border"
+								src={toImageURL(base64, fileType)}
+							/>
+						) : (
+							<Image src={url} />
+						)}
 					</Card>
 				</AspectRatio>
 			))}
@@ -76,8 +77,8 @@ function GalleryForMobileDevices({ images }: GalleryProps) {
 				<Carousel>
 					<CarouselContent>
 						{images.length > 0 &&
-							images.map((image) => (
-								<CarouselItem key={image.id} className="aspect-square">
+							images.map(({ uploaded, base64, url, name, id, fileType }) => (
+								<CarouselItem key={id} className="aspect-square">
 									<Card>
 										<AspectRatio
 											ratio={4 / 5}
@@ -87,13 +88,15 @@ function GalleryForMobileDevices({ images }: GalleryProps) {
 												setOpened(opened && !(key === "Escape"))
 											}
 										>
-											<Image
-												alt={image.name}
-												className="rounded-xl"
-												fit="fill"
-												sizes="20rem"
-												src={image.preview ?? image.url ?? ""}
-											/>
+											{!uploaded ? (
+												<img
+													alt={name}
+													className="rounded-xl border"
+													src={toImageURL(base64, fileType)}
+												/>
+											) : (
+												<Image src={url} />
+											)}
 										</AspectRatio>
 									</Card>
 								</CarouselItem>
