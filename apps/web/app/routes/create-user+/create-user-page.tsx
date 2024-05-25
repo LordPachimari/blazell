@@ -153,4 +153,4 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 	);
 }
 
-export default CreateUserPage;
+export { CreateUserPage };
