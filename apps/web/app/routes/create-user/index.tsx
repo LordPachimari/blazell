@@ -8,22 +8,22 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@pachi/ui/button";
-import { Card, CardContent, CardHeader } from "@pachi/ui/card";
-import { Input } from "@pachi/ui/input";
-import { ScrollArea } from "@pachi/ui/scroll-area";
+import { Button } from "@blazell/ui/button";
+import { Card, CardContent, CardHeader } from "@blazell/ui/card";
+import { Input } from "@blazell/ui/input";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@pachi/ui/select";
+} from "@blazell/ui/select";
 import {
 	FormResponseSchema,
 	ISO_1666,
 	type CreateUser,
-} from "@pachi/validators";
+} from "@blazell/validators";
 import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
