@@ -1,19 +1,16 @@
 {
 	"name": "@blazell/transform",
-	"type": "module",
-	"module": "src/index.js",
+	"version": "1.0.50",
 	"scripts": {
-		"start": "bun run index.ts",
-		"dev": "bun run --watch index.ts",
-		"typecheck": "tsc"
-	},
-	"devDependencies": {
-		"@types/bun": "1",
-		"typescript": "^5.4.5"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "bun run --watch src/index.ts"
 	},
 	"dependencies": {
-		"elysia": "1",
-		"@blazell/tsconfig": "workspace:*",
+		"elysia": "latest",
 		"sharp": "^0.33.4"
-	}
+	},
+	"devDependencies": {
+		"bun-types": "latest"
+	},
+	"module": "src/index.js"
 }
