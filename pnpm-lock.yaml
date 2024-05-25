@@ -97,6 +97,19 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  apps/image-transform:
+    dependencies:
+      elysia:
+        specifier: latest
+        version: 1.0.22(@sinclair/typebox@0.32.31)(typescript@5.4.5)
+      sharp:
+        specifier: ^0.33.4
+        version: 0.33.4
+    devDependencies:
+      bun-types:
+        specifier: latest
+        version: 1.1.10
+
   apps/partykit:
     dependencies:
       '@blazell/db':
@@ -8718,6 +8731,13 @@ packages:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
     dependencies:
       semver: 7.6.2
+    dev: true
+
+  /bun-types@1.1.10:
+    resolution: {integrity: sha512-oBsZ0Bf9HEKr1Ta5bUYgVO6sHkZtTlfHlEj9DGpghZphNdhKI/38eZ5dk+/et/HrStT1sfykHBUW4ughmoNKog==}
+    dependencies:
+      '@types/node': 20.12.12
+      '@types/ws': 8.5.10
     dev: true
 
   /bun-types@1.1.9:
