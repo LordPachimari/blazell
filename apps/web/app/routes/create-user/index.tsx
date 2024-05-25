@@ -1,13 +1,11 @@
 import type { User } from "@blazell/validators/client";
+import { useUser } from "@clerk/remix";
 import { getAuth } from "@clerk/remix/ssr.server";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { useUser } from "@clerk/remix";
 
 import { useState } from "react";
-import { toast } from "sonner";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardHeader } from "@blazell/ui/card";
 import { Input } from "@blazell/ui/input";
@@ -24,9 +22,11 @@ import {
 	ISO_1666,
 	type CreateUser,
 } from "@blazell/validators";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "@blazell/ui/toast";
 
 type LoaderData = {
 	authID: string;
@@ -86,44 +86,43 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 		),
 	});
 
-	// async function onSubmit(value: CreateUserFormState) {
-	// 	if (!email || !authID) return navigate("/sign-up");
-	// 	setIsLoading(true);
+	async function onSubmit(value: CreateUserFormState) {
+		if (!email || !authID) return navigate("/sign-up");
+		setIsLoading(true);
 
-	// 	const exist = await fetch(
-	// 		`${window.ENV.WORKER_URL}/users/${value.username}`,
-	// 	).then((res) => res.json());
-	// 	if (exist) {
-	// 		toast.error("Username already exists!");
-	// 		setIsLoading(false);
-	// 		return;
-	// 	}
+		const exist = await fetch(
+			`${window.ENV.WORKER_URL}/users/${value.username}`,
+		).then((res) => res.json());
+		if (exist) {
+			toast.error("Username already exists!");
+			setIsLoading(false);
+			return;
+		}
 
-	// 	const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {
-	// 		method: "POST",
-	// 		body: JSON.stringify({
-	// 			user: {
-	// 				email,
-	// 				username: value.username,
-	// 				authID,
-	// 			},
-	// 			countryCode: value.countryCode,
-	// 		} satisfies CreateUser),
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.then(FormResponseSchema.parse);
+		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {
+			method: "POST",
+			body: JSON.stringify({
+				user: {
+					email,
+					username: value.username,
+					authID,
+				},
+				countryCode: value.countryCode,
+			} satisfies CreateUser),
+		})
+			.then((res) => res.json())
+			.then(FormResponseSchema.parse);
 
-	// 	if (result.type === "ERROR") {
-	// 		toast.error(result.message);
-	// 		return setIsLoading(false);
-	// 	}
+		if (result.type === "ERROR") {
+			toast.error(result.message);
+			return setIsLoading(false);
+		}
 
-	// 	toast.success("User created successfully!");
-	// 	navigate("/dashboard/store");
+		toast.success("User created successfully!");
+		navigate("/dashboard/store");
 
-	// 	setIsLoading(false);
-	// }
-	const onSubmit = async (value: CreateUserFormState) => {};
+		setIsLoading(false);
+	}
 
 	return (
 		<div className="flex h-screen w-screen items-center justify-center bg-brand-0 dark:bg-mauve-a4">
