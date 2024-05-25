@@ -1,7 +1,7 @@
 import type { User } from "@blazell/validators/client";
 import { getAuth } from "@clerk/remix/ssr.server";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
-import CreateUserPage from "../../components/templates/auth/create-user-page";
+import CreateUserPage from "./create-user-page";
 import { useLoaderData } from "@remix-run/react";
 import { useUser } from "@clerk/remix";
 
