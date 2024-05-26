@@ -33,6 +33,7 @@ function Currencies({
 	);
 	const [opened, setDialogOpened] = useState(false);
 	const [currencyCodes, setCurrencyCodes] = useState<string[]>([]);
+	console.log("currencyCodes", currencyCodes);
 	return (
 		<SheetRoot open={opened} onOpenChange={setDialogOpened}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
@@ -45,9 +46,10 @@ function Currencies({
 						variant="outline"
 						className="flex-wrap"
 						type="multiple"
-						onValueChange={(value) =>
-							setCurrencyCodes(value.filter((v) => !existingPrices.has(v)))
-						}
+						onValueChange={(value) => {
+							setCurrencyCodes(value.filter((v) => !existingPrices.has(v)));
+							console.log("what", value);
+						}}
 					>
 						{Object.values(currencies).map((c) => (
 							<ToggleGroupItem
@@ -72,9 +74,7 @@ function Currencies({
 										id: generateID({ prefix: "price" }),
 										amount: 0,
 										currencyCode: code,
-										...(id.startsWith("product")
-											? { productID: id }
-											: { variantID: id }),
+										variantID: id,
 									})),
 								});
 								setDialogOpened(false);

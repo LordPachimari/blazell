@@ -45,7 +45,7 @@ export function RowActions({
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="text-red-500 hover:text-red-600"
+					className="text-ruby-9"
 					onClick={async () => await deleteVariant(row.original.id)}
 				>
 					Delete

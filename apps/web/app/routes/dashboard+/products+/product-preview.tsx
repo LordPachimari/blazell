@@ -1,5 +1,7 @@
+import { generateReplicachePK } from "@blazell/utils";
 import type { Product, Variant } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
+import { useCallback } from "react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
@@ -13,21 +15,40 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 		dashboardRep,
 		`variant_${product?.id}`,
 	);
+
+	const defaultVariant = ReplicacheStore.getByPK<Variant>(
+		dashboardRep,
+		generateReplicachePK({
+			prefix: "default_var",
+			filterID: product?.id ?? "",
+			id: product?.defaultVariantID ?? "",
+		}),
+	);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const selectedVariantID = searchParams.get("variant");
-	const setSelectedVariantID = (id: string | null) => {
-		setSearchParams((prev) => {
-			if (!id) {
-				prev.delete("variant");
-				return prev;
-			}
-			prev.set("variant", id);
-			return prev;
-		});
+	const selectedVariantID = searchParams.get("variant") ?? undefined;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const setSelectedVariantID = (id: string | undefined) => {
+		console.log("triggered", id);
+		setSearchParams(
+			(prev) => {
+				const params = new URLSearchParams(prev);
+				if (!id) {
+					params.delete("variant");
+					return params;
+				}
+				params.set("variant", id);
+				return params;
+			},
+			// {
+			// 	preventScrollReset: true,
+			// },
+		);
 	};
 	const selectedVariant = selectedVariantID
 		? variants.find((v) => v.id === selectedVariantID) ?? null
 		: null;
+	console.log("selectedVariant", selectedVariant);
+	console.log("selectedVariantID", selectedVariantID);
 	return (
 		<ProductOverview
 			product={product}
@@ -36,6 +57,7 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 			setVariantIDOrHandle={setSelectedVariantID}
 			selectedVariantIDOrHandle={selectedVariantID}
 			isDashboard={true}
+			defaultVariant={defaultVariant}
 		/>
 	);
 };

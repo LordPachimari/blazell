@@ -43,14 +43,13 @@ function GalleryForDesktop({ images }: GalleryProps) {
 			)}
 		>
 			{images.map(({ id, url, base64, name, uploaded, fileType }) => (
-				<AspectRatio
-					ratio={2 / 3}
+				<div
 					key={id}
 					className={"relative  w-full max-h-[calc(100vh-30vh)] rounded-xl"}
 					onClick={() => setOpened(!opened)}
 					onKeyDown={({ key }) => setOpened(opened && !(key === "Escape"))}
 				>
-					<Card className="flex items-center p-4 h-full justify-center">
+					<Card className="flex items-center p-4 h-fit justify-center">
 						{!uploaded ? (
 							<img
 								alt={name}
@@ -58,10 +57,10 @@ function GalleryForDesktop({ images }: GalleryProps) {
 								src={toImageURL(base64, fileType)}
 							/>
 						) : (
-							<Image src={url} />
+							<Image src={url} fit="contain" className="rounded-xl" />
 						)}
 					</Card>
-				</AspectRatio>
+				</div>
 			))}
 		</aside>
 	);
@@ -73,7 +72,7 @@ function GalleryForMobileDevices({ images }: GalleryProps) {
 
 	return (
 		<ParallaxContainer className="lg:hidden">
-			<section className="aspect-square w-full  col-span-4 md:p-4 xs:p-2 p-1  ">
+			<section className="aspect-square w-full col-span-4 md:p-4 xs:p-2 p-1  ">
 				<Carousel>
 					<CarouselContent>
 						{images.length > 0 &&

@@ -164,10 +164,10 @@ const TagInput: React.FC<TagInputProps> = ({
 						<div
 							key={v}
 							className={cn(
-								"rounded-md bg-brand-1 text-brand-7 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2 ",
+								"rounded-md bg-crimson-3 border-crimson-9 border text-crimson-9 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2 ",
 
 								{
-									"bg-brand-3": index === highlighted,
+									"bg-crimson-6": index === highlighted,
 								},
 							)}
 						>

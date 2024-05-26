@@ -24,7 +24,7 @@ export default function CustomerRoute() {
 					<Button
 						variant="ghost"
 						href={"/dashboard/customers"}
-						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
+						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/customers")}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />

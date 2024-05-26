@@ -28,7 +28,10 @@ export function getVariantColumns({
 			),
 			cell: ({ row }) => (
 				<div className="w-[100px]">
-					<AspectRatio ratio={1} className="flex items-center rounded-md">
+					<AspectRatio
+						ratio={1}
+						className="flex items-center rounded-md border border-mauve-7"
+					>
 						{!row.original.images?.[0] ? (
 							<ImagePlaceholder />
 						) : row.original.images?.[0]?.uploaded ? (
@@ -36,6 +39,8 @@ export function getVariantColumns({
 								src={row.original.images[0]?.url}
 								alt={row.original.images[0]?.name || "Uploaded image"}
 								className="rounded-md h-full object-cover "
+								fit="contain"
+								quality={90}
 							/>
 						) : (
 							<img

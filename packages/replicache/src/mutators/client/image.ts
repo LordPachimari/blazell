@@ -15,7 +15,8 @@ async function updateImagesOrder(
 	const { order, entityID } = input;
 
 	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
-	const isProduct = entityID.startsWith("product");
+	const isVariant =
+		entityID.startsWith("variant") || entityID.startsWith("default_var");
 
 	if (!entity) {
 		return entityNotFound(entityID);
@@ -25,13 +26,14 @@ async function updateImagesOrder(
 
 	for (const image of images) {
 		const o = order[image.id];
-		if (o) image.order = o;
+		if (o !== undefined) image.order = o;
 	}
 	images.sort((a, b) => a.order - b.order);
+
 	return await tx.set(entity.replicachePK, {
 		...entity,
 		images,
-		...(isProduct && { thumbnail: images[0] }),
+		...(isVariant && { thumbnail: images[0] }),
 	});
 }
 

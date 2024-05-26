@@ -1,15 +1,21 @@
 import { cn } from "@blazell/ui";
-import type { Product } from "@blazell/validators/client";
+import type { Product, Variant } from "@blazell/validators/client";
 import { Form, useParams, useSearchParams } from "@remix-run/react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductInput } from "./product-input";
 import { ProductPreview } from "./product-preview";
+import { generateReplicachePK } from "@blazell/utils";
 
 function ProductRoute() {
 	const params = useParams();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const product = ReplicacheStore.getByID<Product>(dashboardRep, params.id!);
+
+	const [defaultVariant] = ReplicacheStore.scan<Variant>(
+		dashboardRep,
+		`default_var_${params.id!}`,
+	);
 
 	const [searchParams] = useSearchParams();
 	const view = searchParams.get("view") || "input";
@@ -18,7 +24,11 @@ function ProductRoute() {
 		<section className="w-full relative flex justify-center ">
 			<PreviewTab view={view} />
 			{view === "input" ? (
-				<ProductInput productID={params.id!} product={product} />
+				<ProductInput
+					productID={params.id!}
+					product={product}
+					defaultVariant={defaultVariant}
+				/>
 			) : (
 				<ProductPreview product={product} />
 			)}

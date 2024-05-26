@@ -33,7 +33,7 @@ export function CategoryDropdown() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild className="w-full">
-				<Button variant="outline" type="button">
+				<Button variant="outline" className="text-mauve-11" type="button">
 					Select category
 				</Button>
 			</DropdownMenuTrigger>

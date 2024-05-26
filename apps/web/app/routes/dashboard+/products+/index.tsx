@@ -8,6 +8,7 @@ import type { Product, Store } from "@blazell/validators/client";
 import { PageHeader } from "~/components/page-header";
 import { ProductsTable } from "./product-table/table";
 import type { ActiveStoreID } from "@blazell/validators";
+import { useNavigate } from "@remix-run/react";
 
 function ProductsPage() {
 	const rep = useReplicache((state) => state.dashboardRep);
@@ -37,7 +38,9 @@ function Products({
 	products: Product[] | undefined;
 	storeID: string | undefined;
 }) {
+	const navigate = useNavigate();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const createProduct = useCallback(async () => {
 		if (dashboardRep && storeID) {
 			const productID = generateID({ prefix: "product" });
@@ -55,11 +58,11 @@ function Products({
 						filterID: storeID,
 						id: productID,
 					}),
-
-					defaultVariantID: generateID({ prefix: "variant" }),
+					defaultVariantID: generateID({ prefix: "default_var" }),
 				},
 			});
-			toast.success("Product created successfully");
+			toast.success("Product created successfully.");
+			navigate(`/dashboard/products/${productID}`);
 		}
 	}, [dashboardRep, storeID]);
 	const deleteProduct = useCallback(

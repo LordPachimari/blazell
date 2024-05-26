@@ -10,9 +10,9 @@ const PriceLabel = ({
 	currencyCode: string;
 }) => {
 	return (
-		<div className="flex items-center h-10 rounded-full border bg-white/70 p-1 text-xs font-semibold text-black backdrop-blur-md dark:border-neutral-800 dark:bg-black/70 dark:text-white">
+		<div className="flex items-center h-10 rounded-xl border border-mauve-7 bg-component">
 			<Price
-				className="bg-brand text-sm flex-none rounded-full  p-2"
+				className="bg-brand text-sm flex-none rounded-xl  p-2"
 				amount={amount}
 				currencyCode={currencyCode}
 				currencyCodeClassName="hidden @[275px]/label:inline"

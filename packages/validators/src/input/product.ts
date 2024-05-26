@@ -2,8 +2,11 @@ import { z } from "zod";
 
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { schema } from "@blazell/db";
+import { InsertVariantSchema, VariantSchema } from "./variant";
 
-const InsertProductSchema = createInsertSchema(schema.products);
+const InsertProductSchema = createInsertSchema(schema.products).extend({
+	defaultVariant: InsertVariantSchema.optional(),
+});
 export const ProductSchema = createSelectSchema(schema.products);
 export type InsertProduct = z.infer<typeof InsertProductSchema>;
 export const CreateProductSchema = z.object({

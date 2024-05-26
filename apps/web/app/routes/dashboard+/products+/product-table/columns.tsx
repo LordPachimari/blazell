@@ -7,11 +7,14 @@ import { DataTableColumnHeader } from "~/components/templates/table/data-table-c
 import type { DataTableFilterableColumn } from "~/types/table";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { RowActions } from "./row-actions";
-import type { Product } from "@blazell/validators/client";
+import type { Product, Variant } from "@blazell/validators/client";
 import { Checkbox } from "@blazell/ui/checkbox";
 import { productStatuses } from "@blazell/validators";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
+import { useReplicache } from "~/zustand/replicache";
+import { ReplicacheStore } from "~/replicache/store";
+import { generateReplicachePK } from "@blazell/utils";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (
@@ -67,39 +70,46 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
-			cell: ({ row }) => (
-				<div className="w-[100px]">
-					<AspectRatio
-						ratio={1}
-						className="flex items-center border border-mauve-7 rounded-md"
-					>
-						{!row.original.defaultVariant?.thumbnail ? (
-							<ImagePlaceholder />
-						) : row.original.defaultVariant?.thumbnail?.uploaded ? (
-							<Image
-								src={row.original.defaultVariant?.thumbnail?.url}
-								alt={
-									row.original.defaultVariant?.thumbnail?.name ||
-									"Uploaded image"
-								}
-								fit="cover"
-								className="rounded-md h-full object-cover"
-							/>
-						) : (
-							<img
-								src={toImageURL(
-									row.original.defaultVariant.thumbnail.base64,
-									row.original.defaultVariant.thumbnail.fileType,
-								)}
-								alt={
-									row.original.defaultVariant.thumbnail.name || "Uploaded image"
-								}
-								className="rounded-md h-full object-cover"
-							/>
-						)}
-					</AspectRatio>
-				</div>
-			),
+			cell: ({ row }) => {
+				const dashboardRep = useReplicache((state) => state.dashboardRep);
+				const defaultVariant = ReplicacheStore.getByPK<Variant>(
+					dashboardRep,
+					generateReplicachePK({
+						prefix: "default_var",
+						filterID: row.original.id,
+						id: row.original.defaultVariantID,
+					}),
+				);
+				return (
+					<div className="w-[100px]">
+						<AspectRatio
+							ratio={1}
+							className="flex items-center border border-mauve-7 rounded-md"
+						>
+							{!defaultVariant?.thumbnail ? (
+								<ImagePlaceholder />
+							) : defaultVariant?.thumbnail?.uploaded ? (
+								<Image
+									src={defaultVariant?.thumbnail?.url}
+									alt={defaultVariant?.thumbnail?.name || "Uploaded image"}
+									fit="cover"
+									className="rounded-md h-full object-cover"
+								/>
+							) : (
+								<img
+									src={toImageURL(
+										defaultVariant.thumbnail.base64,
+										defaultVariant.thumbnail.fileType,
+									)}
+									alt={defaultVariant.thumbnail.name || "Uploaded image"}
+									className="rounded-md h-full object-cover"
+								/>
+							)}
+						</AspectRatio>
+					</div>
+				);
+			},
+
 			enableSorting: false,
 			enableHiding: true,
 		},

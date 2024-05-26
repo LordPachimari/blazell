@@ -22,7 +22,7 @@ const createProduct = zod(CreateProductSchema, (input) =>
 		const defaultVariant: InsertVariant = {
 			id: product.defaultVariantID,
 			replicachePK: generateReplicachePK({
-				prefix: "variant",
+				prefix: "default_var",
 				filterID: product.id,
 				id: product.defaultVariantID,
 			}),

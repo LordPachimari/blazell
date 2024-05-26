@@ -37,21 +37,15 @@ export function RowActions<TData>({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
-				<DropdownMenuItem>Edit</DropdownMenuItem>
-				<DropdownMenuItem>Make a copy</DropdownMenuItem>
-				<DropdownMenuItem>Favorite</DropdownMenuItem>
-				{/* <DropdownMenuSub>
-					<DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-					<DropdownMenuSubContent>
-						<DropdownMenuRadioGroup value={task.label}>
-							{labels.map((label) => (
-								<DropdownMenuRadioItem key={label.value} value={label.value}>
-									{label.label}
-								</DropdownMenuRadioItem>
-							))}
-						</DropdownMenuRadioGroup>
-					</DropdownMenuSubContent>
-				</DropdownMenuSub> */}
+				<DropdownMenuItem
+					onClick={async (e) => {
+						e.stopPropagation();
+						// await deleteProduct(row.original.id);
+						toast.success("Product copied");
+					}}
+				>
+					Make a copy
+				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={async (e) => {
@@ -61,7 +55,6 @@ export function RowActions<TData>({
 					}}
 				>
 					Delete
-					<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

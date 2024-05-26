@@ -62,6 +62,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 													optionValues: true,
 												},
 											},
+											defaultVariant: true,
 										},
 									},
 									founder: true,

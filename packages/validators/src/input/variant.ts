@@ -3,7 +3,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { UpdateImagesOrderSchema } from "./image";
 
-const InsertVariantSchema = createInsertSchema(schema.variants);
+export const InsertVariantSchema = createInsertSchema(schema.variants);
 
 export const VariantSchema = createSelectSchema(schema.variants).extend({
 	thumbnail: ImageSchema.optional(),
@@ -32,3 +32,8 @@ export const UpdateVariantSchema = z.object({
 	updates: VariantUpdatesSchema,
 });
 export type UpdateVariant = z.infer<typeof UpdateVariantSchema>;
+export const PublishedVariantSchema = VariantSchema.required({
+	title: true,
+	quantity: true,
+});
+export type PublishedVariant = z.infer<typeof PublishedVariantSchema>;

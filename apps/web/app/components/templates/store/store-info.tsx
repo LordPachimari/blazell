@@ -14,6 +14,7 @@ import type { Store } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
 import { ClientOnly } from "remix-utils/client-only";
 import { toImageURL } from "~/utils/helpers";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
 
 export function StoreInfo({
 	store,
@@ -27,24 +28,28 @@ export function StoreInfo({
 			<div className="relative flex h-full  w-full p-0 pt-8 gap-4 ">
 				<section className="flex h-full w-full  items-center md:w-[230px]">
 					<Avatar className="border-mauve-7 bg-mauve-3 border aspect-square w-full h-full max-w-44 max-h-44 min-w-32 min-h-32">
-						{store?.storeImage?.croppedImage?.uploaded ? (
-							<Image
-								fit="contain"
-								quality={100}
-								src={store?.storeImage.croppedImage?.url}
-								alt="header"
-								className="rounded-lg"
-								height={210}
-							/>
+						{store?.storeImage ? (
+							store?.storeImage?.croppedImage?.uploaded ? (
+								<Image
+									fit="contain"
+									quality={100}
+									src={store?.storeImage.croppedImage?.url}
+									alt="header"
+									className="rounded-lg"
+									height={210}
+								/>
+							) : (
+								<img
+									src={toImageURL(
+										store?.storeImage?.croppedImage?.base64,
+										store?.storeImage?.croppedImage?.fileType,
+									)}
+									alt="header"
+									className="rounded-lg object-contain"
+								/>
+							)
 						) : (
-							<img
-								src={toImageURL(
-									store?.storeImage?.croppedImage?.base64,
-									store?.storeImage?.croppedImage?.fileType,
-								)}
-								alt="header"
-								className="rounded-lg object-contain"
-							/>
+							<ImagePlaceholder />
 						)}
 					</Avatar>
 				</section>

@@ -30,6 +30,8 @@ import {
 	CircleCheck,
 	CircleX,
 	Info,
+	PlusCircle,
+	MinusCircle,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -56,7 +58,10 @@ export const Icons = {
 	copy: Copy,
 	copyCheck: CopyCheck,
 	minus: Minus,
+	minusCircle: MinusCircle,
 	plus: Plus,
+	plusCircle: PlusCircle,
+
 	trash: Trash,
 	laptop: Laptop,
 	loader: LoaderPinwheel,

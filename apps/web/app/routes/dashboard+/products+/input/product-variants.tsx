@@ -10,18 +10,19 @@ import {
 import { generateID, generateReplicachePK } from "@blazell/utils";
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
-import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
 import { ProductOptions } from "./product-options";
 import ProductVariant from "./product-variant";
-import { useSearchParams } from "@remix-run/react";
+import { Form, useSearchParams } from "@remix-run/react";
+import { Icons } from "@blazell/ui/icons";
+import { set } from "zod";
 
 interface ProductVariantsProps {
 	options: ProductOption[] | undefined;
-	productID: string | undefined;
+	productID: string;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
 }
 export function Variants({
@@ -30,28 +31,24 @@ export function Variants({
 	updateVariant,
 }: ProductVariantsProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	const [variantID, _setVariantID] = useState<string | null>(null);
 	const variants = ReplicacheStore.scan<Variant>(
 		dashboardRep,
 		`variant_${productID}`,
 	);
-	const [isOpen, _setIsOpen] = useState(false);
-	const setIsOpen = (value: boolean) => {
-		value === false && setVariantID(null);
-		_setIsOpen(value);
+
+	const setVariantID = (id: string | null) => {
+		if (id === null) {
+			setIsOpen(false);
+		} else {
+			setIsOpen(true);
+		}
+		_setVariantID(id);
 	};
 
-	const [searchParams, setSearchParams] = useSearchParams();
-	const setVariantID = (id: string | null) => {
-		setSearchParams((prev) => {
-			if (!id) {
-				prev.delete("variant");
-				return prev;
-			}
-			prev.set("variant", id);
-			return prev;
-		});
-	};
-	const variantID = searchParams.get("variant");
+	const [isOpen, setIsOpen] = useState(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const createVariant = useCallback(async () => {
 		if (!productID) return;
 		const newID = generateID({ prefix: "variant" });
@@ -69,7 +66,9 @@ export function Variants({
 		});
 
 		setVariantID(newID);
-	}, [dashboardRep, productID, setVariantID]);
+		setIsOpen(true);
+	}, [dashboardRep, productID]);
+	console.log("isOpen", isOpen);
 
 	const deleteVariant = useCallback(
 		async (id: string) => {
@@ -82,10 +81,6 @@ export function Variants({
 		[dashboardRep],
 	);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (variantID) setIsOpen(true);
-	}, [variantID]);
 	return (
 		<Card className="my-4">
 			<CardHeader>
@@ -117,19 +112,17 @@ export function Variants({
 					className="mt-2 text-mauve-11"
 					onClick={createVariant}
 				>
-					<PlusCircle className="h-3.5 w-3.5 mr-2" />
+					<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant
 				</Button>
-				{productID && (
-					<ProductVariant
-						isOpen={isOpen}
-						options={options ?? []}
-						variantID={variantID}
-						setIsOpen={setIsOpen}
-						productID={productID}
-						setVariantID={setVariantID}
-					/>
-				)}
+				<ProductVariant
+					isOpen={isOpen}
+					options={options ?? []}
+					variantID={variantID}
+					setIsOpen={setIsOpen}
+					productID={productID}
+					setVariantID={setVariantID}
+				/>
 			</CardFooter>
 		</Card>
 	);

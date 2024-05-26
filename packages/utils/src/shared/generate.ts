@@ -8,6 +8,7 @@ const prefixes = [
 	"collection",
 	"category",
 	"variant",
+	"default_var",
 	"p_option",
 	"p_op_val",
 	"price",
@@ -17,7 +18,6 @@ const prefixes = [
 	"store",
 	"error",
 	"space",
-	"default",
 	"line_item",
 	"order",
 ] as const;

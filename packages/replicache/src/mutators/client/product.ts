@@ -20,14 +20,14 @@ async function createProduct(tx: WriteTransaction, input: CreateProduct) {
 	const defaultVariant: InsertVariant = {
 		id: product.defaultVariantID,
 		replicachePK: generateReplicachePK({
-			prefix: "variant",
+			prefix: "default_var",
 			filterID: product.id,
 			id: product.defaultVariantID,
 		}),
 		productID: product.id,
 	};
 
-	await tx.set(product.replicachePK, product);
+	await tx.set(product.replicachePK, { ...product, defaultVariant });
 	await tx.set(defaultVariant.replicachePK, defaultVariant);
 }
 

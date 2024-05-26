@@ -34,16 +34,14 @@ export default function ProductVariant({
 	setVariantID,
 }: Readonly<ProductVariantProps>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variant = variantID
-		? ReplicacheStore.getByPK<Variant>(
-				dashboardRep,
-				generateReplicachePK({
-					id: variantID,
-					prefix: "variant",
-					filterID: productID,
-				}),
-			)
-		: undefined;
+	const variant = ReplicacheStore.getByPK<Variant>(
+		dashboardRep,
+		generateReplicachePK({
+			id: variantID ?? "",
+			prefix: "variant",
+			filterID: productID,
+		}),
+	);
 
 	const updateVariant = useCallback(
 		async (props: UpdateVariant) => {
@@ -64,12 +62,6 @@ export default function ProductVariant({
 		}, 800),
 		[updateVariant],
 	);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!productID || variantID === null) setIsOpen(false);
-	}, [variantID, productID]);
-	if (!variant) return null;
-	if (!productID) return null;
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="md:w-[800px] bg-mauve-2 p-4 pt-4 gap-0">
@@ -90,8 +82,8 @@ export default function ProductVariant({
 						variant={variant}
 						productID={productID}
 					/>
-					<Media images={variant.images ?? []} variantID={variant.id} />
-					<Pricing prices={variant.prices ?? []} variantID={variant.id} />
+					<Media images={variant?.images ?? []} variantID={variant?.id} />
+					<Pricing prices={variant?.prices ?? []} variantID={variant?.id} />
 					<Stock
 						variant={variant}
 						updateVariant={updateVariant}
@@ -108,7 +100,7 @@ function VariantOptions({
 	productID,
 }: {
 	options: ProductOption[];
-	variant: Variant;
+	variant: Variant | null | undefined;
 	productID: string;
 }) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -118,14 +110,15 @@ function VariantOptions({
 			prevOptionValueID,
 			optionValueID,
 		}: { prevOptionValueID?: string; optionValueID: string }) => {
-			await dashboardRep?.mutate.assignOptionValueToVariant({
-				variantID: variant.id,
-				optionValueID,
-				productID,
-				...(prevOptionValueID && { prevOptionValueID }),
-			});
+			variant &&
+				(await dashboardRep?.mutate.assignOptionValueToVariant({
+					variantID: variant.id,
+					optionValueID,
+					productID,
+					...(prevOptionValueID && { prevOptionValueID }),
+				}));
 		},
-		[dashboardRep],
+		[dashboardRep, variant],
 	);
 	const optionValueToID = useMemo(
 		() =>
@@ -142,7 +135,7 @@ function VariantOptions({
 	);
 	const optionIDToVariantOptionValue = useMemo(
 		() =>
-			(variant.optionValues ?? []).reduce(
+			(variant?.optionValues ?? []).reduce(
 				(acc, value) => {
 					acc[value.optionValue.optionID] = {
 						id: value.optionValue.id,
@@ -152,14 +145,14 @@ function VariantOptions({
 				},
 				{} as Record<string, { id: string; value: string }>,
 			),
-		[variant.optionValues],
+		[variant?.optionValues],
 	);
 
 	return (
 		<div className="flex w-full flex-col gap-4 py-2">
 			<h1
 				className={cn("font-bold text-lg", {
-					"text-red-500": !variant.optionValues?.length,
+					"text-ruby-7": !variant?.optionValues?.length,
 				})}
 			>
 				Select options:
@@ -167,7 +160,7 @@ function VariantOptions({
 			{options.map((option) => {
 				return (
 					<div className="flex items-center  gap-2" key={option.id}>
-						<span className="flex h-10 min-w-[4rem] items-center font-semibold dark:bg-black justify-center">
+						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-mauve-7 justify-center">
 							{option.name}
 						</span>
 						:
@@ -185,11 +178,7 @@ function VariantOptions({
 							}}
 						>
 							{option.optionValues?.map((v) => (
-								<ToggleGroupItem
-									value={v.value}
-									key={v.value}
-									className="bg-white"
-								>
+								<ToggleGroupItem value={v.value} key={v.value}>
 									{v.value}
 								</ToggleGroupItem>
 							))}

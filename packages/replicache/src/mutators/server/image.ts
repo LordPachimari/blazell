@@ -7,7 +7,7 @@ import {
 	UploadImagesSchema,
 	UploadResponseSchema,
 } from "@blazell/validators";
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 import type { Variant } from "@blazell/validators/server";
 import { Cloudflare, Database } from "@blazell/shared";
 import { zod } from "../../util/zod";
@@ -24,7 +24,8 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 		const { entityID, images } = input;
 
 		let entity: Variant | undefined = undefined;
-		const isVariant = entityID.startsWith("variant");
+		const isVariant =
+			entityID.startsWith("variant") || entityID.startsWith("default_var");
 
 		if (images.length === 0) {
 			return;
@@ -114,7 +115,8 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 		const { env } = yield* Cloudflare;
 
 		let entity: Variant | undefined = undefined;
-		const isVariant = entityID.startsWith("variant");
+		const isVariant =
+			entityID.startsWith("variant") || entityID.startsWith("default_var");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>
@@ -175,7 +177,8 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 		const { manager } = yield* Database;
 		const { order, entityID } = input;
 		let entity: Variant | undefined = undefined;
-		const isVariant = entityID.startsWith("variant");
+		const isVariant =
+			entityID.startsWith("variant") || entityID.startsWith("default_var");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>
@@ -199,11 +202,15 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 		for (const image of images) {
 			const o = order[image.id];
 
-			if (o) image.order = o;
+			if (o !== undefined) image.order = o;
 		}
 		images.sort((a, b) => a.order - b.order);
 
-		return yield* tableMutator.update(entityID, { images }, "variants");
+		return yield* tableMutator.update(
+			entityID,
+			{ images, ...(isVariant && { thumbnail: images[0] }) },
+			"variants",
+		);
 	}),
 );
 

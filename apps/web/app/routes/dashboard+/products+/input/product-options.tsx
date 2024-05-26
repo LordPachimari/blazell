@@ -72,17 +72,18 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 		[dashboardRep, options],
 	);
 
-	const [parent] = useAutoAnimate(/* optional config */);
+	const [parent] = useAutoAnimate({ duration: 100 });
 
 	return (
 		<section className="w-full my-4">
 			<Button
-				className="bg-brand mt-2 flex w-full gap-2  md:w-fit border-[1px]"
+				size="md"
+				className="text-mauve-11"
 				variant={"ghost"}
 				type="button"
 				onClick={createOption}
 			>
-				<Icons.plus fontSize={10} />
+				<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
 				Add option
 			</Button>
 			{options && options.length > 0 && (
