@@ -1,5 +1,4 @@
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
-import { ProductPage } from "../components/product-page";
 import { userContext } from "~/sessions.server";
 import { useLoaderData, useParams, useSearchParams } from "@remix-run/react";
 import type { Product, Variant } from "@blazell/validators/client";

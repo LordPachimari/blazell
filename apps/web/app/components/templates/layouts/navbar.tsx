@@ -8,7 +8,6 @@ function Navbar(props: { children: React.ReactNode }) {
 	const isScrolled = useIsWindowScrolled();
 	const location = useLocation();
 	const { requestInfo } = useLoaderData<RootLoaderData>();
-	console.log("sidebarState", requestInfo.userPrefs.sidebarState);
 	return (
 		<header
 			{...props}

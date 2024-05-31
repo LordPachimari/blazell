@@ -23,7 +23,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 		const { env } = yield* Cloudflare;
 		const { entityID, images } = input;
 
-		let entity: Variant | undefined = undefined;
+		let entity: Pick<Variant, "images"> | undefined = undefined;
 		const isVariant =
 			entityID.startsWith("variant") || entityID.startsWith("default_var");
 
@@ -35,6 +35,9 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			entity = yield* Effect.tryPromise(() =>
 				manager.query.variants.findFirst({
 					where: (variants, { eq }) => eq(variants.id, entityID),
+					columns:{
+						images: true,
+					}
 				}),
 			).pipe(
 				Effect.catchTags({
@@ -98,11 +101,11 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			...uploaded,
 		];
 
-		return yield* tableMutator.update(
+		return yield* Effect.all([tableMutator.update(
 			entityID,
 			{ images: updatedImages, thumbnail: updatedImages[0] },
 			"variants",
-		);
+		)]);
 	}),
 );
 

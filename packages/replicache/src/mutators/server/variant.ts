@@ -32,10 +32,7 @@ const updateVariant = zod(UpdateVariantSchema, (input) =>
 		const tableMutator = yield* TableMutator;
 		const { id, updates } = input;
 
-		yield* Effect.all([
-			tableMutator.update(id, updates, "variants"),
-			tableMutator.update(id, {}, "products"),
-		]);
+		yield* tableMutator.update(id, updates, "variants");
 	}),
 );
 export { createVariant, deleteVariant, updateVariant };

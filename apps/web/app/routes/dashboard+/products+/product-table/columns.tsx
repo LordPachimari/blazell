@@ -116,10 +116,19 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Title" />
 			),
-			cell: (info) => {
+			cell: ({ row }) => {
+				const dashboardRep = useReplicache((state) => state.dashboardRep);
+				const defaultVariant = ReplicacheStore.getByPK<Variant>(
+					dashboardRep,
+					generateReplicachePK({
+						prefix: "default_var",
+						filterID: row.original.id,
+						id: row.original.defaultVariantID,
+					}),
+				);
 				return (
 					<h1 className="w-[80px] font-freeman text-ellipsis overflow-hidden lg:text-lg ">
-						{info.row.original.defaultVariant.title ?? ""}
+						{defaultVariant?.title ?? ""}
 					</h1>
 				);
 			},
@@ -166,12 +175,19 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Quantity" />
 			),
-			cell: (info) => {
+			cell: ({ row }) => {
+				const dashboardRep = useReplicache((state) => state.dashboardRep);
+				const defaultVariant = ReplicacheStore.getByPK<Variant>(
+					dashboardRep,
+					generateReplicachePK({
+						prefix: "default_var",
+						filterID: row.original.id,
+						id: row.original.defaultVariantID,
+					}),
+				);
 				return (
 					<div className="w-[80px]">
-						<h1 className="lg:text-md">
-							{info.row.original.defaultVariant.quantity ?? 1}
-						</h1>
+						<h1 className="lg:text-md">{defaultVariant?.quantity ?? 1}</h1>
 					</div>
 				);
 			},
