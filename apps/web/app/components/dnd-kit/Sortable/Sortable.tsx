@@ -34,7 +34,7 @@ import {
 	type SortingStrategy,
 } from "@dnd-kit/sortable";
 
-import type { Image } from "@blazell/validators";
+import type { Image } from "@blazell/db";
 import { Item } from "../components/Item";
 import { List } from "../components/List";
 import { Wrapper } from "../components/Wrapper";

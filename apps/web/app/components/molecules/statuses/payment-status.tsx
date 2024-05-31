@@ -4,14 +4,14 @@ export function PaymentStatus({ status }: { status: Order["paymentStatus"] }) {
 	return status === "paid" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-green-300 border-green-500 font-medium "
+			className="bg-jade-3 border-jade-9 text-jade-9 font-bold h-7"
 		>
-			paid
+			Paid
 		</Badge>
 	) : (
 		<Badge
 			variant={"outline"}
-			className="bg-gray-300 border-gray-500 font-medium "
+			className="bg-mauve-3 border-mauve-9 text-mauve-9 font-medium "
 		>
 			refunded
 		</Badge>

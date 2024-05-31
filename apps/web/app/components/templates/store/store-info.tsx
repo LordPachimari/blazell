@@ -35,7 +35,7 @@ export function StoreInfo({
 									quality={100}
 									src={store?.storeImage.croppedImage?.url}
 									alt="header"
-									className="rounded-lg"
+									className="rounded-2xl"
 									height={210}
 								/>
 							) : (
@@ -45,7 +45,7 @@ export function StoreInfo({
 										store?.storeImage?.croppedImage?.fileType,
 									)}
 									alt="header"
-									className="rounded-lg object-contain"
+									className="rounded-2xl object-contain"
 								/>
 							)
 						) : (

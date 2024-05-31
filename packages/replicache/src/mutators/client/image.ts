@@ -41,6 +41,8 @@ async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 	const { entityID, images } = input;
 
 	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
+	const isVariant =
+		entityID.startsWith("variant") || entityID.startsWith("default_var");
 
 	if (!entity) {
 		return entityNotFound(entityID);
@@ -55,6 +57,7 @@ async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 	return await tx.set(entity.replicachePK, {
 		...entity,
 		images: updatedImages,
+		...(isVariant && { thumbnail: updatedImages[0] }),
 	});
 }
 

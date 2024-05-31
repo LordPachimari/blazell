@@ -31,37 +31,42 @@ export function Store({
 				<Icons.left size={20} className="text-black dark:text-white" />
 				Select stores
 			</Button>
-			{store?.headerImage ? (
-				<div
-					className={cn(
-						"max-h-[210px] w-fit min-w-[10rem] rounded-lg p-0 relative grid grid-cols-1 border border-mauve-7",
-					)}
-				>
-					{store.headerImage.croppedImage?.uploaded ? (
+
+			<div
+				className={cn(
+					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
+					{
+						"h-[210px]": !store?.headerImage?.croppedImage,
+					},
+				)}
+			>
+				{store?.headerImage?.croppedImage ? (
+					store.headerImage.croppedImage.uploaded ? (
 						<Image
-							fit="contain"
+							fit="fill"
 							quality={100}
 							src={store.headerImage.croppedImage?.url}
 							alt="header"
-							className="rounded-lg"
-							height={210}
+							className="rounded-2xl"
 						/>
 					) : (
 						<img
 							src={toImageURL(
-								store.headerImage.croppedImage?.base64,
-								store.headerImage.croppedImage?.fileType,
+								store.headerImage.croppedImage.base64,
+								store.headerImage.croppedImage.fileType,
 							)}
 							alt="header"
-							className="rounded-lg object-contain"
+							className={cn("rounded-2xl w-full object-fill", {
+								"h-[210px]": !store.headerImage.croppedImage.base64,
+							})}
 						/>
-					)}
-				</div>
-			) : (
-				<div className="h-[210px] rounded-lg w-full grid grid-cols-1 border bg-crimson-7 border-mauve-7">
-					<Noise />
-				</div>
-			)}
+					)
+				) : (
+					<div className="h-[210px] w-full bg-crimson-7 ">
+						<Noise />
+					</div>
+				)}
+			</div>
 
 			<StoreInfo store={store} productCount={products.length} />
 

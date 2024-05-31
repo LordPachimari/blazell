@@ -1,13 +1,17 @@
 import { z } from "zod";
 
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { schema } from "@blazell/db";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { PriceSchema } from "./price";
+import { ProductOptionSchema } from "./product-option";
+import { ProductOptionValueSchema } from "./product-option-value";
 import { InsertVariantSchema, VariantSchema } from "./variant";
 
 const InsertProductSchema = createInsertSchema(schema.products).extend({
 	defaultVariant: InsertVariantSchema.optional(),
 });
 export const ProductSchema = createSelectSchema(schema.products);
+export const PublishedProductSchema = ProductSchema;
 export type InsertProduct = z.infer<typeof InsertProductSchema>;
 export const CreateProductSchema = z.object({
 	product: InsertProductSchema,
@@ -36,3 +40,19 @@ export const AssignOptionValueToVariantSchema = z.object({
 export type AssignOptionValueToVariant = z.infer<
 	typeof AssignOptionValueToVariantSchema
 >;
+
+export const ProductDuplicateSchema = z.object({
+	originalProductID: z.string(),
+	product: ProductSchema,
+	defaultVariant: VariantSchema,
+	prices: z.array(PriceSchema),
+	options: z.array(ProductOptionSchema),
+	optionValues: z.array(ProductOptionValueSchema),
+});
+
+export type ProductDuplicate = z.infer<typeof ProductDuplicateSchema>;
+
+export const DuplicateProductSchema = z.object({
+	duplicates: z.array(ProductDuplicateSchema),
+});
+export type DuplicateProduct = z.infer<typeof DuplicateProductSchema>;

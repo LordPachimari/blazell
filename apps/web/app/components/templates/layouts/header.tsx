@@ -5,6 +5,7 @@ import { Link } from "@remix-run/react";
 import { buttonVariants } from "@blazell/ui/button";
 import { Logo } from "~/components/molecules/logo";
 import type { User } from "@blazell/validators/client";
+import { cn } from "@blazell/ui";
 
 function Header({
 	authID,
@@ -29,7 +30,7 @@ function Header({
 				{/* <CartToggle /> */}
 				<Link
 					to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
-					className={buttonVariants()}
+					className={cn("rounded-full", buttonVariants())}
 				>
 					Dashboard
 				</Link>

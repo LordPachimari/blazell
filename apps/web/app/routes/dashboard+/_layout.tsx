@@ -18,7 +18,6 @@ export const loader: LoaderFunction = async (args) => {
 	if (!user) {
 		return redirect("/create-user");
 	}
-	console.log("user", user);
 	return json(
 		user,
 		//  { headers: { "Cache-Control": "public, s-maxage=360" } }
@@ -29,7 +28,7 @@ export default function DashboardLayout() {
 	return (
 		<SidebarLayoutWrapper>
 			<DashboardSidebar>
-				<main className="md:pl-44 w-full">
+				<main className="md:pl-40 w-full">
 					<Outlet />
 				</main>
 			</DashboardSidebar>

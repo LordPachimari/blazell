@@ -6,7 +6,7 @@ import type { Customer, Order } from "@blazell/validators/client";
 import { useNavigate, useParams } from "@remix-run/react";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
-import { OrdersTable } from "../orders/orders-table/table";
+import { OrdersTable } from "../orders+/orders-table/table";
 
 export default function CustomerRoute() {
 	const params = useParams();
@@ -19,8 +19,8 @@ export default function CustomerRoute() {
 	const navigate = useNavigate();
 	return (
 		<main className="w-full relative flex p-4 md:p-10 justify-center">
-			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-4">
-				<section className="w-full lg:w-8/12 flex flex-col gap-4 order-1 lg:order-0">
+			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-6">
+				<section className="w-full lg:w-8/12 flex flex-col gap-2 order-1 lg:order-0">
 					<Button
 						variant="ghost"
 						href={"/dashboard/customers"}
@@ -30,7 +30,11 @@ export default function CustomerRoute() {
 						<Icons.left size={20} className="text-black dark:text-white" />
 						Back to customers
 					</Button>
-					<OrdersTable orders={orders} />
+					<h1 className="font-freeman text-lg">
+						Orders made by {customer?.username ?? customer?.fullName}
+					</h1>
+
+					<OrdersTable orders={orders} toolbar={false} />
 				</section>
 				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-4 lg:order-1">
 					<CustomerInfo customer={customer} />

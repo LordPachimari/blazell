@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import type { GetRowsWTableName } from "../types";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
@@ -75,6 +75,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 													email: true,
 													username: true,
 													phone: true,
+													replicachePK: true,
 												},
 											},
 											items: {
@@ -206,17 +207,19 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 								}),
 							),
 
-							Effect.sync(() =>
+							Effect.sync(() => {
+								const customers = store.orders
+									.map((order) => {
+										return order.user;
+									})
+									.filter((user) => user !== null);
+
 								rowsWTableName.push({
 									tableName: "users" as const,
 									//@ts-ignore
-									rows: store.orders
-										.map((order) => {
-											return order.user;
-										})
-										.filter((user) => user !== null),
-								}),
-							),
+									rows: customers,
+								});
+							}),
 
 							Effect.sync(() =>
 								rowsWTableName.push({
@@ -240,6 +243,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 			},
 			{ concurrency: "unbounded" },
 		);
+		yield* Console.log("CART CVD", JSON.stringify(rowsWTableName));
 
 		return rowsWTableName;
 	});

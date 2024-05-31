@@ -2,7 +2,7 @@ import { Effect, pipe } from "effect";
 
 import type { GetRowsWTableName } from "../types";
 import { Database } from "@blazell/shared";
-import { NeonDatabaseError } from "@blazell/validators";
+import { NeonDatabaseError, NotFound } from "@blazell/validators";
 import { ReplicacheContext } from "../../../context";
 
 export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
@@ -11,34 +11,35 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 		if (!authID) return [];
 		const { manager } = yield* Database;
 
-		const userEmail = yield* Effect.tryPromise(() =>
-			manager.query.users.findFirst({
-				where: (users, { eq }) => eq(users.authID, authID),
-				columns: {
-					email: true,
-				},
-			}),
-		).pipe(
-			Effect.catchTags({
-				UnknownException: (error) =>
-					new NeonDatabaseError({ message: error.message }),
-			}),
-		);
-		if (!userEmail) return [];
 		return yield* pipe(
 			Effect.tryPromise(() =>
-				fullRows
-					? manager.query.orders.findMany({
-							where: (orders, { eq }) => eq(orders.email, userEmail.email),
-						})
-					: manager.query.orders.findMany({
-							columns: {
-								id: true,
-								version: true,
-								replicachePK: true,
-							},
-							where: (orders, { eq }) => eq(orders.email, userEmail.email),
-						}),
+				manager.query.users.findFirst({
+					where: (users, { eq }) => eq(users.authID, authID),
+					columns: {
+						email: true,
+					},
+				}),
+			),
+			Effect.flatMap((userEmail) => {
+				if (!userEmail)
+					return Effect.fail(new NotFound({ message: "User not found" }));
+				return Effect.succeed(userEmail.email);
+			}),
+			Effect.flatMap((email) =>
+				Effect.tryPromise(() =>
+					fullRows
+						? manager.query.orders.findMany({
+								where: (orders, { eq }) => eq(orders.email, email),
+							})
+						: manager.query.orders.findMany({
+								columns: {
+									id: true,
+									version: true,
+									replicachePK: true,
+								},
+								where: (orders, { eq }) => eq(orders.email, email),
+							}),
+				),
 			),
 			Effect.map((orders) => [
 				{
@@ -49,6 +50,7 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 			Effect.catchTags({
 				UnknownException: (error) =>
 					new NeonDatabaseError({ message: error.message }),
+				NotFound: () => Effect.succeed([]),
 			}),
 		);
 	});

@@ -1,6 +1,6 @@
 import { Copy, CreditCard, MoreVertical } from "lucide-react";
 import { useSubscribe } from "replicache-react";
-import { Button } from "@blazell/ui/button";
+import { Button, buttonVariants } from "@blazell/ui/button";
 import {
 	Card,
 	CardContent,
@@ -23,10 +23,12 @@ import type {
 	LineItem as LineItemType,
 	Order,
 } from "@blazell/validators/client";
-import { OrderStatus } from "~/components/molecules/order-status";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { Total } from "~/components/templates/cart/total-info";
-import { PaymentStatus } from "~/components/molecules/payment-status";
+import { Link } from "@remix-run/react";
+import { cn } from "@blazell/ui";
+import { OrderStatus } from "~/components/molecules/statuses/order-status";
+import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 
 export const OrderPreview = ({ orderID }: { orderID: string }) => {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -41,10 +43,11 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 		},
 		{ default: [], dependencies: [orderID] },
 	);
+	console.log("order", order);
 
 	return (
 		<Card
-			className="overflow-hidden w-[28rem] p-0 sticky top-20"
+			className="overflow-hidden w-[24rem] p-0 sticky top-10"
 			x-chunk="dashboard-05-chunk-4"
 		>
 			<CardHeader className="flex border-b border-mauve-7 p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
@@ -159,9 +162,13 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 						</div>
 					</dl>
 				</div>
-				<Button href={`/dashboard/orders/${orderID}`} className="my-4 w-full">
+				<Link
+					prefetch="viewport"
+					to={`/dashboard/orders/${orderID}`}
+					className={cn("my-4 w-full", buttonVariants())}
+				>
 					Manage
-				</Button>
+				</Link>
 			</CardContent>
 			<CardFooter className="flex p-6 flex-row items-center border-t border-mauve-7 bg-mauve-a-2 h-[3rem]">
 				<div className="text-xs text-mauve-11">

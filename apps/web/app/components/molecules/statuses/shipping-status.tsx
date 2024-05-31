@@ -7,28 +7,30 @@ export function ShippingStatus({
 	return status === "pending" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-red-300 border-red-500 font-medium "
+			className="bg-ruby-3 border-ruby-9 text-ruby-9  font-bold"
 		>
-			pending
+			Pending
 		</Badge>
 	) : status === "shipped" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-yellow-300 border-yellow-500 font-medium "
-		/>
+			className="bg-yellow-2 border-yellow-9 text-yellow-11 font-bold"
+		>
+			Shipped
+		</Badge>
 	) : status === "delivered" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-green-300 border-green-500 font-medium "
+			className="bg-jade-3 border-jade-9 text-jade-9 font-bold "
 		>
-			delivered
+			Delivered
 		</Badge>
 	) : (
 		<Badge
 			variant={"outline"}
-			className="bg-gray-300 border-gray-500 font-medium "
+			className="bg-mauve-3 border-mauve-9 text-mauve-9 font-bold"
 		>
-			cancelled
+			Cancelled
 		</Badge>
 	);
 }

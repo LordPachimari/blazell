@@ -15,6 +15,7 @@ import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 import { ReplicacheStore } from "~/replicache/store";
 import { generateReplicachePK } from "@blazell/utils";
+import { ProductStatus } from "~/components/molecules/statuses/product-status";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (
@@ -38,7 +39,7 @@ function StatusIcon({ status }: { status: Product["status"] }) {
 export function getProductsColumns({
 	deleteProduct,
 }: {
-	deleteProduct: (id: string) => Promise<void>;
+	deleteProduct: (keys: string[]) => Promise<void>;
 }): ColumnDef<Product, unknown>[] {
 	return [
 		{
@@ -81,31 +82,28 @@ export function getProductsColumns({
 					}),
 				);
 				return (
-					<div className="w-[100px]">
-						<AspectRatio
-							ratio={1}
-							className="flex items-center border border-mauve-7 rounded-md"
-						>
-							{!defaultVariant?.thumbnail ? (
-								<ImagePlaceholder />
-							) : defaultVariant?.thumbnail?.uploaded ? (
-								<Image
-									src={defaultVariant?.thumbnail?.url}
-									alt={defaultVariant?.thumbnail?.name || "Uploaded image"}
-									fit="cover"
-									className="rounded-md h-full object-cover"
-								/>
-							) : (
-								<img
-									src={toImageURL(
-										defaultVariant.thumbnail.base64,
-										defaultVariant.thumbnail.fileType,
-									)}
-									alt={defaultVariant.thumbnail.name || "Uploaded image"}
-									className="rounded-md h-full object-cover"
-								/>
-							)}
-						</AspectRatio>
+					<div className="flex w-[100px] h-[100px] items-center border border-mauve-7 rounded-md">
+						{!defaultVariant?.thumbnail ? (
+							<ImagePlaceholder />
+						) : defaultVariant?.thumbnail?.uploaded ? (
+							<Image
+								src={defaultVariant?.thumbnail?.url}
+								alt={defaultVariant?.thumbnail?.name || "Uploaded image"}
+								className="rounded-md h-full object-cover"
+								fit="fill"
+								width={100}
+								height={100}
+							/>
+						) : (
+							<img
+								src={toImageURL(
+									defaultVariant.thumbnail.base64,
+									defaultVariant.thumbnail.fileType,
+								)}
+								alt={defaultVariant.thumbnail.name || "Uploaded image"}
+								className="rounded-md h-full w-full object-cover"
+							/>
+						)}
 					</div>
 				);
 			},
@@ -119,7 +117,11 @@ export function getProductsColumns({
 				<DataTableColumnHeader column={column} title="Title" />
 			),
 			cell: (info) => {
-				return <div className="w-[80px]">{info.getValue() as string}</div>;
+				return (
+					<h1 className="w-[80px] font-freeman text-ellipsis overflow-hidden lg:text-lg ">
+						{info.row.original.defaultVariant.title ?? ""}
+					</h1>
+				);
 			},
 			enableSorting: false,
 			enableHiding: false,
@@ -149,8 +151,7 @@ export function getProductsColumns({
 
 				return (
 					<div className="flex w-[100px] items-center">
-						<StatusIcon status={status} />
-						<span className="capitalize">{status}</span>
+						<ProductStatus status={status} />
 					</div>
 				);
 			},
@@ -166,7 +167,13 @@ export function getProductsColumns({
 				<DataTableColumnHeader column={column} title="Quantity" />
 			),
 			cell: (info) => {
-				return <div className="w-[80px]">{info.getValue() as number}</div>;
+				return (
+					<div className="w-[80px]">
+						<h1 className="lg:text-md">
+							{info.row.original.defaultVariant.quantity ?? 1}
+						</h1>
+					</div>
+				);
 			},
 
 			enableSorting: false,

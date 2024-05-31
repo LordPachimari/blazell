@@ -1,4 +1,4 @@
-import { cn } from "@blazell/ui";
+// import { cn } from "@blazell/ui";
 
 const Price = ({
 	amount,
@@ -17,9 +17,9 @@ const Price = ({
 			currency: currencyCode,
 			currencyDisplay: "narrowSymbol",
 		}).format(amount / 100)}`}
-		<span
+		{/* <span
 			className={cn("ml-1 inline", currencyCodeClassName)}
-		>{`${currencyCode}`}</span>
+		>{`${currencyCode}`}</span> */}
 	</p>
 );
 

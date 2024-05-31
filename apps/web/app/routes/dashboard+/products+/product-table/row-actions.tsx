@@ -1,6 +1,5 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
-import { toast } from "sonner";
 
 import { Button } from "@blazell/ui/button";
 import {
@@ -12,17 +11,19 @@ import {
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import type { Product } from "@blazell/validators/client";
+import { useNavigate } from "@remix-run/react";
+import { toast } from "@blazell/ui/toast";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;
-	deleteProduct: (id: string) => Promise<void>;
+	deleteProduct: (keys: string[]) => Promise<void>;
 }
 
 export function RowActions<TData>({
 	row,
 	deleteProduct,
 }: DataTableRowActionsProps) {
-	// const task = taskSchema.parse(row.original);
+	const navigate = useNavigate();
 
 	return (
 		<DropdownMenu>
@@ -30,7 +31,7 @@ export function RowActions<TData>({
 				<Button
 					variant="ghost"
 					type="button"
-					className="flex h-10 w-10 p-0 data-[state=open]:bg-muted"
+					className="flex rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
 				>
 					<DotsHorizontalIcon className="h-4 w-4 md:h-8 md:w-8" />
 					<span className="sr-only">Open menu</span>
@@ -41,17 +42,26 @@ export function RowActions<TData>({
 					onClick={async (e) => {
 						e.stopPropagation();
 						// await deleteProduct(row.original.id);
-						toast.success("Product copied");
+						navigate(`/dashboard/products/${row.original.id}`);
 					}}
 				>
-					Make a copy
+					Edit
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={async (e) => {
+						e.stopPropagation();
+						// await deleteProduct(row.original.id);
+						toast.success("Product duplicated");
+					}}
+				>
+					Duplicate
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={async (e) => {
 						e.stopPropagation();
-						await deleteProduct(row.original.id);
-						toast.success("Product deleted");
+						await deleteProduct([row.original.id]);
+						toast.success("Product deleted. Press Ctrl+Z to undo.");
 					}}
 				>
 					Delete

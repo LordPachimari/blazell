@@ -1,13 +1,14 @@
+import type { Image as ImageType } from "@blazell/db";
 import { cn } from "@blazell/ui";
-import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import { Avatar } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
 import { Icons } from "@blazell/ui/icons";
 import { Input, inputVariants } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import { LoadingSpinner } from "@blazell/ui/loading";
+import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
-import type { Image as ImageType } from "@blazell/validators";
 import type { Store } from "@blazell/validators/client";
 import { useAuth } from "@clerk/remix";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -100,7 +101,9 @@ export function EditStore({ store }: { store: Store }) {
 			});
 		}
 		saveStoreUpdates({ description: data.description });
+		toast.success("Store updated successfully");
 		setIsLoading(false);
+		setIsOpen(false);
 	};
 
 	const clear = useCallback(() => {
@@ -367,7 +370,7 @@ export function EditStore({ store }: { store: Store }) {
 								onChange={onStoreImageChange}
 							/>
 							<Avatar
-								className="border-mauve-7 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer hover:opacity-90"
+								className="border-mauve-7 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
 								onClick={storeInputClick}
 								onKeyDown={storeInputClick}
 							>

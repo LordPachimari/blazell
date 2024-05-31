@@ -1,22 +1,24 @@
 import {
+	ProductSchema,
 	PublishedVariantSchema,
-	VariantSchema,
 	type PublishedVariant,
 	type UpdateProduct,
 	type UpdateVariant,
 } from "@blazell/validators";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@blazell/ui/badge";
 import { Button } from "@blazell/ui/button";
 import { Icons } from "@blazell/ui/icons";
+import { toast } from "@blazell/ui/toast";
 import type { Product, Variant } from "@blazell/validators/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import debounce from "lodash.debounce";
 import { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
+import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductCategory } from "./input/product-category";
 import { ProductInfo } from "./input/product-info";
@@ -25,17 +27,15 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
-import { toast } from "@blazell/ui/toast";
 export interface ProductInputProps {
 	product: Product | undefined | null;
 	productID: string;
 	defaultVariant: Variant | undefined | null;
 }
 
-const ProductFormSchema = VariantSchema.pick({
-	title: true,
-	quantity: true,
-}).partial();
+const ProductFormSchema = ProductSchema.partial().and(
+	PublishedVariantSchema.partial(),
+);
 export type ProductForm = z.infer<typeof ProductFormSchema>;
 
 export function ProductInput({
@@ -49,17 +49,61 @@ export function ProductInput({
 		resolver: zodResolver(ProductFormSchema),
 	});
 	console.log("errors", methods.formState.errors);
+	const dashboardRep = useReplicache((state) => state.dashboardRep);
+
+	const variants = ReplicacheStore.scan<Variant>(
+		dashboardRep,
+		`variant_${productID}`,
+	);
 	const publishButtonRef = useRef<HTMLButtonElement>(null);
 
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const onPublish = () => {
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onPublish = useCallback(() => {
+		/* check prices */
 		if (!defaultVariant?.prices || defaultVariant.prices.length === 0) {
 			toast.error("Please add a price to the product");
 			return;
 		}
+		if (defaultVariant.quantity <= 0) {
+			console.log("defaultVariant.quantity", defaultVariant.quantity);
+			toast.error("Please add quantity to the product");
+			return;
+		}
+		if (!defaultVariant.title || defaultVariant.title === "") {
+			methods.setError("title", {
+				message: "Title is required",
+			});
+			toast.error("Please add title to the product");
+			return;
+		}
+		const v0 = variants.find((variant) => variant.quantity <= 0);
+		if (v0) {
+			toast.error("Please add a quantity to all variants");
+			return;
+		}
+		const v1 = variants.find(
+			(variant) => (variant.optionValues ?? []).length === 0,
+		);
+		if (v1) {
+			toast.error(
+				`Please add a product option to variant ${
+					v1.title ?? v1.optionValues?.[0] ?? ""
+				}`,
+			);
+			return;
+		}
+		const v2 = variants.find((variant) => (variant.prices ?? []).length === 0);
+		if (v2) {
+			toast.error(
+				`Please add a price to the product variant "${
+					v2.title ?? v2.optionValues?.[0]?.optionValue.value ?? ""
+				}"`,
+			);
+			return;
+		}
 
 		setIsOpen(true);
-	};
+	}, [defaultVariant, variants]);
 
 	const updateProduct = useCallback(
 		async (updates: UpdateProduct["updates"]) => {
@@ -87,7 +131,7 @@ export function ProductInput({
 	const navigate = useNavigate();
 
 	const deleteProduct = useCallback(async () => {
-		await dashboardRep?.mutate.deleteProduct({ id: productID });
+		await dashboardRep?.mutate.deleteProduct({ keys: [productID] });
 	}, [dashboardRep, productID]);
 	const publishProduct = useCallback(async () => {
 		await dashboardRep?.mutate.publishProduct({ id: productID });
@@ -123,6 +167,7 @@ export function ProductInput({
 				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-6 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
 					<Button
 						variant="ghost"
+						type="button"
 						href="/dashboard/products"
 						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/products")}
@@ -138,6 +183,7 @@ export function ProductInput({
 						onContinue={async () => {
 							await publishProduct();
 							toast.success("Product published!");
+							navigate("/dashboard/products");
 						}}
 					/>
 					<AlertDialogComponent
@@ -148,15 +194,18 @@ export function ProductInput({
 							await deleteProduct();
 							toast.success("Product deleted!");
 							navigate("/dashboard/products");
+							navigate("/dashboard/products");
 						}}
 					/>
-					<div className="w-full flex flex-col lg:min-w-[44rem] max-w-[55rem]">
+					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">
 						<section className="flex items-center justify-between h-16">
 							<Badge
 								variant="outline"
 								className="text-sm text-mauve-11 sm:ml-0 h-8"
 							>
-								In stock
+								{(product?.defaultVariant.quantity ?? 0) > 0
+									? "In stock"
+									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
 								<DeleteOrPublish
@@ -178,6 +227,7 @@ export function ProductInput({
 								variantID={defaultVariant?.id}
 							/>
 							<Pricing
+								isPublished={product?.status === "published"}
 								variantID={defaultVariant?.id}
 								prices={defaultVariant?.prices ?? []}
 							/>
@@ -185,6 +235,9 @@ export function ProductInput({
 								options={product?.options}
 								productID={productID}
 								updateVariant={updateVariant}
+								variants={variants}
+								defaultVariant={defaultVariant}
+								isPublished={product?.status === "published"}
 							/>
 							<Stock
 								variant={defaultVariant}

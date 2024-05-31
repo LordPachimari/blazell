@@ -1,5 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 import { isDefined, keys, mapToObj } from "remeda";
 import type { PatchOperation, ReadonlyJSONObject } from "replicache";
 

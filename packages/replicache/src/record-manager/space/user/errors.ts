@@ -13,7 +13,7 @@ export const errorsCVD: GetRowsWTableName = ({ fullRows }) => {
 		const id = userID ?? globalID;
 		if (!id) return [];
 		const { manager } = yield* Database;
-		const cvd = yield* pipe(
+		return yield* pipe(
 			Effect.tryPromise(() =>
 				fullRows
 					? manager.query.clientErrors.findMany({
@@ -36,7 +36,5 @@ export const errorsCVD: GetRowsWTableName = ({ fullRows }) => {
 					new NeonDatabaseError({ message: error.message }),
 			}),
 		);
-
-		return cvd;
 	});
 };

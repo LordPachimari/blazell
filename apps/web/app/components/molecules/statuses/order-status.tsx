@@ -3,22 +3,25 @@ import { Badge } from "@blazell/ui/badge";
 
 export function OrderStatus({ status }: { status: Order["status"] }) {
 	return status === "pending" ? (
-		<Badge variant={"outline"} className="bg-ruby-6 border-ruby-9 font-medium ">
-			pending
+		<Badge
+			variant={"outline"}
+			className="bg-ruby-3 border-ruby-9 font-bold text-ruby-9 "
+		>
+			Pending
 		</Badge>
 	) : status === "completed" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-green-300 border-green-500 font-medium "
+			className="bg-jade-3 border-jade-9 text-jade-9 text-jade-9 font-medium "
 		>
-			delivered
+			Delivered
 		</Badge>
 	) : (
 		<Badge
 			variant={"outline"}
 			className="bg-gray-300 border-gray-500 font-medium "
 		>
-			cancelled
+			Cancelled
 		</Badge>
 	);
 }

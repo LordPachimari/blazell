@@ -70,7 +70,8 @@
   transform: scale(var(--scale, 1));
   transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22);
   aspect-ratio: 1/1;
-  overflow:hidden
+  overflow:hidden;
+  list-style-type: none;
 
 }
 

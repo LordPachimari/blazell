@@ -66,8 +66,8 @@ function Products({
 		}
 	}, [dashboardRep, storeID]);
 	const deleteProduct = useCallback(
-		async (id: string) => {
-			await dashboardRep?.mutate.deleteProduct({ id });
+		async (keys: string[]) => {
+			await dashboardRep?.mutate.deleteProduct({ keys });
 		},
 		[dashboardRep],
 	);

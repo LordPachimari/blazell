@@ -2,10 +2,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import type { Order } from "@blazell/validators/client";
-import { OrderStatus } from "~/components/molecules/order-status";
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import type { DataTableFilterableColumn } from "~/types/table";
 import { orderStatuses } from "@blazell/validators";
+import { OrderStatus } from "~/components/molecules/statuses/order-status";
 
 export function getOrdersColumns(): ColumnDef<Order, unknown>[] {
 	return [

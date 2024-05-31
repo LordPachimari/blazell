@@ -1,19 +1,21 @@
 import { schema } from "@blazell/db";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const PriceSchema = createInsertSchema(schema.prices);
-export type InsertPrice = z.infer<typeof PriceSchema>;
+export const InsertPriceSchema = createInsertSchema(schema.prices);
+export type InsertPrice = z.infer<typeof InsertPriceSchema>;
+export const PriceSchema = createSelectSchema(schema.prices);
+export type Price = z.infer<typeof PriceSchema>;
 
 export const CreatePricesSchema = z.object({
-	prices: z.array(PriceSchema),
+	prices: z.array(InsertPriceSchema),
 	id: z.string(),
 });
 export type CreatePrices = z.infer<typeof CreatePricesSchema>;
 export const UpdatePriceSchema = z.object({
 	priceID: z.string(),
 	id: z.string(),
-	updates: PriceSchema.pick({ amount: true }),
+	updates: InsertPriceSchema.pick({ amount: true }),
 });
 export type UpdatePrice = z.infer<typeof UpdatePriceSchema>;
 export const DeletePricesSchema = z.object({

@@ -28,21 +28,15 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 	const selectedVariantID = searchParams.get("variant") ?? undefined;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const setSelectedVariantID = (id: string | undefined) => {
-		console.log("triggered", id);
-		setSearchParams(
-			(prev) => {
-				const params = new URLSearchParams(prev);
-				if (!id) {
-					params.delete("variant");
-					return params;
-				}
-				params.set("variant", id);
+		setSearchParams((prev) => {
+			const params = new URLSearchParams(prev);
+			if (!id) {
+				params.delete("variant");
 				return params;
-			},
-			// {
-			// 	preventScrollReset: true,
-			// },
-		);
+			}
+			params.set("variant", id);
+			return params;
+		});
 	};
 	const selectedVariant = selectedVariantID
 		? variants.find((v) => v.id === selectedVariantID) ?? null

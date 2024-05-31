@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from "react";
-
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
@@ -15,6 +14,7 @@ import Stock from "./product-stock";
 import type { UpdateVariant } from "@blazell/validators";
 import debounce from "lodash.debounce";
 import { generateReplicachePK } from "@blazell/utils";
+import { inputVariants } from "@blazell/ui/input";
 
 interface ProductVariantProps {
 	setIsOpen: (value: boolean) => void;
@@ -23,6 +23,7 @@ interface ProductVariantProps {
 	variantID: string | null;
 	productID: string;
 	setVariantID: (id: string | null) => void;
+	isPublished: boolean;
 }
 
 export default function ProductVariant({
@@ -32,6 +33,7 @@ export default function ProductVariant({
 	variantID,
 	productID,
 	setVariantID,
+	isPublished,
 }: Readonly<ProductVariantProps>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const variant = ReplicacheStore.getByPK<Variant>(
@@ -76,14 +78,18 @@ export default function ProductVariant({
 						<Icons.close size={20} strokeWidth={strokeWidth} />
 					</Button>
 				</span>
-				<ScrollArea className="h-[calc(80vh)] px-4 py-2">
+				<ScrollArea className="h-[calc(80vh)] px-2 md:px-4 py-2">
 					<VariantOptions
 						options={options}
 						variant={variant}
 						productID={productID}
 					/>
 					<Media images={variant?.images ?? []} variantID={variant?.id} />
-					<Pricing prices={variant?.prices ?? []} variantID={variant?.id} />
+					<Pricing
+						prices={variant?.prices ?? []}
+						variantID={variant?.id}
+						isPublished={isPublished}
+					/>
 					<Stock
 						variant={variant}
 						updateVariant={updateVariant}
@@ -160,7 +166,7 @@ function VariantOptions({
 			{options.map((option) => {
 				return (
 					<div className="flex items-center  gap-2" key={option.id}>
-						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-mauve-7 justify-center">
+						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-2xl border-mauve-7 justify-center">
 							{option.name}
 						</span>
 						:
@@ -171,10 +177,13 @@ function VariantOptions({
 							onValueChange={async (value) => {
 								const prevOptionValueID =
 									optionIDToVariantOptionValue[option.id]?.id;
-								await assignOptionValueToVariant({
-									...(prevOptionValueID && { prevOptionValueID }),
-									optionValueID: optionValueToID[value]!,
-								});
+								const newOptionValueID = optionValueToID[value];
+								console.log("new option value", newOptionValueID);
+								newOptionValueID &&
+									(await assignOptionValueToVariant({
+										...(prevOptionValueID && { prevOptionValueID }),
+										optionValueID: newOptionValueID,
+									}));
 							}}
 						>
 							{option.optionValues?.map((v) => (

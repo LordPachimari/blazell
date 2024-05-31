@@ -27,32 +27,27 @@ export function getVariantColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => (
-				<div className="w-[100px]">
-					<AspectRatio
-						ratio={1}
-						className="flex items-center rounded-md border border-mauve-7"
-					>
-						{!row.original.images?.[0] ? (
-							<ImagePlaceholder />
-						) : row.original.images?.[0]?.uploaded ? (
-							<Image
-								src={row.original.images[0]?.url}
-								alt={row.original.images[0]?.name || "Uploaded image"}
-								className="rounded-md h-full object-cover "
-								fit="contain"
-								quality={90}
-							/>
-						) : (
-							<img
-								src={toImageURL(
-									row.original.images[0]?.base64,
-									row.original.images[0]?.fileType,
-								)}
-								alt={row.original.images[0]?.name || "Uploaded image"}
-								className="rounded-md h-full object-cover "
-							/>
-						)}
-					</AspectRatio>
+				<div className="flex w-[100px] h-[100px]  items-center rounded-md border border-mauve-7">
+					{!row.original.images?.[0] ? (
+						<ImagePlaceholder />
+					) : row.original.images?.[0]?.uploaded ? (
+						<Image
+							src={row.original.images[0]?.url}
+							alt={row.original.images[0]?.name || "Uploaded image"}
+							className="rounded-md h-full w-full object-fill "
+							fit="fill"
+							quality={90}
+						/>
+					) : (
+						<img
+							src={toImageURL(
+								row.original.images[0]?.base64,
+								row.original.images[0]?.fileType,
+							)}
+							alt={row.original.images[0]?.name || "Uploaded image"}
+							className="rounded-md h-full w-full object-fill "
+						/>
+					)}
 				</div>
 			),
 			enableSorting: false,

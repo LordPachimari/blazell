@@ -13,9 +13,8 @@ import { AddToCart } from "./add-to-cart";
 import { Gallery } from "./gallery";
 import { ProductContainer } from "./product-container";
 import { GeneralInfo } from "./product-info";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import { generateReplicachePK } from "@blazell/utils";
+import { cn } from "@blazell/ui";
+import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 
 interface ProductOverviewProps {
 	product: Product | null | undefined;
@@ -25,7 +24,7 @@ interface ProductOverviewProps {
 	selectedVariant: Variant | null;
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 	cartID?: string | undefined;
-	defaultVariant?: Variant | null | undefined;
+	defaultVariant: Variant | null | undefined;
 }
 
 const ProductOverview = ({
@@ -38,15 +37,19 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 }: ProductOverviewProps) => {
+	console.log("product", product);
 	return (
-		<main className="relative lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] mt-12  px-2">
+		<main className="relative flex h-[calc(100vh + 70vh)] flex-col items-center  lg:items-start lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] lg:mt-20 ">
 			<Gallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
 			/>
-			<ProductContainer>
-				<div className="min-h-[60vh] ">
+			<div
+				className={cn(
+					"bg-mauve-2 lg:mt-0 dark:bg-mauve-3 dark:lg:bg-transparent w-full lg:bg-transparent col-span-4 lg:col-span-3 p-4 rounded-t-lg z-20",
+				)}
+			>
+				<div className="min-h-[50vh]">
 					<GeneralInfo product={product} defaultVariant={defaultVariant} />
-					<Separator className="my-4" />
 					<ProductVariants
 						variants={variants}
 						{...(isDashboard && { isDashboard })}
@@ -62,14 +65,15 @@ const ProductOverview = ({
 						isDashboard={isDashboard}
 					/>
 				</div>
-
-				<AddToCart
-					{...(cartID && { cartID })}
-					product={product}
-					variant={selectedVariant ?? defaultVariant}
-					{...(isDashboard && { isDashboard })}
-				/>
-			</ProductContainer>
+				<div className="flex justify-center w-full h-32 py-4 pt-6">
+					<AddToCart
+						{...(cartID && { cartID })}
+						product={product}
+						variant={selectedVariant ?? defaultVariant}
+						{...(isDashboard && { isDashboard })}
+					/>
+				</div>
+			</div>
 		</main>
 	);
 };
@@ -87,10 +91,17 @@ const ProductVariants = ({
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 }) => {
 	return (
-		<section>
-			<h2 className="py-2">Variant</h2>
+		<section className="py-4">
+			{variants.length > 0 && (
+				<>
+					<Separator className="my-4" />
+					<h2 className="flex min-w-[4rem] py-2 items-center font-semibold text-base">
+						VARIANT
+					</h2>
+				</>
+			)}
 			<ToggleGroup
-				className="flex justify-start "
+				className="grid grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 "
 				type="single"
 				value={selectedVariantIDOrHandle ?? ""}
 				variant="outline"
@@ -102,7 +113,7 @@ const ProductVariants = ({
 					<ToggleGroupItem
 						key={v.id}
 						value={isDashboard ? v.id : v.handle ?? ""}
-						className="relative min-w-[6rem] min-h-[6rem] p-0 "
+						className="relative w-[6rem] min-h-[6rem] p-0 "
 					>
 						<div className="relative">
 							{!v.images?.[0] ? (
@@ -190,13 +201,14 @@ const ProductOptions = ({
 		},
 		[variants, setVariantIDOrHandle, isDashboard],
 	);
+	console.log("options", options);
 	return (
-		<section>
+		<section className="pb-4">
 			{options.map((option) => {
 				return (
 					<div className="flex flex-col" key={option.id}>
 						<span className="flex min-w-[4rem] py-2 items-center font-semibold text-base ">
-							{option.name}
+							{(option.name ?? "").toUpperCase()}
 						</span>
 						<ToggleGroup
 							className="flex justify-start"

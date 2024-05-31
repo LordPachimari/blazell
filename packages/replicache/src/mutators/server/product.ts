@@ -2,18 +2,19 @@ import { Effect } from "effect";
 
 import {
 	CreateProductSchema,
-	DeleteInputSchema,
+	DuplicateProductSchema,
 	NeonDatabaseError,
+	ProductDuplicateSchema,
 	UpdateProductSchema,
 	type InsertVariant,
 } from "@blazell/validators";
 
+import { Database } from "@blazell/shared";
+import { generateReplicachePK, toUrlFriendly } from "@blazell/utils";
 import { ulid } from "ulidx";
 import { z } from "zod";
-import { Database } from "@blazell/shared";
-import { generateReplicachePK } from "@blazell/utils";
-import { zod } from "../../util/zod";
 import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const createProduct = zod(CreateProductSchema, (input) =>
 	Effect.gen(function* () {
@@ -27,19 +28,24 @@ const createProduct = zod(CreateProductSchema, (input) =>
 				id: product.defaultVariantID,
 			}),
 			productID: product.id,
+			quantity: 1,
 		};
 		yield* tableMutator.set(product, "products");
 		yield* tableMutator.set(defaultVariant, "variants");
 	}),
 );
 
-const deleteProduct = zod(DeleteInputSchema, (input) =>
-	Effect.gen(function* () {
-		const tableMutator = yield* TableMutator;
-		const { id } = input;
-
-		return yield* tableMutator.delete(id, "products");
+const deleteProduct = zod(
+	z.object({
+		keys: z.array(z.string()),
 	}),
+	(input) =>
+		Effect.gen(function* () {
+			const tableMutator = yield* TableMutator;
+			const { keys } = input;
+
+			return yield* tableMutator.delete(keys, "products");
+		}),
 );
 
 const updateProduct = zod(UpdateProductSchema, (input) =>
@@ -59,7 +65,16 @@ const publishProduct = zod(z.object({ id: z.string() }), (input) =>
 			manager.query.products.findFirst({
 				where: (products, { eq }) => eq(products.id, id),
 				with: {
-					variants: true,
+					variants: {
+						with: {
+							optionValues: {
+								with: {
+									optionValue: true,
+								},
+							},
+						},
+					},
+					defaultVariant: true,
 				},
 			}),
 		).pipe(
@@ -77,7 +92,11 @@ const publishProduct = zod(z.object({ id: z.string() }), (input) =>
 				return tableMutator.update(
 					variant.id,
 					{
-						handle: `${variant.title ?? ""}-${ulid()}`,
+						handle: `${toUrlFriendly(
+							product.defaultVariant.title ?? "",
+						)}-${variant.optionValues
+							.map((val) => val.optionValue.value)
+							.join("-")}-${ulid()}`,
 					},
 					"variants",
 				);
@@ -96,5 +115,68 @@ const publishProduct = zod(z.object({ id: z.string() }), (input) =>
 		return yield* Effect.all(effects, { concurrency: "unbounded" });
 	}),
 );
+const duplicateProduct = zod(DuplicateProductSchema, (input) =>
+	Effect.gen(function* () {
+		const { duplicates } = input;
+		yield* Effect.forEach(
+			duplicates,
+			(_duplicate) => duplicate({ duplicate: _duplicate }),
+			{
+				concurrency: "unbounded",
+			},
+		);
+	}),
+);
 
-export { createProduct, deleteProduct, publishProduct, updateProduct };
+const duplicate = zod(
+	z.object({
+		duplicate: ProductDuplicateSchema,
+	}),
+	(input) =>
+		Effect.gen(function* () {
+			const tableMutator = yield* TableMutator;
+			const { duplicate } = input;
+
+			yield* tableMutator.set(duplicate.product, "products");
+
+			yield* tableMutator.set(duplicate.defaultVariant, "variants");
+
+			yield* Effect.all(
+				[
+					Effect.forEach(
+						duplicate.prices,
+						(price) => {
+							return tableMutator.set(price, "prices");
+						},
+						{ concurrency: "unbounded" },
+					),
+					Effect.forEach(
+						duplicate.options,
+						(option) => {
+							return tableMutator.set(option, "productOptions");
+						},
+						{ concurrency: "unbounded" },
+					),
+				],
+				{
+					concurrency: 2,
+				},
+			);
+
+			yield* Effect.forEach(
+				duplicate.optionValues,
+				(optionValue) => {
+					return tableMutator.set(optionValue, "productOptionValues");
+				},
+				{ concurrency: "unbounded" },
+			);
+		}),
+);
+
+export {
+	createProduct,
+	deleteProduct,
+	duplicateProduct,
+	publishProduct,
+	updateProduct,
+};

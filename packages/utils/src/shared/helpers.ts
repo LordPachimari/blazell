@@ -72,3 +72,10 @@ export const convertToDecimal = (amount: number, currencyCode = "USD") => {
 
 	return Math.floor(amount) / divisor;
 };
+
+export const toUrlFriendly = (text: string) => {
+	return text
+		.toLowerCase() // Convert to lowercase
+		.replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric characters with dashes
+		.replace(/(^-|-$)/g, ""); // Remove leading or trailing dashes
+};

@@ -12,6 +12,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
+	type ShouldRevalidateFunction,
 } from "@remix-run/react";
 //@ts-ignore
 import stylesheet from "./tailwind.css?url";
@@ -33,6 +34,8 @@ import { getDomainUrl } from "./utils/helpers";
 import type { Theme } from "@blazell/validators";
 //@ts-ignore
 import sonnerStyles from "./sonner.css?url";
+//@ts-ignore
+import vaulStyles from "./vaul.css?url";
 import type { Env } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
@@ -42,7 +45,10 @@ export const links: LinksFunction = () => {
 		//TODO: ADD ICON
 		{ rel: "stylesheet", href: stylesheet },
 		...(process.env.NODE_ENV === "development"
-			? [{ rel: "stylesheet", href: sonnerStyles }]
+			? [
+					{ rel: "stylesheet", href: sonnerStyles },
+					{ rel: "stylesheet", href: vaulStyles },
+				]
 			: []),
 	].filter(Boolean);
 };
@@ -103,6 +109,7 @@ export const loader: LoaderFunction = (args) => {
 		},
 	);
 };
+
 function App() {
 	const data = useLoaderData<RootLoaderData>();
 	const nonce = useNonce();
@@ -154,7 +161,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="font-body dark:bg-mauve-1 bg-mauve-a-2">
+			<body className="font-body dark:bg-mauve-1 bg-mauve-a-2 min-w-[280px]">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<script

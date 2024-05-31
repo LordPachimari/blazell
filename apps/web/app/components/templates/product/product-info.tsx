@@ -7,7 +7,6 @@ interface GeneralInfoProps {
 }
 
 function GeneralInfo({ product, defaultVariant }: GeneralInfoProps) {
-	console.log("product", product);
 	return (
 		<section className="flex flex-col ">
 			<span className="flex justify-between">

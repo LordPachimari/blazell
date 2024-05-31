@@ -1,18 +1,30 @@
+import { cn } from "@blazell/ui";
 import Price from "./price";
 
 const PriceLabel = ({
-	title,
 	amount,
 	currencyCode,
+	size = "md",
+	className,
 }: {
-	title: string;
 	amount: number;
 	currencyCode: string;
-}) => {
+	className?: string;
+	size?: "sm" | "md";
+} & React.ComponentProps<"div">) => {
 	return (
-		<div className="flex items-center h-10 rounded-xl border border-mauve-7 bg-component">
+		<div
+			className={cn(
+				"flex items-center rounded-xl border border-mauve-7 bg-component backdrop-blur-sm",
+				className,
+				{
+					"h-12": size === "md",
+					"h-8": size === "sm",
+				},
+			)}
+		>
 			<Price
-				className="bg-brand text-sm flex-none rounded-xl  p-2"
+				className=" text-sm md:text-lg font-freeman flex-none text-crimson-9 rounded-xl  p-2"
 				amount={amount}
 				currencyCode={currencyCode}
 				currencyCodeClassName="hidden @[275px]/label:inline"

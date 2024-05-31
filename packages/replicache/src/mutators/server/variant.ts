@@ -6,13 +6,15 @@ import {
 import { Effect } from "effect";
 import { zod } from "../../util/zod";
 import { TableMutator } from "../../context/table-mutator";
+import { createPrices } from "./price";
 
 const createVariant = zod(CreateVariantSchema, (input) =>
 	Effect.gen(function* () {
 		const tableMutator = yield* TableMutator;
-		const { variant } = input;
+		const { variant, prices } = input;
 
-		return yield* tableMutator.set(variant, "variants");
+		yield* tableMutator.set(variant, "variants");
+		prices && (yield* createPrices({ prices, id: variant.id }));
 	}),
 );
 

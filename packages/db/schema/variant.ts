@@ -23,7 +23,7 @@ export const variants = pgTable(
 		title: varchar("title"),
 		handle: varchar("handle"),
 		barcode: varchar("barcode"),
-		quantity: integer("quantity").notNull().default(0),
+		quantity: integer("quantity").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		productID: varchar("product_id")
 			.references(() => products.id, {

@@ -6,6 +6,7 @@ import {
 	deleteProduct,
 	updateProduct,
 	publishProduct,
+	duplicateProduct,
 } from "./product";
 import {
 	createStore,
@@ -16,7 +17,7 @@ import {
 import { updateUser } from "./user";
 import { createLineItem, deleteLineItem, updateLineItem } from "./line-item";
 import { updateAddress } from "./address";
-import { updateCart } from "./cart";
+import { createCart, updateCart } from "./cart";
 import { createOrder } from "./order";
 import {
 	assignOptionValueToVariant,
@@ -43,6 +44,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	updateProduct,
 	deleteProduct,
 	publishProduct,
+	duplicateProduct,
 	createProductOption,
 	updateProductOption,
 	deleteProductOption,
@@ -77,4 +79,5 @@ export const UserMutators: UserMutatorsType = {
 	deleteLineItem,
 	updateAddress,
 	updateCart,
+	createCart,
 };

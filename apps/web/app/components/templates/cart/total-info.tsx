@@ -5,6 +5,7 @@ import type { Cart, LineItem, Order } from "@blazell/validators/client";
 import { cn } from "@blazell/ui";
 import { Effect, pipe } from "effect";
 import { toast } from "@blazell/ui/toast";
+import Price from "~/components/molecules/price";
 export const Total = React.forwardRef<
 	HTMLDivElement,
 	React.HTMLAttributes<HTMLDivElement> & {
@@ -29,7 +30,11 @@ export const Total = React.forwardRef<
 		<div ref={ref} className={cn("w-full", className)} {...props}>
 			<span className="flex w-full text-mauve-11 justify-between my-2">
 				<p>Subtotal:</p>
-				<p>{`${cartOrOrder?.currencyCode} ${subtotal}`}</p>
+
+				<Price
+					amount={subtotal}
+					currencyCode={cartOrOrder?.currencyCode ?? "AUD"}
+				/>
 			</span>
 
 			<span className="flex w-full text-mauve-11 justify-between my-2">
@@ -45,7 +50,10 @@ export const Total = React.forwardRef<
 
 			<span className="flex font-bold w-full justify-between mt-4">
 				<p>Total:</p>
-				<p>{`${cartOrOrder?.currencyCode} ${subtotal}`}</p>
+				<Price
+					amount={subtotal}
+					currencyCode={cartOrOrder?.currencyCode ?? "AUD"}
+				/>
 			</span>
 		</div>
 	);

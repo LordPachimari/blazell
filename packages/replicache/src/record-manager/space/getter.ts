@@ -166,6 +166,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									email: true,
 									username: true,
 									phone: true,
+									replicachePK: true,
 								},
 							},
 							shippingAddress: true,

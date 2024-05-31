@@ -4,7 +4,7 @@ import { Effect } from "effect";
 import type { Bindings } from "@blazell/validators";
 
 const app = new Hono<{ Bindings: Bindings }>();
-app.get("/", async (c) => {
+app.get("/order", async (c) => {
 	const db = c.get("db" as never) as Db;
 	const ids = c.req.queries("id");
 

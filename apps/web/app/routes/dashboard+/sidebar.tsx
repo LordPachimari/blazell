@@ -45,7 +45,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 		<div className="w-full h-full flex relative inset-0 ">
 			<nav
 				className={cn(
-					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-3xl transition-all duration-200 ease-in-out ",
+					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm transition-all duration-200 ease-in-out z-30 ",
 				)}
 			>
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">

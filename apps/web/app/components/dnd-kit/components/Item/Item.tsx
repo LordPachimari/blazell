@@ -166,13 +166,9 @@ export const Item = React.memo(
 											fit="fill"
 											width={228}
 											height={228}
+											className="border border-mauve-7 rounded-md"
 										/>
 									) : null}
-									{!item?.uploaded && (
-										<div className="absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-30 dark:bg-white">
-											<Loader2Icon className="animate-spin text-white dark:text-black" />
-										</div>
-									)}
 								</div>
 							) : null}
 

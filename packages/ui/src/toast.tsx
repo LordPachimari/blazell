@@ -10,6 +10,9 @@ const toast = {
 	error(message: string) {
 		return sonnerToast.error(message, {
 			icon: <Icons.circleError className="text-ruby-9" />,
+			duration: 5000,
+			dismissible: true,
+			closeButton: true,
 		});
 	},
 	info(message: string) {

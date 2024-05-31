@@ -5,7 +5,6 @@ import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductInput } from "./product-input";
 import { ProductPreview } from "./product-preview";
-import { generateReplicachePK } from "@blazell/utils";
 
 function ProductRoute() {
 	const params = useParams();

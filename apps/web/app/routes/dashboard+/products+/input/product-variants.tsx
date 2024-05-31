@@ -7,35 +7,34 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
 import { generateID, generateReplicachePK } from "@blazell/utils";
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
-import { useCallback, useEffect, useState } from "react";
-import { ReplicacheStore } from "~/replicache/store";
+import { useCallback, useState } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
 import { ProductOptions } from "./product-options";
 import ProductVariant from "./product-variant";
-import { Form, useSearchParams } from "@remix-run/react";
-import { Icons } from "@blazell/ui/icons";
-import { set } from "zod";
 
 interface ProductVariantsProps {
 	options: ProductOption[] | undefined;
 	productID: string;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
+	variants: Variant[];
+	defaultVariant: Variant | null | undefined;
+	isPublished: boolean;
 }
 export function Variants({
 	options,
 	productID,
 	updateVariant,
+	variants,
+	defaultVariant,
+	isPublished,
 }: ProductVariantsProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const [variantID, _setVariantID] = useState<string | null>(null);
-	const variants = ReplicacheStore.scan<Variant>(
-		dashboardRep,
-		`variant_${productID}`,
-	);
 
 	const setVariantID = (id: string | null) => {
 		if (id === null) {
@@ -60,14 +59,16 @@ export function Variants({
 				prefix: "variant",
 				filterID: productID,
 			}),
+			quantity: 1,
 		};
 		await dashboardRep?.mutate.createVariant({
 			variant: newVariant,
+			...(defaultVariant?.prices && { prices: defaultVariant.prices }),
 		});
 
 		setVariantID(newID);
 		setIsOpen(true);
-	}, [dashboardRep, productID]);
+	}, [dashboardRep, productID, defaultVariant]);
 	console.log("isOpen", isOpen);
 
 	const deleteVariant = useCallback(
@@ -122,6 +123,7 @@ export function Variants({
 					setIsOpen={setIsOpen}
 					productID={productID}
 					setVariantID={setVariantID}
+					isPublished={isPublished}
 				/>
 			</CardFooter>
 		</Card>

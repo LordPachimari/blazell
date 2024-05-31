@@ -38,7 +38,7 @@ export type LineItem = Server.LineItem & {
 };
 
 export type Cart = Server.Cart & {
-	shippingAddress: Address;
+	shippingAddress?: Address;
 	billingAddress?: Address;
 };
 

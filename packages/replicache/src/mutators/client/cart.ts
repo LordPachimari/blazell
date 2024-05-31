@@ -1,7 +1,12 @@
-import type { UpdateCart } from "@blazell/validators";
+import type { CreateCart, UpdateCart } from "@blazell/validators";
 import type { WriteTransaction } from "replicache";
 import { getEntityFromID } from "./util/get-id";
 import type { Address } from "@blazell/validators/client";
+async function createCart(tx: WriteTransaction, input: CreateCart) {
+	const { cart } = input;
+
+	await tx.set(cart.replicachePK, cart);
+}
 
 async function updateCart(tx: WriteTransaction, input: UpdateCart) {
 	const { id, updates } = input;
@@ -17,4 +22,4 @@ async function updateCart(tx: WriteTransaction, input: UpdateCart) {
 		...updates,
 	});
 }
-export { updateCart };
+export { updateCart, createCart };

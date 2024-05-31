@@ -43,6 +43,7 @@ const Stock = ({
 					type="number"
 					className="my-2 w-20"
 					min={1}
+					defaultValue={variant?.quantity ?? 1}
 					onChange={async (e) => {
 						variant &&
 							(await onVariantInputChange({

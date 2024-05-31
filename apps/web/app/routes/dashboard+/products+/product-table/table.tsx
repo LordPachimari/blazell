@@ -3,9 +3,7 @@ import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { Button } from "@blazell/ui/button";
-import { filterableColumns, getProductsColumns } from "./columns";
-import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
-import { useDataTable } from "~/components/templates/table/use-data-table";
+import { Icons } from "@blazell/ui/icons";
 import {
 	Table,
 	TableBody,
@@ -14,14 +12,18 @@ import {
 	TableHeader,
 	TableRow,
 } from "@blazell/ui/table";
-import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
-import { Link, useNavigate, useNavigation } from "@remix-run/react";
 import type { Product } from "@blazell/validators/client";
+import { useNavigate } from "@remix-run/react";
+import { DataTableFloatingBar } from "~/components/templates/table/data-table-floating-bar";
+import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
+import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
+import { useDataTable } from "~/components/templates/table/use-data-table";
+import { filterableColumns, getProductsColumns } from "./columns";
 
 interface ProductsTableProps {
 	products: Product[];
 	createProduct: () => Promise<void>;
-	deleteProduct: (id: string) => Promise<void>;
+	deleteProduct: (keys: string[]) => Promise<void>;
 }
 
 function ProductsTable({
@@ -47,14 +49,18 @@ function ProductsTable({
 				filterableColumns={filterableColumns}
 				toolbarButton={
 					<Button size="md" onClick={createProduct} type="button">
-						<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
+						<Icons.plus
+							className="mr-1 font-bold"
+							size={15}
+							aria-hidden="true"
+						/>
 						New Product
 					</Button>
 				}
 			/>
 			<div className="shadow-md">
 				<Table>
-					<TableHeader>
+					<TableHeader className="bg-mauve-a-2">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
@@ -122,6 +128,9 @@ function ProductsTable({
 				</Table>
 			</div>
 			<DataTablePagination table={table} />
+			{table.getFilteredSelectedRowModel().rows.length > 0 && (
+				<DataTableFloatingBar table={table} onDelete={deleteProduct} />
+			)}
 		</div>
 	);
 }

@@ -1,5 +1,3 @@
-import type { UpdateVariant } from "@blazell/validators";
-import { useMemo } from "react";
 import {
 	Table,
 	TableBody,
@@ -8,11 +6,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@blazell/ui/table";
-import { getVariantColumns } from "./columns";
-import { useDataTable } from "~/components/templates/table/use-data-table";
-import { flexRender, type ColumnDef } from "@tanstack/react-table";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+import type { UpdateVariant } from "@blazell/validators";
 import type { Variant } from "@blazell/validators/client";
+import { flexRender, type ColumnDef } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { useDataTable } from "~/components/templates/table/use-data-table";
+import { getVariantColumns } from "./columns";
 
 interface VariantTableProps {
 	variants: Variant[];
@@ -41,7 +40,6 @@ export default function VariantTable({
 		data: variants,
 	});
 
-	const [parent] = useAutoAnimate({ duration: 100 });
 	return (
 		<Table>
 			<TableHeader>
@@ -62,13 +60,14 @@ export default function VariantTable({
 					</TableRow>
 				))}
 			</TableHeader>
-			<TableBody ref={parent}>
+			<TableBody>
 				{table.getRowModel().rows.length > 0 ? (
 					table.getRowModel().rows.map((row) => {
 						return (
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && "selected"}
+								onClick={() => setVariantID(row.original.id)}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>

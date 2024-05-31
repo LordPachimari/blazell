@@ -24,8 +24,8 @@ export default function Orders() {
 	}, []);
 	const [orderID, setOrderID] = useState<string | undefined>(undefined);
 	return (
-		<main className="w-full p-4 md:p-10 justify-center flex flex-col lg:flex-row gap-6">
-			<section className="w-full lg:w-8/12">
+		<main className="w-full p-4 justify-center flex flex-col lg:flex-row gap-6">
+			<section className="w-full xl:w-8/12">
 				<div className="flex flex-col pb-4">
 					<PageHeader title="Orders" />
 					<div className="flex gap-4">
@@ -41,11 +41,11 @@ export default function Orders() {
 					setOrderID={setOrderID}
 				/>
 			</section>
-			<section className="w-full lg:w-4/12 relative flex flex-col items-start">
+			<section className="w-full lg:w-4/12 relative lg:flex flex-col items-start hidden">
 				{orderID ? (
 					<OrderPreview orderID={orderID} />
 				) : (
-					<div className="h-[58rem] w-[28rem] sticky top-20 flex justify-center items-center border bg-mauve-1 hover:bg-mauve-2 rounded-lg">
+					<div className="h-[58rem] w-[28rem] sticky top-10 flex justify-center items-center border bg-mauve-1 hover:bg-mauve-2 rounded-2xl">
 						<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
 					</div>
 				)}

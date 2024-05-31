@@ -1,5 +1,5 @@
 import { DndContext } from "@dnd-kit/core";
-import type { Image } from "@blazell/validators";
+import type { Image } from "@blazell/db";
 import { useCallback } from "react";
 import { LargeFirstTile } from "~/components/dnd-kit/Sortable/large-first-tile";
 import { FileUpload } from "~/components/molecules/file-upload";

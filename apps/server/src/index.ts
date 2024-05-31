@@ -19,6 +19,8 @@ import orders from "./routes/orders";
 import carts from "./routes/carts";
 import variants from "./routes/variants";
 import images from "./routes/images";
+import stores from "./routes/stores";
+import products from "./routes/products";
 import { Schema } from "@effect/schema";
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -56,6 +58,7 @@ app.post("/pull/:spaceID", async (c) => {
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
 		c.req.param("spaceID"),
 	);
+	console.log("cartID", c.req.header("x-cart-id"));
 	const body = PullRequest.decodeUnknownSync(await c.req.json());
 	console.log("subspaceIDs", subspaceIDs);
 
@@ -166,4 +169,6 @@ app.route("/orders", orders);
 app.route("/carts", carts);
 app.route("/variants", variants);
 app.route("/images", images);
+app.route("/stores", stores);
+app.route("/products", products);
 export default app;

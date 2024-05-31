@@ -7,16 +7,9 @@ import {
 	SelectValue,
 } from "@blazell/ui/select";
 import { toast } from "@blazell/ui/toast";
-import {
-	productStatuses,
-	type PublishedVariant,
-	type UpdateProduct,
-} from "@blazell/validators";
+import { productStatuses, type UpdateProduct } from "@blazell/validators";
 import type { Product } from "@blazell/validators/client";
 import { useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
-import { AlertDialogComponent } from "~/components/molecules/alert";
-import type { ProductForm } from "../product-input";
 
 export function ProductStatus({
 	status,

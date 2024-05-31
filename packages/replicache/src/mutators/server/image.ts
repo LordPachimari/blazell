@@ -100,7 +100,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 
 		return yield* tableMutator.update(
 			entityID,
-			{ images: updatedImages },
+			{ images: updatedImages, thumbnail: updatedImages[0] },
 			"variants",
 		);
 	}),
@@ -108,7 +108,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 
 const deleteImage = zod(DeleteImageSchema, (input) => {
 	return Effect.gen(function* () {
-		const { cloudflareID, imageID, entityID } = input;
+		const { imageID, entityID } = input;
 
 		const tableMutator = yield* TableMutator;
 		const { manager } = yield* Database;
@@ -136,38 +136,22 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 			);
 		}
 
-		if (!cloudflareID)
-			return yield* tableMutator.update(
-				entityID,
-				{
-					images: entity.images?.filter((image) => image.id !== imageID) ?? [],
-				},
-				"variants",
-			);
+		yield* pipe(
+			Effect.tryPromise(() => env.R2.delete(`images/${imageID}`)),
+			Effect.retry({ times: 3 }),
+			Effect.orDie,
 
-		yield* Http.request
-			.del(
-				`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${imageID}`,
-			)
-			.pipe(
-				Http.request.setHeaders({
-					Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-				}),
-				Http.client.fetch,
-				Effect.retry({ times: 3 }),
-				Effect.scoped,
-				Effect.orDie,
-				Effect.zipLeft(
-					tableMutator.update(
-						entityID,
-						{
-							images:
-								entity.images?.filter((image) => image.id !== imageID) ?? [],
-						},
-						"variants",
-					),
+			Effect.zipLeft(
+				tableMutator.update(
+					entityID,
+					{
+						images:
+							entity.images?.filter((image) => image.id !== imageID) ?? [],
+					},
+					"variants",
 				),
-			);
+			),
+		);
 	});
 });
 

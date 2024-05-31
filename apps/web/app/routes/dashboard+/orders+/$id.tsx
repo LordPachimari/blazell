@@ -8,9 +8,9 @@ import type {
 	Order,
 } from "@blazell/validators/client";
 import { useNavigate, useParams } from "@remix-run/react";
-import { OrderStatus } from "~/components/molecules/order-status";
-import { PaymentStatus } from "~/components/molecules/payment-status";
-import { ShippingStatus } from "~/components/molecules/shipping-status";
+import { OrderStatus } from "~/components/molecules/statuses/order-status";
+import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
+import { ShippingStatus } from "~/components/molecules/statuses/shipping-status";
 import { Total } from "~/components/templates/cart/total-info";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { ReplicacheStore } from "~/replicache/store";
@@ -23,7 +23,7 @@ const OrderRoute = () => {
 	const navigate = useNavigate();
 	return (
 		<main className="w-full relative flex p-4 md:p-10 justify-center">
-			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-4">
+			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-6">
 				<section className="w-full lg:w-8/12 flex flex-col gap-4 order-1 lg:order-0">
 					<Button
 						variant="ghost"
@@ -70,9 +70,12 @@ const CustomerInfo = ({ order }: { order: Order | undefined | null }) => {
 			<CardFooter>
 				<div className="grid">
 					<address className="grid gap-0.5 not-italic ">
-						<span className="flex justify-between ">
+						<span className="flex justify-between">
 							<p className="font-semibold">email:</p>
-							<a href="mailto:" className="text-mauve-10">
+							<a
+								href="mailto:"
+								className="text-mauve-10 text-ellipsis overflow-hidden"
+							>
 								{order?.email}
 							</a>
 						</span>
@@ -113,7 +116,7 @@ const CustomerNote = () => {
 				<h1>Customer Note</h1>
 			</CardHeader>
 			<CardContent>
-				<p>Customer did not leave a note</p>
+				<p className="text-mauve-11 text-sm">Customer did not leave a note.</p>
 			</CardContent>
 		</Card>
 	);

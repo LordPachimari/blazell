@@ -17,6 +17,7 @@ import { DataTablePagination } from "~/components/templates/table/data-table-pag
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { getCustomersColumns } from "./columns";
 import type { Customer } from "@blazell/validators/client";
+import { useNavigate } from "@remix-run/react";
 
 interface CustomersTableProps {
 	customers: Customer[];
@@ -37,6 +38,7 @@ function CustomersTable({
 		data: customers,
 	});
 	const [parent] = useAutoAnimate({ duration: 100 });
+	const navigate = useNavigate();
 
 	return (
 		<div className="space-y-4">
@@ -52,7 +54,7 @@ function CustomersTable({
 			/>
 			<div className="shadow-md">
 				<Table>
-					<TableHeader>
+					<TableHeader className="bg-mauve-a-2">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
@@ -76,6 +78,9 @@ function CustomersTable({
 								<TableRow
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
+									onClick={() =>
+										navigate(`/dashboard/customers/${row.original.id}`)
+									}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id}>

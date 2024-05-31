@@ -1,17 +1,13 @@
 function ParallaxContainer({
 	children,
-	className = "",
+	className = "h-screen",
 }: {
 	children: React.ReactNode;
 	className?: string;
 }) {
 	return (
-		<div
-			className={`${className} sm:h-[100vh] h-[80vh] flex justify-center transition-all  `}
-		>
-			<div className="fixed inset-0 md:inset-auto md:min-w-[40rem]">
-				{children}
-			</div>
+		<div className={className}>
+			<div className="fixed inset-0">{children}</div>
 		</div>
 	);
 }

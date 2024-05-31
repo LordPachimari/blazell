@@ -15,7 +15,6 @@ export const productOptionValues = pgTable(
 	{
 		id: varchar("id").notNull().primaryKey(),
 		replicachePK: varchar("replicache_pk"),
-		variantID: varchar("variant_id").references(() => variants.id),
 		value: varchar("value").notNull(),
 		optionID: varchar("option_id")
 			.notNull()
@@ -23,7 +22,6 @@ export const productOptionValues = pgTable(
 		version: integer("version").notNull().default(0),
 	},
 	(productOption) => ({
-		variantIDIndex: index("variant_id_index").on(productOption.variantID),
 		optionIDIndex: index("option_id_index").on(productOption.optionID),
 	}),
 );
@@ -51,7 +49,6 @@ export const productOptionValuesToVariants = pgTable(
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.optionValueID, t.variantID] }),
-		index: index("povtov_id_index").on(t.id),
 	}),
 );
 export const productOptionValuesToVariantsRelations = relations(

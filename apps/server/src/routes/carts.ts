@@ -37,6 +37,7 @@ app.post("/create-cart", async (c) => {
 								prefix: "cart",
 								id: cartID,
 							}),
+							currencyCode: "AUD",
 							...(auth?.userId && { userID: auth.userId }),
 						}),
 					);
@@ -127,6 +128,7 @@ app.post("/complete-cart", async (c) => {
 					}
 
 					const newUserID = generateID({ prefix: "user" });
+					const newShippingAddressID = generateID({ prefix: "address" });
 
 					/* create new user if not found */
 					if (!existingUser) {
@@ -138,6 +140,24 @@ app.post("/complete-cart", async (c) => {
 								version: 0,
 								email: checkoutInfo.email,
 								fullName: checkoutInfo.fullName,
+							}),
+						);
+					}
+
+					/* create new address*/
+					if (!cart.shippingAddressID) {
+						yield* Effect.tryPromise(() =>
+							transaction.insert(schema.addresses).values({
+								id: newShippingAddressID,
+								address: checkoutInfo.shippingAddress.address,
+								city: checkoutInfo.shippingAddress.city,
+								countryCode: checkoutInfo.shippingAddress.countryCode,
+								postalCode: checkoutInfo.shippingAddress.postalCode,
+								province: checkoutInfo.shippingAddress.province,
+								version: 0,
+								createdAt: new Date().toISOString(),
+								replicachePK: newShippingAddressID,
+								userID: existingUser ? existingUser.id : newUserID,
 							}),
 						);
 					}
@@ -174,13 +194,14 @@ app.post("/complete-cart", async (c) => {
 										prefix: "order",
 									}),
 									email: checkoutInfo.email ?? "email not provided",
-									billingAddressID: cart.billingAddressID,
-									shippingAddressID: cart.shippingAddressID,
+									//TODO
+									billingAddressID:
+										cart.shippingAddressID ?? newShippingAddressID,
+									shippingAddressID:
+										cart.shippingAddressID ?? newShippingAddressID,
 									phone: checkoutInfo.phone,
 									fullName: checkoutInfo.fullName,
-									...(cart.userID
-										? { userID: cart.userID }
-										: { userID: existingUser ? existingUser.id : newUserID }),
+									userID: existingUser ? existingUser.id : newUserID,
 									storeID,
 									total: subtotal,
 									status: "pending",
@@ -197,69 +218,53 @@ app.post("/complete-cart", async (c) => {
 							.values(Array.from(storeIDToOrder.values()))
 							.returning({ id: schema.orders.id }),
 					);
-					yield* Effect.all(
-						[
-							/* for each line item, update the orderID, so that order will include those items */
-							/* for each line item, remove the cartID, so that cart will not include items that were successfully ordered */
-							Effect.forEach(
-								Array.from(storeIDToLineItem.entries()),
-								([storeID, items]) =>
-									Effect.gen(function* () {
-										const effect = Effect.forEach(
-											items,
-											(item) => {
-												return Effect.tryPromise(() =>
-													transaction.update(schema.lineItems).set({
-														cartID: null,
-														replicachePK: generateReplicachePK({
-															id: item.id,
-															filterID: storeIDToOrder.get(storeID)!.id,
-															prefix: "line_item",
-														}),
-														orderID: storeIDToOrder.get(storeID)!.id,
+					yield* Effect.all([
+						/* for each line item, update the orderID, so that order will include those items */
+						/* for each line item, remove the cartID, so that cart will not include items that were successfully ordered */
+						Effect.forEach(
+							Array.from(storeIDToLineItem.entries()),
+							([storeID, items]) =>
+								Effect.gen(function* () {
+									const effect = Effect.forEach(
+										items,
+										(item) => {
+											return Effect.tryPromise(() =>
+												transaction.update(schema.lineItems).set({
+													cartID: null,
+													replicachePK: generateReplicachePK({
+														id: item.id,
+														filterID: storeIDToOrder.get(storeID)!.id,
+														prefix: "line_item",
 													}),
-												);
-											},
-											{ concurrency: "unbounded" },
-										);
-										return yield* effect;
+													orderID: storeIDToOrder.get(storeID)!.id,
+												}),
+											);
+										},
+										{ concurrency: "unbounded" },
+									);
+									return yield* effect;
+								}),
+							{ concurrency: "unbounded" },
+						),
+
+						/* save user info for the cart */
+						Effect.tryPromise(() =>
+							transaction
+								.update(schema.carts)
+								.set({
+									fullName: cart.fullName,
+									email: cart.email,
+									phone: cart.phone,
+									version: sql`${schema.carts.version} + 1`,
+									userID: existingUser ? existingUser.id : newUserID,
+									...(!cart.shippingAddressID && {
+										shippingAddressID: newShippingAddressID,
 									}),
-								{ concurrency: "unbounded" },
-							),
+								})
 
-							/* save user info for the cart */
-							Effect.tryPromise(() =>
-								transaction
-									.update(schema.carts)
-									.set({
-										fullName: cart.fullName,
-										email: cart.email,
-										phone: cart.phone,
-										version: sql`${schema.carts.version} + 1`,
-										...(!cart.userID && {
-											userID: existingUser ? existingUser.id : newUserID,
-										}),
-									})
-									.where(eq(schema.carts.id, id)),
-							),
-
-							/* save address info for the cart */
-							Effect.tryPromise(() =>
-								transaction
-									.update(schema.addresses)
-									.set({
-										address: checkoutInfo.shippingAddress.address,
-										city: checkoutInfo.shippingAddress.city,
-										countryCode: checkoutInfo.shippingAddress.countryCode,
-										postalCode: checkoutInfo.shippingAddress.postalCode,
-										province: checkoutInfo.shippingAddress.province,
-										version: sql`${schema.addresses.version} + 1`,
-									})
-									.where(eq(schema.addresses.id, cart.shippingAddressID!)),
-							),
-						],
-						{ concurrency: 3 },
-					);
+								.where(eq(schema.carts.id, id)),
+						),
+					]);
 					return orderIDs.map((order) => order.id);
 				}).pipe(
 					Effect.catchTags({

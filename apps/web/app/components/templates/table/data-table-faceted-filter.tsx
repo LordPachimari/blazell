@@ -40,7 +40,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
-					size="sm"
+					size="md"
 					className="h-10 rounded-xl border-dashed "
 				>
 					<PlusCircledIcon className="mr-2 h-4 w-4" />
@@ -58,7 +58,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 								{selectedValues.size > 2 ? (
 									<Badge
 										variant="secondary"
-										className="rounded-lg px-1 h-10 font-normal"
+										className="rounded-2xl px-1 h-10 font-normal"
 									>
 										{selectedValues.size} selected
 									</Badge>

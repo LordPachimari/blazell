@@ -29,10 +29,10 @@ export function RowActions({
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="ghost"
-					className="flex h-10 w-10 p-0 data-[state=open]:bg-muted"
+					className="flex rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
 					type="button"
 				>
-					<DotsHorizontalIcon className="h-8 w-8" />
+					<DotsHorizontalIcon className="h-4 w-4 md:h-8 md:w-8" />
 					<span className="sr-only">Open menu</span>
 				</Button>
 			</DropdownMenuTrigger>

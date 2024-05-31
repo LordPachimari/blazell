@@ -3,7 +3,9 @@ import type { InferInsertModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-const ProductOptionValueSchema = createInsertSchema(schema.productOptionValues);
+export const ProductOptionValueSchema = createInsertSchema(
+	schema.productOptionValues,
+);
 export const UpdateProductOptionValuesSchema = z.object({
 	productID: z.string(),
 	optionID: z.string(),

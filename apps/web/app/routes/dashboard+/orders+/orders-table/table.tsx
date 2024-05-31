@@ -25,6 +25,7 @@ interface OrdersTableProps {
 	createOrder?: () => Promise<void>;
 	setOrderID?: (id: string | undefined) => void;
 	orderID?: string | undefined;
+	toolbar?: boolean;
 }
 
 function OrdersTable({
@@ -32,6 +33,7 @@ function OrdersTable({
 	createOrder,
 	setOrderID,
 	orderID,
+	toolbar = true,
 }: Readonly<OrdersTableProps>) {
 	const columns = useMemo<ColumnDef<Order>[]>(() => getOrdersColumns(), []);
 	const table = useDataTable({
@@ -43,19 +45,21 @@ function OrdersTable({
 
 	return (
 		<div className="space-y-4">
-			<DataTableToolbar
-				viewOptions={false}
-				table={table}
-				filterableColumns={filterableColumns}
-				{...(createOrder && {
-					toolbarButton: (
-						<Button size="md" onClick={createOrder} type="button">
-							<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
-							Custom Order
-						</Button>
-					),
-				})}
-			/>
+			{toolbar && (
+				<DataTableToolbar
+					viewOptions={false}
+					table={table}
+					filterableColumns={filterableColumns}
+					{...(createOrder && {
+						toolbarButton: (
+							<Button size="md" onClick={createOrder} type="button">
+								<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
+								Custom Order
+							</Button>
+						),
+					})}
+				/>
+			)}
 			{dashboardRep?.online && (
 				<div className="w-full flex items-center gap-2">
 					<Ping />
@@ -64,7 +68,7 @@ function OrdersTable({
 			)}
 			<div className="shadow-md">
 				<Table>
-					<TableHeader>
+					<TableHeader className="bg-mauve-a-2">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {

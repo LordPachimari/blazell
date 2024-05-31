@@ -12,7 +12,8 @@
 				"useSingleVarDeclarator":"off"
 			},
 			"suspicious": {
-				"noExplicitAny": "warn"
+				"noExplicitAny": "warn",
+				"noArrayIndexKey":"warn"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"
@@ -20,6 +21,7 @@
 			"complexity": {
 				"noStaticOnlyClass": "off"
 			}
+			
 		}
 	},
 	"formatter": {

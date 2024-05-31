@@ -1,7 +1,7 @@
 import { cn } from "@blazell/ui";
 import { toast } from "@blazell/ui/toast";
 import { formatBytes, generateID } from "@blazell/utils";
-import type { Image } from "@blazell/validators";
+import type { Image } from "@blazell/db";
 import { UploadIcon } from "@radix-ui/react-icons";
 import * as base64 from "base64-arraybuffer";
 import { Console, Effect } from "effect";
@@ -183,7 +183,7 @@ export function FileUpload(props: FileUploaderProps) {
 							<div
 								{...getRootProps()}
 								className={cn(
-									"group relative grid h-[10rem] w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-mauve-7 px-5 py-2.5 text-center transition hover:bg-mauve-2",
+									"group relative grid h-[10rem] w-full cursor-pointer place-items-center rounded-2xl border-2 border-dashed border-mauve-7 px-5 py-2.5 text-center transition hover:bg-mauve-2",
 									"ring-offset-background focus-visible:outline outline-none focus:border-crimson-7 focus-visible:ring-2 outline-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 									isDragActive && "border-mauve-3",
 									isDisabled && "pointer-events-none opacity-60",

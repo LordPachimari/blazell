@@ -29,6 +29,16 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 									prices: true,
 								},
 							},
+							defaultVariant: {
+								with: {
+									prices: true,
+								},
+							},
+							options: {
+								with: {
+									optionValues: true,
+								},
+							},
 						},
 					})
 				: manager.query.products.findMany({

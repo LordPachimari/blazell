@@ -18,6 +18,7 @@ import { CustomersTable } from "./customers-table/table";
 export default function CustomersPage() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
+	console.log("customers", customers);
 	const createCustomer = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
@@ -38,7 +39,7 @@ export default function CustomersPage() {
 							createCustomer={createCustomer}
 						/>
 					</div>
-					<div className="w-full lg:w-4/12">
+					<div className="w-full lg:w-4/12 lg:block hidden">
 						<CustomersInfo />
 					</div>
 				</div>
@@ -70,7 +71,7 @@ function CustomersInfo() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
 	return (
-		<Card>
+		<Card className="min-w-[24rem]">
 			<CardHeader className="pb-4">
 				<CardTitle>New customers</CardTitle>
 			</CardHeader>
