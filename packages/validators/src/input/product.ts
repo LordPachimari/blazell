@@ -43,11 +43,11 @@ export type AssignOptionValueToVariant = z.infer<
 
 export const ProductDuplicateSchema = z.object({
 	originalProductID: z.string(),
-	product: ProductSchema,
-	defaultVariant: VariantSchema,
-	prices: z.array(PriceSchema),
-	options: z.array(ProductOptionSchema),
-	optionValues: z.array(ProductOptionValueSchema),
+	newDefaultVariantID: z.string(),
+	newProductID: z.string(),
+	newPriceIDs: z.array(z.string()),
+	newOptionIDs: z.array(z.string()),
+	newOptionValueIDs: z.array(z.string()),
 });
 
 export type ProductDuplicate = z.infer<typeof ProductDuplicateSchema>;

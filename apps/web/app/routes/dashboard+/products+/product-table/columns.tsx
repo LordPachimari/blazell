@@ -38,8 +38,10 @@ function StatusIcon({ status }: { status: Product["status"] }) {
 
 export function getProductsColumns({
 	deleteProduct,
+	duplicateProduct,
 }: {
-	deleteProduct: (keys: string[]) => Promise<void>;
+	deleteProduct: (keys: string[]) => void;
+	duplicateProduct: (keys: string[]) => void;
 }): ColumnDef<Product, unknown>[] {
 	return [
 		{
@@ -197,7 +199,13 @@ export function getProductsColumns({
 		},
 		{
 			id: "actions",
-			cell: ({ row }) => <RowActions row={row} deleteProduct={deleteProduct} />,
+			cell: ({ row }) => (
+				<RowActions
+					row={row}
+					deleteProduct={deleteProduct}
+					duplicateProduct={duplicateProduct}
+				/>
+			),
 		},
 	];
 }

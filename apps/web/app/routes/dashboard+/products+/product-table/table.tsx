@@ -23,17 +23,19 @@ import { filterableColumns, getProductsColumns } from "./columns";
 interface ProductsTableProps {
 	products: Product[];
 	createProduct: () => Promise<void>;
-	deleteProduct: (keys: string[]) => Promise<void>;
+	deleteProduct: (keys: string[]) => void;
+	duplicateProduct: (keys: string[]) => void;
 }
 
 function ProductsTable({
 	products,
 	createProduct,
 	deleteProduct,
+	duplicateProduct,
 }: Readonly<ProductsTableProps>) {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<Product>[]>(
-		() => getProductsColumns({ deleteProduct }),
+		() => getProductsColumns({ deleteProduct, duplicateProduct }),
 		[deleteProduct],
 	);
 	const navigate = useNavigate();
@@ -58,7 +60,7 @@ function ProductsTable({
 					</Button>
 				}
 			/>
-			<div className="shadow-md">
+			<div className="shadow-md rounded-2xl">
 				<Table>
 					<TableHeader className="bg-mauve-a-2">
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -129,7 +131,11 @@ function ProductsTable({
 			</div>
 			<DataTablePagination table={table} />
 			{table.getFilteredSelectedRowModel().rows.length > 0 && (
-				<DataTableFloatingBar table={table} onDelete={deleteProduct} />
+				<DataTableFloatingBar
+					table={table}
+					onDelete={deleteProduct}
+					onDuplicate={duplicateProduct}
+				/>
 			)}
 		</div>
 	);

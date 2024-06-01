@@ -35,9 +35,9 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			entity = yield* Effect.tryPromise(() =>
 				manager.query.variants.findFirst({
 					where: (variants, { eq }) => eq(variants.id, entityID),
-					columns:{
+					columns: {
 						images: true,
-					}
+					},
 				}),
 			).pipe(
 				Effect.catchTags({
@@ -101,11 +101,13 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			...uploaded,
 		];
 
-		return yield* Effect.all([tableMutator.update(
-			entityID,
-			{ images: updatedImages, thumbnail: updatedImages[0] },
-			"variants",
-		)]);
+		return yield* Effect.all([
+			tableMutator.update(
+				entityID,
+				{ images: updatedImages, thumbnail: updatedImages[0] },
+				"variants",
+			),
+		]);
 	}),
 );
 

@@ -28,7 +28,12 @@ import {
 	updateProductOption,
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
-import { createVariant, deleteVariant, updateVariant } from "./variant";
+import {
+	createVariant,
+	deleteVariant,
+	duplicateVariant,
+	updateVariant,
+} from "./variant";
 import { deleteImage, updateImagesOrder, uploadImages } from "./image";
 import { createCart } from "./carts";
 
@@ -44,6 +49,7 @@ const DashboardMutators = {
 	deleteProductOptionValue,
 	deletePrices,
 	deleteVariant,
+	duplicateVariant,
 	updateProduct,
 	duplicateProduct,
 	updateImagesOrder,
@@ -130,6 +136,9 @@ export const affectedSpaces: AffectedSpaces = {
 		dashboard: ["store"],
 		marketplace: ["products"],
 		user: ["cart"],
+	},
+	duplicateVariant: {
+		dashboard: ["store"],
 	},
 	updateProduct: {
 		dashboard: ["store"],

@@ -35,9 +35,9 @@ function Currencies({
 		<DialogRoot direction="right" open={opened} onOpenChange={setDialogOpened}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent>
-				<DialogTitle>Currencies</DialogTitle>
+				<DialogTitle className="p-4">Currencies</DialogTitle>
 
-				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] py-1 ">
+				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] py-2 ">
 					<ToggleGroup
 						defaultValue={Array.from(existingPrices)}
 						variant="outline"
@@ -55,10 +55,11 @@ function Currencies({
 						{/* ))} */}
 					</ToggleGroup>
 				</ScrollArea>
-				<div>
+				<div className="p-4">
 					<Button
 						size="md"
 						type="button"
+						className="w-full"
 						onClick={async () => {
 							if (id && currencyCodes.length > 0) {
 								await createPrices({

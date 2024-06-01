@@ -44,3 +44,13 @@ export const PublishedVariantSchema = VariantSchema.required({
 	prices: z.array(PriceSchema),
 });
 export type PublishedVariant = z.infer<typeof PublishedVariantSchema>;
+export const VariantDuplicateSchema = z.object({
+	originalVariantID: z.string(),
+	newVariantID: z.string(),
+	newPriceIDs: z.array(z.string()),
+});
+export type VariantDuplicate = z.infer<typeof VariantDuplicateSchema>;
+export const DuplicateVariantSchema = z.object({
+	duplicates: z.array(VariantDuplicateSchema),
+});
+export type DuplicateVariant = z.infer<typeof DuplicateVariantSchema>;

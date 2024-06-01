@@ -13,31 +13,21 @@ export const ReplicacheStore = {
 		createScan<Item>(rep, prefix),
 };
 
-function createGetByPK<T>(
-	rep: Replicache | null,
-	key: string,
-): T | null | undefined {
-	const [itemState, setItemState] = useState<T | null | undefined>(undefined);
-	useSubscribe(
+function createGetByPK<T>(rep: Replicache | null, key: string): T | null {
+	const item = useSubscribe(
 		rep,
 		async (tx) => {
 			const item = await tx.get(key);
-			if (item) return setItemState(item as T);
-			return setItemState(null);
+			return item as T;
 		},
 		{ default: null, dependencies: [key] },
 	);
 
-	return itemState;
+	return item;
 }
 
-function createGetByID<T>(
-	rep: Replicache | null,
-	id: string,
-): T | null | undefined {
-	const [itemState, setItemState] = useState<T | null | undefined>(undefined);
-
-	useSubscribe(
+function createGetByID<T>(rep: Replicache | null, id: string): T | null {
+	const item = useSubscribe(
 		rep,
 		async (tx) => {
 			const [item] = await tx
@@ -52,21 +42,19 @@ function createGetByID<T>(
 				.values()
 				.toArray();
 
-			if (item) return setItemState(item as T);
-			return setItemState(null);
+			return item as T;
 		},
 
 		{ default: null, dependencies: [id] },
 	);
 
-	return itemState;
+	return item;
 }
 function createGetByHandle<T>(
 	rep: Replicache | null,
 	handle: string,
-): T | null | undefined {
-	const [itemState, setItemState] = useState<T | null | undefined>(undefined);
-	useSubscribe(
+): T | null {
+	const item = useSubscribe(
 		rep,
 		async (tx) => {
 			const [item] = await tx
@@ -80,14 +68,13 @@ function createGetByHandle<T>(
 				.values()
 				.toArray();
 
-			if (item) return setItemState(item as T);
-			return setItemState(null);
+			return item as T;
 		},
 
 		{ default: null, dependencies: [handle] },
 	);
 
-	return itemState;
+	return item;
 }
 
 function createScan<T>(rep: Replicache | null, prefix: string): T[] {

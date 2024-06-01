@@ -1,5 +1,4 @@
-import { Copy, CreditCard, MoreVertical } from "lucide-react";
-import { useSubscribe } from "replicache-react";
+import { cn } from "@blazell/ui";
 import { Button, buttonVariants } from "@blazell/ui/button";
 import {
 	Card,
@@ -17,33 +16,26 @@ import {
 } from "@blazell/ui/dropdown-menu";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Separator } from "@blazell/ui/separator";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
 import type {
 	LineItem as LineItemType,
 	Order,
 } from "@blazell/validators/client";
-import { LineItem } from "~/components/templates/line-item/line-item";
-import { Total } from "~/components/templates/cart/total-info";
 import { Link } from "@remix-run/react";
-import { cn } from "@blazell/ui";
+import { Copy, CreditCard, MoreVertical } from "lucide-react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
+import { Total } from "~/components/templates/cart/total-info";
+import { LineItem } from "~/components/templates/line-item/line-item";
+import { ReplicacheStore } from "~/replicache/store";
+import { useReplicache } from "~/zustand/replicache";
 
 export const OrderPreview = ({ orderID }: { orderID: string }) => {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const order = ReplicacheStore.getByID<Order>(dashboardRep, orderID);
-	const items = useSubscribe(
+	const items = ReplicacheStore.scan<LineItemType>(
 		dashboardRep,
-		async (tx) => {
-			return (await tx
-				.scan({ prefix: `line_item_${orderID}` })
-				.values()
-				.toArray()) as LineItemType[];
-		},
-		{ default: [], dependencies: [orderID] },
+		`line_item_${orderID}`,
 	);
-	console.log("order", order);
 
 	return (
 		<Card

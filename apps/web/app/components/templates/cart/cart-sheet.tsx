@@ -15,17 +15,15 @@ import { strokeWidth } from "@blazell/ui/icons";
 import { useCartState } from "~/zustand/state";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
-import { LineItem } from "../line-item/line-item";
+import { LineItem, LineItemSkeleton } from "../line-item/line-item";
 import { Button, buttonVariants } from "@blazell/ui/button";
 import { Link } from "@remix-run/react";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { cn } from "@blazell/ui";
 
-export const CartSheet = ({
-	cartID,
-}: { cartID: string | null | undefined }) => {
+export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 	const userRep = useReplicache((state) => state.userRep);
-	console.log("cartID", cartID);
+	const initialized = ReplicacheStore.getByPK<string>(userRep, "init");
 	const cart = ReplicacheStore.getByPK<Cart>(userRep, cartID ?? "__");
 	const items = ReplicacheStore.scan<LineItemType>(userRep, "line_item");
 
@@ -33,7 +31,6 @@ export const CartSheet = ({
 	const [parent] = useAutoAnimate(/* optional config */);
 
 	const { opened, setOpened } = useCartState();
-	console.log("cart", cart);
 
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
@@ -50,8 +47,12 @@ export const CartSheet = ({
 				<DialogTitle className="p-4 border-b border-mauve-7">Cart</DialogTitle>
 				<ScrollArea className="h-[75vh] px-4 pt-2">
 					<ul className="flex flex-col gap-2" ref={parent}>
+						{!initialized &&
+							Array.from({ length: 5 }).map((_, i) => (
+								<LineItemSkeleton key={i} />
+							))}
 						{items.length === 0 && (
-							<p className="text-mauve-11 dark:text-white text-center">
+							<p className="text-mauve-11 mt-40 dark:text-white text-center">
 								Cart is empty
 							</p>
 						)}
@@ -73,7 +74,7 @@ export const CartSheet = ({
 				<Total
 					className="mt-auto px-4 pb-2 border-t border-t-mauve-7"
 					cartOrOrder={cart}
-					lineItems={items || []}
+					lineItems={items}
 				/>
 				<div className="w-full px-4 pb-4">
 					<Link

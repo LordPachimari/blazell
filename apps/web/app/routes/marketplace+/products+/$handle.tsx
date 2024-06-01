@@ -1,10 +1,10 @@
-import { json, type LoaderFunction } from "@remix-run/cloudflare";
-import { userContext } from "~/sessions.server";
-import { useLoaderData, useParams, useSearchParams } from "@remix-run/react";
 import type { Product, Variant } from "@blazell/validators/client";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { json, type LoaderFunction } from "@remix-run/cloudflare";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
+import { ReplicacheStore } from "~/replicache/store";
+import { userContext } from "~/sessions.server";
+import { useReplicache } from "~/zustand/replicache";
 type LoaderData = {
 	product: Product | null;
 	cartID: string | undefined;
@@ -76,7 +76,7 @@ export default function Page() {
 				setVariantIDOrHandle={setSelectedVariantHandle}
 				selectedVariantIDOrHandle={selectedVariantHandle}
 				cartID={cartID}
-				defaultVariant={defaultVariant}
+				defaultVariant={defaultVariant ?? null}
 			/>
 		</main>
 	);

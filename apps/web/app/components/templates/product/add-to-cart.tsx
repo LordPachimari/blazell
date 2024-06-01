@@ -6,7 +6,6 @@ import { useReplicache } from "~/zustand/replicache";
 import { useCartState } from "~/zustand/state";
 import type { LineItem, Product, Variant } from "@blazell/validators/client";
 import { useFetcher } from "@remix-run/react";
-import { useAuth } from "@clerk/remix";
 
 const AddToCart = ({
 	cartID,
@@ -15,8 +14,8 @@ const AddToCart = ({
 	isDashboard,
 }: {
 	cartID?: string;
-	variant: Variant | null | undefined;
-	product: Product | null | undefined;
+	variant: Variant | null;
+	product: Product | null;
 	isDashboard?: boolean;
 }) => {
 	const fetcher = useFetcher();

@@ -16,12 +16,14 @@ import { toast } from "@blazell/ui/toast";
 
 interface DataTableFloatingBarProps<TData extends { id: string }> {
 	table: Table<TData>;
-	onDelete: (keys: string[]) => Promise<void>;
+	onDelete: (keys: string[]) => void;
+	onDuplicate: (keys: string[]) => void;
 }
 
 export function DataTableFloatingBar<TData extends { id: string }>({
 	table,
 	onDelete,
+	onDuplicate,
 }: DataTableFloatingBarProps<TData>) {
 	const rows = table.getFilteredSelectedRowModel().rows;
 
@@ -56,6 +58,11 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										size="icon"
 										className="rounded-full"
 										disabled={isPending}
+										onClick={() => {
+											onDuplicate(rows.map((row) => row.original.id));
+											table.toggleAllRowsSelected(false);
+											toast.success("Duplicated successfully.");
+										}}
 									>
 										{isPending && method === "export" ? (
 											<LoadingSpinner />

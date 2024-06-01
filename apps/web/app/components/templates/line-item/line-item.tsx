@@ -1,6 +1,7 @@
 import { Card } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { Separator } from "@blazell/ui/separator";
+import { Skeleton } from "@blazell/ui/skeleton";
 import { toast } from "@blazell/ui/toast";
 import { getLineItemPriceAmount, truncateString } from "@blazell/utils";
 import type { LineItem as LineItemType } from "@blazell/validators/client";
@@ -110,5 +111,47 @@ export const LineItem = ({
 			</li>
 			<Separator className="my-2" />
 		</>
+	);
+};
+export const LineItemSkeleton = () => {
+	return (
+		<li className="w-full flex gap-2">
+			<Card className="aspect-square border-none flex items-center justify-center p-0 rounded-2xl relative w-[100px]">
+				<Skeleton className="w-[100px] h-[100px] rounded-2xl" />
+			</Card>
+			<div className="flex gap-2 w-full justify-between">
+				<div className="w-full flex flex-col gap-2 justify-between">
+					<Skeleton className="w-[150px] h-[10px]" />
+					<div className="flex flex-col gap-2">
+						<Skeleton className="w-[150px] h-[10px]" />
+						<Skeleton className="w-[150px] h-[10px]" />
+					</div>
+					<div className="flex items-center">
+						<button
+							type="button"
+							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+						>
+							<Icons.minus size={10} />
+						</button>
+						<Skeleton className="w-[15px] h-[15px] mx-2" />
+						<button
+							type="button"
+							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+						>
+							<Icons.plus size={10} />
+						</button>
+					</div>
+				</div>
+				<div className="flex flex-col items-end justify-between">
+					<Skeleton className="w-[50px] h-[10px]" />
+					<button
+						type="button"
+						className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
+					>
+						<Icons.trash size={12} />
+					</button>
+				</div>
+			</div>
+		</li>
 	);
 };

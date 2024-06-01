@@ -13,7 +13,7 @@ function Header({
 	user,
 }: {
 	authID: string | null;
-	cartID: string | null | undefined;
+	cartID: string | null;
 	user: User | undefined;
 }) {
 	return (

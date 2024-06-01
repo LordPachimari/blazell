@@ -121,7 +121,11 @@ function App() {
 				<UserReplicacheProvider cartID={data.cartID}>
 					<DashboardReplicacheProvider>
 						<Sidebar />
-						<Header cartID={data.cartID} authID={data.authID} user={user} />
+						<Header
+							cartID={data.cartID ?? null}
+							authID={data.authID}
+							user={user}
+						/>
 						<Outlet />
 						<Toaster />
 						<ClientOnly>

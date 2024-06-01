@@ -16,12 +16,14 @@ import { toast } from "@blazell/ui/toast";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;
-	deleteProduct: (keys: string[]) => Promise<void>;
+	deleteProduct: (keys: string[]) => void;
+	duplicateProduct: (keys: string[]) => void;
 }
 
 export function RowActions<TData>({
 	row,
 	deleteProduct,
+	duplicateProduct,
 }: DataTableRowActionsProps) {
 	const navigate = useNavigate();
 
@@ -41,17 +43,16 @@ export function RowActions<TData>({
 				<DropdownMenuItem
 					onClick={async (e) => {
 						e.stopPropagation();
-						// await deleteProduct(row.original.id);
+
 						navigate(`/dashboard/products/${row.original.id}`);
 					}}
 				>
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={async (e) => {
+					onClick={(e) => {
 						e.stopPropagation();
-						// await deleteProduct(row.original.id);
-						toast.success("Product duplicated");
+						duplicateProduct([row.original.id]);
 					}}
 				>
 					Duplicate
@@ -60,8 +61,7 @@ export function RowActions<TData>({
 				<DropdownMenuItem
 					onClick={async (e) => {
 						e.stopPropagation();
-						await deleteProduct([row.original.id]);
-						toast.success("Product deleted. Press Ctrl+Z to undo.");
+						deleteProduct([row.original.id]);
 					}}
 				>
 					Delete

@@ -1,23 +1,18 @@
 import type { WriteTransaction } from "replicache";
 
 import { generateReplicachePK } from "@blazell/utils";
-import type {
-	CreateProduct,
-	DeleteInput,
-	DuplicateProduct,
-	InsertVariant,
-	ProductDuplicate,
-	UpdateProduct,
+import {
+	InvalidValue,
+	NotFound,
+	type CreateProduct,
+	type DuplicateProduct,
+	type InsertVariant,
+	type ProductDuplicate,
+	type UpdateProduct,
 } from "@blazell/validators";
-import type {
-	Product,
-	ProductOption,
-	ProductOptionValue,
-	Variant,
-} from "@blazell/validators/client";
-import { getEntityFromID } from "./util/get-id";
+import type { Price, Product, Variant } from "@blazell/validators/client";
 import { Effect } from "effect";
-import { satisfies } from "effect/Function";
+import { getEntityFromID } from "./util/get-id";
 
 export function productNotFound(id: string) {
 	console.info(`Product ${id} not found`);
@@ -46,6 +41,7 @@ async function deleteProduct(tx: WriteTransaction, input: { keys: string[] }) {
 	console.log("keys", keys);
 	for (const key of keys) {
 		const product = (await getEntityFromID(tx, key)) as Product | undefined;
+		console.log("product to delete", product);
 		product && (await tx.del(product.replicachePK));
 	}
 }
@@ -80,61 +76,164 @@ async function duplicateProduct(tx: WriteTransaction, input: DuplicateProduct) {
 	await Effect.runPromise(
 		Effect.forEach(duplicates, (_duplicate) => duplicate(tx, _duplicate), {
 			concurrency: "unbounded",
-		}),
+		}).pipe(Effect.orDie),
 	);
 }
 const duplicate = (tx: WriteTransaction, duplicate: ProductDuplicate) =>
 	Effect.gen(function* () {
+		const {
+			newDefaultVariantID,
+			newOptionIDs,
+			newOptionValueIDs,
+			newPriceIDs,
+			newProductID,
+			originalProductID,
+		} = duplicate;
 		const product = (yield* Effect.tryPromise(() =>
-			tx.get(duplicate.product.replicachePK),
+			getEntityFromID(tx, originalProductID),
 		)) as Product | undefined;
 
 		if (!product) {
-			return yield* Effect.fail(`Product ${duplicate.product.id} not found`);
+			return yield* Effect.fail(
+				new NotFound({ message: `Product ${originalProductID} not found` }),
+			);
 		}
+		const defaultVariant = (yield* Effect.tryPromise(() =>
+			getEntityFromID(tx, product.defaultVariantID),
+		)) as Variant | undefined;
 
-		const optionIDToOptionValue = new Map<string, ProductOptionValue[]>();
-		yield* Effect.forEach(duplicate.optionValues, (optionValue) =>
-			Effect.sync(() => {
-				const optionValues =
-					optionIDToOptionValue.get(optionValue.optionID) ?? [];
-				optionValues.push(optionValue as ProductOptionValue);
-				optionIDToOptionValue.set(optionValue.optionID, optionValues);
-			}),
-		);
-
+		if (!defaultVariant) {
+			return yield* Effect.fail(
+				new NotFound({
+					message: `Default variant ${product.defaultVariantID} not found`,
+				}),
+			);
+		}
+		const prices = defaultVariant.prices;
+		const options = product.options ?? [];
+		const optionValues = options.flatMap((option) => option.optionValues ?? []);
+		const optionIDtoNewOptionID = new Map<string, string>();
+		const optionValueIDtoNewOptionValueID = new Map<string, string>();
+		const priceIDtoNewPriceID = new Map<string, string>();
 		yield* Effect.all(
 			[
-				Effect.tryPromise(() =>
-					tx.set(duplicate.product.replicachePK, {
-						...duplicate.product,
-						options: duplicate.options.map(
-							(option) =>
-								({
-									...option,
-									optionValues: optionIDToOptionValue.get(option.id) ?? [],
-								}) satisfies ProductOption,
-						),
-						collection: product.collection,
-						defaultVariant: duplicate.defaultVariant,
-					} as Product),
+				Effect.forEach(
+					options,
+					(option, index) =>
+						Effect.sync(() => {
+							optionIDtoNewOptionID.set(option.id, newOptionIDs[index]!);
+						}),
+					{ concurrency: "unbounded" },
 				),
-				Effect.tryPromise(() =>
-					tx.set(
-						duplicate.defaultVariant.replicachePK,
-						duplicate.defaultVariant,
-					),
+				Effect.forEach(
+					optionValues,
+					(optionValue, index) =>
+						Effect.sync(() => {
+							optionValueIDtoNewOptionValueID.set(
+								optionValue.id,
+								newOptionValueIDs[index]!,
+							);
+						}),
+					{ concurrency: "unbounded" },
+				),
+				Effect.forEach(prices, (price, index) =>
+					Effect.sync(() => {
+						priceIDtoNewPriceID.set(price.id, newPriceIDs[index]!);
+					}),
 				),
 			],
-			{
-				concurrency: 2,
-			},
+			{ concurrency: 3 },
+		);
+
+		if (
+			prices.length > newPriceIDs.length ||
+			options.length > newOptionIDs.length ||
+			optionValues.length > newOptionValueIDs.length
+		) {
+			return yield* Effect.fail(
+				new InvalidValue({
+					message:
+						"Mismatched number of new prices id, options id, or option values id.",
+				}),
+			);
+		}
+		const newDefaultVariant: Variant = {
+			...defaultVariant,
+			id: newDefaultVariantID,
+			replicachePK: generateReplicachePK({
+				prefix: "default_var",
+				id: newDefaultVariantID,
+				filterID: newProductID,
+			}),
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			version: 0,
+			handle: null,
+			productID: newProductID,
+			prices: prices.map(
+				(price) =>
+					({
+						...price,
+						id: priceIDtoNewPriceID.get(price.id)!,
+						replicachePK: null,
+						variantID: newDefaultVariantID,
+						version: 0,
+					}) satisfies Price,
+			),
+			optionValues: (defaultVariant.optionValues ?? []).map((value, index) => ({
+				optionValue: {
+					id: optionValueIDtoNewOptionValueID.get(value.optionValue.id)!,
+					replicachePK: null,
+					option: {
+						...value.optionValue.option,
+						id: optionIDtoNewOptionID.get(value.optionValue.optionID)!,
+						productID: newProductID,
+						version: 0,
+					},
+					optionID: optionIDtoNewOptionID.get(value.optionValue.optionID)!,
+					version: 0,
+					value: value.optionValue.value,
+				},
+			})),
+		};
+		//TODO : add collection
+		yield* Effect.tryPromise(() =>
+			tx.set(newProductID, {
+				...product,
+				id: newProductID,
+				replicachePK: generateReplicachePK({
+					prefix: "product",
+					id: newProductID,
+				}),
+
+				defaultVariantID: newDefaultVariantID,
+				defaultVariant: newDefaultVariant,
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				variants: [],
+				metadata: null,
+				options: options.map((option) => ({
+					...option,
+					id: optionIDtoNewOptionID.get(option.id)!,
+					replicachePK: null,
+					optionValues: option.optionValues
+						? option.optionValues?.map((value) => ({
+								...value,
+								id: optionValueIDtoNewOptionValueID.get(value.id)!,
+								optionID: optionIDtoNewOptionID.get(value.optionID)!,
+								version: 0,
+							}))
+						: [],
+				})),
+				version: 0,
+				status: "draft",
+			} satisfies Product),
 		);
 	});
 export {
 	createProduct,
 	deleteProduct,
+	duplicateProduct,
 	publishProduct,
 	updateProduct,
-	duplicateProduct,
 };

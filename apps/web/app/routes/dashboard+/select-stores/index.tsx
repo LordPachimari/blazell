@@ -23,11 +23,11 @@ export default function SelectStores() {
 			<ul
 				ref={parent}
 				className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4", {
-					"md:grid-cols-1 lg:grid-cols-1": stores.length === 1,
-					"lg:grid-cols-2": stores.length === 2,
+					"md:grid-cols-1 lg:grid-cols-1": stores?.length === 1,
+					"lg:grid-cols-2": stores?.length === 2,
 				})}
 			>
-				{stores.map((_store, index) => (
+				{stores?.map((_store, index) => (
 					<li
 						key={`${_store.id}_${index}`}
 						className="flex justify-center items-center"

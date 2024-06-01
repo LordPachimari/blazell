@@ -81,6 +81,22 @@ export function Variants({
 		},
 		[dashboardRep],
 	);
+	const duplicateVariant = useCallback(
+		async (keys: string[]) => {
+			if (dashboardRep) {
+				await dashboardRep.mutate.duplicateVariant({
+					duplicates: keys.map((id) => ({
+						newPriceIDs: Array.from({ length: 1 }).map(() =>
+							generateID({ prefix: "price" }),
+						),
+						newVariantID: generateID({ prefix: "variant" }),
+						originalVariantID: id,
+					})),
+				});
+			}
+		},
+		[dashboardRep],
+	);
 
 	return (
 		<Card className="my-4">
@@ -103,6 +119,7 @@ export function Variants({
 					variants={variants ?? []}
 					updateVariant={updateVariant}
 					deleteVariant={deleteVariant}
+					duplicateVariant={duplicateVariant}
 				/>
 			</CardContent>
 			<CardFooter className="justify-center">
@@ -112,6 +129,7 @@ export function Variants({
 					type="button"
 					className="mt-2 text-mauve-11"
 					onClick={createVariant}
+					disabled={options?.length === 0}
 				>
 					<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant

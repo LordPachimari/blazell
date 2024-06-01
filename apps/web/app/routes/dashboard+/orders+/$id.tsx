@@ -12,7 +12,10 @@ import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 import { ShippingStatus } from "~/components/molecules/statuses/shipping-status";
 import { Total } from "~/components/templates/cart/total-info";
-import { LineItem } from "~/components/templates/line-item/line-item";
+import {
+	LineItem,
+	LineItemSkeleton,
+} from "~/components/templates/line-item/line-item";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 
@@ -128,6 +131,8 @@ const OrderInfo = ({ order }: { order: Order | null | undefined }) => {
 		`line_item_${order?.id}`,
 	);
 
+	const initialized = ReplicacheStore.getByPK<string>(dashboardRep, "init");
+
 	return (
 		<Card>
 			<CardHeader className="flex justify-between">
@@ -140,6 +145,10 @@ const OrderInfo = ({ order }: { order: Order | null | undefined }) => {
 			<CardContent>
 				<ul className="flex flex-col gap-2">
 					<Separator className="my-2" />
+					{!initialized &&
+						Array.from({ length: 3 }).map((_, i) => (
+							<LineItemSkeleton key={i} />
+						))}
 					{items.length === 0 && (
 						<p className="text-mauve-11 text-center">Order is empty</p>
 					)}

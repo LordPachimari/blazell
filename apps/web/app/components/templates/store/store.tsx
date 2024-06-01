@@ -11,16 +11,17 @@ import { ProductCard } from "../product/product-card";
 import { StoreInfo } from "./store-info";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
+import { Skeleton } from "@blazell/ui/skeleton";
 
 export function Store({
 	store,
 }: {
-	store: StoreType | undefined;
+	store: StoreType | null;
 }) {
 	const rep = useReplicache((state) => state.dashboardRep);
+	const initialized = ReplicacheStore.getByPK<string>(rep, "init");
 	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 	const navigate = useNavigate();
-	console.log("header", store?.headerImage);
 	return (
 		<div className="relative">
 			<Button
@@ -35,11 +36,9 @@ export function Store({
 			<div
 				className={cn(
 					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
-					{
-						"h-[210px]": !store?.headerImage?.croppedImage,
-					},
 				)}
 			>
+				{!initialized && <Skeleton className="w-full h-[210px]" />}
 				{store?.headerImage?.croppedImage ? (
 					store.headerImage.croppedImage.uploaded ? (
 						<Image
@@ -47,7 +46,7 @@ export function Store({
 							quality={100}
 							src={store.headerImage.croppedImage?.url}
 							alt="header"
-							className="rounded-2xl"
+							className="rounded-2xl w-full"
 						/>
 					) : (
 						<img
@@ -68,7 +67,7 @@ export function Store({
 				)}
 			</div>
 
-			<StoreInfo store={store} productCount={products.length} />
+			<StoreInfo store={store} productCount={products?.length ?? 0} rep={rep} />
 
 			<Tabs defaultValue="products" className="mt-6">
 				<TabsList variant="outline">
@@ -80,7 +79,7 @@ export function Store({
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="products">
-					<ProductSection products={products} />
+					<ProductSection products={products} initialized={!!initialized} />
 				</TabsContent>
 				<TabsContent value="announcements">No announcements.</TabsContent>
 			</Tabs>
@@ -89,13 +88,19 @@ export function Store({
 }
 const ProductSection = ({
 	products,
+	initialized,
 }: {
-	products: Product[];
+	products: Product[] | undefined;
+	initialized: boolean;
 }) => {
 	return (
 		<section className="w-full">
 			<section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-				{products.map((product) => (
+				{!initialized &&
+					Array.from({ length: 4 }).map((_, i) => (
+						<Skeleton key={i} className="w-full h-[300px]" />
+					))}
+				{products?.map((product) => (
 					<Link
 						key={product.id}
 						to={`/dashboard/products/${product.id}`}

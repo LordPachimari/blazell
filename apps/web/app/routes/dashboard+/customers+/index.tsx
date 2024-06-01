@@ -14,11 +14,11 @@ import { PageHeader } from "~/components/page-header";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { CustomersTable } from "./customers-table/table";
+import { Skeleton } from "@blazell/ui/skeleton";
 
 export default function CustomersPage() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
-	console.log("customers", customers);
 	const createCustomer = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
@@ -70,12 +70,24 @@ function Stat({
 function CustomersInfo() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
+	const initialized = ReplicacheStore.getByPK<string>(dashboardRep, "init");
 	return (
 		<Card className="min-w-[24rem]">
 			<CardHeader className="pb-4">
 				<CardTitle>New customers</CardTitle>
 			</CardHeader>
-			<CardContent className="flex flex-col gap-2">
+			<CardContent className="flex flex-col gap-2 min-h-[40vh]">
+				{!initialized &&
+					Array.from({ length: 5 }).map((_, i) => (
+						<div className="flex items-center gap-4" key={i}>
+							<Skeleton className="hidden h-9 w-9 rounded-full sm:flex" />
+							<div className="grid gap-1">
+								<Skeleton className="w-[150px] h-[10px]" />
+							</div>
+
+							<Skeleton className="w-[100px] h-[10px]" />
+						</div>
+					))}
 				{customers.map((customer) => (
 					<div className="flex items-center gap-4" key={customer.id}>
 						<Avatar className="hidden h-9 w-9 sm:flex">

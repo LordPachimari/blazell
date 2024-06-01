@@ -11,10 +11,11 @@ function ProductRoute() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const product = ReplicacheStore.getByID<Product>(dashboardRep, params.id!);
 
-	const [defaultVariant] = ReplicacheStore.scan<Variant>(
+	const variants = ReplicacheStore.scan<Variant>(
 		dashboardRep,
 		`default_var_${params.id!}`,
 	);
+	const [defaultVariant] = variants ?? [];
 
 	const [searchParams] = useSearchParams();
 	const view = searchParams.get("view") || "input";

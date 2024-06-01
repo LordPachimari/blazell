@@ -1,5 +1,5 @@
 import { Clock, Effect, Layer } from "effect";
-import type { PullResponseOKV1 } from "replicache";
+import type { PatchOperation, PullResponseOKV1 } from "replicache";
 
 import { tableNameToTableMap, type Db } from "@blazell/db";
 import { Database, type Cloudflare } from "@blazell/shared";
@@ -12,6 +12,7 @@ import {
 import { ulid } from "ulidx";
 import { ReplicacheContext } from "./context/replicache";
 import { RecordManager } from "./record-manager";
+import { satisfies } from "effect/Function";
 
 export const pull = ({
 	body: pull,
@@ -113,6 +114,13 @@ export const pull = ({
 							const spacePatch = oldSpaceRecord
 								? yield* _(RecordManager.createSpacePatch({ diff: spaceDiff }))
 								: yield* _(RecordManager.createSpaceResetPatch());
+
+							// ADD INDICATION THAT THE CLIENT HAS PULLED.
+							spacePatch.push({
+								key: "init",
+								op: "put",
+								value: "true",
+							} satisfies PatchOperation);
 
 							// 6: PREPARE UPDATES
 							const oldSpaceRecordVersion = Math.max(

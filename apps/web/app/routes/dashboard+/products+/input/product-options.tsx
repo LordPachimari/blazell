@@ -94,16 +94,15 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 			)}
 			<ul ref={parent} className="flex list-none flex-col gap-2 ">
 				{options?.map((option) => (
-					<li key={option.id} className="flex gap-2">
+					<li key={option.id} className="flex gap-2 items-center">
 						<Option
 							onOptionNameChange={onOptionNameChange}
 							onOptionValuesChange={onOptionValuesChange}
 							option={option}
 						/>
-						<Button
-							size="icon"
-							variant={"ghost"}
+						<button
 							type="button"
+							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,
@@ -111,8 +110,8 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 								})
 							}
 						>
-							<Icons.close className="text-red-500" />
-						</Button>
+							<Icons.close className="text-ruby-9" size={20} />
+						</button>
 					</li>
 				))}
 			</ul>

@@ -1,5 +1,5 @@
 import { generateID, generateReplicachePK } from "@blazell/utils";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { ReplicacheStore } from "~/replicache/store";
 import { ACTIVE_STORE_ID } from "~/constants";
@@ -9,6 +9,7 @@ import { PageHeader } from "~/components/page-header";
 import { ProductsTable } from "./product-table/table";
 import type { ActiveStoreID } from "@blazell/validators";
 import { useNavigate } from "@remix-run/react";
+import { set } from "zod";
 
 function ProductsPage() {
 	const rep = useReplicache((state) => state.dashboardRep);
@@ -18,7 +19,7 @@ function ProductsPage() {
 	);
 	const stores = ReplicacheStore.scan<Store>(rep, "store");
 	const store =
-		stores.find((store) => store.id === activeStoreID?.value) ?? stores[0];
+		stores?.find((store) => store.id === activeStoreID?.value) ?? stores?.[0];
 	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 
 	return (
@@ -66,8 +67,37 @@ function Products({
 		}
 	}, [dashboardRep, storeID]);
 	const deleteProduct = useCallback(
+		(keys: string[]) => {
+			if (!dashboardRep) return;
+			toast.promise(
+				"Product deleted. Press CMD+Z to undo.",
+				dashboardRep?.mutate.deleteProduct({ keys }),
+			);
+		},
+		[dashboardRep],
+	);
+	const duplicateProduct = useCallback(
 		async (keys: string[]) => {
-			await dashboardRep?.mutate.deleteProduct({ keys });
+			if (!dashboardRep) return;
+			toast.promise(
+				"Product duplicated",
+				dashboardRep.mutate.duplicateProduct({
+					duplicates: keys.map((id) => ({
+						originalProductID: id,
+						newDefaultVariantID: generateID({ prefix: "default_var" }),
+						newProductID: generateID({ prefix: "product" }),
+						newOptionIDs: Array.from<string>({ length: 10 }).map(() =>
+							generateID({ prefix: "p_option" }),
+						),
+						newOptionValueIDs: Array.from<string>({ length: 20 }).map(() =>
+							generateID({ prefix: "p_op_val" }),
+						),
+						newPriceIDs: Array.from<string>({ length: 10 }).map(() =>
+							generateID({ prefix: "price" }),
+						),
+					})),
+				}),
+			);
 		},
 		[dashboardRep],
 	);
@@ -77,6 +107,7 @@ function Products({
 			products={products ?? []}
 			createProduct={createProduct}
 			deleteProduct={deleteProduct}
+			duplicateProduct={duplicateProduct}
 		/>
 	);
 }

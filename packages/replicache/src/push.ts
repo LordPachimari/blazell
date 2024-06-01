@@ -3,6 +3,7 @@ import { Clock, Console, Effect, Layer } from "effect";
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { type Cloudflare, Database } from "@blazell/shared";
 import {
+	type InvalidValue,
 	MutatorNotFoundError,
 	NeonDatabaseError,
 	type Mutation,
@@ -49,6 +50,7 @@ export const push = ({
 	| TableNotFound
 	| NeonDatabaseError
 	| NotFound
+	| InvalidValue
 	| MutatorNotFoundError,
 	Scope | Cloudflare | ReplicacheContext
 > =>

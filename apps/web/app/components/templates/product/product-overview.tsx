@@ -1,3 +1,4 @@
+import { cn } from "@blazell/ui";
 import { Separator } from "@blazell/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type {
@@ -11,20 +12,17 @@ import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
 import { AddToCart } from "./add-to-cart";
 import { Gallery } from "./gallery";
-import { ProductContainer } from "./product-container";
 import { GeneralInfo } from "./product-info";
-import { cn } from "@blazell/ui";
-import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 
 interface ProductOverviewProps {
-	product: Product | null | undefined;
+	product: Product | null;
 	isDashboard?: boolean;
 	variants: Variant[];
 	selectedVariantIDOrHandle: string | undefined;
 	selectedVariant: Variant | null;
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 	cartID?: string | undefined;
-	defaultVariant: Variant | null | undefined;
+	defaultVariant: Variant | null;
 }
 
 const ProductOverview = ({

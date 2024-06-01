@@ -26,7 +26,12 @@ import {
 	updateProductOption,
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
-import { createVariant, deleteVariant, updateVariant } from "./variant";
+import {
+	createVariant,
+	deleteVariant,
+	duplicateVariant,
+	updateVariant,
+} from "./variant";
 import {
 	deleteProductOptionValue,
 	updateProductOptionValues,
@@ -54,6 +59,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	createVariant,
 	updateVariant,
 	deleteVariant,
+	duplicateVariant,
 	deleteProductOptionValue,
 	updateImagesOrder,
 	updateProductOptionValues,

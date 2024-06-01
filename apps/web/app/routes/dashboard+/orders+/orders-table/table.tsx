@@ -66,7 +66,7 @@ function OrdersTable({
 					<p className="text-crimson-9 text-sm font-medium">real time</p>
 				</div>
 			)}
-			<div className="shadow-md">
+			<div className="shadow-md rounded-2xl">
 				<Table>
 					<TableHeader className="bg-mauve-a-2">
 						{table.getHeaderGroups().map((headerGroup) => (

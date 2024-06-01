@@ -15,14 +15,17 @@ import Image from "~/components/molecules/image";
 import { ClientOnly } from "remix-utils/client-only";
 import { toImageURL } from "~/utils/helpers";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { Skeleton } from "@blazell/ui/skeleton";
+import { ReplicacheStore } from "~/replicache/store";
+import type { Replicache } from "replicache";
 
 export function StoreInfo({
 	store,
 	productCount,
-}: { store: Store | undefined | null; productCount: number }) {
+	rep,
+}: { store: Store | null; productCount: number; rep: Replicache | null }) {
+	const initialized = ReplicacheStore.getByPK<string>(rep, "init");
 	const [aboutOpen, setAboutOpen] = useState(false);
-	console.log("store", store);
-	console.log("url", store?.storeImage?.croppedImage?.url);
 	return (
 		<section>
 			<div className="relative flex h-full  w-full p-0 pt-8 gap-4 ">
@@ -54,34 +57,60 @@ export function StoreInfo({
 					</Avatar>
 				</section>
 				<section className="h-full w-full">
-					<h1 className="line-clamp-2 font-freeman flex-grow text-2xl font-bold leading-none tracking-tight">
-						{store?.name ?? ""}
-					</h1>
-					<span>
-						<h2 className="py-1 text-mauve-11">@{store?.founder?.username}</h2>
-					</span>
+					{!initialized ? (
+						<div className="flex flex-col gap-2">
+							<Skeleton className="w-[100px] h-[15px]" />
+							<Skeleton className="w-[100px] mt-1 h-[15px]" />
+						</div>
+					) : (
+						<div className="flex flex-col gap-2">
+							<h1 className="line-clamp-2 font-freeman flex-grow text-2xl font-bold leading-none tracking-tight">
+								{store?.name ?? ""}
+							</h1>
+							<span>
+								<h2 className="py-1 text-mauve-11">
+									@{store?.founder?.username}
+								</h2>
+							</span>
+						</div>
+					)}
 					<AboutStore
 						isOpen={aboutOpen}
 						setIsOpen={setAboutOpen}
 						store={store}
+						initialized={!!initialized}
 					/>
 
 					<div className="absolute bottom-0">
 						<div className="flex gap-3">
-							<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
-								<p className="font-bold text-black dark:text-white">0</p>{" "}
-								following
-							</h2>
-							<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
-								<p className="font-bold text-black dark:text-white">
-									{productCount}
-								</p>{" "}
-								products
-							</h2>
+							{!initialized ? (
+								<>
+									<Skeleton className="w-[100px] h-[15px]" />
+									<Skeleton className="w-[100px] h-[15px]" />
+								</>
+							) : (
+								<>
+									<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
+										<p className="font-bold text-black dark:text-white">0</p>{" "}
+										following
+									</h2>
+									<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
+										<p className="font-bold text-black dark:text-white">
+											{productCount}
+										</p>{" "}
+										products
+									</h2>
+								</>
+							)}
 						</div>
 						{/* <Button className="mt-2">Follow</Button> */}
 						{store && (
 							<ClientOnly>{() => <EditStore store={store} />}</ClientOnly>
+						)}
+						{!store && (
+							<Button variant="ghost" className="mt-2">
+								Edit store
+							</Button>
 						)}
 					</div>
 				</section>
@@ -94,18 +123,25 @@ const AboutStore = ({
 	isOpen,
 	setIsOpen,
 	store,
+	initialized,
 }: {
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
 	store: Store | undefined | null;
+	initialized: boolean;
 }) => {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger>
 				<span className="flex items-center cursor-pointer text-mauve-11">
-					<p className="text-ellipsis overflow-hidden">
-						{truncateString(store?.description ?? "", 70)}
-					</p>
+					{!initialized ? (
+						<Skeleton className="w-[300px] h-[10px]" />
+					) : (
+						<p className="text-ellipsis overflow-hidden">
+							{truncateString(store?.description ?? "", 70)}
+						</p>
+					)}
+
 					<Icons.right size={17} strokeWidth={strokeWidth} />
 				</span>
 			</DialogTrigger>
@@ -114,7 +150,7 @@ const AboutStore = ({
 					type="button"
 					variant={"ghost"}
 					size="icon"
-					className="text-mauve-11 absolute top-3 right-3"
+					className="text-mauve-11 absolute rounded-full top-3 right-3"
 					onClick={() => setIsOpen(false)}
 				>
 					<Icons.close />

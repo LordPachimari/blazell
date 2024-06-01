@@ -7,7 +7,7 @@ import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 
 interface ProductPreviewProps {
-	product: Product | null | undefined;
+	product: Product | null;
 }
 const ProductPreview = ({ product }: ProductPreviewProps) => {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -41,8 +41,6 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 	const selectedVariant = selectedVariantID
 		? variants.find((v) => v.id === selectedVariantID) ?? null
 		: null;
-	console.log("selectedVariant", selectedVariant);
-	console.log("selectedVariantID", selectedVariantID);
 	return (
 		<ProductOverview
 			product={product}

@@ -11,9 +11,9 @@ export default function StoresPage() {
 		rep,
 		ACTIVE_STORE_ID,
 	);
-	console.log("active", activeStoreID);
 	const stores = ReplicacheStore.scan<StoreType>(rep, "store") ?? [];
-	const store = stores.find((store) => store.id === activeStoreID?.value ?? "");
+	const store =
+		stores.find((store) => store.id === activeStoreID?.value ?? "") ?? null;
 	return (
 		<section className="w-full p-4">
 			<Store store={store} />

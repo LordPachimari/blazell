@@ -16,12 +16,14 @@ interface DataTableRowActionsProps<TData> {
 
 	setVariantID: (id: string | null) => void;
 	deleteVariant: (id: string) => Promise<void>;
+	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 
 export function RowActions({
 	row,
 	setVariantID,
 	deleteVariant,
+	duplicateVariant,
 }: DataTableRowActionsProps<Variant>) {
 	// const task = taskSchema.parse(row.original);
 	return (
@@ -45,8 +47,19 @@ export function RowActions({
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					onClick={async (e) => {
+						e.stopPropagation();
+						await duplicateVariant([row.original.id]);
+					}}
+				>
+					Duplicate
+				</DropdownMenuItem>
+				<DropdownMenuItem
 					className="text-ruby-9"
-					onClick={async () => await deleteVariant(row.original.id)}
+					onClick={async (e) => {
+						e.stopPropagation();
+						await deleteVariant(row.original.id);
+					}}
 				>
 					Delete
 				</DropdownMenuItem>

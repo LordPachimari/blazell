@@ -19,12 +19,14 @@ interface VariantTableProps {
 	updateVariant: (props: UpdateVariant) => Promise<void>;
 
 	deleteVariant: (id: string) => Promise<void>;
+	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 export default function VariantTable({
 	variants,
 	setVariantID,
 	updateVariant,
 	deleteVariant,
+	duplicateVariant,
 }: VariantTableProps) {
 	const columns = useMemo<ColumnDef<Variant>[]>(
 		() =>
@@ -32,8 +34,9 @@ export default function VariantTable({
 				setVariantID,
 				updateVariant,
 				deleteVariant,
+				duplicateVariant,
 			}),
-		[setVariantID, updateVariant, deleteVariant],
+		[setVariantID, updateVariant, deleteVariant, duplicateVariant],
 	);
 	const table = useDataTable({
 		columns,
