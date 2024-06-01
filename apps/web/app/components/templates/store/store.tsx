@@ -15,11 +15,12 @@ import { Skeleton } from "@blazell/ui/skeleton";
 
 export function Store({
 	store,
+	isInitialized,
 }: {
 	store: StoreType | null;
+	isInitialized: boolean;
 }) {
 	const rep = useReplicache((state) => state.dashboardRep);
-	const initialized = ReplicacheStore.getByPK<string>(rep, "init");
 	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 	const navigate = useNavigate();
 	return (
@@ -38,7 +39,7 @@ export function Store({
 					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
 				)}
 			>
-				{!initialized && <Skeleton className="w-full h-[210px]" />}
+				{!isInitialized && <Skeleton className="w-full h-[210px]" />}
 				{store?.headerImage?.croppedImage ? (
 					store.headerImage.croppedImage.uploaded ? (
 						<Image
@@ -67,7 +68,11 @@ export function Store({
 				)}
 			</div>
 
-			<StoreInfo store={store} productCount={products?.length ?? 0} rep={rep} />
+			<StoreInfo
+				store={store}
+				productCount={products?.length ?? 0}
+				isInitialized={isInitialized}
+			/>
 
 			<Tabs defaultValue="products" className="mt-6">
 				<TabsList variant="outline">
@@ -79,7 +84,7 @@ export function Store({
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="products">
-					<ProductSection products={products} initialized={!!initialized} />
+					<ProductSection products={products} isInitialized={!!isInitialized} />
 				</TabsContent>
 				<TabsContent value="announcements">No announcements.</TabsContent>
 			</Tabs>
@@ -88,15 +93,15 @@ export function Store({
 }
 const ProductSection = ({
 	products,
-	initialized,
+	isInitialized,
 }: {
 	products: Product[] | undefined;
-	initialized: boolean;
+	isInitialized: boolean;
 }) => {
 	return (
 		<section className="w-full">
 			<section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-				{!initialized &&
+				{!isInitialized &&
 					Array.from({ length: 4 }).map((_, i) => (
 						<Skeleton key={i} className="w-full h-[300px]" />
 					))}

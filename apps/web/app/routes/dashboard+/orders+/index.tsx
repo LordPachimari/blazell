@@ -7,24 +7,21 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { Progress } from "@blazell/ui/progress";
-import type { Order } from "@blazell/validators/client";
 import { useCallback, useState } from "react";
 import { PageHeader } from "~/components/page-header";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardState } from "~/zustand/state";
 import { OrderPreview } from "./order-preview";
 import { OrdersTable } from "./orders-table/table";
 
 export default function Orders() {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const orders = ReplicacheStore.scan<Order>(dashboardRep, "order");
+	const orders = useDashboardState((state) => state.orders);
 	const createOrder = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
 	}, []);
 	const [orderID, setOrderID] = useState<string | undefined>(undefined);
 	return (
-		<main className="w-full p-4 justify-center flex flex-col lg:flex-row gap-6">
+		<main className="w-full p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full xl:w-8/12">
 				<div className="flex flex-col pb-4">
 					<PageHeader title="Orders" />

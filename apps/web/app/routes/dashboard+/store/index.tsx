@@ -4,6 +4,7 @@ import { Store } from "~/components/templates/store/store";
 import { ACTIVE_STORE_ID } from "~/constants";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
+import { useDashboardState } from "~/zustand/state";
 
 export default function StoresPage() {
 	const rep = useReplicache((state) => state.dashboardRep);
@@ -14,9 +15,10 @@ export default function StoresPage() {
 	const stores = ReplicacheStore.scan<StoreType>(rep, "store") ?? [];
 	const store =
 		stores.find((store) => store.id === activeStoreID?.value ?? "") ?? null;
+	const isInitialized = useDashboardState((state) => state.isInitialized);
 	return (
-		<section className="w-full p-4">
-			<Store store={store} />
+		<section className="w-full p-10">
+			<Store store={store} isInitialized={isInitialized} />
 		</section>
 	);
 }

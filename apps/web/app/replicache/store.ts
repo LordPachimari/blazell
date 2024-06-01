@@ -5,8 +5,6 @@ import { useSubscribe } from "replicache-react";
 export const ReplicacheStore = {
 	getByPK: <Item>(rep: Replicache | null, key: string) =>
 		createGetByPK<Item>(rep, key),
-	getByHandle: <Item>(rep: Replicache | null, handle: string) =>
-		createGetByHandle<Item>(rep, handle),
 	getByID: <Item>(rep: Replicache | null, id: string) =>
 		createGetByID<Item>(rep, id),
 	scan: <Item>(rep: Replicache | null, prefix: string) =>
@@ -46,32 +44,6 @@ function createGetByID<T>(rep: Replicache | null, id: string): T | null {
 		},
 
 		{ default: null, dependencies: [id] },
-	);
-
-	return item;
-}
-function createGetByHandle<T>(
-	rep: Replicache | null,
-	handle: string,
-): T | null {
-	const item = useSubscribe(
-		rep,
-		async (tx) => {
-			const [item] = await tx
-				.scan({
-					indexName: "handle",
-					start: {
-						key: [handle],
-					},
-					limit: 1,
-				})
-				.values()
-				.toArray();
-
-			return item as T;
-		},
-
-		{ default: null, dependencies: [handle] },
 	);
 
 	return item;

@@ -19,7 +19,7 @@ const ProductCard = ({
 	const defaultVariant = ReplicacheStore.getByPK<Variant>(
 		dashboardRep,
 		generateReplicachePK({
-			prefix: "default_var",
+			prefix: "variant_default",
 			filterID: product.id,
 			id: product.defaultVariantID,
 		}),

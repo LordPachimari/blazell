@@ -9,7 +9,7 @@ import { PageHeader } from "~/components/page-header";
 import { ProductsTable } from "./product-table/table";
 import type { ActiveStoreID } from "@blazell/validators";
 import { useNavigate } from "@remix-run/react";
-import { set } from "zod";
+import { useDashboardState } from "~/zustand/state";
 
 function ProductsPage() {
 	const rep = useReplicache((state) => state.dashboardRep);
@@ -20,7 +20,7 @@ function ProductsPage() {
 	const stores = ReplicacheStore.scan<Store>(rep, "store");
 	const store =
 		stores?.find((store) => store.id === activeStoreID?.value) ?? stores?.[0];
-	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
+	const products = useDashboardState((state) => state.products);
 
 	return (
 		<main className="p-10 w-full">
@@ -36,7 +36,7 @@ function Products({
 	products,
 	storeID,
 }: {
-	products: Product[] | undefined;
+	products: Product[];
 	storeID: string | undefined;
 }) {
 	const navigate = useNavigate();
@@ -59,7 +59,7 @@ function Products({
 						filterID: storeID,
 						id: productID,
 					}),
-					defaultVariantID: generateID({ prefix: "default_var" }),
+					defaultVariantID: generateID({ prefix: "variant_default" }),
 				},
 			});
 			toast.success("Product created successfully.");
@@ -84,7 +84,7 @@ function Products({
 				dashboardRep.mutate.duplicateProduct({
 					duplicates: keys.map((id) => ({
 						originalProductID: id,
-						newDefaultVariantID: generateID({ prefix: "default_var" }),
+						newDefaultVariantID: generateID({ prefix: "variant_default" }),
 						newProductID: generateID({ prefix: "product" }),
 						newOptionIDs: Array.from<string>({ length: 10 }).map(() =>
 							generateID({ prefix: "p_option" }),
@@ -104,7 +104,7 @@ function Products({
 
 	return (
 		<ProductsTable
-			products={products ?? []}
+			products={products}
 			createProduct={createProduct}
 			deleteProduct={deleteProduct}
 			duplicateProduct={duplicateProduct}

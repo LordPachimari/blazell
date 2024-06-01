@@ -25,7 +25,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 
 		let entity: Pick<Variant, "images"> | undefined = undefined;
 		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("default_var");
+			entityID.startsWith("variant") || entityID.startsWith("variant_default");
 
 		if (images.length === 0) {
 			return;
@@ -121,7 +121,7 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 
 		let entity: Variant | undefined = undefined;
 		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("default_var");
+			entityID.startsWith("variant") || entityID.startsWith("variant_default");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>
@@ -167,7 +167,7 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 		const { order, entityID } = input;
 		let entity: Variant | undefined = undefined;
 		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("default_var");
+			entityID.startsWith("variant") || entityID.startsWith("variant_default");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>

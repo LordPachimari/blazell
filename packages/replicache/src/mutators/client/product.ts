@@ -24,7 +24,7 @@ async function createProduct(tx: WriteTransaction, input: CreateProduct) {
 	const defaultVariant: InsertVariant = {
 		id: product.defaultVariantID,
 		replicachePK: generateReplicachePK({
-			prefix: "default_var",
+			prefix: "variant_default",
 			filterID: product.id,
 			id: product.defaultVariantID,
 		}),
@@ -161,7 +161,7 @@ const duplicate = (tx: WriteTransaction, duplicate: ProductDuplicate) =>
 			...defaultVariant,
 			id: newDefaultVariantID,
 			replicachePK: generateReplicachePK({
-				prefix: "default_var",
+				prefix: "variant_default",
 				id: newDefaultVariantID,
 				filterID: newProductID,
 			}),

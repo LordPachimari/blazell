@@ -80,7 +80,7 @@ const duplicate = (tx: WriteTransaction, duplicate: VariantDuplicate) =>
 			...variant,
 			id: newVariantID,
 			replicachePK: generateReplicachePK({
-				prefix: "default_var",
+				prefix: "variant_default",
 				id: newVariantID,
 				filterID: variant.productID,
 			}),

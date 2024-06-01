@@ -78,7 +78,7 @@ export function getProductsColumns({
 				const defaultVariant = ReplicacheStore.getByPK<Variant>(
 					dashboardRep,
 					generateReplicachePK({
-						prefix: "default_var",
+						prefix: "variant_default",
 						filterID: row.original.id,
 						id: row.original.defaultVariantID,
 					}),
@@ -123,7 +123,7 @@ export function getProductsColumns({
 				const defaultVariant = ReplicacheStore.getByPK<Variant>(
 					dashboardRep,
 					generateReplicachePK({
-						prefix: "default_var",
+						prefix: "variant_default",
 						filterID: row.original.id,
 						id: row.original.defaultVariantID,
 					}),
@@ -182,7 +182,7 @@ export function getProductsColumns({
 				const defaultVariant = ReplicacheStore.getByPK<Variant>(
 					dashboardRep,
 					generateReplicachePK({
-						prefix: "default_var",
+						prefix: "variant_default",
 						filterID: row.original.id,
 						id: row.original.defaultVariantID,
 					}),

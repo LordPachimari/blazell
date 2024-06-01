@@ -8,7 +8,7 @@ const prefixes = [
 	"collection",
 	"category",
 	"variant",
-	"default_var",
+	"variant_default",
 	"p_option",
 	"p_op_val",
 	"price",

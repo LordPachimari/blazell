@@ -16,7 +16,7 @@ async function updateImagesOrder(
 
 	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
 	const isVariant =
-		entityID.startsWith("variant") || entityID.startsWith("default_var");
+		entityID.startsWith("variant") || entityID.startsWith("variant_default");
 
 	if (!entity) {
 		return entityNotFound(entityID);
@@ -42,7 +42,7 @@ async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 
 	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
 	const isVariant =
-		entityID.startsWith("variant") || entityID.startsWith("default_var");
+		entityID.startsWith("variant") || entityID.startsWith("variant_default");
 
 	if (!entity) {
 		return entityNotFound(entityID);

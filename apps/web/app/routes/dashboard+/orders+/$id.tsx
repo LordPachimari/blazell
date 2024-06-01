@@ -18,6 +18,7 @@ import {
 } from "~/components/templates/line-item/line-item";
 import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
+import { useDashboardState } from "~/zustand/state";
 
 const OrderRoute = () => {
 	const params = useParams();
@@ -131,7 +132,7 @@ const OrderInfo = ({ order }: { order: Order | null | undefined }) => {
 		`line_item_${order?.id}`,
 	);
 
-	const initialized = ReplicacheStore.getByPK<string>(dashboardRep, "init");
+	const isInitialized = useDashboardState((state) => state.isInitialized);
 
 	return (
 		<Card>
@@ -145,7 +146,7 @@ const OrderInfo = ({ order }: { order: Order | null | undefined }) => {
 			<CardContent>
 				<ul className="flex flex-col gap-2">
 					<Separator className="my-2" />
-					{!initialized &&
+					{!isInitialized &&
 						Array.from({ length: 3 }).map((_, i) => (
 							<LineItemSkeleton key={i} />
 						))}

@@ -15,6 +15,7 @@ import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { CustomersTable } from "./customers-table/table";
 import { Skeleton } from "@blazell/ui/skeleton";
+import { useDashboardState } from "~/zustand/state";
 
 export default function CustomersPage() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -68,16 +69,15 @@ function Stat({
 	);
 }
 function CustomersInfo() {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
-	const initialized = ReplicacheStore.getByPK<string>(dashboardRep, "init");
+	const isInitialized = useDashboardState((state) => state.isInitialized);
+	const customers = useDashboardState((state) => state.customers);
 	return (
 		<Card className="min-w-[24rem]">
 			<CardHeader className="pb-4">
 				<CardTitle>New customers</CardTitle>
 			</CardHeader>
 			<CardContent className="flex flex-col gap-2 min-h-[40vh]">
-				{!initialized &&
+				{!isInitialized &&
 					Array.from({ length: 5 }).map((_, i) => (
 						<div className="flex items-center gap-4" key={i}>
 							<Skeleton className="hidden h-9 w-9 rounded-full sm:flex" />

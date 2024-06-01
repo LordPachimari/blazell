@@ -22,9 +22,8 @@ import type { Replicache } from "replicache";
 export function StoreInfo({
 	store,
 	productCount,
-	rep,
-}: { store: Store | null; productCount: number; rep: Replicache | null }) {
-	const initialized = ReplicacheStore.getByPK<string>(rep, "init");
+	isInitialized,
+}: { store: Store | null; productCount: number; isInitialized: boolean }) {
 	const [aboutOpen, setAboutOpen] = useState(false);
 	return (
 		<section>
@@ -57,7 +56,7 @@ export function StoreInfo({
 					</Avatar>
 				</section>
 				<section className="h-full w-full">
-					{!initialized ? (
+					{!isInitialized ? (
 						<div className="flex flex-col gap-2">
 							<Skeleton className="w-[100px] h-[15px]" />
 							<Skeleton className="w-[100px] mt-1 h-[15px]" />
@@ -78,12 +77,12 @@ export function StoreInfo({
 						isOpen={aboutOpen}
 						setIsOpen={setAboutOpen}
 						store={store}
-						initialized={!!initialized}
+						isInitialized={!!isInitialized}
 					/>
 
 					<div className="absolute bottom-0">
 						<div className="flex gap-3">
-							{!initialized ? (
+							{!isInitialized ? (
 								<>
 									<Skeleton className="w-[100px] h-[15px]" />
 									<Skeleton className="w-[100px] h-[15px]" />
@@ -123,18 +122,18 @@ const AboutStore = ({
 	isOpen,
 	setIsOpen,
 	store,
-	initialized,
+	isInitialized,
 }: {
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
 	store: Store | undefined | null;
-	initialized: boolean;
+	isInitialized: boolean;
 }) => {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger>
 				<span className="flex items-center cursor-pointer text-mauve-11">
-					{!initialized ? (
+					{!isInitialized ? (
 						<Skeleton className="w-[300px] h-[10px]" />
 					) : (
 						<p className="text-ellipsis overflow-hidden">

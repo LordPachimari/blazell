@@ -34,7 +34,7 @@ const createProduct = zod(CreateProductSchema, (input) =>
 		const defaultVariant: InsertVariant = {
 			id: product.defaultVariantID,
 			replicachePK: generateReplicachePK({
-				prefix: "default_var",
+				prefix: "variant_default",
 				filterID: product.id,
 				id: product.defaultVariantID,
 			}),
@@ -281,7 +281,7 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				id: newDefaultVariantID,
 				productID: newProductID,
 				replicachePK: generateReplicachePK({
-					prefix: "default_var",
+					prefix: "variant_default",
 					filterID: newProductID,
 					id: newDefaultVariantID,
 				}),
