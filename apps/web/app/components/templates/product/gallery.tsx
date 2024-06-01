@@ -40,20 +40,27 @@ function Gallery({ images }: GalleryProps) {
 		>
 			<div className="flex flex-col gap-4 lg:p-4">
 				<Carousel setApi={setApi} className="h-fit">
-					<CarouselContent>
+					<CarouselContent className="shadow-none">
 						{images.length > 0 &&
 							images.map(({ uploaded, base64, url, name, id, fileType }) => (
-								<CarouselItem key={id} className={cn("aspect-square")}>
+								<CarouselItem
+									key={id}
+									className={cn("aspect-square shadow-none")}
+								>
 									{!uploaded ? (
 										<img
 											alt={name}
-											className={cn("md:rounded-xl border")}
+											className={cn(
+												"md:rounded-xl lg:border lg:border-mauve-7",
+											)}
 											src={toImageURL(base64, fileType)}
 										/>
 									) : (
 										<Image
 											src={url}
-											className={cn("lg:rounded-2xl border")}
+											className={cn(
+												"lg:rounded-2xl lg:border lg:border-mauve-7",
+											)}
 											fit="fill"
 										/>
 									)}
@@ -61,7 +68,7 @@ function Gallery({ images }: GalleryProps) {
 							))}
 						{images.length === 0 && (
 							<CarouselItem className="aspect-square">
-								<Card className="p-4 relative text-center shadow-md height-full cursor-pointer aspect-square">
+								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-none lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
 									<CardContent className="p-0 flex h-full justify-center items-center">
 										<ImagePlaceholder size={30} />
 									</CardContent>

@@ -17,7 +17,7 @@ export default function StoresPage() {
 		stores.find((store) => store.id === activeStoreID?.value ?? "") ?? null;
 	const isInitialized = useDashboardState((state) => state.isInitialized);
 	return (
-		<section className="w-full p-10">
+		<section className="w-full p-4 lg:p-10">
 			<Store store={store} isInitialized={isInitialized} />
 		</section>
 	);

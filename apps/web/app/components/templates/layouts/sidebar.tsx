@@ -133,7 +133,6 @@ const Sidebar = () => {
 									"group/link flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2 ",
 								)}
 								prefetch="viewport"
-								unstable_viewTransition
 							>
 								<div className="flex justify-center ">
 									<Icon
@@ -148,7 +147,7 @@ const Sidebar = () => {
 								</div>
 								<span
 									className={cn(
-										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out group-hover:opacity-100",
+										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out lg:group-hover:opacity-100",
 
 										`/${mainPath}` === item.href && "text-crimson-9",
 										mode === "open" ? "lg:opacity-100" : "opacity-0",

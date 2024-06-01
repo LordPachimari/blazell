@@ -164,7 +164,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-6 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
+				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-10 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
 					<Button
 						variant="ghost"
 						type="button"

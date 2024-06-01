@@ -43,7 +43,7 @@ export function DataTableToolbar<TData>({
 					// onChange={(event) =>
 					// 	table.getColumn("fullName")?.setFilterValue(event.target.value)
 					// }
-					className="h-10 w-[150px] lg:w-[350px] rounded-xl"
+					className="h-10 w-[150px] md:w-[350px] rounded-xl"
 				/>
 
 				{filterableColumns?.map(

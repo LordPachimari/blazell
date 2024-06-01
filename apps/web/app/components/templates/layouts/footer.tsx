@@ -14,7 +14,6 @@ export default function Footer() {
 					<Link
 						className="flex items-center gap-2 text-black dark:text-white md:pt-1"
 						to="/"
-						unstable_viewTransition
 					>
 						{/* <LogoSquare size="sm" /> */}
 						<span className="uppercase">{SITE_NAME}</span>

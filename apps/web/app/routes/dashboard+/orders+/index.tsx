@@ -21,7 +21,7 @@ export default function Orders() {
 	}, []);
 	const [orderID, setOrderID] = useState<string | undefined>(undefined);
 	return (
-		<main className="w-full p-10 justify-center flex flex-col lg:flex-row gap-6">
+		<main className="w-full p-4 lg:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full xl:w-8/12">
 				<div className="flex flex-col pb-4">
 					<PageHeader title="Orders" />

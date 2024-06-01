@@ -86,7 +86,9 @@ export function Store({
 				<TabsContent value="products">
 					<ProductSection products={products} isInitialized={!!isInitialized} />
 				</TabsContent>
-				<TabsContent value="announcements">No announcements.</TabsContent>
+				<TabsContent value="announcements">
+					<p className="text-mauve-11">No announcements found.</p>
+				</TabsContent>
 			</Tabs>
 		</div>
 	);
@@ -95,7 +97,7 @@ const ProductSection = ({
 	products,
 	isInitialized,
 }: {
-	products: Product[] | undefined;
+	products: Product[];
 	isInitialized: boolean;
 }) => {
 	return (
@@ -105,11 +107,13 @@ const ProductSection = ({
 					Array.from({ length: 4 }).map((_, i) => (
 						<Skeleton key={i} className="w-full h-[300px]" />
 					))}
+				{products.length === 0 && (
+					<p className="text-mauve-11">No products found.</p>
+				)}
 				{products?.map((product) => (
 					<Link
 						key={product.id}
 						to={`/dashboard/products/${product.id}`}
-						unstable_viewTransition
 						prefetch="viewport"
 					>
 						<ProductCard product={product} key={product.id} />

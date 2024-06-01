@@ -80,7 +80,6 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 					<Link
 						to="/checkout"
 						prefetch="viewport"
-						unstable_viewTransition
 						className={cn(buttonVariants(), "w-full")}
 					>
 						Checkout
