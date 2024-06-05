@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/db",
+	"name": "@blazell/db",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -33,6 +33,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@effect/schema": "^0.67.9",
 		"@neondatabase/serverless": "^0.9.0",
 		"drizzle-orm": "^0.30.7",
 		"drizzle-zod": "^0.5.1",
@@ -41,8 +42,8 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.7.1",
-		"@pachi/tsconfig": "workspace:^0.1.0",
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tsconfig": "workspace:^0.1.0",
 		"dotenv-cli": "^7.3.0",
 		"drizzle-kit": "^0.21.1",
 		"tsx": "^4.7.2",

@@ -1,5 +1,5 @@
 {
-	"name": "@pachi/expo",
+	"name": "@blazell/expo",
 	"version": "0.1.0",
 	"private": true,
 	"main": "expo-router/entry",
@@ -33,8 +33,8 @@
 		"react-native-screens": "~3.22.1"
 	},
 	"devDependencies": {
-		"@pachi/tailwind-config": "workspace:^0.1.0",
-		"@pachi/tsconfig": "workspace:^0.1.0",
+		"@blazell/tailwind-config": "workspace:^0.1.0",
+		"@blazell/tsconfig": "workspace:^0.1.0",
 		"@babel/core": "^7.23.2",
 		"@babel/preset-env": "^7.23.2",
 		"@babel/runtime": "^7.23.2",

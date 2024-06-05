@@ -1,0 +1,23 @@
+{
+	"name": "@blazell/partykit",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"beautify": "biome format ./src --write",
+		"dev": "partykit dev",
+		"deploy": "pnpm dlx partykit deploy",
+		"format": "biome format .",
+		"lint": "biome lint src"
+	},
+	"dependencies": {
+		"@blazell/db": "workspace:^0.1.0",
+		"partysocket": "^1.0.1",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.3",
+		"partykit": "^0.0.105",
+		"typescript": "^5.4.5",
+		"@blazell/tsconfig": "workspace:*"
+	}
+}

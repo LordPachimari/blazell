@@ -1,9 +1,12 @@
 {
-	"extends": "@pachi/tsconfig/internal-package.json",
+	"extends": "@blazell/tsconfig/base.json",
 	"compilerOptions": {
-		"outDir": "dist",
-		"tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+		"tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+		"paths": {
+			"~/*": ["./src/*"]
+		},
+		"types": ["@cloudflare/workers-types"]
 	},
-	"include": ["src"],
+	"include": ["."],
 	"exclude": ["node_modules"]
 }

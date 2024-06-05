@@ -12,17 +12,12 @@ import {
 import { products } from "./product";
 import { adminsToStores, users } from "./user";
 import { orders } from "./order";
-type Image = {
-	id: string;
-	url?: string;
-	name: string;
-	order: number;
-};
+import type { Image } from "../types/image";
 export const stores = pgTable(
 	"stores",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		name: text("name").notNull(),
 		logo: json("logo").$type<{
 			id: string;
@@ -34,7 +29,7 @@ export const stores = pgTable(
 			.references(() => users.id)
 			.notNull(),
 		storeImage: json("store_image").$type<Image>(),
-		headerImage: json("header_image").$type<Image & { croppedUrl: string }>(),
+		headerImage: json("header_image").$type<Image>(),
 		countryCode: varchar("country_code", { length: 2 }).notNull(),
 		description: text("description"),
 		createdAt: varchar("created_at").notNull(),

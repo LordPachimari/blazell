@@ -12,23 +12,18 @@ import {
 import { prices } from "./price";
 import { products } from "./product";
 import { productOptionValuesToVariants } from "./product-option-value";
+import type { Image } from "../types/image";
 
-export type Image = {
-	id: string;
-	url?: string;
-	name: string;
-	order: number;
-};
 const weightUnits = ["kg", "g", "lb", "oz"] as const;
 export const variants = pgTable(
 	"variants",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		title: varchar("title"),
 		handle: varchar("handle"),
 		barcode: varchar("barcode"),
-		quantity: integer("quantity").notNull().default(0),
+		quantity: integer("quantity").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		productID: varchar("product_id")
 			.references(() => products.id, {

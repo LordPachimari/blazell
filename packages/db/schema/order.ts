@@ -21,12 +21,14 @@ export const orders = pgTable(
 		shippingStatus: text("shipping_status", {
 			enum: ["pending", "shipped", "delivered", "cancelled"],
 		}).default("pending"),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		countryCode: varchar("country_code", { length: 2 }).notNull(),
 		currencyCode: varchar("currency_code", { length: 3 })
 			.notNull()
 			.default("USD"),
-		userID: varchar("user_id").references(() => users.id),
+		userID: varchar("user_id")
+			.notNull()
+			.references(() => users.id),
 		subtotal: integer("subtotal"),
 		total: integer("total"),
 		shippingAddressID: varchar("shipping_address_id").references(

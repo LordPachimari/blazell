@@ -8,7 +8,7 @@ export const productOptions = pgTable(
 	"product_options",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		productID: varchar("product_id")
 			.references(() => products.id, {
 				onDelete: "cascade",

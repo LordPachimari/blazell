@@ -1,10 +1,14 @@
 {
-  "extends": "@pachi/tsconfig/internal-package.json",
-  "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "ES2022"],
-    "jsx": "preserve",
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
-  },
-  "include": ["*.ts", "src"],
-  "exclude": ["node_modules"]
+	"extends": "@blazell/tsconfig/internal-package.json",
+	"compilerOptions": {
+		"lib": ["dom", "dom.iterable", "ES2022"],
+		"jsx": "preserve",
+		"tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+	},
+	"include": [
+		"*.ts",
+		"src",
+		"../../apps/web/app/components/templates/wobble-card.tsx"
+	],
+	"exclude": ["node_modules"]
 }
