@@ -96,7 +96,7 @@ export const affectedSpaces: AffectedSpaces = {
 	createProductOption: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	createPrices: {
 		dashboard: ["store"],
@@ -107,12 +107,12 @@ export const affectedSpaces: AffectedSpaces = {
 	deleteProduct: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	publishProduct: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	duplicateProduct: {
 		dashboard: ["store"],
@@ -120,22 +120,22 @@ export const affectedSpaces: AffectedSpaces = {
 	deleteProductOption: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteProductOptionValue: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deletePrices: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteVariant: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	duplicateVariant: {
 		dashboard: ["store"],
@@ -143,22 +143,22 @@ export const affectedSpaces: AffectedSpaces = {
 	updateProduct: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateImagesOrder: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateProductOption: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateProductOptionValues: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updatePrice: {
 		dashboard: ["store"],
@@ -166,17 +166,17 @@ export const affectedSpaces: AffectedSpaces = {
 	updateVariant: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	uploadImages: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteImage: {
 		dashboard: ["store"],
 		marketplace: ["products"],
-		user: ["cart"],
+		global: ["cart"],
 	},
 	createStore: {
 		dashboard: ["store"],
@@ -188,25 +188,25 @@ export const affectedSpaces: AffectedSpaces = {
 		dashboard: ["store"],
 	},
 	updateUser: {
-		user: ["user"],
+		global: ["user"],
 	},
 	assignOptionValueToVariant: {
 		dashboard: ["store"],
 	},
 	createLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateAddress: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateCart: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteStoreImage: {
 		dashboard: ["store"],
@@ -215,6 +215,6 @@ export const affectedSpaces: AffectedSpaces = {
 		dashboard: ["store"],
 	},
 	createCart: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 };

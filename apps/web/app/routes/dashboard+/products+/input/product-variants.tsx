@@ -8,7 +8,7 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
-import { generateID, generateReplicachePK } from "@blazell/utils";
+import { generateID } from "@blazell/utils";
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
 import { useCallback, useState } from "react";
@@ -50,15 +50,9 @@ export function Variants({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const createVariant = useCallback(async () => {
 		if (!productID) return;
-		const newID = generateID({ prefix: "variant" });
 		const newVariant: InsertVariant = {
-			id: newID,
+			id: generateID({ prefix: "variant" }),
 			productID,
-			replicachePK: generateReplicachePK({
-				id: newID,
-				prefix: "variant",
-				filterID: productID,
-			}),
 			quantity: 1,
 		};
 		await dashboardRep?.mutate.createVariant({
@@ -66,7 +60,7 @@ export function Variants({
 			...(defaultVariant?.prices && { prices: defaultVariant.prices }),
 		});
 
-		setVariantID(newID);
+		setVariantID(newVariant.id);
 		setIsOpen(true);
 	}, [dashboardRep, productID, defaultVariant]);
 	console.log("isOpen", isOpen);

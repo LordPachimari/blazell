@@ -1,20 +1,18 @@
-import { useCallback, useEffect, useMemo } from "react";
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
-import { ReplicacheStore } from "~/replicache/store";
+import debounce from "lodash.debounce";
+import { useCallback, useMemo } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Media } from "./product-media";
 import { Pricing } from "./product-pricing";
 import Stock from "./product-stock";
-import type { UpdateVariant } from "@blazell/validators";
-import debounce from "lodash.debounce";
-import { generateReplicachePK } from "@blazell/utils";
-import { inputVariants } from "@blazell/ui/input";
+import { useDashboardStore } from "~/zustand/store";
 
 interface ProductVariantProps {
 	setIsOpen: (value: boolean) => void;
@@ -35,26 +33,20 @@ export default function ProductVariant({
 	setVariantID,
 	isPublished,
 }: Readonly<ProductVariantProps>) {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variant = ReplicacheStore.getByPK<Variant>(
-		dashboardRep,
-		generateReplicachePK({
-			id: variantID ?? "",
-			prefix: "variant",
-			filterID: productID,
-		}),
-	);
+	const rep = useReplicache((state) => state.dashboardRep);
+	const variantMap = useDashboardStore((state) => state.variantMap);
+	const variant = variantMap.get(variantID ?? "");
 
 	const updateVariant = useCallback(
 		async (props: UpdateVariant) => {
-			if (dashboardRep) {
-				await dashboardRep.mutate.updateVariant({
+			if (rep) {
+				await rep.mutate.updateVariant({
 					id: props.id,
 					updates: props.updates,
 				});
 			}
 		},
-		[dashboardRep],
+		[rep],
 	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

@@ -24,7 +24,7 @@ export const SpaceRecordGetter: SpaceRecordGetterType = {
 	dashboard: {
 		store: storeCVD,
 	},
-	user: {
+	global: {
 		errors: errorsCVD,
 		user: userCVD,
 		cart: cartCVD,
@@ -166,7 +166,6 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									email: true,
 									username: true,
 									phone: true,
-									replicachePK: true,
 								},
 							},
 							shippingAddress: true,

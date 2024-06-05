@@ -4,7 +4,7 @@ export const categories = pgTable(
 	"categories",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		name: varchar("name").notNull(),
 		parentID: varchar("parent_id"),
 		version: integer("version"),

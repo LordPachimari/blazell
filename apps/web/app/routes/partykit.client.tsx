@@ -8,13 +8,15 @@ function PartykitProvider({
 }: Readonly<{
 	cartID: string | undefined;
 }>) {
-	const { dashboardRep, marketplaceRep, userRep } = useReplicache();
+	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	const globalRep = useReplicache((state) => state.globalRep);
+	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { getToken } = useAuth();
 
 	usePartySocket({
 		// usePartySocket takes the same arguments as PartySocket.
 		host: window.ENV.PARTYKIT_HOST, // or localhost:1999 in dev
-		room: "user",
+		room: "global",
 
 		// in addition, you can provide socket lifecycle event handlers
 		// (equivalent to using ws.addEventListener in an effect hook)
@@ -24,13 +26,13 @@ function PartykitProvider({
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
 			console.log("message", subspaces);
-			if (userRep) {
+			if (globalRep) {
 				//@ts-ignore
-				userRep.puller = async (req) => {
+				globalRep.puller = async (req) => {
 					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
-						`${window.ENV.WORKER_URL}/pull/user?${subspaces
+						`${window.ENV.WORKER_URL}/pull/global?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
@@ -54,7 +56,7 @@ function PartykitProvider({
 						},
 					};
 				};
-				userRep.pull();
+				globalRep.pull();
 			}
 		},
 		onClose() {

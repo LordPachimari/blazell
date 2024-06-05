@@ -16,25 +16,19 @@ import {
 } from "@blazell/ui/dropdown-menu";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Separator } from "@blazell/ui/separator";
-import type {
-	LineItem as LineItemType,
-	Order,
-} from "@blazell/validators/client";
 import { Link } from "@remix-run/react";
 import { Copy, CreditCard, MoreVertical } from "lucide-react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 import { Total } from "~/components/templates/cart/total-info";
 import { LineItem } from "~/components/templates/line-item/line-item";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 
 export const OrderPreview = ({ orderID }: { orderID: string }) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const order = ReplicacheStore.getByID<Order>(dashboardRep, orderID);
-	const items = ReplicacheStore.scan<LineItemType>(
-		dashboardRep,
-		`line_item_${orderID}`,
+	const orderMap = useDashboardStore((state) => state.orderMap);
+	const order = orderMap.get(orderID);
+	const items = useDashboardStore((state) => state.lineItems).filter(
+		(item) => item.orderID === orderID,
 	);
 
 	return (

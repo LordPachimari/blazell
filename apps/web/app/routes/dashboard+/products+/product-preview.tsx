@@ -1,29 +1,19 @@
-import { generateReplicachePK } from "@blazell/utils";
-import type { Product, Variant } from "@blazell/validators/client";
+import type { Product } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
-import { useCallback } from "react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 
 interface ProductPreviewProps {
-	product: Product | null;
+	product: Product | undefined;
 }
 const ProductPreview = ({ product }: ProductPreviewProps) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variants = ReplicacheStore.scan<Variant>(
-		dashboardRep,
-		`variant_${product?.id}`,
+	const variantMap = useDashboardStore((state) => state.variantMap);
+	const variants = useDashboardStore((state) =>
+		state.variants.filter(
+			(v) => v.productID === product?.id && v.id !== product?.defaultVariantID,
+		),
 	);
-
-	const defaultVariant = ReplicacheStore.getByPK<Variant>(
-		dashboardRep,
-		generateReplicachePK({
-			prefix: "variant_default",
-			filterID: product?.id ?? "",
-			id: product?.defaultVariantID ?? "",
-		}),
-	);
+	const defaultVariant = variantMap.get(product?.defaultVariantID ?? "");
 	const [searchParams, setSearchParams] = useSearchParams();
 	const selectedVariantID = searchParams.get("variant") ?? undefined;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

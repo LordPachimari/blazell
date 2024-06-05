@@ -13,7 +13,7 @@ export const clientErrors = pgTable(
 	"client_errors",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		title: text("title").notNull(),
 		message: text("message").notNull(),
 		userID: varchar("auth_id").notNull(),

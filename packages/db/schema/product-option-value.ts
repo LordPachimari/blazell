@@ -14,7 +14,7 @@ export const productOptionValues = pgTable(
 	"product_option_values",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		value: varchar("value").notNull(),
 		optionID: varchar("option_id")
 			.notNull()
@@ -38,7 +38,7 @@ export const productOptionValuesToVariants = pgTable(
 	"product_option_values_to_variants",
 	{
 		id: varchar("id").notNull(),
-		replicachePK: varchar("replicache_pk"),
+
 		optionValueID: varchar("option_value_id")
 			.notNull()
 			.references(() => productOptionValues.id, { onDelete: "cascade" }),

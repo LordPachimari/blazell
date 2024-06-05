@@ -40,7 +40,7 @@ export function CategoryDropdown() {
 			<DropdownMenuContent className="w-56">
 				<DropdownMenuSub>
 					<DropdownMenuSubTrigger>
-						<span>Invite users</span>
+						<span>Under development</span>
 					</DropdownMenuSubTrigger>
 					<DropdownMenuPortal>
 						{/* <DropdownMenuSubContent></DropdownMenuSubContent> */}

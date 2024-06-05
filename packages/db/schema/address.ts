@@ -7,7 +7,7 @@ export const addresses = pgTable(
 	"addresses",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		type: text("type", { enum: ["shipping", "billing", "living"] }),
 		address: varchar("address"),
 		city: varchar("city"),

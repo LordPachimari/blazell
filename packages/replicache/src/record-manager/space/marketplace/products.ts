@@ -46,7 +46,7 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 						columns: {
 							id: true,
 							version: true,
-							replicachePK: true,
+
 							score: true,
 						},
 						with: {
@@ -54,7 +54,6 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 								columns: {
 									id: true,
 									version: true,
-									replicachePK: true,
 								},
 							},
 						},

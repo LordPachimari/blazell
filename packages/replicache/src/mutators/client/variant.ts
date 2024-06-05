@@ -6,11 +6,9 @@ import {
 	type UpdateVariant,
 	type VariantDuplicate,
 } from "@blazell/validators";
-import type { WriteTransaction } from "replicache";
-import { getEntityFromID } from "./util/get-id";
+import type { DeepReadonlyObject, WriteTransaction } from "replicache";
 import type { Price, Variant } from "@blazell/validators/client";
 import { Effect } from "effect";
-import { generateReplicachePK } from "@blazell/utils";
 
 export function variantNotFound(id: string) {
 	console.info(`Variant ${id} not found`);
@@ -19,18 +17,18 @@ export function variantNotFound(id: string) {
 async function createVariant(tx: WriteTransaction, input: CreateVariant) {
 	const { variant } = input;
 
-	await tx.set(variant.replicachePK, variant);
+	await tx.set(variant.id, variant);
 }
 
 async function updateVariant(tx: WriteTransaction, input: UpdateVariant) {
 	const { updates, id } = input;
 
-	const variant = (await getEntityFromID(tx, id)) as Variant | undefined;
+	const variant = await tx.get<Variant>(id);
 
 	if (!variant) {
 		return variantNotFound(id);
 	}
-	await tx.set(variant.replicachePK, {
+	await tx.set(id, {
 		...variant,
 		...updates,
 	});
@@ -38,8 +36,7 @@ async function updateVariant(tx: WriteTransaction, input: UpdateVariant) {
 
 async function deleteVariant(tx: WriteTransaction, input: DeleteInput) {
 	const { id } = input;
-	const variant = (await getEntityFromID(tx, id)) as Variant | undefined;
-	variant && (await tx.del(variant.replicachePK));
+	await tx.del(id);
 }
 async function duplicateVariant(tx: WriteTransaction, input: DuplicateVariant) {
 	const { duplicates } = input;
@@ -52,16 +49,17 @@ async function duplicateVariant(tx: WriteTransaction, input: DuplicateVariant) {
 const duplicate = (tx: WriteTransaction, duplicate: VariantDuplicate) =>
 	Effect.gen(function* () {
 		const { originalVariantID, newVariantID, newPriceIDs } = duplicate;
-		const variant = (yield* Effect.tryPromise(() =>
-			getEntityFromID(tx, originalVariantID),
-		)) as Variant | undefined;
+		const variant = yield* Effect.tryPromise(() =>
+			tx.get<Variant>(originalVariantID),
+		);
 
 		if (!variant) {
 			return yield* Effect.fail(`Product ${originalVariantID} not found`);
 		}
+		const prices = variant.prices ?? [];
 		const priceIDtoNewPriceID = new Map<string, string>();
 		yield* Effect.forEach(
-			variant.prices,
+			prices,
 			(price, index) =>
 				Effect.sync(() => {
 					priceIDtoNewPriceID.set(price.id, newPriceIDs[index]!);
@@ -69,40 +67,32 @@ const duplicate = (tx: WriteTransaction, duplicate: VariantDuplicate) =>
 			{ concurrency: "unbounded" },
 		);
 
-		if (variant.prices.length > newPriceIDs.length) {
+		if (prices.length > newPriceIDs.length) {
 			return yield* Effect.fail(
 				new InvalidValue({
 					message: "Mismatched number of new prices id",
 				}),
 			);
 		}
-		const newDefaultVariant: Variant = {
+		const newVariant: DeepReadonlyObject<Variant> = {
 			...variant,
 			id: newVariantID,
-			replicachePK: generateReplicachePK({
-				prefix: "variant_default",
-				id: newVariantID,
-				filterID: variant.productID,
-			}),
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 			version: 0,
 			handle: null,
 			productID: variant.productID,
-			prices: variant.prices.map(
+			prices: prices.map(
 				(price) =>
 					({
 						...price,
 						id: priceIDtoNewPriceID.get(price.id)!,
-						replicachePK: null,
 						variantID: newVariantID,
 						version: 0,
 					}) satisfies Price,
 			),
 		};
-		yield* Effect.tryPromise(() =>
-			tx.set(newDefaultVariant.replicachePK, newDefaultVariant),
-		);
+		yield* Effect.tryPromise(() => tx.set(newVariant.id, newVariant));
 	});
 
 export { createVariant, updateVariant, deleteVariant, duplicateVariant };

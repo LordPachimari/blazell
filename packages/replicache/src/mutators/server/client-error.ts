@@ -26,7 +26,6 @@ const createClientError = zod(
 				message,
 				createdAt: new Date().toISOString(),
 				userID: id,
-				replicachePK: errorID,
 				version: 0,
 			};
 			const tableMutator = yield* TableMutator;

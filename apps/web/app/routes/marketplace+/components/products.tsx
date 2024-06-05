@@ -1,15 +1,12 @@
-import type { Product } from "@blazell/validators/client";
-import { useEffect, useMemo, useState } from "react";
-import type { Replicache } from "replicache";
-import { generateGrid } from "./grid";
-import Image from "~/components/molecules/image";
-import PriceLabel from "~/components/molecules/price-label";
-import { ReplicacheStore } from "~/replicache/store";
-import { generateReplicachePK } from "@blazell/utils";
-import type { PublishedVariant } from "@blazell/validators";
+import type { PublishedProduct } from "@blazell/validators/client";
 import { Link } from "@remix-run/react";
-import Price from "~/components/molecules/price";
 import { useWindowSize } from "@uidotdev/usehooks";
+import { useMemo } from "react";
+import type { Replicache } from "replicache";
+import Image from "~/components/molecules/image";
+import Price from "~/components/molecules/price";
+import { useMarketplaceStore } from "~/zustand/store";
+import { generateGrid } from "./grid";
 
 interface ProductsProps {
 	marketplaceRep: Replicache | null;
@@ -17,52 +14,12 @@ interface ProductsProps {
 }
 
 const Products = ({ marketplaceRep }: ProductsProps) => {
-	const [data, setData] = useState<Product[]>([]);
+	const products = useMarketplaceStore((state) => state.products);
 	const windowSize = useWindowSize();
-	useEffect(() => {
-		marketplaceRep?.experimentalWatch(
-			(diffs) => {
-				for (const diff of diffs) {
-					if (diff.op === "add") {
-						setData((prev) => [
-							...(prev || []),
-							structuredClone(diff.newValue) as Product,
-						]);
-					}
-
-					if (diff.op === "change") {
-						setData((prev) => [
-							...(prev
-								? prev.filter(
-										(item) =>
-											(item as { replicachePK: string }).replicachePK !==
-											diff.key,
-									)
-								: []),
-							structuredClone(diff.newValue) as Product,
-						]);
-					}
-
-					if (diff.op === "del") {
-						setData((prev) =>
-							prev
-								? prev.filter(
-										(item) =>
-											(item as { replicachePK: string }).replicachePK !==
-											diff.key,
-									)
-								: [],
-						);
-					}
-				}
-			},
-			{ prefix: "product", initialValuesInFirstDiff: true },
-		);
-	}, [marketplaceRep]);
 	const productGrids = useMemo(
 		() =>
 			generateGrid({
-				data,
+				data: products,
 				columns: !windowSize.width
 					? 5
 					: windowSize.width < 640
@@ -75,7 +32,7 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 									? 5
 									: 6,
 			}),
-		[data, windowSize.width],
+		[products, windowSize.width],
 	);
 	return (
 		<div className="p-2 md:p-6 md:pt-10 flex flex-col gap-4">
@@ -109,16 +66,9 @@ export { Products };
 const ProductCard = ({
 	product,
 	rep,
-}: { product: Product; rep: Replicache | null }) => {
-	const defaultVariant = ReplicacheStore.getByPK<PublishedVariant>(
-		rep,
-		generateReplicachePK({
-			prefix: "variant_default",
-			filterID: product.id,
-			id: product.defaultVariantID,
-		}),
-	);
-	console.log("defaultVariant", defaultVariant);
+}: { product: PublishedProduct; rep: Replicache | null }) => {
+	const variantMap = useMarketplaceStore((state) => state.variantMap);
+	const defaultVariant = variantMap.get(product.defaultVariantID);
 	if (!defaultVariant) return null;
 	if (!rep) return null;
 	return (

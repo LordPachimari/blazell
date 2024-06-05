@@ -29,10 +29,7 @@ interface SpaceRecordDiff {
 	deletedIDs: string[];
 }
 
-type SubspaceRecord = Omit<
-	ReplicacheSubspaceRecord,
-	"version" | "replicachePK"
->;
+type SubspaceRecord = Omit<ReplicacheSubspaceRecord, "version">;
 
 type ClientRecordDiff = Record<string, number>;
 
@@ -328,37 +325,25 @@ const createSpacePatch = ({
 }): Effect.Effect<PatchOperation[], NeonDatabaseError, Database> => {
 	return Effect.gen(function* () {
 		const patch: PatchOperation[] = [];
-		const [fullRows, replicachePKs] = yield* Effect.all(
-			[
-				Effect.forEach(
-					diff.newIDs.entries(),
-					([tableName, ids]) => {
-						return getFullRows({
-							keys: Array.from(ids),
-							tableName,
-						});
-					},
-					{ concurrency: "unbounded" },
-				).pipe(Effect.map((fullRows) => fullRows.flat())),
-
-				getReplicachePKs({
-					keys: diff.deletedIDs,
-				}),
-			],
-			{
-				concurrency: 2,
+		const fullRows = yield* Effect.forEach(
+			Array.from(diff.newIDs.entries()),
+			([tableName, ids]) => {
+				return getFullRows({
+					keys: Array.from(ids),
+					tableName,
+				});
 			},
-		);
+			{ concurrency: "unbounded" },
+		).pipe(Effect.map((fullRows) => fullRows.flat()));
 
 		const deletePatchEffect = Effect.forEach(
-			replicachePKs,
-			({ replicachePK }) => {
+			diff.deletedIDs,
+			(id) => {
 				return Effect.sync(() => {
-					if (replicachePK)
-						patch.push({
-							op: "del",
-							key: replicachePK,
-						});
+					patch.push({
+						op: "del",
+						key: id,
+					});
 				});
 			},
 			{ concurrency: "unbounded" },
@@ -367,10 +352,10 @@ const createSpacePatch = ({
 			fullRows,
 			(item) => {
 				return Effect.sync(() => {
-					if (item?.replicachePK) {
+					if (item.id) {
 						patch.push({
 							op: "put",
-							key: item.replicachePK,
+							key: item.id,
 							value: item as ReadonlyJSONObject,
 						});
 					}
@@ -420,14 +405,12 @@ const createSpaceResetPatch = <T extends SpaceID>(): Effect.Effect<
 										yield* Effect.forEach(
 											rows,
 											(item) =>
-												Effect.sync(
-													() =>
-														item.replicachePK &&
-														patch.push({
-															op: "put",
-															key: item.replicachePK,
-															value: item as ReadonlyJSONObject,
-														}),
+												Effect.sync(() =>
+													patch.push({
+														op: "put",
+														key: item.id,
+														value: item as ReadonlyJSONObject,
+													}),
 												),
 											{ concurrency: "unbounded" },
 										);
@@ -450,46 +433,12 @@ const getFullRows = ({
 }: {
 	tableName: TableName;
 	keys: string[];
-}): Effect.Effect<
-	Array<{ id: string | null; replicachePK: string | null }>,
-	NeonDatabaseError,
-	Database
-> =>
+}): Effect.Effect<Array<{ id: string | null }>, NeonDatabaseError, Database> =>
 	Effect.gen(function* () {
 		if (keys.length === 0) {
 			return yield* Effect.succeed([]);
 		}
 		return yield* fullRowsGetter(tableName, keys);
-	});
-
-const getReplicachePKs = ({
-	keys,
-}: {
-	keys: string[];
-}): Effect.Effect<
-	{ replicachePK: string | null }[],
-	NeonDatabaseError,
-	Database
-> =>
-	Effect.gen(function* () {
-		if (keys.length === 0) {
-			return yield* Effect.succeed([]);
-		}
-		const { manager } = yield* Database;
-
-		return yield* Effect.tryPromise(() =>
-			manager
-				.select({
-					replicachePK: schema.jsonTable.replicachePK,
-				})
-				.from(schema.jsonTable)
-				.where(inArray(schema.jsonTable.id, keys)),
-		).pipe(
-			Effect.catchTags({
-				UnknownException: (error) =>
-					new NeonDatabaseError({ message: error.message }),
-			}),
-		);
 	});
 
 export const getClientGroupObject = (): Effect.Effect<

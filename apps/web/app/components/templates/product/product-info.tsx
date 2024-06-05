@@ -1,9 +1,14 @@
-import type { Product, Variant } from "@blazell/validators/client";
+import type { PublishedVariant } from "@blazell/validators";
+import type {
+	Product,
+	PublishedProduct,
+	Variant,
+} from "@blazell/validators/client";
 import PriceLabel from "~/components/molecules/price-label";
 
 interface GeneralInfoProps {
-	product: Product | null | undefined;
-	defaultVariant: Variant | undefined | null;
+	product: Product | PublishedProduct | null | undefined;
+	defaultVariant: Variant | PublishedVariant | undefined | null;
 }
 
 function GeneralInfo({ product, defaultVariant }: GeneralInfoProps) {

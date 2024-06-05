@@ -4,13 +4,12 @@ import type {
 	DeleteProductOption,
 	UpdateProductOption,
 } from "@blazell/validators";
-import type { WriteTransaction } from "replicache";
-import { getEntityFromID } from "./util/get-id";
 import type {
 	Product,
 	ProductOptionValue,
 	Variant,
 } from "@blazell/validators/client";
+import type { WriteTransaction } from "replicache";
 import { productNotFound } from "./product";
 import { variantNotFound } from "./variant";
 
@@ -19,16 +18,15 @@ async function createProductOption(
 	input: CreateProductOption,
 ) {
 	const { option } = input;
-	const product = (await getEntityFromID(tx, option.productID)) as
-		| Product
-		| undefined;
+
+	const product = await tx.get<Product>(option.productID);
 
 	if (!product) {
 		return productNotFound(option.productID);
 	}
 	const productOptions = product.options ? product.options : [];
 
-	await tx.set(product.replicachePK, {
+	await tx.set(product.id, {
 		...product,
 		options: [...productOptions, option],
 	});
@@ -40,13 +38,13 @@ async function updateProductOption(
 ) {
 	const { optionID, productID, updates } = input;
 
-	const product = (await getEntityFromID(tx, productID)) as Product | undefined;
+	const product = await tx.get<Product>(productID);
 
 	if (!product) {
 		return productNotFound(productID);
 	}
 
-	await tx.set(product.replicachePK, {
+	await tx.set(productID, {
 		...product,
 		options: product.options?.map((option) =>
 			option.id === optionID ? { ...option, ...updates } : option,
@@ -59,7 +57,8 @@ async function deleteProductOption(
 	input: DeleteProductOption,
 ) {
 	const { optionID, productID } = input;
-	const product = (await getEntityFromID(tx, productID)) as Product | undefined;
+
+	const product = await tx.get<Product>(productID);
 
 	if (!product) {
 		return productNotFound(productID);
@@ -68,7 +67,7 @@ async function deleteProductOption(
 		? product.options.filter((option) => option.id !== optionID)
 		: [];
 
-	await tx.set(product.replicachePK, {
+	await tx.set(productID, {
 		...product,
 		options,
 	});
@@ -80,13 +79,11 @@ async function assignOptionValueToVariant(
 	tx: WriteTransaction,
 	input: AssignOptionValueToVariant,
 ) {
-	const { optionValueID, prevOptionValueID, variantID } = input;
+	const { optionValueID, prevOptionValueID, variantID, productID } = input;
 
-	const product = (await getEntityFromID(tx, input.productID)) as
-		| Product
-		| undefined;
+	const product = await tx.get<Product>(productID);
 
-	const variant = (await getEntityFromID(tx, variantID)) as Variant | undefined;
+	const variant = await tx.get<Variant>(variantID);
 
 	if (!product) {
 		return productNotFound(input.productID);
@@ -113,7 +110,7 @@ async function assignOptionValueToVariant(
 		newOptionValues.push({ optionValue: productOptionValue });
 
 	if (productOptionValue)
-		await tx.set(variant.replicachePK, {
+		await tx.set(variant.id, {
 			...variant,
 			optionValues: newOptionValues,
 		});

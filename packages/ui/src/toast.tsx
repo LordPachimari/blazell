@@ -21,7 +21,7 @@ const toast = {
 			icon: <Icons.circleInfo className="text-sapphire-9" />,
 		});
 	},
-	promise(message: string, promise: Promise<any>) {
+	promise(message: string, promise: Promise<any>, errorMessage?: string) {
 		return sonnerToast.promise(promise, {
 			loading: <LoadingSpinner />,
 			success: () => {
@@ -32,12 +32,22 @@ const toast = {
 					</span>
 				);
 			},
-			error: (
-				<span className="flex items-center gap-2">
-					<Icons.circleError className="text-ruby-9" />
-					Error
-				</span>
-			),
+			error: (error) => {
+				console.error(JSON.stringify(error));
+
+				return (
+					<span className="flex items-center gap-2">
+						<Icons.circleError className="text-ruby-9" />
+						{errorMessage}
+					</span>
+				);
+			},
+			dismissible: true,
+		});
+	},
+	loading(message: string) {
+		return sonnerToast.loading(message, {
+			icon: <LoadingSpinner />,
 		});
 	},
 };

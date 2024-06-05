@@ -20,7 +20,6 @@ export const userCVD: GetRowsWTableName = ({ fullRows = false }) => {
 							columns: {
 								id: true,
 								version: true,
-								replicachePK: true,
 							},
 							where: (users, { eq }) => eq(users.authID, authID),
 						}),

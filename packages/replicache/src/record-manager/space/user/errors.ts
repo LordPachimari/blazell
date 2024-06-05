@@ -23,7 +23,6 @@ export const errorsCVD: GetRowsWTableName = ({ fullRows }) => {
 							columns: {
 								id: true,
 								version: true,
-								replicachePK: true,
 							},
 							where: (errors, { eq }) => eq(errors.id, id),
 						}),

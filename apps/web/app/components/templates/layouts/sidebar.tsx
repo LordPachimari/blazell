@@ -7,6 +7,7 @@ import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-sidebar";
 import { ThemeToggle } from "./theme-toggle";
+import { ClientOnly } from "remix-utils/client-only";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -88,7 +89,7 @@ const Sidebar = () => {
 					"left-[-100px] lg:left-0 group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out lg:hover:w-44 ",
 					{
 						"lg:w-44 left-0": mode === "open",
-						hidden: noSidebarPaths.has(location.pathname),
+						"hidden lg:hidden": noSidebarPaths.has(location.pathname),
 					},
 				)}
 			>
@@ -167,7 +168,7 @@ const Sidebar = () => {
 						},
 					)}
 				>
-					<ThemeToggle />
+					<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
 				</div>
 			</nav>
 		</div>

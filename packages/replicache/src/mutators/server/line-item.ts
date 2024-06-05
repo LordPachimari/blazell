@@ -18,7 +18,6 @@ const createLineItem = zod(CreateLineItemSchema, (input) =>
 				cart: {
 					id: newCartID,
 					createdAt: new Date().toISOString(),
-					replicachePK: newCartID,
 					//TODO: get country code
 					countryCode: "AU",
 					currencyCode: "AUD",

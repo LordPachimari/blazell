@@ -1,9 +1,11 @@
-import { DownloadIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { DownloadIcon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 import * as React from "react";
 
+import { Card, CardContent } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { LoadingSpinner } from "@blazell/ui/loading";
+import { toast } from "@blazell/ui/toast";
 import { Button } from "@pachi/ui/button";
 import {
 	Tooltip,
@@ -11,8 +13,6 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@pachi/ui/tooltip";
-import { Card, CardContent } from "@blazell/ui/card";
-import { toast } from "@blazell/ui/toast";
 
 interface DataTableFloatingBarProps<TData extends { id: string }> {
 	table: Table<TData>;
@@ -59,9 +59,12 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										className="rounded-full"
 										disabled={isPending}
 										onClick={() => {
+											if (rows.length > 20)
+												return toast.error(
+													"You can only duplicate 20 products at a time.",
+												);
 											onDuplicate(rows.map((row) => row.original.id));
 											table.toggleAllRowsSelected(false);
-											toast.success("Duplicated successfully.");
 										}}
 									>
 										{isPending && method === "export" ? (
@@ -112,7 +115,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										onClick={() => {
 											onDelete(rows.map((row) => row.original.id));
 											table.toggleAllRowsSelected(false);
-											toast.success("Deleted successfully.");
 										}}
 									>
 										<Icons.trash
@@ -123,7 +125,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>Delete tasks</p>
+									<p>Delete products</p>
 								</TooltipContent>
 							</Tooltip>
 						</CardContent>

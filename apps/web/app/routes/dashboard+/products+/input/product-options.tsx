@@ -89,7 +89,9 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 			{options && options.length > 0 && (
 				<div className="my-2 flex w-[calc(100%-40px)] gap-2">
 					<label className="w-full text-sm font-bold">{"Option name"}</label>
-					<label className="w-full text-sm font-bold">{"Option values "}</label>
+					<label className="w-full text-sm font-bold">
+						{"Option values (comma separated)"}
+					</label>
 				</div>
 			)}
 			<ul ref={parent} className="flex list-none flex-col gap-2 ">

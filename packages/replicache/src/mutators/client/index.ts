@@ -72,13 +72,13 @@ export const DashboardMutators: DashboardMutatorsType = {
 	deleteStoreImage,
 	setActiveStoreID,
 };
-export type UserMutatorsType = {
+export type GlobalMutatorsType = {
 	[key in keyof Server.UserMutatorsType]: (
 		ctx: WriteTransaction,
 		args: Parameters<Server.UserMutatorsType[key]>[0],
 	) => Promise<void>;
 };
-export const UserMutators: UserMutatorsType = {
+export const GlobalMutators: GlobalMutatorsType = {
 	updateUser,
 	createLineItem,
 	updateLineItem,

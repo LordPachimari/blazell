@@ -1,3 +1,5 @@
+import type { Image } from "@blazell/db";
+import { Cloudflare, Database } from "@blazell/shared";
 import {
 	DeleteImageSchema,
 	ImageUploadError,
@@ -5,16 +7,12 @@ import {
 	NotFound,
 	UpdateImagesOrderSchema,
 	UploadImagesSchema,
-	UploadResponseSchema,
 } from "@blazell/validators";
-import { Console, Effect, pipe } from "effect";
 import type { Variant } from "@blazell/validators/server";
-import { Cloudflare, Database } from "@blazell/shared";
-import { zod } from "../../util/zod";
-import { TableMutator } from "../../context/table-mutator";
-import * as Http from "@effect/platform/HttpClient";
-import type { Image } from "@blazell/db";
 import * as base64 from "base64-arraybuffer";
+import { Effect, pipe } from "effect";
+import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const uploadImages = zod(UploadImagesSchema, (input) =>
 	Effect.gen(function* () {
@@ -24,8 +22,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 		const { entityID, images } = input;
 
 		let entity: Pick<Variant, "images"> | undefined = undefined;
-		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("variant_default");
+		const isVariant = entityID.startsWith("variant");
 
 		if (images.length === 0) {
 			return;
@@ -120,8 +117,7 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 		const { env } = yield* Cloudflare;
 
 		let entity: Variant | undefined = undefined;
-		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("variant_default");
+		const isVariant = entityID.startsWith("variant");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>
@@ -166,8 +162,7 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 		const { manager } = yield* Database;
 		const { order, entityID } = input;
 		let entity: Variant | undefined = undefined;
-		const isVariant =
-			entityID.startsWith("variant") || entityID.startsWith("variant_default");
+		const isVariant = entityID.startsWith("variant");
 
 		if (isVariant)
 			entity = yield* Effect.tryPromise(() =>
@@ -203,4 +198,4 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 	}),
 );
 
-export { uploadImages, deleteImage, updateImagesOrder };
+export { deleteImage, updateImagesOrder, uploadImages };

@@ -1,5 +1,4 @@
 import { Database } from "@blazell/shared";
-import { generateReplicachePK } from "@blazell/utils";
 import {
 	CreateVariantSchema,
 	DeleteInputSchema,
@@ -94,11 +93,6 @@ const duplicate = zod(VariantDuplicateSchema, (input) =>
 			{
 				id: newVariantID,
 				productID: variant.productID,
-				replicachePK: generateReplicachePK({
-					prefix: "variant",
-					filterID: variant.productID,
-					id: newVariantID,
-				}),
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 				version: 0,

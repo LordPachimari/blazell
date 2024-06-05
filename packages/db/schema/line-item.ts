@@ -10,7 +10,7 @@ export const lineItems = pgTable(
 	"line_items",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		cartID: varchar("cart_id").references(() => carts.id),
 		orderID: varchar("order_id").references(() => orders.id),
 		title: varchar("title").notNull(),

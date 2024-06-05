@@ -32,7 +32,7 @@ export function ProductTypeCards() {
 					Digital giftcards.
 				</h2>
 				<p className="mt-4 max-w-[26rem] text-left  text-base/6 text-neutral-200">
-					Pachi allows you to create custom giftcards for your community.
+					Blazell allows you to create custom giftcards for your community.
 				</p>
 			</WobbleCard>
 		</div>

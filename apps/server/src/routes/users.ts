@@ -45,7 +45,7 @@ app.post("/create-user", async (c) => {
 								Effect.scoped,
 							),
 						Http.request
-							.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/user`)
+							.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
 							.pipe(
 								Http.request.jsonBody(["user"]),
 								Effect.andThen(Http.client.fetch),

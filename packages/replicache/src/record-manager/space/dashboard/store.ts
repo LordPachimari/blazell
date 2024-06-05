@@ -24,7 +24,6 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 							columns: {
 								id: true,
 								version: true,
-								replicachePK: true,
 							},
 						}),
 			),
@@ -75,7 +74,6 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 													email: true,
 													username: true,
 													phone: true,
-													replicachePK: true,
 												},
 											},
 											items: {
@@ -112,21 +110,18 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 								columns: {
 									id: true,
 									version: true,
-									replicachePK: true,
 								},
 								with: {
 									products: {
 										columns: {
 											id: true,
 											version: true,
-											replicachePK: true,
 										},
 										with: {
 											variants: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 											defaultVariant: true,
@@ -136,21 +131,18 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 										columns: {
 											id: true,
 											version: true,
-											replicachePK: true,
 										},
 										with: {
 											user: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 											items: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 										},
@@ -243,7 +235,6 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 			},
 			{ concurrency: "unbounded" },
 		);
-		yield* Console.log("CART CVD", JSON.stringify(rowsWTableName));
 
 		return rowsWTableName;
 	});

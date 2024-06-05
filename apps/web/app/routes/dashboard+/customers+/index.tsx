@@ -8,18 +8,14 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { Progress } from "@blazell/ui/progress";
-import type { Customer } from "@blazell/validators/client";
+import { Skeleton } from "@blazell/ui/skeleton";
 import { useCallback } from "react";
 import { PageHeader } from "~/components/page-header";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 import { CustomersTable } from "./customers-table/table";
-import { Skeleton } from "@blazell/ui/skeleton";
-import { useDashboardState } from "~/zustand/state";
 
 export default function CustomersPage() {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const customers = ReplicacheStore.scan<Customer>(dashboardRep, "user");
+	const customers = useDashboardStore((state) => state.customers);
 	const createCustomer = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
@@ -40,7 +36,7 @@ export default function CustomersPage() {
 							createCustomer={createCustomer}
 						/>
 					</div>
-					<div className="w-full lg:w-4/12 lg:block hidden">
+					<div className="w-full lg:w-4/12 lg:block hidden relative">
 						<CustomersInfo />
 					</div>
 				</div>
@@ -69,10 +65,10 @@ function Stat({
 	);
 }
 function CustomersInfo() {
-	const isInitialized = useDashboardState((state) => state.isInitialized);
-	const customers = useDashboardState((state) => state.customers);
+	const customers = useDashboardStore((state) => state.customers);
+	const isInitialized = useDashboardStore((state) => state.isInitialized);
 	return (
-		<Card className="min-w-[24rem]">
+		<Card className="min-w-[24rem] sticky top-10">
 			<CardHeader className="pb-4">
 				<CardTitle>New customers</CardTitle>
 			</CardHeader>

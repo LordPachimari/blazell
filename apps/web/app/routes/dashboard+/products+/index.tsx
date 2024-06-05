@@ -1,26 +1,20 @@
-import { generateID, generateReplicachePK } from "@blazell/utils";
-import { useCallback, useState } from "react";
-import { useReplicache } from "~/zustand/replicache";
-import { ReplicacheStore } from "~/replicache/store";
-import { ACTIVE_STORE_ID } from "~/constants";
 import { toast } from "@blazell/ui/toast";
-import type { Product, Store } from "@blazell/validators/client";
-import { PageHeader } from "~/components/page-header";
-import { ProductsTable } from "./product-table/table";
-import type { ActiveStoreID } from "@blazell/validators";
+import { generateID } from "@blazell/utils";
+import type { Product } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
-import { useDashboardState } from "~/zustand/state";
+import { useCallback, useTransition } from "react";
+import { PageHeader } from "~/components/page-header";
+import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
+import { ProductsTable } from "./product-table/table";
 
 function ProductsPage() {
-	const rep = useReplicache((state) => state.dashboardRep);
-	const activeStoreID = ReplicacheStore.getByPK<ActiveStoreID>(
-		rep,
-		ACTIVE_STORE_ID,
+	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
+	const storeMap = useDashboardStore((state) => state.storeMap);
+	const store = storeMap.get(activeStoreID ?? "");
+	const products = useDashboardStore((state) =>
+		state.products.filter((product) => product.storeID === activeStoreID),
 	);
-	const stores = ReplicacheStore.scan<Store>(rep, "store");
-	const store =
-		stores?.find((store) => store.id === activeStoreID?.value) ?? stores?.[0];
-	const products = useDashboardState((state) => state.products);
 
 	return (
 		<main className="p-10 w-full">
@@ -40,6 +34,7 @@ function Products({
 	storeID: string | undefined;
 }) {
 	const navigate = useNavigate();
+	const [isPending, startTransition] = useTransition();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const createProduct = useCallback(async () => {
@@ -54,12 +49,7 @@ function Products({
 					discountable: true,
 					storeID,
 					version: 0,
-					replicachePK: generateReplicachePK({
-						prefix: "product",
-						filterID: storeID,
-						id: productID,
-					}),
-					defaultVariantID: generateID({ prefix: "variant_default" }),
+					defaultVariantID: generateID({ prefix: "variant" }),
 				},
 			});
 			toast.success("Product created successfully.");
@@ -79,25 +69,28 @@ function Products({
 	const duplicateProduct = useCallback(
 		async (keys: string[]) => {
 			if (!dashboardRep) return;
-			toast.promise(
-				"Product duplicated",
-				dashboardRep.mutate.duplicateProduct({
-					duplicates: keys.map((id) => ({
-						originalProductID: id,
-						newDefaultVariantID: generateID({ prefix: "variant_default" }),
-						newProductID: generateID({ prefix: "product" }),
-						newOptionIDs: Array.from<string>({ length: 10 }).map(() =>
-							generateID({ prefix: "p_option" }),
-						),
-						newOptionValueIDs: Array.from<string>({ length: 20 }).map(() =>
-							generateID({ prefix: "p_op_val" }),
-						),
-						newPriceIDs: Array.from<string>({ length: 10 }).map(() =>
-							generateID({ prefix: "price" }),
-						),
-					})),
-				}),
-			);
+			startTransition(() => {
+				toast.promise(
+					"Product duplicated",
+					dashboardRep.mutate.duplicateProduct({
+						duplicates: keys.map((id) => ({
+							originalProductID: id,
+							newDefaultVariantID: generateID({ prefix: "variant" }),
+							newProductID: generateID({ prefix: "product" }),
+							newOptionIDs: Array.from<string>({ length: 10 }).map(() =>
+								generateID({ prefix: "p_option" }),
+							),
+							newOptionValueIDs: Array.from<string>({ length: 20 }).map(() =>
+								generateID({ prefix: "p_op_val" }),
+							),
+							newPriceIDs: Array.from<string>({ length: 10 }).map(() =>
+								generateID({ prefix: "price" }),
+							),
+						})),
+					}),
+					"Too many products to duplicate at once.",
+				);
+			});
 		},
 		[dashboardRep],
 	);
@@ -108,6 +101,7 @@ function Products({
 			createProduct={createProduct}
 			deleteProduct={deleteProduct}
 			duplicateProduct={duplicateProduct}
+			isPending={isPending}
 		/>
 	);
 }

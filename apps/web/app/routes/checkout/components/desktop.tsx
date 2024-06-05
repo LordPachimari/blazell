@@ -1,23 +1,22 @@
 import { Button } from "@blazell/ui/button";
+import { CheckoutFormSchema, type CheckoutForm } from "@blazell/validators";
 import type { Cart, User } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckoutFormSchema, type CheckoutForm } from "@blazell/validators";
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
 import { useCartState } from "~/zustand/state";
+import { useGlobalStore } from "~/zustand/store";
 import { CartInfo } from "./cart-info";
 import { CustomerInfo } from "./customer-info";
 import { ShippingAddressInfo } from "./shipping-address-info";
-import { findEffect } from "effect/Sink";
 
 export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
-	const fetcher = useFetcher();
-	const userRep = useReplicache((state) => state.userRep);
-	const [user] = ReplicacheStore.scan<User>(userRep, "user");
-	const cart = ReplicacheStore.getByID<Cart>(userRep, cartID);
+	const users = useGlobalStore((state) => state.users);
+	const cartMap = useGlobalStore((state) => state.cartMap);
+	const cart = cartMap.get(cartID);
+
+	const [user] = users;
 
 	const { opened, setOpened } = useCartState();
 	const navigate = useNavigate();

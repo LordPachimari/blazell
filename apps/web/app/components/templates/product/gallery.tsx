@@ -31,21 +31,22 @@ function Gallery({ images }: GalleryProps) {
 	);
 
 	const isScrolled = useIsWindowScrolled();
+	console.log("images", images);
 	return (
 		<div
 			className={cn(
-				"sticky top-0 lg:relative transition-all duration-500 ease-in-out col-span-4 w-full min-w-[20rem] lg:max-w-[40rem] gap-4",
+				"sticky top-0 lg:relative  transition-all duration-500 ease-in-out col-span-4 w-full min-w-[20rem] lg:max-w-[40rem] gap-4",
 				isScrolled && "brightness-50 lg:brightness-100",
 			)}
 		>
 			<div className="flex flex-col gap-4 lg:p-4">
 				<Carousel setApi={setApi} className="h-fit">
-					<CarouselContent className="shadow-none">
+					<CarouselContent className="shadow-none ">
 						{images.length > 0 &&
 							images.map(({ uploaded, base64, url, name, id, fileType }) => (
 								<CarouselItem
 									key={id}
-									className={cn("aspect-square shadow-none")}
+									className={cn("aspect-square shadow-none ")}
 								>
 									{!uploaded ? (
 										<img
@@ -68,7 +69,7 @@ function Gallery({ images }: GalleryProps) {
 							))}
 						{images.length === 0 && (
 							<CarouselItem className="aspect-square">
-								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-none lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
+								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
 									<CardContent className="p-0 flex h-full justify-center items-center">
 										<ImagePlaceholder size={30} />
 									</CardContent>

@@ -3,7 +3,7 @@ import { getAuth } from "@hono/clerk-auth";
 import { ErrorService } from "@blazell/api";
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { cartSubtotal, generateID, generateReplicachePK } from "@blazell/utils";
+import { cartSubtotal, generateID } from "@blazell/utils";
 import {
 	CartError,
 	CheckoutFormSchema,
@@ -33,23 +33,17 @@ app.post("/create-cart", async (c) => {
 							id: cartID,
 							countryCode,
 							createdAt: new Date().toISOString(),
-							replicachePK: generateReplicachePK({
-								prefix: "cart",
-								id: cartID,
-							}),
 							currencyCode: "AUD",
 							...(auth?.userId && { userID: auth.userId }),
 						}),
 					);
-					const addressID = generateID({ prefix: "address" });
 					const [shippingAddress] = yield* Effect.tryPromise(() =>
 						transaction
 							.insert(schema.addresses)
 							.values({
 								countryCode,
 								createdAt: new Date().toISOString(),
-								replicachePK: addressID,
-								id: addressID,
+								id: generateID({ prefix: "address" }),
 							})
 							.returning({ id: schema.addresses.id }),
 					);
@@ -135,7 +129,6 @@ app.post("/complete-cart", async (c) => {
 						yield* Effect.tryPromise(() =>
 							transaction.insert(schema.users).values({
 								id: newUserID,
-								replicachePK: newUserID,
 								createdAt: new Date().toISOString(),
 								version: 0,
 								email: checkoutInfo.email,
@@ -156,7 +149,6 @@ app.post("/complete-cart", async (c) => {
 								province: checkoutInfo.shippingAddress.province,
 								version: 0,
 								createdAt: new Date().toISOString(),
-								replicachePK: newShippingAddressID,
 								userID: existingUser ? existingUser.id : newUserID,
 							}),
 						);
@@ -182,17 +174,11 @@ app.post("/complete-cart", async (c) => {
 							Effect.gen(function* () {
 								//TODO: DO ACTUAL MATH ON TOTAL AND SUBTOTAL
 								const subtotal = yield* cartSubtotal(lineItems, cart);
-								const orderID = generateID({ prefix: "order" });
 								const newOrder: InsertOrder = {
-									id: orderID,
+									id: generateID({ prefix: "order" }),
 									countryCode: cart.countryCode ?? "AU",
 									currencyCode: "AUD",
 									createdAt: new Date().toISOString(),
-									replicachePK: generateReplicachePK({
-										id: orderID,
-										filterID: existingUser?.id ?? newUserID,
-										prefix: "order",
-									}),
 									email: checkoutInfo.email ?? "email not provided",
 									//TODO
 									billingAddressID:
@@ -229,15 +215,13 @@ app.post("/complete-cart", async (c) => {
 										items,
 										(item) => {
 											return Effect.tryPromise(() =>
-												transaction.update(schema.lineItems).set({
-													cartID: null,
-													replicachePK: generateReplicachePK({
-														id: item.id,
-														filterID: storeIDToOrder.get(storeID)!.id,
-														prefix: "line_item",
-													}),
-													orderID: storeIDToOrder.get(storeID)!.id,
-												}),
+												transaction
+													.update(schema.lineItems)
+													.set({
+														cartID: null,
+														orderID: storeIDToOrder.get(storeID)!.id,
+													})
+													.where(eq(schema.lineItems.id, item.id)),
 											);
 										},
 										{ concurrency: "unbounded" },
@@ -314,7 +298,7 @@ app.post("/complete-cart", async (c) => {
 						Effect.scoped,
 					),
 				Http.request
-					.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/user`)
+					.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
 					.pipe(
 						Http.request.jsonBody(["cart", "orders"]),
 						Effect.andThen(Http.client.fetch),

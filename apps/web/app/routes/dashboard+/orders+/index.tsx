@@ -9,12 +9,12 @@ import {
 import { Progress } from "@blazell/ui/progress";
 import { useCallback, useState } from "react";
 import { PageHeader } from "~/components/page-header";
-import { useDashboardState } from "~/zustand/state";
 import { OrderPreview } from "./order-preview";
 import { OrdersTable } from "./orders-table/table";
+import { useDashboardStore } from "~/zustand/store";
 
 export default function Orders() {
-	const orders = useDashboardState((state) => state.orders);
+	const orders = useDashboardStore((state) => state.orders);
 	const createOrder = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });

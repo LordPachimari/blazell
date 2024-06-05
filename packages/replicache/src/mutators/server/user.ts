@@ -1,5 +1,4 @@
-import { UserService } from "@blazell/api";
-import { CreateUserSchema, UpdateUserSchema } from "@blazell/validators";
+import { UpdateUserSchema } from "@blazell/validators";
 import { Effect } from "effect";
 import { TableMutator } from "../../context/table-mutator";
 import { zod } from "../../util/zod";

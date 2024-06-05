@@ -20,13 +20,11 @@ export const CreateClientError = ({
 	Effect.gen(function* () {
 		if (!userID) return;
 		const { manager } = yield* Database;
-		const newErrorID = generateID({ prefix: "error" });
 		const newError: ClientError = {
-			id: newErrorID,
+			id: generateID({ prefix: "error" }),
 			createdAt: new Date().toISOString(),
 			message,
 			title,
-			replicachePK: newErrorID,
 			userID,
 			version: 0,
 		};
@@ -39,7 +37,7 @@ export const CreateClientError = ({
 			}),
 			Effect.zipLeft(
 				Http.request
-					.post(`${partyKitOrigin}/parties/main/user`)
+					.post(`${partyKitOrigin}/parties/main/global`)
 					.pipe(
 						Http.request.jsonBody(["errors"]),
 						Effect.andThen(Http.client.fetch),

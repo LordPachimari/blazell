@@ -29,15 +29,17 @@ export function RowActions<TData>({
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					variant="ghost"
+			<DropdownMenuTrigger>
+				<button
 					type="button"
-					className="flex rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
+					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
 				>
-					<DotsHorizontalIcon className="h-4 w-4 md:h-8 md:w-8" />
+					<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
 					<span className="sr-only">Open menu</span>
-				</Button>
+				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
 				<DropdownMenuItem

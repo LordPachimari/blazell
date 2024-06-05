@@ -1,4 +1,4 @@
-import { Console, Effect, pipe } from "effect";
+import { Effect, pipe } from "effect";
 
 import type { Image } from "@blazell/db";
 import { Cloudflare, Database } from "@blazell/shared";

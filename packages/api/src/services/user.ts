@@ -1,6 +1,6 @@
 import { schema } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { generateID, generateReplicachePK } from "@blazell/utils";
+import { generateID } from "@blazell/utils";
 import {
 	NeonDatabaseError,
 	type CreateUser,
@@ -10,8 +10,6 @@ import {
 import { sql } from "drizzle-orm";
 import { Effect } from "effect";
 import { jsonTable } from "../../../db/schema";
-import { idToReplicachePK } from "./map";
-
 const createUser = (props: CreateUser) =>
 	Effect.gen(function* () {
 		const { countryCode, user } = props;
@@ -23,7 +21,6 @@ const createUser = (props: CreateUser) =>
 			authID: user.authID,
 			createdAt: new Date().toISOString(),
 			username: user.username,
-			replicachePK: userID,
 			version: 0,
 		};
 		const storeID = generateID({ prefix: "store" });
@@ -33,11 +30,6 @@ const createUser = (props: CreateUser) =>
 			name: user.username,
 			version: 0,
 			founderID: userID,
-			replicachePK: generateReplicachePK({
-				prefix: "store",
-				filterID: userID,
-				id: storeID,
-			}),
 			countryCode,
 		};
 		const existingUser = yield* Effect.tryPromise(() =>
@@ -66,29 +58,21 @@ const createUser = (props: CreateUser) =>
 			//@ts-ignore
 			() => manager.insert(schema.stores).values(store),
 		);
-		yield* Effect.all(
-			[
-				Effect.tryPromise(() =>
-					manager
-						.insert(schema.jsonTable)
-						.values({
-							id: `active_store_id_${user.authID}`,
-							version: 0,
-							replicachePK: "active_store_id",
-							value: storeID,
-						})
-						.onConflictDoUpdate({
-							target: schema.jsonTable.id,
-							set: {
-								version: sql`${jsonTable.version} + 1`,
-								value: storeID,
-							},
-						}),
-				),
-				/* necessary for object removal on the client, using the patch */
-				idToReplicachePK({ value: [store, newUser] }),
-			],
-			{ concurrency: 2 },
+		yield* Effect.tryPromise(() =>
+			manager
+				.insert(schema.jsonTable)
+				.values({
+					id: `active_store_id_${user.authID}`,
+					version: 0,
+					value: storeID,
+				})
+				.onConflictDoUpdate({
+					target: schema.jsonTable.id,
+					set: {
+						version: sql`${jsonTable.version} + 1`,
+						value: storeID,
+					},
+				}),
 		);
 	}).pipe(
 		Effect.catchTags({

@@ -1,7 +1,7 @@
-import type { Product } from "@blazell/validators/client";
+import type { Product, PublishedProduct } from "@blazell/validators/client";
 
 interface GridComponentProps {
-	data: Product[];
+	data: PublishedProduct[];
 	columns?: number;
 	rows?: number;
 }
@@ -12,7 +12,7 @@ const generateGrid = ({ data, columns = 5, rows = 10 }: GridComponentProps) => {
 	while (index < data.length) {
 		// Create a new 5x10 grid
 		const grid = Array.from({ length: columns }, () =>
-			Array<Product | undefined>(rows).fill(undefined),
+			Array<PublishedProduct | undefined>(rows).fill(undefined),
 		);
 		const map = new Map<number, number>();
 

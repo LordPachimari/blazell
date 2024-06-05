@@ -2,20 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
-import type { Customer, Order } from "@blazell/validators/client";
+import type { Customer } from "@blazell/validators/client";
 import { useNavigate, useParams } from "@remix-run/react";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 import { OrdersTable } from "../orders+/orders-table/table";
 
 export default function CustomerRoute() {
 	const params = useParams();
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const customer = ReplicacheStore.getByID<Customer>(dashboardRep, params.id!);
-	const orders = ReplicacheStore.scan<Order>(
-		dashboardRep,
-		`order_${params.id!}`,
+	const orders = useDashboardStore((state) => state.orders).filter(
+		(order) => order.userID === params.id!,
 	);
+	const customerMap = useDashboardStore((state) => state.customerMap);
+	const customer = customerMap.get(params.id!);
 	const navigate = useNavigate();
 	return (
 		<main className="w-full relative flex p-4 md:p-10 justify-center">

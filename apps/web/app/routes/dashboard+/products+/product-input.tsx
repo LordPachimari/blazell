@@ -18,7 +18,6 @@ import { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
-import { ReplicacheStore } from "~/replicache/store";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductCategory } from "./input/product-category";
 import { ProductInfo } from "./input/product-info";
@@ -27,8 +26,9 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
+import { useDashboardStore } from "~/zustand/store";
 export interface ProductInputProps {
-	product: Product | undefined | null;
+	product: Product | undefined;
 	productID: string;
 	defaultVariant: Variant | undefined | null;
 }
@@ -43,6 +43,11 @@ export function ProductInput({
 	product,
 	defaultVariant,
 }: ProductInputProps) {
+	const variants = useDashboardStore((state) =>
+		state.variants.filter(
+			(v) => v.productID === productID && v.id !== defaultVariant?.id,
+		),
+	);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpen1, setIsOpen1] = useState(false);
 	const methods = useForm<PublishedVariant>({
@@ -51,10 +56,7 @@ export function ProductInput({
 	console.log("errors", methods.formState.errors);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 
-	const variants = ReplicacheStore.scan<Variant>(
-		dashboardRep,
-		`variant_${productID}`,
-	);
+	console.log("variants", variants);
 	const publishButtonRef = useRef<HTMLButtonElement>(null);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

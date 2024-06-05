@@ -11,12 +11,9 @@ import {
 	type InsertVariant,
 } from "@blazell/validators";
 
+import { schema } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { generateReplicachePK, toUrlFriendly } from "@blazell/utils";
-import { ulid } from "ulidx";
-import { z } from "zod";
-import { TableMutator } from "../../context/table-mutator";
-import { zod } from "../../util/zod";
+import { toUrlFriendly } from "@blazell/utils";
 import type {
 	Price,
 	Product,
@@ -24,8 +21,11 @@ import type {
 	ProductOptionValue,
 	Variant,
 } from "@blazell/validators/server";
-import { schema } from "@blazell/db";
 import { and, eq, isNotNull } from "drizzle-orm";
+import { ulid } from "ulidx";
+import { z } from "zod";
+import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const createProduct = zod(CreateProductSchema, (input) =>
 	Effect.gen(function* () {
@@ -33,11 +33,6 @@ const createProduct = zod(CreateProductSchema, (input) =>
 		const { product } = input;
 		const defaultVariant: InsertVariant = {
 			id: product.defaultVariantID,
-			replicachePK: generateReplicachePK({
-				prefix: "variant_default",
-				filterID: product.id,
-				id: product.defaultVariantID,
-			}),
 			productID: product.id,
 			quantity: 1,
 		};
@@ -198,7 +193,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 		const defaultVariant = product.defaultVariant;
 		const prices = defaultVariant.prices;
 		const options = product.options;
-		yield* Console.log("YAAAA", newOptionIDs);
 		const optionValues = product.options.flatMap(
 			(option) => option.optionValues,
 		);
@@ -262,11 +256,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				defaultVariantID: newDefaultVariantID,
 				metadata: product.metadata,
 				originCountry: product.originCountry,
-				replicachePK: generateReplicachePK({
-					prefix: "product",
-					filterID: product.storeID,
-					id: newProductID,
-				}),
 				score: 0,
 				status: "draft",
 				storeID: product.storeID,
@@ -280,11 +269,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 			{
 				id: newDefaultVariantID,
 				productID: newProductID,
-				replicachePK: generateReplicachePK({
-					prefix: "variant_default",
-					filterID: newProductID,
-					id: newDefaultVariantID,
-				}),
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 				version: 0,
@@ -330,7 +314,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 									id: optionIDtoNewOptionID.get(option.id)!,
 									name: option.name,
 									productID: newProductID,
-									replicachePK: null,
 									version: 0,
 								} satisfies ProductOption,
 								"productOptions",
@@ -352,7 +335,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 						...optionValue,
 						id: optionValueIDtoNewOptionValueID.get(optionValue.id)!,
 						optionID: optionIDtoNewOptionID.get(optionValue.optionID)!,
-						replicachePK: null,
 						version: 0,
 					} satisfies ProductOptionValue,
 					"productOptionValues",

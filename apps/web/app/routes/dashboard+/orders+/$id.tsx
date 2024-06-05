@@ -3,10 +3,7 @@ import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { Separator } from "@blazell/ui/separator";
-import type {
-	LineItem as LineItemType,
-	Order,
-} from "@blazell/validators/client";
+import type { Order } from "@blazell/validators/client";
 import { useNavigate, useParams } from "@remix-run/react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
@@ -16,15 +13,14 @@ import {
 	LineItem,
 	LineItemSkeleton,
 } from "~/components/templates/line-item/line-item";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import { useDashboardState } from "~/zustand/state";
+import { useDashboardStore } from "~/zustand/store";
 
 const OrderRoute = () => {
 	const params = useParams();
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const order = ReplicacheStore.getByID<Order>(dashboardRep, params.id!);
+	const orderMap = useDashboardStore((state) => state.orderMap);
+	const order = orderMap.get(params.id!);
 	const navigate = useNavigate();
+
 	return (
 		<main className="w-full relative flex p-4 md:p-10 justify-center">
 			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-6">
@@ -125,14 +121,11 @@ const CustomerNote = () => {
 		</Card>
 	);
 };
-const OrderInfo = ({ order }: { order: Order | null | undefined }) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const items = ReplicacheStore.scan<LineItemType>(
-		dashboardRep,
-		`line_item_${order?.id}`,
+const OrderInfo = ({ order }: { order: Order | undefined }) => {
+	const isInitialized = useDashboardStore((state) => state.isInitialized);
+	const items = useDashboardStore((state) => state.lineItems).filter(
+		(item) => item.orderID === order?.id,
 	);
-
-	const isInitialized = useDashboardState((state) => state.isInitialized);
 
 	return (
 		<Card>

@@ -13,7 +13,8 @@
 			},
 			"suspicious": {
 				"noExplicitAny": "warn",
-				"noArrayIndexKey":"warn"
+				"noArrayIndexKey":"warn",
+				"noAssignInExpressions":"warn"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"

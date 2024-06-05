@@ -2,20 +2,18 @@ import { CrossCircledIcon, StopwatchIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 import { CircleIcon } from "lucide-react";
 
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
-import type { DataTableFilterableColumn } from "~/types/table";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import { RowActions } from "./row-actions";
-import type { Product, Variant } from "@blazell/validators/client";
 import { Checkbox } from "@blazell/ui/checkbox";
 import { productStatuses } from "@blazell/validators";
+import type { Product } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
-import { toImageURL } from "~/utils/helpers";
-import { useReplicache } from "~/zustand/replicache";
-import { ReplicacheStore } from "~/replicache/store";
-import { generateReplicachePK } from "@blazell/utils";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { ProductStatus } from "~/components/molecules/statuses/product-status";
+import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
+import type { DataTableFilterableColumn } from "~/types/table";
+import { toImageURL } from "~/utils/helpers";
+import { useDashboardStore } from "~/zustand/store";
+import { RowActions } from "./row-actions";
+import { LoadingSpinner } from "@blazell/ui/loading";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (
@@ -39,9 +37,11 @@ function StatusIcon({ status }: { status: Product["status"] }) {
 export function getProductsColumns({
 	deleteProduct,
 	duplicateProduct,
+	isPending = false,
 }: {
 	deleteProduct: (keys: string[]) => void;
 	duplicateProduct: (keys: string[]) => void;
+	isPending?: boolean;
 }): ColumnDef<Product, unknown>[] {
 	return [
 		{
@@ -74,18 +74,13 @@ export function getProductsColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => {
-				const dashboardRep = useReplicache((state) => state.dashboardRep);
-				const defaultVariant = ReplicacheStore.getByPK<Variant>(
-					dashboardRep,
-					generateReplicachePK({
-						prefix: "variant_default",
-						filterID: row.original.id,
-						id: row.original.defaultVariantID,
-					}),
-				);
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
 				return (
-					<div className="flex w-[100px] h-[100px] items-center border border-mauve-7 rounded-md">
-						{!defaultVariant?.thumbnail ? (
+					<div className="flex w-[50px] h-[50px] justify-center items-center border border-mauve-7 rounded-md">
+						{isPending && row.getIsSelected() ? (
+							<LoadingSpinner className="text-mauve-11" />
+						) : !defaultVariant?.thumbnail ? (
 							<ImagePlaceholder />
 						) : defaultVariant?.thumbnail?.uploaded ? (
 							<Image
@@ -119,19 +114,14 @@ export function getProductsColumns({
 				<DataTableColumnHeader column={column} title="Title" />
 			),
 			cell: ({ row }) => {
-				const dashboardRep = useReplicache((state) => state.dashboardRep);
-				const defaultVariant = ReplicacheStore.getByPK<Variant>(
-					dashboardRep,
-					generateReplicachePK({
-						prefix: "variant_default",
-						filterID: row.original.id,
-						id: row.original.defaultVariantID,
-					}),
-				);
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
 				return (
-					<h1 className="w-[80px] font-freeman text-ellipsis overflow-hidden lg:text-lg ">
-						{defaultVariant?.title ?? ""}
-					</h1>
+					<div>
+						<h1 className="font-freeman">
+							{defaultVariant?.title || "Untitled"}
+						</h1>
+					</div>
 				);
 			},
 			enableSorting: false,
@@ -178,15 +168,8 @@ export function getProductsColumns({
 				<DataTableColumnHeader column={column} title="Quantity" />
 			),
 			cell: ({ row }) => {
-				const dashboardRep = useReplicache((state) => state.dashboardRep);
-				const defaultVariant = ReplicacheStore.getByPK<Variant>(
-					dashboardRep,
-					generateReplicachePK({
-						prefix: "variant_default",
-						filterID: row.original.id,
-						id: row.original.defaultVariantID,
-					}),
-				);
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
 				return (
 					<div className="w-[80px]">
 						<h1 className="lg:text-md">{defaultVariant?.quantity ?? 1}</h1>

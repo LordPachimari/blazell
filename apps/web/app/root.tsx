@@ -28,7 +28,7 @@ import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
 import { useUser } from "./hooks/use-user";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
-import UserReplicacheProvider from "./providers/replicache/user";
+import UserReplicacheProvider from "./providers/replicache/global";
 import { prefs, userContext } from "./sessions.server";
 import { getDomainUrl } from "./utils/helpers";
 import type { Theme } from "@blazell/validators";
@@ -39,6 +39,8 @@ import vaulStyles from "./vaul.css?url";
 import type { Env } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
+import { GlobalStoreProvider } from "./zustand/store";
+import { GlobalStoreMutator } from "./zustand/store-mutator";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -120,14 +122,18 @@ function App() {
 			<MarketplaceReplicacheProvider>
 				<UserReplicacheProvider cartID={data.cartID}>
 					<DashboardReplicacheProvider>
-						<Sidebar />
-						<Header
-							cartID={data.cartID ?? null}
-							authID={data.authID}
-							user={user}
-						/>
-						<Outlet />
-						<Toaster />
+						<GlobalStoreProvider>
+							<GlobalStoreMutator>
+								<Sidebar />
+								<Header
+									cartID={data.cartID ?? null}
+									authID={data.authID}
+									user={user}
+								/>
+								<Outlet />
+								<Toaster />
+							</GlobalStoreMutator>
+						</GlobalStoreProvider>
 						<ClientOnly>
 							{() => <PartykitProvider cartID={data.cartID} />}
 						</ClientOnly>

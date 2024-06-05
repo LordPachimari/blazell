@@ -21,7 +21,7 @@ export const orders = pgTable(
 		shippingStatus: text("shipping_status", {
 			enum: ["pending", "shipped", "delivered", "cancelled"],
 		}).default("pending"),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		countryCode: varchar("country_code", { length: 2 }).notNull(),
 		currencyCode: varchar("currency_code", { length: 3 })
 			.notNull()

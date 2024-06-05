@@ -15,10 +15,12 @@ import React from "react";
 interface UseDataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	debugTable?: boolean;
 }
 export const useDataTable = <TData, TValue>({
 	columns,
 	data,
+	debugTable = false,
 }: UseDataTableProps<TData, TValue>) => {
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
@@ -49,6 +51,7 @@ export const useDataTable = <TData, TValue>({
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
+		debugTable: debugTable,
 	});
 	return table;
 };

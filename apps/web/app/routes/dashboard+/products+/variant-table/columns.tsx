@@ -2,14 +2,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { UpdateVariant } from "@blazell/validators";
 
+import type { Product, Variant } from "@blazell/validators/client";
+import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import type { DataTableFilterableColumn } from "~/types/table";
-import { RowActions } from "./row-actions";
-import type { Product, Variant } from "@blazell/validators/client";
-import { AspectRatio } from "@blazell/ui/aspect-ratio";
-import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
+import { RowActions } from "./row-actions";
 
 export function getVariantColumns({
 	setVariantID,
@@ -29,7 +28,7 @@ export function getVariantColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => (
-				<div className="flex w-[100px] h-[100px]  items-center rounded-md border border-mauve-7">
+				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-mauve-7">
 					{!row.original.images?.[0] ? (
 						<ImagePlaceholder />
 					) : row.original.images?.[0]?.uploaded ? (

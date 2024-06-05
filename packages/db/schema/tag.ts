@@ -7,7 +7,7 @@ export const tags = pgTable(
 	"tags",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		value: varchar("value").notNull(),
 		createdAt: varchar("created_at").notNull(),
 		version: integer("version").notNull().default(0),

@@ -1,19 +1,28 @@
 import { cn } from "@blazell/ui";
 import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
-import type { Store } from "@blazell/validators/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useNavigate } from "@remix-run/react";
+import { useCallback } from "react";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { ReplicacheStore } from "~/replicache/store";
 import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 
 export default function SelectStores() {
 	const rep = useReplicache((state) => state.dashboardRep);
-	const stores = ReplicacheStore.scan<Store>(rep, "store");
+	const stores = useDashboardStore((state) => state.stores);
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const navigate = useNavigate();
+	const setActiveStoreID = useCallback(
+		async (id: string) => {
+			await rep?.mutate.setActiveStoreID({
+				id,
+			});
+			navigate("/dashboard/store");
+		},
+		[rep, navigate],
+	);
 
 	return (
 		<>
@@ -32,38 +41,35 @@ export default function SelectStores() {
 						key={`${_store.id}_${index}`}
 						className="flex justify-center items-center"
 						onClick={async () => {
-							await rep?.mutate.setActiveStoreID({
-								id: _store.id,
-							});
-							navigate("/dashboard/store");
+							await setActiveStoreID(_store.id);
 						}}
 						onKeyDown={async () => {
-							await rep?.mutate.setActiveStoreID({
-								id: _store.id,
-							});
-							navigate("/dashboard/store");
+							await setActiveStoreID(_store.id);
 						}}
 					>
-						<Card className="p-4 text-center flex justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[500px]">
-							<CardContent className="p-0">
-								{!_store.storeImage ? (
-									<ImagePlaceholder />
-								) : _store.storeImage.uploaded ? (
-									<Image
-										src={_store.storeImage.url}
-										alt={_store.name}
-										className="rounded-xl"
-									/>
-								) : (
-									<img
-										src={toImageURL(
-											_store.storeImage.base64,
-											_store.storeImage.fileType,
-										)}
-										alt={_store.name}
-										className="rounded-xl"
-									/>
-								)}
+						<Card className="text-center flex flex-col p-2 hover:scale-105 transition-all duration-100 ease-out justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[400px]">
+							<CardContent className="p-0 ">
+								<section className="flex h-full w-full  border border-mauve-7 overflow-hidden rounded-xl items-center justify-center">
+									{!_store.storeImage ? (
+										<ImagePlaceholder />
+									) : _store.storeImage.uploaded ? (
+										<Image
+											src={_store.storeImage.url}
+											alt={_store.name}
+											className="rounded-xl"
+											fit="fill"
+										/>
+									) : (
+										<img
+											src={toImageURL(
+												_store.storeImage.base64,
+												_store.storeImage.fileType,
+											)}
+											alt={_store.name}
+											className="rounded-xl object-fill"
+										/>
+									)}
+								</section>
 							</CardContent>
 							<CardFooter className="flex flex-row items-center justify-between fill-current h-14 p-0 pt-4">
 								<span className="flex flex-col items-start">

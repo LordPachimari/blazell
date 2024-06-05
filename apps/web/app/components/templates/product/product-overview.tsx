@@ -4,6 +4,8 @@ import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type {
 	Product,
 	ProductOption,
+	PublishedProduct,
+	PublishedVariant,
 	Variant,
 } from "@blazell/validators/client";
 import { useCallback, useEffect, useState } from "react";
@@ -15,14 +17,14 @@ import { Gallery } from "./gallery";
 import { GeneralInfo } from "./product-info";
 
 interface ProductOverviewProps {
-	product: Product | null;
+	product: Product | PublishedProduct | undefined;
 	isDashboard?: boolean;
-	variants: Variant[];
+	variants: (Variant | PublishedVariant)[];
 	selectedVariantIDOrHandle: string | undefined;
 	selectedVariant: Variant | null;
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 	cartID?: string | undefined;
-	defaultVariant: Variant | null;
+	defaultVariant: Variant | PublishedVariant | undefined;
 }
 
 const ProductOverview = ({
@@ -35,7 +37,6 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 }: ProductOverviewProps) => {
-	console.log("product", product);
 	return (
 		<main className="relative flex h-[calc(100vh + 70vh)] flex-col items-center  lg:items-start lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] lg:mt-20 ">
 			<Gallery
@@ -84,10 +85,11 @@ const ProductVariants = ({
 	setVariantIDOrHandle,
 }: {
 	isDashboard?: boolean;
-	variants: Variant[];
+	variants: (Variant | PublishedVariant)[];
 	selectedVariantIDOrHandle: string | undefined;
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 }) => {
+	console.log("selectedVariantIDOrHandle", selectedVariantIDOrHandle);
 	return (
 		<section className="py-4">
 			{variants.length > 0 && (
@@ -150,7 +152,7 @@ const ProductOptions = ({
 	selectedVariant: Variant | null;
 
 	setVariantIDOrHandle: (prop: string | undefined) => void;
-	variants: Variant[];
+	variants: (Variant | PublishedVariant)[];
 	isDashboard?: boolean;
 }) => {
 	const [variantOptions, setVariantOptions] = useState<Record<string, string>>(
@@ -178,6 +180,7 @@ const ProductOptions = ({
 				let variantFound = false;
 				for (const variant of variants) {
 					let optionValuesEqual = true;
+					if (variant.optionValues?.length === 0) optionValuesEqual = false;
 					for (const value of variant.optionValues ?? []) {
 						if (
 							options[value.optionValue.optionID] !== value.optionValue.value
@@ -187,6 +190,7 @@ const ProductOptions = ({
 					}
 					if (optionValuesEqual) {
 						variantFound = true;
+						console.log("hello?", variant);
 						setVariantIDOrHandle(
 							isDashboard ? variant.id : variant.handle ?? undefined,
 						);
@@ -199,7 +203,6 @@ const ProductOptions = ({
 		},
 		[variants, setVariantIDOrHandle, isDashboard],
 	);
-	console.log("options", options);
 	return (
 		<section className="pb-4">
 			{options.map((option) => {

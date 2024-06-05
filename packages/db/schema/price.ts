@@ -7,7 +7,7 @@ export const prices = pgTable(
 	"prices",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		variantID: varchar("variant_id")
 			.notNull()
 			.references(() => variants.id, {

@@ -250,10 +250,10 @@ const processMutation = ({
 						});
 						//Poke to the client. This will trigger a pull that will render an error toast
 						const subspaces =
-							affectedSpacesMap.get("user") ??
-							new Set<(typeof SPACE_RECORD)["user"][number]>();
+							affectedSpacesMap.get("global") ??
+							new Set<(typeof SPACE_RECORD)["global"][number]>();
 						subspaces.add("errors");
-						affectedSpacesMap.set("user", subspaces);
+						affectedSpacesMap.set("global", subspaces);
 						return yield* Effect.succeed({});
 					}),
 				ImageUploadError: (error) =>
@@ -264,10 +264,10 @@ const processMutation = ({
 						});
 						//Poke to the client. This will trigger a pull that will render an error toast
 						const subspaces =
-							affectedSpacesMap.get("user") ??
-							new Set<(typeof SPACE_RECORD)["user"][number]>();
+							affectedSpacesMap.get("global") ??
+							new Set<(typeof SPACE_RECORD)["global"][number]>();
 						subspaces.add("errors");
-						affectedSpacesMap.set("user", subspaces);
+						affectedSpacesMap.set("global", subspaces);
 						return yield* Effect.succeed({});
 					}),
 			}),

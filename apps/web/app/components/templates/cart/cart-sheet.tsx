@@ -1,36 +1,48 @@
+import { cn } from "@blazell/ui";
+import { Button, buttonVariants } from "@blazell/ui/button";
+import { strokeWidth } from "@blazell/ui/icons";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { ShoppingCart } from "lucide-react";
 import {
-	DialogRoot,
 	DialogContent,
+	DialogRoot,
 	DialogTitle,
 	DialogTrigger,
 } from "@pachi/ui/dialog-vaul";
-import { Total } from "./total-info";
-import type {
-	Cart,
-	LineItem as LineItemType,
-} from "@blazell/validators/client";
-import { strokeWidth } from "@blazell/ui/icons";
-import { useCartState, useMarketplaceState } from "~/zustand/state";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import { LineItem, LineItemSkeleton } from "../line-item/line-item";
-import { Button, buttonVariants } from "@blazell/ui/button";
 import { Link } from "@remix-run/react";
-import { ScrollArea } from "@blazell/ui/scroll-area";
-import { cn } from "@blazell/ui";
+import { ShoppingCart } from "lucide-react";
+import { useCallback } from "react";
+import { useReplicache } from "~/zustand/replicache";
+import { useCartState } from "~/zustand/state";
+import { useGlobalStore } from "~/zustand/store";
+import { LineItem, LineItemSkeleton } from "../line-item/line-item";
+import { Total } from "./total-info";
 
 export const CartSheet = ({ cartID }: { cartID: string | null }) => {
-	const userRep = useReplicache((state) => state.userRep);
-	const isInitialized = useMarketplaceState((state) => state.isInitialized);
-	const cart = ReplicacheStore.getByPK<Cart>(userRep, cartID ?? "__");
-	const items = ReplicacheStore.scan<LineItemType>(userRep, "line_item");
+	const rep = useReplicache((state) => state.globalRep);
+	const isInitialized = useGlobalStore((state) => state.isInitialized);
+	const cartMap = useGlobalStore((state) => state.cartMap);
+	const cart = cartMap.get(cartID ?? "");
+	const items = useGlobalStore((state) =>
+		state.lineItems.filter((item) => item.cartID === cartID),
+	);
 
-	items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 	const [parent] = useAutoAnimate(/* optional config */);
 
 	const { opened, setOpened } = useCartState();
+
+	const deleteItem = useCallback(
+		async (id: string) => {
+			await rep?.mutate.deleteLineItem({ id });
+		},
+		[rep],
+	);
+	const updateItem = useCallback(
+		async (id: string, quantity: number) => {
+			await rep?.mutate.updateLineItem({ id, quantity });
+		},
+		[rep],
+	);
 
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
@@ -60,12 +72,8 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 							<LineItem
 								lineItem={item}
 								key={item.id}
-								deleteItem={async (id: string) =>
-									await userRep?.mutate.deleteLineItem({ id })
-								}
-								updateItem={async (id: string, quantity: number) =>
-									await userRep?.mutate.updateLineItem({ id, quantity })
-								}
+								deleteItem={deleteItem}
+								updateItem={updateItem}
 								currencyCode={cart?.currencyCode ?? "AUD"}
 							/>
 						))}

@@ -1,29 +1,19 @@
-import type { Product, Variant } from "@blazell/validators/client";
-import PriceLabel from "~/components/molecules/price-label";
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import type { Product } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
-import { toImageURL } from "~/utils/helpers";
-import { generateReplicachePK } from "@blazell/utils";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import Price from "~/components/molecules/price";
+import { toImageURL } from "~/utils/helpers";
+import { useDashboardStore } from "~/zustand/store";
 
 const ProductCard = ({
 	product,
 }: {
 	product: Product;
 }) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	const variantMap = useDashboardStore((state) => state.variantMap);
 
-	const defaultVariant = ReplicacheStore.getByPK<Variant>(
-		dashboardRep,
-		generateReplicachePK({
-			prefix: "variant_default",
-			filterID: product.id,
-			id: product.defaultVariantID,
-		}),
-	);
+	const defaultVariant = variantMap.get(product.defaultVariantID);
 	return (
 		<Card className="relative aspect-square p-2 min-w-[15rem] cursor-pointer hover:scale-105 transition-all duration-100 ease-out">
 			<CardContent className="relative flex h-full w-full flex-col gap-4">

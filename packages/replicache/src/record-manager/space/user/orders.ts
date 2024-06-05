@@ -35,7 +35,6 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 								columns: {
 									id: true,
 									version: true,
-									replicachePK: true,
 								},
 								where: (orders, { eq }) => eq(orders.email, email),
 							}),

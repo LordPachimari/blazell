@@ -3,10 +3,16 @@ import type { Image } from "@blazell/db";
 import type * as Server from "../server/entities";
 export type Variant = Server.Variant & {
 	product?: Product;
-	prices: Server.Price[];
+	prices?: Server.Price[];
 	optionValues?: Array<{
 		optionValue: ProductOptionValue & { option: ProductOption };
 	}>;
+	images: Image[];
+};
+export type PublishedVariant = Variant & {
+	product: PublishedProduct;
+	prices: Price[];
+	optionValues: ProductOptionValue[];
 	images: Image[];
 };
 
@@ -15,6 +21,12 @@ export type Product = Server.Product & {
 	options?: ProductOption[];
 	collection: Server.Collection;
 	defaultVariant: Variant;
+};
+export type PublishedProduct = Server.Product & {
+	variants: Variant[];
+	options: ProductOption[];
+	collection: Server.Collection;
+	defaultVariant: PublishedVariant;
 };
 
 export type ProductOption = Server.ProductOption & {
@@ -33,8 +45,8 @@ export type Customer = Pick<
 >;
 export type Address = Server.Address;
 export type LineItem = Server.LineItem & {
-	variant: Variant;
-	product?: Product;
+	variant: PublishedVariant;
+	product?: PublishedProduct;
 };
 
 export type Cart = Server.Cart & {

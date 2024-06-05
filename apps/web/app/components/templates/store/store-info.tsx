@@ -1,29 +1,27 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
-import { EditStore } from "./edit-store";
-import { truncateString } from "@blazell/utils";
-import { Icons, strokeWidth } from "@blazell/ui/icons";
+import { Avatar } from "@blazell/ui/avatar";
+import { Button } from "@blazell/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
 } from "@blazell/ui/dialog";
-import { useState } from "react";
-import { Button } from "@blazell/ui/button";
-import type { Store } from "@blazell/validators/client";
-import Image from "~/components/molecules/image";
-import { ClientOnly } from "remix-utils/client-only";
-import { toImageURL } from "~/utils/helpers";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Skeleton } from "@blazell/ui/skeleton";
-import { ReplicacheStore } from "~/replicache/store";
-import type { Replicache } from "replicache";
+import { truncateString } from "@blazell/utils";
+import type { Store } from "@blazell/validators/client";
+import { useState } from "react";
+import { ClientOnly } from "remix-utils/client-only";
+import Image from "~/components/molecules/image";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { toImageURL } from "~/utils/helpers";
+import { EditStore } from "./edit-store";
 
 export function StoreInfo({
 	store,
 	productCount,
 	isInitialized,
-}: { store: Store | null; productCount: number; isInitialized: boolean }) {
+}: { store: Store | undefined; productCount: number; isInitialized: boolean }) {
 	const [aboutOpen, setAboutOpen] = useState(false);
 	return (
 		<section>

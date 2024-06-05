@@ -15,7 +15,7 @@ export const carts = pgTable(
 	"carts",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		countryCode: varchar("country_code", { length: 2 }).notNull(),
 		currencyCode: varchar("currency_code", { length: 3 }).notNull(),
 		userID: varchar("user_id").references(() => users.id),

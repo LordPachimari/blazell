@@ -42,7 +42,6 @@ export const cartCVD: GetRowsWTableName = ({ fullRows }) => {
 							columns: {
 								id: true,
 								version: true,
-								replicachePK: true,
 							},
 							where: (carts, { eq }) => eq(carts.id, cartID),
 							with: {
@@ -50,7 +49,6 @@ export const cartCVD: GetRowsWTableName = ({ fullRows }) => {
 									columns: {
 										id: true,
 										version: true,
-										replicachePK: true,
 									},
 								},
 							},

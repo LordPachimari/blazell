@@ -1,9 +1,10 @@
+import { cn } from ".";
 import { Icons, strokeWidth } from "./icons";
 
-export const LoadingSpinner = () => {
+export const LoadingSpinner = ({ className }: { className?: string }) => {
 	return (
 		<Icons.loader
-			className="animate-spin text-crimson-9"
+			className={cn("animate-spin text-crimson-9", className)}
 			strokeWidth={strokeWidth}
 			aria-hidden="true"
 		/>

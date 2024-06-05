@@ -2,26 +2,24 @@ import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Icons } from "@blazell/ui/icons";
 import { Noise } from "@blazell/ui/noise";
+import { Skeleton } from "@blazell/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@blazell/ui/tabs";
 import type { Product, Store as StoreType } from "@blazell/validators/client";
 import { Link, useNavigate } from "@remix-run/react";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import { ProductCard } from "../product/product-card";
-import { StoreInfo } from "./store-info";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
-import { Skeleton } from "@blazell/ui/skeleton";
+import { ProductCard } from "../product/product-card";
+import { StoreInfo } from "./store-info";
 
 export function Store({
 	store,
 	isInitialized,
+	products,
 }: {
-	store: StoreType | null;
+	store: StoreType | undefined;
 	isInitialized: boolean;
+	products: Product[];
 }) {
-	const rep = useReplicache((state) => state.dashboardRep);
-	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 	const navigate = useNavigate();
 	return (
 		<div className="relative">
