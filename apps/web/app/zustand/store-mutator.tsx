@@ -106,7 +106,7 @@ export const DashboardStoreMutator = ({
 	useSubscribe(
 		rep,
 		async (tx) => {
-			const all = await tx.scan({ prefix: "active" }).entries().toArray();
+			const all = await tx.scan({ prefix: "" }).entries().toArray();
 			const isInitialized = await tx.get<string>("init");
 			const [activeStoreID] = await tx
 				.scan<ActiveStoreID>({ prefix: "active" })

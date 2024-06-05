@@ -90,7 +90,7 @@ function Features({ theme }: { theme: Theme }) {
 					{features.map((item, i) => (
 						<Card
 							key={item.title}
-							className="aspect-square h-fit backdrop-blur-sm relative cursor-pointer hover:scale-105 transition-all duration-100 ease-out gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"
+							className="aspect-square h-fit relative cursor-pointer hover:scale-105 transition-all duration-100 ease-out gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"
 						>
 							<CardContent className="h-3/4">{item.component}</CardContent>
 							<CardFooter className="py-4 h-[120px]">
@@ -121,7 +121,7 @@ function Features({ theme }: { theme: Theme }) {
 
 			<section className="w-full flex flex-col items-center mt-20">
 				<h2 className="text-center text-4xl font-bold pt-20 lg:text-5xl lg:tracking-tight">
-					Creators selling on Blazell
+					See who is selling on Blazell
 				</h2>
 			</section>
 		</div>
