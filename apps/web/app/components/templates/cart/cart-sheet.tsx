@@ -8,7 +8,7 @@ import {
 	DialogRoot,
 	DialogTitle,
 	DialogTrigger,
-} from "@pachi/ui/dialog-vaul";
+} from "@blazell/ui/dialog-vaul";
 import { Link } from "@remix-run/react";
 import { ShoppingCart } from "lucide-react";
 import { useCallback } from "react";

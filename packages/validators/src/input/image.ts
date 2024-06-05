@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Schema } from "@effect/schema";
-import { ImageSchema } from "@blazell/db";
+import { ImageSchema, type Image } from "@blazell/db";
 
 export const UpdateImagesOrderSchema = z.object({
 	entityID: z.string(),
@@ -37,3 +37,4 @@ export const UploadResponseSchema = Schema.Struct({
 		}),
 	),
 });
+export type { Image };

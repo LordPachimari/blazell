@@ -1,8 +1,7 @@
 import type { Area } from "~/types/crop";
 import * as base64 from "base64-arraybuffer";
-import type { Image } from "@blazell/db";
+import type { Image } from "@blazell/validators";
 import { generateID } from "@blazell/utils";
-import { satisfies } from "effect/Function";
 export const createImage = (url: string) =>
 	new Promise((resolve, reject) => {
 		const image = new Image();

@@ -1,13 +1,14 @@
+import type { Image as ImageType } from "@blazell/validators";
 import { cn } from "@blazell/ui";
-import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import { Avatar } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
 import { Icons } from "@blazell/ui/icons";
 import { Input, inputVariants } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import { LoadingSpinner } from "@blazell/ui/loading";
+import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
-import type { Image as ImageType } from "@blazell/db";
 import type { Store } from "@blazell/validators/client";
 import { useAuth } from "@clerk/remix";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +25,6 @@ import getCroppedImg from "~/utils/crop";
 import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 import CropImage from "./crop-image";
-import { toast } from "@blazell/ui/toast";
 export type View = "default" | "cropStoreImage" | "cropHeaderImage";
 export function EditStore({ store }: { store: Store }) {
 	const [isLoading, setIsLoading] = useState(false);

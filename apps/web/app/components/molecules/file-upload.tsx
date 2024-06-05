@@ -1,7 +1,7 @@
 import { cn } from "@blazell/ui";
 import { toast } from "@blazell/ui/toast";
 import { formatBytes, generateID } from "@blazell/utils";
-import type { Image } from "@blazell/db";
+import type { Image } from "@blazell/validators";
 import { UploadIcon } from "@radix-ui/react-icons";
 import * as base64 from "base64-arraybuffer";
 import { Console, Effect } from "effect";

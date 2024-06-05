@@ -9,7 +9,7 @@ import {
 	CarouselPrevious,
 	type CarouselApi,
 } from "@blazell/ui/carousel";
-import type { Image as ImageType } from "@blazell/db";
+import type { Image as ImageType } from "@blazell/validators";
 import React, { useCallback } from "react";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";

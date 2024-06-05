@@ -6,13 +6,13 @@ import { Card, CardContent } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { LoadingSpinner } from "@blazell/ui/loading";
 import { toast } from "@blazell/ui/toast";
-import { Button } from "@pachi/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@pachi/ui/tooltip";
+} from "@blazell/ui/tooltip";
 
 interface DataTableFloatingBarProps<TData extends { id: string }> {
 	table: Table<TData>;
