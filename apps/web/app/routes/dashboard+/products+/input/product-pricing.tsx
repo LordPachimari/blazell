@@ -13,12 +13,20 @@ import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
 import { Icons } from "@blazell/ui/icons";
+import { toast } from "@blazell/ui/toast";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@blazell/ui/tooltip";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
 	variantID: string | undefined;
+	isPublished: boolean;
 }
-function Pricing({ prices, variantID }: ProductPricingProps) {
+function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const updatePrice = useCallback(
@@ -49,7 +57,26 @@ function Pricing({ prices, variantID }: ProductPricingProps) {
 	);
 	return (
 		<Card className="min-h-[6rem] my-4">
-			<CardTitle className="pb-4">Pricing</CardTitle>
+			<CardTitle className="pb-4 flex gap-2 items-center">
+				Pricing
+				{isPublished && (
+					<TooltipProvider>
+						<Tooltip delayDuration={250}>
+							<TooltipTrigger asChild>
+								<Icons.circleInfo
+									className="text-iris-9"
+									aria-hidden="true"
+									strokeWidth={1.25}
+									size={20}
+								/>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>You can't edit prices on a published product.</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				)}
+			</CardTitle>
 			<CardContent className="flex flex-col gap-2 pb-4">
 				{prices.map((price) => (
 					<div
@@ -59,6 +86,7 @@ function Pricing({ prices, variantID }: ProductPricingProps) {
 						<Label className="w-[3rem]">{price.currencyCode}</Label>
 						<Input
 							type="number"
+							disabled={isPublished}
 							defaultValue={price.amount / 100}
 							onChange={async (e) => {
 								const cleanedValue = e.currentTarget.value.replace(/,/g, "");
@@ -81,6 +109,7 @@ function Pricing({ prices, variantID }: ProductPricingProps) {
 						<Button
 							size="icon"
 							variant={"ghost"}
+							className="rounded-full"
 							onClick={async () => await deletePrices(price.id)}
 						>
 							<Icons.close className="text-ruby-9" />

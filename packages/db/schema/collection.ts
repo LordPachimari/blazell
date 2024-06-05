@@ -26,7 +26,7 @@ export const collections = pgTable(
 	"collections",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		handle: varchar("handle"),
 		title: varchar("title"),
 		sortOrder: text("sort_order", { enum: sortOrder }),

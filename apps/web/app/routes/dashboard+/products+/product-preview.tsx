@@ -1,28 +1,31 @@
-import type { Product, Variant } from "@blazell/validators/client";
+import type { Product } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 
 interface ProductPreviewProps {
-	product: Product | null | undefined;
+	product: Product | undefined;
 }
 const ProductPreview = ({ product }: ProductPreviewProps) => {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variants = ReplicacheStore.scan<Variant>(
-		dashboardRep,
-		`variant_${product?.id}`,
+	const variantMap = useDashboardStore((state) => state.variantMap);
+	const variants = useDashboardStore((state) =>
+		state.variants.filter(
+			(v) => v.productID === product?.id && v.id !== product?.defaultVariantID,
+		),
 	);
+	const defaultVariant = variantMap.get(product?.defaultVariantID ?? "");
 	const [searchParams, setSearchParams] = useSearchParams();
-	const selectedVariantID = searchParams.get("variant");
-	const setSelectedVariantID = (id: string | null) => {
+	const selectedVariantID = searchParams.get("variant") ?? undefined;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const setSelectedVariantID = (id: string | undefined) => {
 		setSearchParams((prev) => {
+			const params = new URLSearchParams(prev);
 			if (!id) {
-				prev.delete("variant");
-				return prev;
+				params.delete("variant");
+				return params;
 			}
-			prev.set("variant", id);
-			return prev;
+			params.set("variant", id);
+			return params;
 		});
 	};
 	const selectedVariant = selectedVariantID
@@ -36,6 +39,7 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 			setVariantIDOrHandle={setSelectedVariantID}
 			selectedVariantIDOrHandle={selectedVariantID}
 			isDashboard={true}
+			defaultVariant={defaultVariant}
 		/>
 	);
 };

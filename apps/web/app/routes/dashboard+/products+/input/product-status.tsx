@@ -6,20 +6,23 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@blazell/ui/select";
+import { toast } from "@blazell/ui/toast";
 import { productStatuses, type UpdateProduct } from "@blazell/validators";
 import type { Product } from "@blazell/validators/client";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { AlertDialogComponent } from "~/components/molecules/alert";
 
 export function ProductStatus({
 	status,
 	updateProduct,
 	publishProduct,
+	publishButtonRef,
+	onPublish,
 }: {
 	status: Product["status"] | undefined;
 	updateProduct: (updates: UpdateProduct["updates"]) => Promise<void>;
 	publishProduct: () => Promise<void>;
+	publishButtonRef: React.RefObject<HTMLButtonElement>;
+	onPublish: () => void;
 }) {
 	const [open, setIsOpen] = useState(false);
 	const [statusState, setStatusState] = useState<Product["status"]>(
@@ -37,21 +40,11 @@ export function ProductStatus({
 			<CardContent>
 				<div className="grid gap-6">
 					<div className="grid gap-3">
-						<AlertDialogComponent
-							open={open}
-							setIsOpen={setIsOpen}
-							title="Are you sure you want to publish?"
-							description="All your followers will be notified."
-							onContinue={async () => {
-								await publishProduct();
-								toast.success("Product published!");
-							}}
-						/>
 						<Select
 							value={statusState}
 							onValueChange={async (value) => {
 								if (value === "published") {
-									return setIsOpen(true);
+									return onPublish();
 								}
 								setStatusState(value as (typeof productStatuses)[number]);
 								await updateProduct({

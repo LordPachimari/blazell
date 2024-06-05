@@ -1,13 +1,11 @@
 import type { WriteTransaction } from "replicache";
 
-import type { CreateUser, InsertStore, UpdateUser } from "@blazell/validators";
+import type { UpdateUser } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
-import { getEntityFromID } from "./util/get-id";
-import { generateReplicachePK } from "@blazell/utils";
 
 async function updateUser(tx: WriteTransaction, input: UpdateUser) {
 	const { id, updates } = input;
-	const user = (await getEntityFromID(tx, id)) as User | undefined;
+	const user = await tx.get<User>(id);
 	if (!user) {
 		console.info("User  not found");
 		throw new Error("User not found");

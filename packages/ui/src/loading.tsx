@@ -1,8 +1,12 @@
-export const LoadingSpinner = () => {
+import { cn } from ".";
+import { Icons, strokeWidth } from "./icons";
+
+export const LoadingSpinner = ({ className }: { className?: string }) => {
 	return (
-		<svg
-			className="animate-spin h-5 w-5 mr-3 text-mauve-7"
-			viewBox="0 0 24 24"
+		<Icons.loader
+			className={cn("animate-spin text-crimson-9", className)}
+			strokeWidth={strokeWidth}
+			aria-hidden="true"
 		/>
 	);
 };

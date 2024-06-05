@@ -2,23 +2,24 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { UpdateVariant } from "@blazell/validators";
 
+import type { Product, Variant } from "@blazell/validators/client";
+import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import type { DataTableFilterableColumn } from "~/types/table";
-import { RowActions } from "./row-actions";
-import type { Product, Variant } from "@blazell/validators/client";
-import { AspectRatio } from "@blazell/ui/aspect-ratio";
-import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
+import { RowActions } from "./row-actions";
 
 export function getVariantColumns({
 	setVariantID,
 	updateVariant,
 	deleteVariant,
+	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
 	deleteVariant: (id: string) => Promise<void>;
+	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
 	return [
 		{
@@ -27,27 +28,27 @@ export function getVariantColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => (
-				<div className="w-[100px]">
-					<AspectRatio ratio={1} className="flex items-center rounded-md">
-						{!row.original.images?.[0] ? (
-							<ImagePlaceholder />
-						) : row.original.images?.[0]?.uploaded ? (
-							<Image
-								src={row.original.images[0]?.url}
-								alt={row.original.images[0]?.name || "Uploaded image"}
-								className="rounded-md h-full object-cover "
-							/>
-						) : (
-							<img
-								src={toImageURL(
-									row.original.images[0]?.base64,
-									row.original.images[0]?.fileType,
-								)}
-								alt={row.original.images[0]?.name || "Uploaded image"}
-								className="rounded-md h-full object-cover "
-							/>
-						)}
-					</AspectRatio>
+				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-mauve-7">
+					{!row.original.images?.[0] ? (
+						<ImagePlaceholder />
+					) : row.original.images?.[0]?.uploaded ? (
+						<Image
+							src={row.original.images[0]?.url}
+							alt={row.original.images[0]?.name || "Uploaded image"}
+							className="rounded-md h-full w-full object-fill "
+							fit="fill"
+							quality={90}
+						/>
+					) : (
+						<img
+							src={toImageURL(
+								row.original.images[0]?.base64,
+								row.original.images[0]?.fileType,
+							)}
+							alt={row.original.images[0]?.name || "Uploaded image"}
+							className="rounded-md h-full w-full object-fill "
+						/>
+					)}
 				</div>
 			),
 			enableSorting: false,
@@ -84,6 +85,7 @@ export function getVariantColumns({
 					row={row}
 					setVariantID={setVariantID}
 					deleteVariant={deleteVariant}
+					duplicateVariant={duplicateVariant}
 				/>
 			),
 		},

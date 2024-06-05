@@ -25,7 +25,7 @@ export const products = pgTable(
 	"products",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		defaultVariantID: varchar("default_variant_id").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		description: text("description"),
@@ -77,7 +77,7 @@ export const productsToTags = pgTable(
 	"products_to_tags",
 	{
 		id: varchar("id"),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		productID: varchar("product_id")
 			.notNull()
 			.references(() => products.id, { onDelete: "cascade" }),

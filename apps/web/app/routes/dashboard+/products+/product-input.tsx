@@ -1,16 +1,22 @@
-import type { UpdateProduct, UpdateVariant } from "@blazell/validators";
+import {
+	ProductSchema,
+	PublishedVariantSchema,
+	type PublishedVariant,
+	type UpdateProduct,
+	type UpdateVariant,
+} from "@blazell/validators";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@blazell/ui/badge";
 import { Button } from "@blazell/ui/button";
 import { Icons } from "@blazell/ui/icons";
-import type { Product } from "@blazell/validators/client";
+import { toast } from "@blazell/ui/toast";
+import type { Product, Variant } from "@blazell/validators/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import debounce from "lodash.debounce";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
 import { useReplicache } from "~/zustand/replicache";
 import { ProductCategory } from "./input/product-category";
@@ -20,33 +26,86 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
+import { useDashboardStore } from "~/zustand/store";
 export interface ProductInputProps {
-	product: Product | undefined | null;
+	product: Product | undefined;
 	productID: string;
+	defaultVariant: Variant | undefined | null;
 }
 
-const PublishedProductSchema = z.object({
-	title: z
-		.string()
-		.min(1, { message: "Title must contain at least 1 character" }),
-});
-export type PublishedProduct = z.infer<typeof PublishedProductSchema>;
-export function ProductInput({ productID, product }: ProductInputProps) {
+const ProductFormSchema = ProductSchema.partial().and(
+	PublishedVariantSchema.partial(),
+);
+export type ProductForm = z.infer<typeof ProductFormSchema>;
+
+export function ProductInput({
+	productID,
+	product,
+	defaultVariant,
+}: ProductInputProps) {
+	const variants = useDashboardStore((state) =>
+		state.variants.filter(
+			(v) => v.productID === productID && v.id !== defaultVariant?.id,
+		),
+	);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpen1, setIsOpen1] = useState(false);
-	const methods = useForm<PublishedProduct>({
-		resolver: zodResolver(PublishedProductSchema),
+	const methods = useForm<PublishedVariant>({
+		resolver: zodResolver(ProductFormSchema),
 	});
-
+	console.log("errors", methods.formState.errors);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const onSubmit = (data: PublishedProduct) => {
-		if (
-			!product?.defaultVariant?.prices ||
-			product?.defaultVariant.prices.length === 0
-		)
-			return toast.error("Please add a price to the product");
-		return setIsOpen(true);
-	};
+
+	console.log("variants", variants);
+	const publishButtonRef = useRef<HTMLButtonElement>(null);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onPublish = useCallback(() => {
+		/* check prices */
+		if (!defaultVariant?.prices || defaultVariant.prices.length === 0) {
+			toast.error("Please add a price to the product");
+			return;
+		}
+		if (defaultVariant.quantity <= 0) {
+			console.log("defaultVariant.quantity", defaultVariant.quantity);
+			toast.error("Please add quantity to the product");
+			return;
+		}
+		if (!defaultVariant.title || defaultVariant.title === "") {
+			methods.setError("title", {
+				message: "Title is required",
+			});
+			toast.error("Please add title to the product");
+			return;
+		}
+		const v0 = variants.find((variant) => variant.quantity <= 0);
+		if (v0) {
+			toast.error("Please add a quantity to all variants");
+			return;
+		}
+		const v1 = variants.find(
+			(variant) => (variant.optionValues ?? []).length === 0,
+		);
+		if (v1) {
+			toast.error(
+				`Please add a product option to variant ${
+					v1.title ?? v1.optionValues?.[0] ?? ""
+				}`,
+			);
+			return;
+		}
+		const v2 = variants.find((variant) => (variant.prices ?? []).length === 0);
+		if (v2) {
+			toast.error(
+				`Please add a price to the product variant "${
+					v2.title ?? v2.optionValues?.[0]?.optionValue.value ?? ""
+				}"`,
+			);
+			return;
+		}
+
+		setIsOpen(true);
+	}, [defaultVariant, variants]);
 
 	const updateProduct = useCallback(
 		async (updates: UpdateProduct["updates"]) => {
@@ -74,7 +133,7 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 	const navigate = useNavigate();
 
 	const deleteProduct = useCallback(async () => {
-		await dashboardRep?.mutate.deleteProduct({ id: productID });
+		await dashboardRep?.mutate.deleteProduct({ keys: [productID] });
 	}, [dashboardRep, productID]);
 	const publishProduct = useCallback(async () => {
 		await dashboardRep?.mutate.publishProduct({ id: productID });
@@ -100,18 +159,19 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 		<FormProvider {...methods}>
 			<form
 				className="w-full flex justify-center"
-				onSubmit={methods.handleSubmit(onSubmit)}
+				onSubmit={methods.handleSubmit(onPublish)}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
 					}
 				}}
 			>
-				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-6 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
+				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-10 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
 					<Button
 						variant="ghost"
+						type="button"
 						href="/dashboard/products"
-						className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
+						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/products")}
 					>
 						<Icons.left size={20} className="text-black dark:text-white" />
@@ -125,53 +185,64 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 						onContinue={async () => {
 							await publishProduct();
 							toast.success("Product published!");
+							navigate("/dashboard/products");
 						}}
 					/>
 					<AlertDialogComponent
 						open={isOpen1}
 						setIsOpen={setIsOpen1}
 						title="Are you sure you want to delete? "
-						description="This action is irreversible."
 						onContinue={async () => {
 							await deleteProduct();
 							toast.success("Product deleted!");
+							navigate("/dashboard/products");
+							navigate("/dashboard/products");
 						}}
 					/>
-					<div className="w-full flex flex-col lg:min-w-[44rem] max-w-[55rem]">
+					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">
 						<section className="flex items-center justify-between h-16">
 							<Badge
 								variant="outline"
 								className="text-sm text-mauve-11 sm:ml-0 h-8"
 							>
-								In stock
+								{(product?.defaultVariant.quantity ?? 0) > 0
+									? "In stock"
+									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
-								<DeleteOrPublish setIsOpen1={setIsOpen1} />
+								<DeleteOrPublish
+									setIsOpen1={setIsOpen1}
+									ref={publishButtonRef}
+								/>
 							</div>
 						</section>
 						<section className="w-full table gap-0">
 							<ProductInfo
 								description={product?.description}
 								onProductInputChange={onProductInputChange}
-								title={product?.defaultVariant.title}
-								defaultVariantID={product?.defaultVariant.id}
+								title={defaultVariant?.title}
+								defaultVariantID={defaultVariant?.id}
 								onVariantInputChange={onVariantInputChange}
 							/>
 							<Media
-								images={product?.defaultVariant.images ?? []}
-								variantID={product?.defaultVariant.id}
+								images={defaultVariant?.images ?? []}
+								variantID={defaultVariant?.id}
 							/>
 							<Pricing
-								variantID={product?.defaultVariant.id}
-								prices={product?.defaultVariant.prices ?? []}
+								isPublished={product?.status === "published"}
+								variantID={defaultVariant?.id}
+								prices={defaultVariant?.prices ?? []}
 							/>
 							<Variants
 								options={product?.options}
-								productID={product?.id}
+								productID={productID}
 								updateVariant={updateVariant}
+								variants={variants}
+								defaultVariant={defaultVariant}
+								isPublished={product?.status === "published"}
 							/>
 							<Stock
-								variant={product?.defaultVariant}
+								variant={defaultVariant}
 								updateVariant={updateVariant}
 								onVariantInputChange={onVariantInputChange}
 							/>
@@ -180,13 +251,15 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} />
+							<DeleteOrPublish setIsOpen1={setIsOpen1} ref={publishButtonRef} />
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
 								status={product?.status}
 								updateProduct={updateProduct}
 								publishProduct={publishProduct}
+								publishButtonRef={publishButtonRef}
+								onPublish={onPublish}
 							/>
 							<ProductCategory />
 						</section>
@@ -199,8 +272,10 @@ export function ProductInput({ productID, product }: ProductInputProps) {
 
 function DeleteOrPublish({
 	setIsOpen1,
+	ref,
 }: {
 	setIsOpen1: (value: boolean) => void;
+	ref: React.RefObject<HTMLButtonElement>;
 }) {
 	return (
 		<>
@@ -215,7 +290,7 @@ function DeleteOrPublish({
 				Delete
 			</Button>
 
-			<Button size="md" type="submit">
+			<Button size="md" type="submit" ref={ref}>
 				Publish
 			</Button>
 		</>

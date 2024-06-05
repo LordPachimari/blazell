@@ -2,16 +2,18 @@ import { CrossCircledIcon, StopwatchIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 import { CircleIcon } from "lucide-react";
 
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
-import type { DataTableFilterableColumn } from "~/types/table";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import { RowActions } from "./row-actions";
-import type { Product } from "@blazell/validators/client";
 import { Checkbox } from "@blazell/ui/checkbox";
 import { productStatuses } from "@blazell/validators";
+import type { Product } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { ProductStatus } from "~/components/molecules/statuses/product-status";
+import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
+import type { DataTableFilterableColumn } from "~/types/table";
 import { toImageURL } from "~/utils/helpers";
+import { useDashboardStore } from "~/zustand/store";
+import { RowActions } from "./row-actions";
+import { LoadingSpinner } from "@blazell/ui/loading";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (
@@ -34,8 +36,12 @@ function StatusIcon({ status }: { status: Product["status"] }) {
 
 export function getProductsColumns({
 	deleteProduct,
+	duplicateProduct,
+	isPending = false,
 }: {
-	deleteProduct: (id: string) => Promise<void>;
+	deleteProduct: (keys: string[]) => void;
+	duplicateProduct: (keys: string[]) => void;
+	isPending?: boolean;
 }): ColumnDef<Product, unknown>[] {
 	return [
 		{
@@ -67,39 +73,38 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
-			cell: ({ row }) => (
-				<div className="w-[100px]">
-					<AspectRatio
-						ratio={1}
-						className="flex items-center border border-mauve-7 rounded-md"
-					>
-						{!row.original.defaultVariant?.thumbnail ? (
+			cell: ({ row }) => {
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
+				return (
+					<div className="flex w-[50px] h-[50px] justify-center items-center border border-mauve-7 rounded-md">
+						{isPending && row.getIsSelected() ? (
+							<LoadingSpinner className="text-mauve-11" />
+						) : !defaultVariant?.thumbnail ? (
 							<ImagePlaceholder />
-						) : row.original.defaultVariant?.thumbnail?.uploaded ? (
+						) : defaultVariant?.thumbnail?.uploaded ? (
 							<Image
-								src={row.original.defaultVariant?.thumbnail?.url}
-								alt={
-									row.original.defaultVariant?.thumbnail?.name ||
-									"Uploaded image"
-								}
-								fit="cover"
+								src={defaultVariant?.thumbnail?.url}
+								alt={defaultVariant?.thumbnail?.name || "Uploaded image"}
 								className="rounded-md h-full object-cover"
+								fit="fill"
+								width={100}
+								height={100}
 							/>
 						) : (
 							<img
 								src={toImageURL(
-									row.original.defaultVariant.thumbnail.base64,
-									row.original.defaultVariant.thumbnail.fileType,
+									defaultVariant.thumbnail.base64,
+									defaultVariant.thumbnail.fileType,
 								)}
-								alt={
-									row.original.defaultVariant.thumbnail.name || "Uploaded image"
-								}
-								className="rounded-md h-full object-cover"
+								alt={defaultVariant.thumbnail.name || "Uploaded image"}
+								className="rounded-md h-full w-full object-cover"
 							/>
 						)}
-					</AspectRatio>
-				</div>
-			),
+					</div>
+				);
+			},
+
 			enableSorting: false,
 			enableHiding: true,
 		},
@@ -108,8 +113,16 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Title" />
 			),
-			cell: (info) => {
-				return <div className="w-[80px]">{info.getValue() as string}</div>;
+			cell: ({ row }) => {
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
+				return (
+					<div>
+						<h1 className="font-freeman">
+							{defaultVariant?.title || "Untitled"}
+						</h1>
+					</div>
+				);
 			},
 			enableSorting: false,
 			enableHiding: false,
@@ -139,8 +152,7 @@ export function getProductsColumns({
 
 				return (
 					<div className="flex w-[100px] items-center">
-						<StatusIcon status={status} />
-						<span className="capitalize">{status}</span>
+						<ProductStatus status={status} />
 					</div>
 				);
 			},
@@ -155,8 +167,14 @@ export function getProductsColumns({
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Quantity" />
 			),
-			cell: (info) => {
-				return <div className="w-[80px]">{info.getValue() as number}</div>;
+			cell: ({ row }) => {
+				const variantMap = useDashboardStore((state) => state.variantMap);
+				const defaultVariant = variantMap.get(row.original.defaultVariantID);
+				return (
+					<div className="w-[80px]">
+						<h1 className="lg:text-md">{defaultVariant?.quantity ?? 1}</h1>
+					</div>
+				);
 			},
 
 			enableSorting: false,
@@ -164,7 +182,13 @@ export function getProductsColumns({
 		},
 		{
 			id: "actions",
-			cell: ({ row }) => <RowActions row={row} deleteProduct={deleteProduct} />,
+			cell: ({ row }) => (
+				<RowActions
+					row={row}
+					deleteProduct={deleteProduct}
+					duplicateProduct={duplicateProduct}
+				/>
+			),
 		},
 	];
 }

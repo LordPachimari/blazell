@@ -12,7 +12,7 @@ export const replicacheClients = pgTable(
 	"replicache_clients",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk"),
+
 		clientGroupID: varchar("client_group_id").notNull(),
 		lastMutationID: integer("last_mutation_id").notNull(),
 		version: integer("version"),
@@ -29,7 +29,7 @@ export const replicacheSubspaceRecords = pgTable(
 	"replicaсhe_subspace_records",
 	{
 		id: varchar("id").notNull(),
-		replicachePK: varchar("replicache_pk"),
+
 		subspaceID: varchar("subspace_id").notNull(),
 		record: json("record").notNull().$type<ClientViewRecord>(),
 		version: integer("version"),

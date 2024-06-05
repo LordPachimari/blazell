@@ -7,24 +7,23 @@ import type {
 	UpdateStore,
 } from "@blazell/validators";
 import type { Store } from "@blazell/validators/client";
-import { getEntityFromID } from "./util/get-id";
 
 async function createStore(tx: WriteTransaction, input: CreateStore) {
 	const { store } = input;
-	await tx.set(store.replicachePK, store);
+	await tx.set(store.id, store);
 }
 
 async function updateStore(tx: WriteTransaction, input: UpdateStore) {
 	const { id, updates } = input;
 
-	const store = (await getEntityFromID(tx, id)) as Store | undefined;
+	const store = await tx.get<Store>(id);
 
 	if (!store) {
 		console.info("Store  not found");
 		throw new Error("Store not found");
 	}
 
-	return tx.set(store.replicachePK, {
+	return tx.set(id, {
 		...store,
 		...(updates.currencyCodes && { currencyCodes: updates.currencyCodes }),
 		...(updates.description && { description: updates.description }),
@@ -71,7 +70,7 @@ async function setActiveStoreID(tx: WriteTransaction, input: SetActiveStoreID) {
 async function deleteStoreImage(tx: WriteTransaction, input: DeleteStoreImage) {
 	const { storeID, type } = input;
 
-	const store = (await getEntityFromID(tx, storeID)) as Store | undefined;
+	const store = await tx.get<Store>(storeID);
 
 	if (!store) {
 		console.info("Store  not found");
@@ -79,7 +78,7 @@ async function deleteStoreImage(tx: WriteTransaction, input: DeleteStoreImage) {
 	}
 
 	return tx.set(
-		store.replicachePK,
+		storeID,
 		type === "store"
 			? { ...store, storeImage: null }
 			: { ...store, headerImage: null },

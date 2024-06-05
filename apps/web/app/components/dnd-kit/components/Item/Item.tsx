@@ -7,8 +7,8 @@ import { Handle, Remove } from "./components";
 import styles from "./Item.module.css";
 import { cn } from "@blazell/ui";
 import type { ItemProps } from "../../Sortable/Sortable";
-import { Loader2Icon } from "lucide-react";
 import Image from "~/components/molecules/image";
+import { toImageURL } from "~/utils/helpers";
 
 export interface Props {
 	dragOverlay?: boolean;
@@ -147,24 +147,28 @@ export const Item = React.memo(
 								color && styles.color,
 							)}
 							style={style}
-							data-cypress="draggable-item"
+							// data-cypress="draggable-item"
 							{...(!handle ? listeners : undefined)}
 							{...props}
 							tabIndex={!handle ? 0 : undefined}
 						>
 							{isImage ? (
-								<div className={cn("w-full h-full")}>
-									{item?.base64 || item.url ? (
+								<div>
+									{item?.uploaded ? (
 										<Image
-											src={item.base64 ?? item.url ?? ""}
-											className="aspect-square rounded-md object-cover"
+											src={item.url}
 											alt={item.name ?? "Uploaded image"}
+											fit="fill"
+											width={228}
+											height={228}
+											className="border border-mauve-7 rounded-md"
 										/>
-									) : null}
-									{!item?.uploaded && (
-										<div className="absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-30 dark:bg-white">
-											<Loader2Icon className="animate-spin text-white dark:text-black" />
-										</div>
+									) : (
+										<img
+											src={toImageURL(item.base64, item.fileType)}
+											alt={item.name ?? "Uploaded image"}
+											className="border w-[228px] h-[228px] border-mauve-7 rounded-md"
+										/>
 									)}
 								</div>
 							) : null}

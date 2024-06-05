@@ -1,22 +1,18 @@
-import type { ActiveStoreID } from "@blazell/validators";
-import type { Store as StoreType } from "@blazell/validators/client";
 import { Store } from "~/components/templates/store/store";
-import { ACTIVE_STORE_ID } from "~/constants";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 
 export default function StoresPage() {
-	const rep = useReplicache((state) => state.dashboardRep);
-	const activeStoreID = ReplicacheStore.getByPK<ActiveStoreID>(
-		rep,
-		ACTIVE_STORE_ID,
+	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
+	const isInitialized = useDashboardStore((state) => state.isInitialized);
+	const storeMap = useDashboardStore((state) => state.storeMap);
+	const store = storeMap.get(activeStoreID ?? "");
+	const products = useDashboardStore((state) =>
+		state.products.filter((product) => product.storeID === activeStoreID),
 	);
-	console.log("active", activeStoreID);
-	const stores = ReplicacheStore.scan<StoreType>(rep, "store") ?? [];
-	const store = stores.find((store) => store.id === activeStoreID?.value ?? "");
+
 	return (
-		<section className="w-full p-4">
-			<Store store={store} />
+		<section className="w-full p-4 lg:p-10">
+			<Store store={store} isInitialized={isInitialized} products={products} />
 		</section>
 	);
 }

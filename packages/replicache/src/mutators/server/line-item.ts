@@ -7,11 +7,23 @@ import {
 import { z } from "zod";
 import { zod } from "../../util/zod";
 import { TableMutator } from "../../context/table-mutator";
+import { createCart } from "./carts";
 
 const createLineItem = zod(CreateLineItemSchema, (input) =>
 	Effect.gen(function* () {
 		const tableMutator = yield* TableMutator;
-		const { lineItem } = input;
+		const { lineItem, newCartID } = input;
+		if (newCartID) {
+			yield* createCart({
+				cart: {
+					id: newCartID,
+					createdAt: new Date().toISOString(),
+					//TODO: get country code
+					countryCode: "AU",
+					currencyCode: "AUD",
+				},
+			});
+		}
 		return yield* tableMutator.set(lineItem, "lineItems");
 	}),
 );

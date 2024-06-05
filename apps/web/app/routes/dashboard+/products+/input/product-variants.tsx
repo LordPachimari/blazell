@@ -7,69 +7,63 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@blazell/ui/card";
-import { generateID, generateReplicachePK } from "@blazell/utils";
+import { Icons } from "@blazell/ui/icons";
+import { generateID } from "@blazell/utils";
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
-import { PlusCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { ReplicacheStore } from "~/replicache/store";
+import { useCallback, useState } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
 import { ProductOptions } from "./product-options";
 import ProductVariant from "./product-variant";
-import { useSearchParams } from "@remix-run/react";
 
 interface ProductVariantsProps {
 	options: ProductOption[] | undefined;
-	productID: string | undefined;
+	productID: string;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
+	variants: Variant[];
+	defaultVariant: Variant | null | undefined;
+	isPublished: boolean;
 }
 export function Variants({
 	options,
 	productID,
 	updateVariant,
+	variants,
+	defaultVariant,
+	isPublished,
 }: ProductVariantsProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variants = ReplicacheStore.scan<Variant>(
-		dashboardRep,
-		`variant_${productID}`,
-	);
-	const [isOpen, _setIsOpen] = useState(false);
-	const setIsOpen = (value: boolean) => {
-		value === false && setVariantID(null);
-		_setIsOpen(value);
+	const [variantID, _setVariantID] = useState<string | null>(null);
+
+	const setVariantID = (id: string | null) => {
+		if (id === null) {
+			setIsOpen(false);
+		} else {
+			setIsOpen(true);
+		}
+		_setVariantID(id);
 	};
 
-	const [searchParams, setSearchParams] = useSearchParams();
-	const setVariantID = (id: string | null) => {
-		setSearchParams((prev) => {
-			if (!id) {
-				prev.delete("variant");
-				return prev;
-			}
-			prev.set("variant", id);
-			return prev;
-		});
-	};
-	const variantID = searchParams.get("variant");
+	const [isOpen, setIsOpen] = useState(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const createVariant = useCallback(async () => {
 		if (!productID) return;
-		const newID = generateID({ prefix: "variant" });
 		const newVariant: InsertVariant = {
-			id: newID,
+			id: generateID({ prefix: "variant" }),
 			productID,
-			replicachePK: generateReplicachePK({
-				id: newID,
-				prefix: "variant",
-				filterID: productID,
-			}),
+			quantity: 1,
 		};
 		await dashboardRep?.mutate.createVariant({
 			variant: newVariant,
+			...(defaultVariant?.prices && { prices: defaultVariant.prices }),
 		});
 
-		setVariantID(newID);
-	}, [dashboardRep, productID, setVariantID]);
+		setVariantID(newVariant.id);
+		setIsOpen(true);
+	}, [dashboardRep, productID, defaultVariant]);
+	console.log("isOpen", isOpen);
 
 	const deleteVariant = useCallback(
 		async (id: string) => {
@@ -81,11 +75,23 @@ export function Variants({
 		},
 		[dashboardRep],
 	);
+	const duplicateVariant = useCallback(
+		async (keys: string[]) => {
+			if (dashboardRep) {
+				await dashboardRep.mutate.duplicateVariant({
+					duplicates: keys.map((id) => ({
+						newPriceIDs: Array.from({ length: 1 }).map(() =>
+							generateID({ prefix: "price" }),
+						),
+						newVariantID: generateID({ prefix: "variant" }),
+						originalVariantID: id,
+					})),
+				});
+			}
+		},
+		[dashboardRep],
+	);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (variantID) setIsOpen(true);
-	}, [variantID]);
 	return (
 		<Card className="my-4">
 			<CardHeader>
@@ -107,6 +113,7 @@ export function Variants({
 					variants={variants ?? []}
 					updateVariant={updateVariant}
 					deleteVariant={deleteVariant}
+					duplicateVariant={duplicateVariant}
 				/>
 			</CardContent>
 			<CardFooter className="justify-center">
@@ -116,20 +123,20 @@ export function Variants({
 					type="button"
 					className="mt-2 text-mauve-11"
 					onClick={createVariant}
+					disabled={options?.length === 0}
 				>
-					<PlusCircle className="h-3.5 w-3.5 mr-2" />
+					<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant
 				</Button>
-				{productID && (
-					<ProductVariant
-						isOpen={isOpen}
-						options={options ?? []}
-						variantID={variantID}
-						setIsOpen={setIsOpen}
-						productID={productID}
-						setVariantID={setVariantID}
-					/>
-				)}
+				<ProductVariant
+					isOpen={isOpen}
+					options={options ?? []}
+					variantID={variantID}
+					setIsOpen={setIsOpen}
+					productID={productID}
+					setVariantID={setVariantID}
+					isPublished={isPublished}
+				/>
 			</CardFooter>
 		</Card>
 	);

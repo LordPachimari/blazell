@@ -1,18 +1,17 @@
 import type { UpdateAddress } from "@blazell/validators";
 import type { WriteTransaction } from "replicache";
-import { getEntityFromID } from "./util/get-id";
 import type { Address } from "@blazell/validators/client";
 
 async function updateAddress(tx: WriteTransaction, input: UpdateAddress) {
 	const { id, updates } = input;
-	const address = (await getEntityFromID(tx, id)) as Address | undefined;
+	const address = await tx.get<Address>(id);
 
 	if (!address) {
 		console.info("Address  not found");
 		throw new Error("Address not found");
 	}
 
-	await tx.set(address.replicachePK, {
+	await tx.set(id, {
 		...address,
 		...updates,
 	});

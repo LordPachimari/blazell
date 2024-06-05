@@ -1,10 +1,11 @@
-import { Outlet } from "@remix-run/react";
-import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import { DashboardReplicacheProvider } from "~/providers/replicache/dashboard";
-import DashboardSidebar from "./sidebar";
 import type { User } from "@blazell/validators/client";
 import { getAuth } from "@clerk/remix/ssr.server";
-import { type LoaderFunction, json, redirect } from "@remix-run/cloudflare";
+import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
+import { Outlet } from "@remix-run/react";
+import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
+import DashboardSidebar from "./sidebar";
+import { DashboardStoreProvider } from "~/zustand/store";
+import { DashboardStoreMutator } from "~/zustand/store-mutator";
 export const loader: LoaderFunction = async (args) => {
 	const { getToken, userId } = await getAuth(args);
 	if (!userId) return redirect("/sign-in");
@@ -18,21 +19,21 @@ export const loader: LoaderFunction = async (args) => {
 	if (!user) {
 		return redirect("/create-user");
 	}
-	console.log("user", user);
-	return json(
-		user,
-		//  { headers: { "Cache-Control": "public, s-maxage=360" } }
-	);
+	return json(user, { headers: { "Cache-Control": "private, s-maxage=3600" } });
 };
 
 export default function DashboardLayout() {
 	return (
-		<SidebarLayoutWrapper>
-			<DashboardSidebar>
-				<main className="md:pl-44 w-full">
-					<Outlet />
-				</main>
-			</DashboardSidebar>
-		</SidebarLayoutWrapper>
+		<DashboardStoreProvider>
+			<DashboardStoreMutator>
+				<SidebarLayoutWrapper>
+					<DashboardSidebar>
+						<main className="md:pl-40 w-full">
+							<Outlet />
+						</main>
+					</DashboardSidebar>
+				</SidebarLayoutWrapper>
+			</DashboardStoreMutator>
+		</DashboardStoreProvider>
 	);
 }

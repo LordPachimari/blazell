@@ -1,6 +1,5 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
-import { toast } from "sonner";
 
 import { Button } from "@blazell/ui/button";
 import {
@@ -12,56 +11,62 @@ import {
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import type { Product } from "@blazell/validators/client";
+import { useNavigate } from "@remix-run/react";
+import { toast } from "@blazell/ui/toast";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;
-	deleteProduct: (id: string) => Promise<void>;
+	deleteProduct: (keys: string[]) => void;
+	duplicateProduct: (keys: string[]) => void;
 }
 
 export function RowActions<TData>({
 	row,
 	deleteProduct,
+	duplicateProduct,
 }: DataTableRowActionsProps) {
-	// const task = taskSchema.parse(row.original);
+	const navigate = useNavigate();
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					variant="ghost"
+			<DropdownMenuTrigger>
+				<button
 					type="button"
-					className="flex h-10 w-10 p-0 data-[state=open]:bg-muted"
+					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
 				>
-					<DotsHorizontalIcon className="h-4 w-4 md:h-8 md:w-8" />
+					<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
 					<span className="sr-only">Open menu</span>
-				</Button>
+				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
-				<DropdownMenuItem>Edit</DropdownMenuItem>
-				<DropdownMenuItem>Make a copy</DropdownMenuItem>
-				<DropdownMenuItem>Favorite</DropdownMenuItem>
-				{/* <DropdownMenuSub>
-					<DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-					<DropdownMenuSubContent>
-						<DropdownMenuRadioGroup value={task.label}>
-							{labels.map((label) => (
-								<DropdownMenuRadioItem key={label.value} value={label.value}>
-									{label.label}
-								</DropdownMenuRadioItem>
-							))}
-						</DropdownMenuRadioGroup>
-					</DropdownMenuSubContent>
-				</DropdownMenuSub> */}
+				<DropdownMenuItem
+					onClick={async (e) => {
+						e.stopPropagation();
+
+						navigate(`/dashboard/products/${row.original.id}`);
+					}}
+				>
+					Edit
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={(e) => {
+						e.stopPropagation();
+						duplicateProduct([row.original.id]);
+					}}
+				>
+					Duplicate
+				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={async (e) => {
 						e.stopPropagation();
-						await deleteProduct(row.original.id);
-						toast.success("Product deleted");
+						deleteProduct([row.original.id]);
 					}}
 				>
 					Delete
-					<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

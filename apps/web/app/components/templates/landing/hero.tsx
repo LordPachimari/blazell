@@ -25,11 +25,7 @@ function Hero() {
 					products to the world!
 				</p>
 				<div className="mt-6 flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-					<Link
-						className={cn(buttonVariants())}
-						to="/marketplace"
-						unstable_viewTransition
-					>
+					<Link className={cn(buttonVariants())} to="/marketplace">
 						Enter marketplace
 					</Link>
 				</div>

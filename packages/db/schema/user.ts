@@ -17,7 +17,7 @@ export const users = pgTable(
 	{
 		id: varchar("id").notNull().primaryKey(),
 		authID: varchar("auth_id"),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		username: varchar("username"),
 		fullName: varchar("full_name"),
 		patronymic: varchar("patronymic"),

@@ -243,6 +243,7 @@ export function Sortable({
 							reordered.forEach((item, index) => {
 								order[item.id] = index;
 							});
+							setItems(reordered);
 							updateImagesOrder({ order }).catch((err) => console.log(err));
 						}
 					}

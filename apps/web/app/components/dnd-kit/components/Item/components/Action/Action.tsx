@@ -16,6 +16,7 @@ export const Action = forwardRef<HTMLButtonElement, Props>(
 	({ active, className, cursor, style, ...props }, ref) => {
 		return (
 			<Button
+				size="icon"
 				variant="ghost"
 				type="button"
 				ref={ref}

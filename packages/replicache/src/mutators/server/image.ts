@@ -1,3 +1,5 @@
+import type { Image } from "@blazell/db";
+import { Cloudflare, Database } from "@blazell/shared";
 import {
 	DeleteImageSchema,
 	ImageUploadError,
@@ -5,16 +7,12 @@ import {
 	NotFound,
 	UpdateImagesOrderSchema,
 	UploadImagesSchema,
-	UploadResponseSchema,
 } from "@blazell/validators";
-import { Effect, pipe } from "effect";
 import type { Variant } from "@blazell/validators/server";
-import { Cloudflare, Database } from "@blazell/shared";
-import { zod } from "../../util/zod";
-import { TableMutator } from "../../context/table-mutator";
-import * as Http from "@effect/platform/HttpClient";
-import type { Image } from "@blazell/db";
 import * as base64 from "base64-arraybuffer";
+import { Effect, pipe } from "effect";
+import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const uploadImages = zod(UploadImagesSchema, (input) =>
 	Effect.gen(function* () {
@@ -23,7 +21,7 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 		const { env } = yield* Cloudflare;
 		const { entityID, images } = input;
 
-		let entity: Variant | undefined = undefined;
+		let entity: Pick<Variant, "images"> | undefined = undefined;
 		const isVariant = entityID.startsWith("variant");
 
 		if (images.length === 0) {
@@ -34,6 +32,9 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			entity = yield* Effect.tryPromise(() =>
 				manager.query.variants.findFirst({
 					where: (variants, { eq }) => eq(variants.id, entityID),
+					columns: {
+						images: true,
+					},
 				}),
 			).pipe(
 				Effect.catchTags({
@@ -97,17 +98,19 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 			...uploaded,
 		];
 
-		return yield* tableMutator.update(
-			entityID,
-			{ images: updatedImages },
-			"variants",
-		);
+		return yield* Effect.all([
+			tableMutator.update(
+				entityID,
+				{ images: updatedImages, thumbnail: updatedImages[0] },
+				"variants",
+			),
+		]);
 	}),
 );
 
 const deleteImage = zod(DeleteImageSchema, (input) => {
 	return Effect.gen(function* () {
-		const { cloudflareID, imageID, entityID } = input;
+		const { imageID, entityID } = input;
 
 		const tableMutator = yield* TableMutator;
 		const { manager } = yield* Database;
@@ -134,38 +137,22 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 			);
 		}
 
-		if (!cloudflareID)
-			return yield* tableMutator.update(
-				entityID,
-				{
-					images: entity.images?.filter((image) => image.id !== imageID) ?? [],
-				},
-				"variants",
-			);
+		yield* pipe(
+			Effect.tryPromise(() => env.R2.delete(`images/${imageID}`)),
+			Effect.retry({ times: 3 }),
+			Effect.orDie,
 
-		yield* Http.request
-			.del(
-				`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${imageID}`,
-			)
-			.pipe(
-				Http.request.setHeaders({
-					Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-				}),
-				Http.client.fetch,
-				Effect.retry({ times: 3 }),
-				Effect.scoped,
-				Effect.orDie,
-				Effect.zipLeft(
-					tableMutator.update(
-						entityID,
-						{
-							images:
-								entity.images?.filter((image) => image.id !== imageID) ?? [],
-						},
-						"variants",
-					),
+			Effect.zipLeft(
+				tableMutator.update(
+					entityID,
+					{
+						images:
+							entity.images?.filter((image) => image.id !== imageID) ?? [],
+					},
+					"variants",
 				),
-			);
+			),
+		);
 	});
 });
 
@@ -199,12 +186,16 @@ const updateImagesOrder = zod(UpdateImagesOrderSchema, (input) =>
 		for (const image of images) {
 			const o = order[image.id];
 
-			if (o) image.order = o;
+			if (o !== undefined) image.order = o;
 		}
 		images.sort((a, b) => a.order - b.order);
 
-		return yield* tableMutator.update(entityID, { images }, "variants");
+		return yield* tableMutator.update(
+			entityID,
+			{ images, ...(isVariant && { thumbnail: images[0] }) },
+			"variants",
+		);
 	}),
 );
 
-export { uploadImages, deleteImage, updateImagesOrder };
+export { deleteImage, updateImagesOrder, uploadImages };

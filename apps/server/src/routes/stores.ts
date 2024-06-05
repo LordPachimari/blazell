@@ -36,3 +36,4 @@ app.post("/update-store/:id", async (c) => {
 
 	return c.json({}, 200);
 });
+export default app;

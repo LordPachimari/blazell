@@ -49,6 +49,7 @@ export function Media({
 		},
 		[dashboardRep, variantID],
 	);
+	console.log("images", images);
 	return (
 		<Card className="overflow-hidden my-4">
 			<CardHeader className="pb-4">
@@ -65,14 +66,12 @@ export function Media({
 					{images && images.length > 0 && (
 						<div className="py-2">
 							<div className="gap-y-2x small flex flex-col">
-								{images && (
-									<LargeFirstTile
-										items={images}
-										updateImagesOrder={updateImagesOrder}
-										isImage={true}
-										onItemRemove={deleteImage}
-									/>
-								)}
+								<LargeFirstTile
+									items={images}
+									updateImagesOrder={updateImagesOrder}
+									isImage={true}
+									onItemRemove={deleteImage}
+								/>
 							</div>
 						</div>
 					)}

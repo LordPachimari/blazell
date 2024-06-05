@@ -29,6 +29,16 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 									prices: true,
 								},
 							},
+							defaultVariant: {
+								with: {
+									prices: true,
+								},
+							},
+							options: {
+								with: {
+									optionValues: true,
+								},
+							},
 						},
 					})
 				: manager.query.products.findMany({
@@ -36,7 +46,7 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 						columns: {
 							id: true,
 							version: true,
-							replicachePK: true,
+
 							score: true,
 						},
 						with: {
@@ -44,7 +54,6 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 								columns: {
 									id: true,
 									version: true,
-									replicachePK: true,
 								},
 							},
 						},

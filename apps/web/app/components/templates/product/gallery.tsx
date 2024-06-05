@@ -1,12 +1,5 @@
 import { cn } from "@blazell/ui";
 
-import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
-import { useGalleryState } from "~/zustand/state";
-import type { Image as ImageType } from "@blazell/validators";
-import { ParallaxContainer } from "@blazell/ui/parallax-container";
-import { Button } from "@blazell/ui/button";
-import { Icons } from "@blazell/ui/icons";
-import { AspectRatio } from "@blazell/ui/aspect-ratio";
 import { Card, CardContent } from "@blazell/ui/card";
 import {
 	Carousel,
@@ -14,9 +7,13 @@ import {
 	CarouselItem,
 	CarouselNext,
 	CarouselPrevious,
+	type CarouselApi,
 } from "@blazell/ui/carousel";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import type { Image as ImageType } from "@blazell/validators";
+import React, { useCallback } from "react";
 import Image from "~/components/molecules/image";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 import { toImageURL } from "~/utils/helpers";
 
 interface GalleryProps {
@@ -24,86 +21,55 @@ interface GalleryProps {
 }
 
 function Gallery({ images }: GalleryProps) {
-	return (
-		<>
-			<GalleryForDesktop images={images} />
-			<GalleryForMobileDevices images={images} />
-			<CloseFullScreenGalleryButton />
-		</>
+	const [api, setApi] = React.useState<CarouselApi>();
+	const onClick = useCallback(
+		(index: number) => {
+			if (!api) return;
+			api.scrollTo(index);
+		},
+		[api],
 	);
-}
 
-function GalleryForDesktop({ images }: GalleryProps) {
-	const { opened, setOpened } = useGalleryState();
-
+	const isScrolled = useIsWindowScrolled();
+	console.log("images", images);
 	return (
-		<aside
+		<div
 			className={cn(
-				"hidden lg:grid col-span-4 min-w-[20rem] max-w-[45rem] lg:max-w-[40rem] gap-4",
+				"sticky top-0 lg:relative  transition-all duration-500 ease-in-out col-span-4 w-full min-w-[20rem] lg:max-w-[40rem] gap-4",
+				isScrolled && "brightness-50 lg:brightness-100",
 			)}
 		>
-			{images.map(({ id, url, base64, name, uploaded, fileType }) => (
-				<AspectRatio
-					ratio={2 / 3}
-					key={id}
-					className={"relative  w-full max-h-[calc(100vh-30vh)] rounded-xl"}
-					onClick={() => setOpened(!opened)}
-					onKeyDown={({ key }) => setOpened(opened && !(key === "Escape"))}
-				>
-					<Card className="flex items-center p-4 h-full justify-center">
-						{!uploaded ? (
-							<img
-								alt={name}
-								className="rounded-xl border"
-								src={toImageURL(base64, fileType)}
-							/>
-						) : (
-							<Image src={url} />
-						)}
-					</Card>
-				</AspectRatio>
-			))}
-		</aside>
-	);
-}
-
-function GalleryForMobileDevices({ images }: GalleryProps) {
-	const isScrolled = useIsWindowScrolled();
-	const { opened, setOpened } = useGalleryState();
-
-	return (
-		<ParallaxContainer className="lg:hidden">
-			<section className="aspect-square w-full  col-span-4 md:p-4 xs:p-2 p-1  ">
-				<Carousel>
-					<CarouselContent>
+			<div className="flex flex-col gap-4 lg:p-4">
+				<Carousel setApi={setApi} className="h-fit">
+					<CarouselContent className="shadow-none ">
 						{images.length > 0 &&
 							images.map(({ uploaded, base64, url, name, id, fileType }) => (
-								<CarouselItem key={id} className="aspect-square">
-									<Card>
-										<AspectRatio
-											ratio={4 / 5}
-											className={"w-full rounded-xl"}
-											onClick={() => setOpened(!opened)}
-											onKeyDown={({ key }) =>
-												setOpened(opened && !(key === "Escape"))
-											}
-										>
-											{!uploaded ? (
-												<img
-													alt={name}
-													className="rounded-xl border"
-													src={toImageURL(base64, fileType)}
-												/>
-											) : (
-												<Image src={url} />
+								<CarouselItem
+									key={id}
+									className={cn("aspect-square shadow-none ")}
+								>
+									{!uploaded ? (
+										<img
+											alt={name}
+											className={cn(
+												"md:rounded-xl lg:border lg:border-mauve-7",
 											)}
-										</AspectRatio>
-									</Card>
+											src={toImageURL(base64, fileType)}
+										/>
+									) : (
+										<Image
+											src={url}
+											className={cn(
+												"lg:rounded-2xl lg:border lg:border-mauve-7",
+											)}
+											fit="fill"
+										/>
+									)}
 								</CarouselItem>
 							))}
 						{images.length === 0 && (
 							<CarouselItem className="aspect-square">
-								<Card className="p-4 relative text-center shadow-md height-full cursor-pointer aspect-square">
+								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
 									<CardContent className="p-0 flex h-full justify-center items-center">
 										<ImagePlaceholder size={30} />
 									</CardContent>
@@ -114,27 +80,38 @@ function GalleryForMobileDevices({ images }: GalleryProps) {
 					<CarouselPrevious />
 					<CarouselNext />
 				</Carousel>
-			</section>
-		</ParallaxContainer>
-	);
-}
-
-function CloseFullScreenGalleryButton() {
-	const { opened, setOpened } = useGalleryState();
-
-	return (
-		opened && (
-			<Button
-				className="fixed right-0 top-0 z-20 m-2"
-				size="icon"
-				title="CLose"
-				variant="ghost"
-				onClick={() => setOpened(false)}
-			>
-				<Icons.close color="black" size={50} strokeWidth={0.5} />
-				<span className="sr-only">Close gallery</span>
-			</Button>
-		)
+				<div className="lg:grid lg:grid-cols-5 gap-4 px-4 hidden">
+					{images.map(
+						({ uploaded, base64, url, name, id, fileType }, index) => (
+							<div key={id} className="h-[100px] ">
+								{!uploaded ? (
+									<button type="button" onClick={() => onClick(index)}>
+										<img
+											alt={name}
+											className={cn(
+												"rounded-xl border hover:border-crimson-9 cursor-pointer",
+											)}
+											src={toImageURL(base64, fileType)}
+											onKeyDown={() => onClick(index)}
+										/>
+									</button>
+								) : (
+									<button type="button" onClick={() => onClick(index)}>
+										<Image
+											src={url}
+											className={cn(
+												"rounded-2xl border hover:border-crimson-9 cursor-pointer",
+											)}
+											fit="fill"
+										/>
+									</button>
+								)}
+							</div>
+						),
+					)}
+				</div>
+			</div>
+		</div>
 	);
 }
 

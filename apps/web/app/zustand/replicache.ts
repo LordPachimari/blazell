@@ -1,15 +1,13 @@
 import type {
 	DashboardMutatorsType,
-	UserMutatorsType,
+	GlobalMutatorsType,
 } from "@blazell/replicache";
 import type { Replicache } from "replicache";
 import { create } from "zustand";
 
 interface ReplicacheState {
-	globalRep: Replicache | null;
-	setGlobalRep: (rep: Replicache) => void;
-	userRep: Replicache<UserMutatorsType> | null;
-	setUserRep: (rep: Replicache<UserMutatorsType> | null) => void;
+	globalRep: Replicache<GlobalMutatorsType> | null;
+	setGlobalRep: (rep: Replicache<GlobalMutatorsType> | null) => void;
 	dashboardRep: Replicache<DashboardMutatorsType> | null;
 	setDashboardRep: (rep: Replicache<DashboardMutatorsType> | null) => void;
 	marketplaceRep: Replicache | null;
@@ -17,8 +15,6 @@ interface ReplicacheState {
 }
 
 export const useReplicache = create<ReplicacheState>((set) => ({
-	userRep: null,
-	setUserRep: (rep) => set({ userRep: rep }),
 	dashboardRep: null,
 	setDashboardRep: (rep) => set({ dashboardRep: rep }),
 	globalRep: null,

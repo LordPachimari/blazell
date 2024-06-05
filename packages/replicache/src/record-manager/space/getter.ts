@@ -24,7 +24,7 @@ export const SpaceRecordGetter: SpaceRecordGetterType = {
 	dashboard: {
 		store: storeCVD,
 	},
-	user: {
+	global: {
 		errors: errorsCVD,
 		user: userCVD,
 		cart: cartCVD,

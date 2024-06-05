@@ -1,21 +1,27 @@
-import type { Product } from "@blazell/validators/client";
+import type { PublishedVariant } from "@blazell/validators";
+import type {
+	Product,
+	PublishedProduct,
+	Variant,
+} from "@blazell/validators/client";
 import PriceLabel from "~/components/molecules/price-label";
 
 interface GeneralInfoProps {
-	product: Product | null | undefined;
+	product: Product | PublishedProduct | null | undefined;
+	defaultVariant: Variant | PublishedVariant | undefined | null;
 }
 
-function GeneralInfo({ product }: GeneralInfoProps) {
+function GeneralInfo({ product, defaultVariant }: GeneralInfoProps) {
 	return (
-		<section className="flex flex-col  ">
+		<section className="flex flex-col ">
 			<span className="flex justify-between">
-				<h1 className="font-semibold uppercase text-2xl">{`${product?.defaultVariant.title}`}</h1>
+				<h1 className="font-semibold uppercase text-2xl">{`${
+					defaultVariant?.title ?? "Untitled"
+				}`}</h1>
 				<PriceLabel
-					title={product?.defaultVariant.prices?.[0]?.currencyCode ?? "USD"}
-					amount={product?.defaultVariant.prices?.[0]?.amount ?? 0}
-					currencyCode={
-						product?.defaultVariant.prices?.[0]?.currencyCode ?? "USD"
-					}
+					title={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
+					amount={defaultVariant?.prices?.[0]?.amount ?? 0}
+					currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
 				/>
 			</span>
 

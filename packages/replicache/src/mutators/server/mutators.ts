@@ -4,6 +4,7 @@ import {
 	deleteProduct,
 	updateProduct,
 	publishProduct,
+	duplicateProduct,
 } from "./product";
 import {
 	createStore,
@@ -27,8 +28,14 @@ import {
 	updateProductOption,
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
-import { createVariant, deleteVariant, updateVariant } from "./variant";
+import {
+	createVariant,
+	deleteVariant,
+	duplicateVariant,
+	updateVariant,
+} from "./variant";
 import { deleteImage, updateImagesOrder, uploadImages } from "./image";
+import { createCart } from "./carts";
 
 const DashboardMutators = {
 	createProduct,
@@ -42,7 +49,9 @@ const DashboardMutators = {
 	deleteProductOptionValue,
 	deletePrices,
 	deleteVariant,
+	duplicateVariant,
 	updateProduct,
+	duplicateProduct,
 	updateImagesOrder,
 	updateProductOption,
 	updateProductOptionValues,
@@ -67,6 +76,7 @@ export const UserMutators = {
 	deleteLineItem,
 	updateAddress,
 	updateCart,
+	createCart,
 };
 export const UserMutatorsMap = new Map(Object.entries(UserMutators));
 export type UserMutatorsType = typeof UserMutators;
@@ -85,6 +95,8 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	createProductOption: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	createPrices: {
 		dashboard: ["store"],
@@ -94,46 +106,77 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	deleteProduct: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	publishProduct: {
 		dashboard: ["store"],
 		marketplace: ["products"],
+		global: ["cart"],
+	},
+	duplicateProduct: {
+		dashboard: ["store"],
 	},
 	deleteProductOption: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	deleteProductOptionValue: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	deletePrices: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	deleteVariant: {
+		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
+	},
+	duplicateVariant: {
 		dashboard: ["store"],
 	},
 	updateProduct: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	updateImagesOrder: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	updateProductOption: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	updateProductOptionValues: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	updatePrice: {
 		dashboard: ["store"],
 	},
 	updateVariant: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	uploadImages: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	deleteImage: {
 		dashboard: ["store"],
+		marketplace: ["products"],
+		global: ["cart"],
 	},
 	createStore: {
 		dashboard: ["store"],
@@ -145,30 +188,33 @@ export const affectedSpaces: AffectedSpaces = {
 		dashboard: ["store"],
 	},
 	updateUser: {
-		user: ["user"],
+		global: ["user"],
 	},
 	assignOptionValueToVariant: {
 		dashboard: ["store"],
 	},
 	createLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteLineItem: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateAddress: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	updateCart: {
-		user: ["cart"],
+		global: ["cart"],
 	},
 	deleteStoreImage: {
 		dashboard: ["store"],
 	},
 	setActiveStoreID: {
 		dashboard: ["store"],
+	},
+	createCart: {
+		global: ["cart"],
 	},
 };

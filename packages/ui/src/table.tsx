@@ -6,13 +6,11 @@ const Table = React.forwardRef<
 	HTMLTableElement,
 	React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-	<div className="w-full overflow-auto bg-component border border-mauve-7 rounded-lg">
-		<table
-			ref={ref}
-			className={cn("w-full caption-bottom text-sm rounded-lg", className)}
-			{...props}
-		/>
-	</div>
+	<table
+		ref={ref}
+		className={cn("w-full caption-bottom text-sm rounded-2x", className)}
+		{...props}
+	/>
 ));
 Table.displayName = "Table";
 
@@ -32,11 +30,7 @@ const TableBody = React.forwardRef<
 	HTMLTableSectionElement,
 	React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-	<tbody
-		ref={ref}
-		className={cn("[&_tr:last-child]:border-0 rounded-lg", className)}
-		{...props}
-	/>
+	<tbody ref={ref} className={cn("rounded-2xl", className)} {...props} />
 ));
 TableBody.displayName = "TableBody";
 
@@ -46,7 +40,7 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<tfoot
 		ref={ref}
-		className={cn("bg-primary font-medium text-primary-foreground", className)}
+		className={cn("font-medium text-primary-foreground", className)}
 		{...props}
 	/>
 ));

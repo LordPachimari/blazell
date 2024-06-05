@@ -11,7 +11,8 @@ const createPrices = zod(CreatePricesSchema, (input) =>
 	Effect.gen(function* () {
 		const tableMutator = yield* TableMutator;
 		const { prices, id } = input;
-		const isVariant = id.startsWith("variant");
+		const isVariant =
+			id.startsWith("variant") || id.startsWith("variant_default");
 		const effects = [];
 		effects.push(tableMutator.set(prices, "prices"));
 
@@ -28,12 +29,11 @@ const updatePrice = zod(UpdatePriceSchema, (input) =>
 		const tableMutator = yield* TableMutator;
 		const { priceID, updates, id } = input;
 
-		const isProduct = id.startsWith("product");
-		const isVariant = id.startsWith("variant");
+		const isVariant =
+			id.startsWith("variant") || id.startsWith("variant_default");
 
 		const effects = [tableMutator.update(priceID, updates, "prices")];
 
-		if (isProduct) effects.push(tableMutator.update(id, {}, "products"));
 		if (isVariant) effects.push(tableMutator.update(id, {}, "variants"));
 
 		return yield* Effect.all(effects, {
@@ -47,11 +47,10 @@ const deletePrices = zod(DeletePricesSchema, (input) =>
 		const tableMutator = yield* TableMutator;
 		const { priceIDs, id } = input;
 
-		const isProduct = id.startsWith("product");
-		const isVariant = id.startsWith("variant");
+		const isVariant =
+			id.startsWith("variant") || id.startsWith("variant_default");
 
 		const effects = [tableMutator.delete(priceIDs, "prices")];
-		if (isProduct) effects.push(tableMutator.update(id, {}, "products"));
 		if (isVariant) effects.push(tableMutator.update(id, {}, "variants"));
 
 		return yield* Effect.all(effects, {

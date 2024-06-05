@@ -6,7 +6,6 @@ import type {
 import type { Variant } from "@blazell/validators/client";
 import type { WriteTransaction } from "replicache";
 import { entityNotFound } from "./price";
-import { getEntityFromID } from "./util/get-id";
 
 async function updateImagesOrder(
 	tx: WriteTransaction,
@@ -14,8 +13,8 @@ async function updateImagesOrder(
 ) {
 	const { order, entityID } = input;
 
-	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
-	const isProduct = entityID.startsWith("product");
+	const entity = (await tx.get(entityID)) as Variant | undefined;
+	const isVariant = entityID.startsWith("variant");
 
 	if (!entity) {
 		return entityNotFound(entityID);
@@ -25,20 +24,22 @@ async function updateImagesOrder(
 
 	for (const image of images) {
 		const o = order[image.id];
-		if (o) image.order = o;
+		if (o !== undefined) image.order = o;
 	}
 	images.sort((a, b) => a.order - b.order);
-	return await tx.set(entity.replicachePK, {
+
+	return await tx.set(entityID, {
 		...entity,
 		images,
-		...(isProduct && { thumbnail: images[0] }),
+		...(isVariant && { thumbnail: images[0] }),
 	});
 }
 
 async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 	const { entityID, images } = input;
 
-	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
+	const entity = (await tx.get(entityID)) as Variant | undefined;
+	const isVariant = entityID.startsWith("variant");
 
 	if (!entity) {
 		return entityNotFound(entityID);
@@ -50,22 +51,23 @@ async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 
 	const updatedImages = [...(entity.images ? entity.images : []), ...images];
 
-	return await tx.set(entity.replicachePK, {
+	return await tx.set(entityID, {
 		...entity,
 		images: updatedImages,
+		...(isVariant && { thumbnail: updatedImages[0] }),
 	});
 }
 
 async function deleteImage(tx: WriteTransaction, input: DeleteImage) {
 	const { imageID, entityID } = input;
 
-	const entity = (await getEntityFromID(tx, entityID)) as Variant | undefined;
+	const entity = (await tx.get(entityID)) as Variant | undefined;
 
 	if (!entity) {
 		return entityNotFound(entityID);
 	}
 
-	await tx.set(entity.replicachePK, {
+	await tx.set(entityID, {
 		...entity,
 		images: entity.images?.filter((image) => image.id !== imageID),
 	});

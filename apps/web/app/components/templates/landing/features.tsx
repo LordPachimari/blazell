@@ -1,46 +1,83 @@
-import { ShoppingBag } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
+import { Card, CardContent, CardFooter } from "@blazell/ui/card";
+import {
+	ShoppingBag,
+	Truck,
+	BadgeDollarSign,
+	BarChartBig,
+	Settings,
+} from "lucide-react";
 import { ProductTypeCards } from "./wobble-cards";
-
-function Features() {
+import type { Theme } from "@blazell/validators";
+type Feature = {
+	title: string;
+	description: string;
+	component: React.ReactNode;
+};
+function Features({ theme }: { theme: Theme }) {
 	const features = [
 		{
-			title: "Dashboard",
-			description: "Easily create a product with our blazingly fast dashboard",
-			icon: <ShoppingBag />,
+			title: "Real-time",
+			description:
+				"Organize auctions, schedule merch drops, and see your income grow in real-time.",
+			component: (
+				<div>
+					{theme === "dark" ? (
+						<img
+							src="/assets/demo-1-dark.png"
+							alt="Demo2"
+							className="object-fill rounded-lg"
+						/>
+					) : (
+						<img
+							src="/assets/demo-1.png"
+							alt="Demo1"
+							className="object-fill rounded-lg"
+						/>
+					)}
+				</div>
+			),
 		},
 		{
 			title: "Analytics",
 			description: "Analyze your sells with our powerful analytics tool.",
-			icon: <ShoppingBag />,
+			component: (
+				<div className="flex justify-center items-center h-full">
+					<BarChartBig size={70} className="text-crimson-9" />
+				</div>
+			),
 		},
 		{
 			title: "Shipping",
 			description: "Choose the best shipping method for your product.",
-			icon: <ShoppingBag />,
+			component: (
+				<div className="flex justify-center items-center h-full">
+					<Truck size={70} className="text-crimson-9" />
+				</div>
+			),
 		},
 		{
 			title: "Payment",
 			description:
 				"Handle your payment with ease, we support multiple payment methods.",
-			icon: <ShoppingBag />,
+			component: (
+				<div className="flex justify-center items-center h-full">
+					<BadgeDollarSign size={70} className="text-crimson-9" />
+				</div>
+			),
 		},
 		{
-			title: "Auction",
-			description:
-				"You can even auction your product! We made it fun and easy for you.",
-			icon: <ShoppingBag />,
+			title: "API",
+			description: "Use our rich API to build your own store.",
+			component: (
+				<div className="flex justify-center items-center h-full">
+					<Settings size={70} className="text-crimson-9" />
+				</div>
+			),
 		},
-		{
-			title: "Community",
-			description:
-				"Our most powerful feature. Blazell provides easy reach which makes it easy to connect and build your community.",
-			icon: <ShoppingBag />,
-		},
-	];
+	] satisfies Feature[];
 
 	return (
-		<div className="flex flex-col items-center px-6 sm:px-14 ">
+		<div className="flex flex-col items-center sm:px-4">
 			<section className="w-full flex flex-col items-center">
 				<h2 className="text-center text-4xl font-bold lg:text-5xl lg:tracking-tight">
 					Everything you need to start selling
@@ -49,17 +86,15 @@ function Features() {
 					Blazell comes with a lot of features that will help you to start
 					selling
 				</p>
-				<ul className="mt-8 grid w-full gap-4 sm:grid-cols-2 md:w-10/12 md:grid-cols-3">
+				<ul className="mt-8 grid w-full gap-4  sm:grid-cols-2 md:w-10/12 xl:grid-cols-3">
 					{features.map((item, i) => (
 						<Card
 							key={item.title}
-							className="aspect-square gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"
+							className="aspect-square h-fit backdrop-blur-sm relative cursor-pointer hover:scale-105 transition-all duration-100 ease-out gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"
 						>
-							<CardHeader>
+							<CardContent className="h-3/4">{item.component}</CardContent>
+							<CardFooter className="py-4 h-[120px]">
 								<h3 className="text-lg font-semibold">{item.title}</h3>
-							</CardHeader>
-							<CardContent />
-							<CardFooter>
 								<p className="mt-2 leading-relaxed text-mauve-11">
 									{item.description}
 								</p>
@@ -80,8 +115,7 @@ function Features() {
 				</h2>
 				<p className="mt-8 text-center text-lg text-mauve-11">
 					With our <span className="font-bold">PRO</span> plan, you can
-					customize your store appearance. Host your store on your own domain if
-					you want!
+					customize your store appearance. You can even create your own domain!
 				</p>
 			</section>
 

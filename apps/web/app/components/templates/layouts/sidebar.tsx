@@ -7,6 +7,7 @@ import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-sidebar";
 import { ThemeToggle } from "./theme-toggle";
+import { ClientOnly } from "remix-utils/client-only";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -48,10 +49,7 @@ const Sidebar = () => {
 	const optimisticMode = useOptimisticSidebarMode();
 
 	const mode = optimisticMode ?? userPreference.sidebarState ?? "closed";
-	console.log("userPreference", userPreference);
-	console.log("mode", mode);
 	const nextMode = mode === "open" ? "closed" : "open";
-	console.log("nextMode", nextMode);
 	useHotkeys(["s"], () => {
 		fetcher.submit(
 			{ sidebarState: nextMode },
@@ -61,16 +59,37 @@ const Sidebar = () => {
 	const location = useLocation();
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
-	console.log(mode === "open");
 
 	return (
 		<div className="flex">
+			<Button
+				variant="ghost"
+				size="icon"
+				className="fixed lg:hidden bottom-4 left-3 z-50"
+				onClick={() =>
+					fetcher.submit(
+						{ sidebarState: nextMode },
+						{
+							method: "post",
+							action: "/action/set-sidebar",
+							navigate: false,
+							fetcherKey: "sidebar-fetcher",
+						},
+					)
+				}
+			>
+				{mode === "open" ? (
+					<Icons.left size={20} strokeWidth={strokeWidth} />
+				) : (
+					<Icons.menu size={20} strokeWidth={strokeWidth} />
+				)}
+			</Button>
 			<nav
 				className={cn(
-					"group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
+					"left-[-100px] lg:left-0 group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out lg:hover:w-44 ",
 					{
-						"w-44": mode === "open",
-						hidden: noSidebarPaths.has(location.pathname),
+						"lg:w-44 left-0": mode === "open",
+						"hidden lg:hidden": noSidebarPaths.has(location.pathname),
 					},
 				)}
 			>
@@ -85,7 +104,7 @@ const Sidebar = () => {
 					<Button
 						size={"icon"}
 						variant={"ghost"}
-						className="text-mauve-11 text-lg"
+						className="hidden lg:block text-mauve-11 text-lg rounded-full"
 						type="submit"
 						onClick={() =>
 							fetcher.submit(
@@ -115,7 +134,6 @@ const Sidebar = () => {
 									"group/link flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2 ",
 								)}
 								prefetch="viewport"
-								unstable_viewTransition
 							>
 								<div className="flex justify-center ">
 									<Icon
@@ -130,10 +148,10 @@ const Sidebar = () => {
 								</div>
 								<span
 									className={cn(
-										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out group-hover:opacity-100",
+										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out lg:group-hover:opacity-100",
 
 										`/${mainPath}` === item.href && "text-crimson-9",
-										mode === "open" ? "opacity-100" : "opacity-0",
+										mode === "open" ? "lg:opacity-100" : "opacity-0",
 									)}
 								>
 									{item.title}
@@ -150,7 +168,7 @@ const Sidebar = () => {
 						},
 					)}
 				>
-					<ThemeToggle />
+					<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
 				</div>
 			</nav>
 		</div>

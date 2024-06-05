@@ -45,7 +45,7 @@ app.post("/create-user", async (c) => {
 								Effect.scoped,
 							),
 						Http.request
-							.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/user`)
+							.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
 							.pipe(
 								Http.request.jsonBody(["user"]),
 								Effect.andThen(Http.client.fetch),
@@ -66,31 +66,24 @@ app.post("/create-user", async (c) => {
 	return c.json(result, result.status);
 });
 
-app.get(
-	"/",
-	// cache({
-	// 	cacheName: "blazell-hono-cache",
-	// 	cacheControl: "max-age=3600",
-	// }),
-	async (c) => {
-		const db = c.get("db" as never) as Db;
-		const auth = getAuth(c);
-		if (!auth?.userId) return c.json(null, 200);
-		// const cachedUser = await c.env.KV.get(auth.userId);
-		// if (cachedUser) return c.json(JSON.parse(cachedUser), 200);
-		const result = await db.query.users.findFirst({
-			where: (users, { eq }) => eq(users.authID, auth?.userId),
-		});
+app.get("/", async (c) => {
+	const db = c.get("db" as never) as Db;
+	const auth = getAuth(c);
+	if (!auth?.userId) return c.json(null, 200);
+	const cachedUser = await c.env.KV.get(auth.userId);
+	if (cachedUser) return c.json(JSON.parse(cachedUser), 200);
+	const result = await db.query.users.findFirst({
+		where: (users, { eq }) => eq(users.authID, auth?.userId),
+	});
 
-		if (!result) return c.json(null, 200);
+	if (!result) return c.json(null, 200);
 
-		// await c.env.KV.put(auth.userId, JSON.stringify(result), {
-		// 	expirationTtl: 60 * 5,
-		// });
+	await c.env.KV.put(auth.userId, JSON.stringify(result), {
+		expirationTtl: 60 * 5,
+	});
 
-		return c.json(result, 200);
-	},
-);
+	return c.json(result, 200);
+});
 app.get(
 	"/:username",
 	// cache({

@@ -1,4 +1,3 @@
-import { base64 } from "@effect/schema/FastCheck";
 import { z } from "zod";
 
 // export class Image extends Schema.Class<Image>("Image")({

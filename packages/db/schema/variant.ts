@@ -19,11 +19,11 @@ export const variants = pgTable(
 	"variants",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		title: varchar("title"),
 		handle: varchar("handle"),
 		barcode: varchar("barcode"),
-		quantity: integer("quantity").notNull().default(0),
+		quantity: integer("quantity").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		productID: varchar("product_id")
 			.references(() => products.id, {

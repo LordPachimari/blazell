@@ -36,14 +36,14 @@ export function DataTableToolbar<TData>({
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
-					placeholder="Search by customer..."
+					placeholder="Search..."
 					// value={
 					// 	(table.getColumn("fullName")?.getFilterValue() as string) ?? ""
 					// }
 					// onChange={(event) =>
 					// 	table.getColumn("fullName")?.setFilterValue(event.target.value)
 					// }
-					className="h-10 w-[150px] lg:w-[350px] rounded-xl"
+					className="h-10 w-[150px] md:w-[350px] rounded-xl"
 				/>
 
 				{filterableColumns?.map(

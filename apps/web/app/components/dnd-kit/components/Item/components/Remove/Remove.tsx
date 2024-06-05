@@ -1,5 +1,5 @@
-import { XIcon } from "lucide-react";
 import { Action, type ActionProps } from "../Action";
+import { Icons } from "@blazell/ui/icons";
 
 export function Remove(props: ActionProps) {
 	return (
@@ -10,10 +10,7 @@ export function Remove(props: ActionProps) {
 				background: "rgba(255, 70, 70, 0.1)",
 			}}
 		>
-			<XIcon
-				className="text-red-500 dark:text-red-500 font-bold"
-				fontSize={26}
-			/>
+			<Icons.close className="text-ruby-9 font-bold" size={20} />
 		</Action>
 	);
 }

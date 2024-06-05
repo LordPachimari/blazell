@@ -1,15 +1,20 @@
 import { schema } from "@blazell/db";
 import type { InferInsertModel } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-const ProductOptionSchema = createInsertSchema(schema.productOptions);
+export const InsertProductOptionSchema = createInsertSchema(
+	schema.productOptions,
+);
+export const ProductOptionSchema = createSelectSchema(schema.productOptions);
+export type ProductOption = z.infer<typeof ProductOptionSchema>;
+
 export const CreateProductOptionSchema = z.object({
-	option: ProductOptionSchema,
+	option: InsertProductOptionSchema,
 });
 export type CreateProductOption = z.infer<typeof CreateProductOptionSchema>;
 export const UpdateProductOptionSchema = z.object({
-	updates: ProductOptionSchema.pick({ name: true }),
+	updates: InsertProductOptionSchema.pick({ name: true }),
 	optionID: z.string(),
 	productID: z.string(),
 });

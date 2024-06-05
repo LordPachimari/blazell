@@ -49,8 +49,10 @@ const Image = React.forwardRef<
 	}
 
 	params.append("src", src);
+	const localURL = "http://localhost:8080/transform";
+	const devURL = "https://image-transform.fly.dev/transform";
 
-	const url = new URL("https://image-transform.fly.dev/transform");
+	const url = new URL(localURL);
 	url.search = params.toString();
 	if (!fit && !width && !height) {
 		return (

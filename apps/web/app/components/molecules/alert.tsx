@@ -33,7 +33,9 @@ export function AlertDialogComponent({
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={onContinue}>Continue</AlertDialogAction>
+					<AlertDialogAction onClick={onContinue} type="submit">
+						Continue
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

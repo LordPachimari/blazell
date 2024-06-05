@@ -72,37 +72,39 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 		[dashboardRep, options],
 	);
 
-	const [parent] = useAutoAnimate(/* optional config */);
+	const [parent] = useAutoAnimate({ duration: 100 });
 
 	return (
 		<section className="w-full my-4">
 			<Button
-				className="bg-brand mt-2 flex w-full gap-2  md:w-fit border-[1px]"
+				size="md"
+				className="text-mauve-11"
 				variant={"ghost"}
 				type="button"
 				onClick={createOption}
 			>
-				<Icons.plus fontSize={10} />
+				<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
 				Add option
 			</Button>
 			{options && options.length > 0 && (
 				<div className="my-2 flex w-[calc(100%-40px)] gap-2">
 					<label className="w-full text-sm font-bold">{"Option name"}</label>
-					<label className="w-full text-sm font-bold">{"Option values "}</label>
+					<label className="w-full text-sm font-bold">
+						{"Option values (comma separated)"}
+					</label>
 				</div>
 			)}
 			<ul ref={parent} className="flex list-none flex-col gap-2 ">
 				{options?.map((option) => (
-					<li key={option.id} className="flex gap-2">
+					<li key={option.id} className="flex gap-2 items-center">
 						<Option
 							onOptionNameChange={onOptionNameChange}
 							onOptionValuesChange={onOptionValuesChange}
 							option={option}
 						/>
-						<Button
-							size="icon"
-							variant={"ghost"}
+						<button
 							type="button"
+							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,
@@ -110,8 +112,8 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 								})
 							}
 						>
-							<Icons.close className="text-red-500" />
-						</Button>
+							<Icons.close className="text-ruby-9" size={20} />
+						</button>
 					</li>
 				))}
 			</ul>

@@ -6,6 +6,7 @@ import {
 	deleteProduct,
 	updateProduct,
 	publishProduct,
+	duplicateProduct,
 } from "./product";
 import {
 	createStore,
@@ -16,7 +17,7 @@ import {
 import { updateUser } from "./user";
 import { createLineItem, deleteLineItem, updateLineItem } from "./line-item";
 import { updateAddress } from "./address";
-import { updateCart } from "./cart";
+import { createCart, updateCart } from "./cart";
 import { createOrder } from "./order";
 import {
 	assignOptionValueToVariant,
@@ -25,7 +26,12 @@ import {
 	updateProductOption,
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
-import { createVariant, deleteVariant, updateVariant } from "./variant";
+import {
+	createVariant,
+	deleteVariant,
+	duplicateVariant,
+	updateVariant,
+} from "./variant";
 import {
 	deleteProductOptionValue,
 	updateProductOptionValues,
@@ -43,6 +49,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	updateProduct,
 	deleteProduct,
 	publishProduct,
+	duplicateProduct,
 	createProductOption,
 	updateProductOption,
 	deleteProductOption,
@@ -52,6 +59,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	createVariant,
 	updateVariant,
 	deleteVariant,
+	duplicateVariant,
 	deleteProductOptionValue,
 	updateImagesOrder,
 	updateProductOptionValues,
@@ -64,17 +72,18 @@ export const DashboardMutators: DashboardMutatorsType = {
 	deleteStoreImage,
 	setActiveStoreID,
 };
-export type UserMutatorsType = {
+export type GlobalMutatorsType = {
 	[key in keyof Server.UserMutatorsType]: (
 		ctx: WriteTransaction,
 		args: Parameters<Server.UserMutatorsType[key]>[0],
 	) => Promise<void>;
 };
-export const UserMutators: UserMutatorsType = {
+export const GlobalMutators: GlobalMutatorsType = {
 	updateUser,
 	createLineItem,
 	updateLineItem,
 	deleteLineItem,
 	updateAddress,
 	updateCart,
+	createCart,
 };

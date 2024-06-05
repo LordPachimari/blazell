@@ -12,6 +12,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
+	type ShouldRevalidateFunction,
 } from "@remix-run/react";
 //@ts-ignore
 import stylesheet from "./tailwind.css?url";
@@ -27,22 +28,29 @@ import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
 import { useUser } from "./hooks/use-user";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
-import UserReplicacheProvider from "./providers/replicache/user";
+import UserReplicacheProvider from "./providers/replicache/global";
 import { prefs, userContext } from "./sessions.server";
 import { getDomainUrl } from "./utils/helpers";
 import type { Theme } from "@blazell/validators";
 //@ts-ignore
 import sonnerStyles from "./sonner.css?url";
+//@ts-ignore
+import vaulStyles from "./vaul.css?url";
 import type { Env } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
+import { GlobalStoreProvider } from "./zustand/store";
+import { GlobalStoreMutator } from "./zustand/store-mutator";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
 		//TODO: ADD ICON
 		{ rel: "stylesheet", href: stylesheet },
 		...(process.env.NODE_ENV === "development"
-			? [{ rel: "stylesheet", href: sonnerStyles }]
+			? [
+					{ rel: "stylesheet", href: sonnerStyles },
+					{ rel: "stylesheet", href: vaulStyles },
+				]
 			: []),
 	].filter(Boolean);
 };
@@ -103,6 +111,7 @@ export const loader: LoaderFunction = (args) => {
 		},
 	);
 };
+
 function App() {
 	const data = useLoaderData<RootLoaderData>();
 	const nonce = useNonce();
@@ -113,10 +122,18 @@ function App() {
 			<MarketplaceReplicacheProvider>
 				<UserReplicacheProvider cartID={data.cartID}>
 					<DashboardReplicacheProvider>
-						<Sidebar />
-						<Header cartID={data.cartID} authID={data.authID} user={user} />
-						<Outlet />
-						<Toaster />
+						<GlobalStoreProvider>
+							<GlobalStoreMutator>
+								<Sidebar />
+								<Header
+									cartID={data.cartID ?? null}
+									authID={data.authID}
+									user={user}
+								/>
+								<Outlet />
+								<Toaster />
+							</GlobalStoreMutator>
+						</GlobalStoreProvider>
 						<ClientOnly>
 							{() => <PartykitProvider cartID={data.cartID} />}
 						</ClientOnly>
@@ -154,7 +171,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="font-body dark:bg-mauve-1 bg-mauve-a-2">
+			<body className="font-body dark:bg-mauve-1 bg-mauve-a-2 min-w-[280px]">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<script

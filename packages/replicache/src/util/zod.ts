@@ -4,6 +4,7 @@ import type { z, ZodError } from "zod";
 import type {
 	AuthorizationError,
 	ImageUploadError,
+	InvalidValue,
 	NeonDatabaseError,
 	NotFound,
 	TableNotFound,
@@ -22,7 +23,8 @@ export function zod<Schema extends z.ZodSchema>(
 		| AuthorizationError
 		| NeonDatabaseError
 		| NotFound
-		| ImageUploadError,
+		| ImageUploadError
+		| InvalidValue,
 		TableMutator | Database | Cloudflare
 	>,
 ) {

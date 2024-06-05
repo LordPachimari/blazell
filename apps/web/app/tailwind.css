@@ -131,6 +131,32 @@
             --iris-11: #5753c6;
             --iris-12: #272962;
 
+              --black-a1: rgba(0, 0, 0, 0.05);
+              --black-a2: rgba(0, 0, 0, 0.1);
+              --black-a3: rgba(0, 0, 0, 0.15);
+              --black-a4: rgba(0, 0, 0, 0.2);
+              --black-a5: rgba(0, 0, 0, 0.3);
+              --black-a6: rgba(0, 0, 0, 0.4);
+              --black-a7: rgba(0, 0, 0, 0.5);
+              --black-a8: rgba(0, 0, 0, 0.6);
+              --black-a9: rgba(0, 0, 0, 0.7);
+              --black-a10: rgba(0, 0, 0, 0.8);
+              --black-a11: rgba(0, 0, 0, 0.9);
+              --black-a12: rgba(0, 0, 0, 0.95);
+
+                  --yellow-1: #fdfdf9;
+                  --yellow-2: #fefce9;
+                  --yellow-3: #fffab8;
+                  --yellow-4: #fff394;
+                  --yellow-5: #ffe770;
+                  --yellow-6: #f3d768;
+                  --yellow-7: #e4c767;
+                  --yellow-8: #d5ae39;
+                  --yellow-9: #ffe629;
+                  --yellow-10: #ffdc00;
+                  --yellow-11: #9e6c00;
+                  --yellow-12: #473b1f;
+
   }
 
   .dark {
@@ -250,6 +276,33 @@
               --iris-10: #6e6ade;
               --iris-11: #b1a9ff;
               --iris-12: #e0dffe;
+
+                --black-a1: rgba(255, 255, 255, 0.05);
+                --black-a2: rgba(255, 255, 255, 0.1);
+                --black-a3: rgba(255, 255, 255, 0.15);
+                --black-a4: rgba(255, 255, 255, 0.2);
+                --black-a5: rgba(255, 255, 255, 0.3);
+                --black-a6: rgba(255, 255, 255, 0.4);
+                --black-a7: rgba(255, 255, 255, 0.5);
+                --black-a8: rgba(255, 255, 255, 0.6);
+                --black-a9: rgba(255, 255, 255, 0.7);
+                --black-a10: rgba(255, 255, 255, 0.8);
+                --black-a11: rgba(255, 255, 255, 0.9);
+                --black-a12: rgba(255, 255, 255, 0.95);
+
+                  --yellow-1: #14120b;
+                  --yellow-2: #1b180f;
+                  --yellow-3: #2d2305;
+                  --yellow-4: #362b00;
+                  --yellow-5: #433500;
+                  --yellow-6: #524202;
+                  --yellow-7: #665417;
+                  --yellow-8: #836a21;
+                  --yellow-9: #ffe629;
+                  --yellow-10: #ffff57;
+                  --yellow-11: #f5e147;
+                  --yellow-12: #f6eeb4;
+
               }
 }
 

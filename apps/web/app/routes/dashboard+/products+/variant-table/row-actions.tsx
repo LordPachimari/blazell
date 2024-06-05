@@ -16,25 +16,29 @@ interface DataTableRowActionsProps<TData> {
 
 	setVariantID: (id: string | null) => void;
 	deleteVariant: (id: string) => Promise<void>;
+	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 
 export function RowActions({
 	row,
 	setVariantID,
 	deleteVariant,
+	duplicateVariant,
 }: DataTableRowActionsProps<Variant>) {
 	// const task = taskSchema.parse(row.original);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					variant="ghost"
-					className="flex h-10 w-10 p-0 data-[state=open]:bg-muted"
+			<DropdownMenuTrigger>
+				<button
 					type="button"
+					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
 				>
-					<DotsHorizontalIcon className="h-8 w-8" />
+					<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
 					<span className="sr-only">Open menu</span>
-				</Button>
+				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
 				<DropdownMenuItem
@@ -45,8 +49,19 @@ export function RowActions({
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="text-red-500 hover:text-red-600"
-					onClick={async () => await deleteVariant(row.original.id)}
+					onClick={async (e) => {
+						e.stopPropagation();
+						await duplicateVariant([row.original.id]);
+					}}
+				>
+					Duplicate
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					className="text-ruby-9"
+					onClick={async (e) => {
+						e.stopPropagation();
+						await deleteVariant(row.original.id);
+					}}
 				>
 					Delete
 				</DropdownMenuItem>

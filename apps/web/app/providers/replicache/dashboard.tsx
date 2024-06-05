@@ -1,28 +1,27 @@
-import { useEffect } from "react";
-import { Replicache } from "replicache";
 import { DashboardMutators } from "@blazell/replicache";
 import { useAuth } from "@clerk/remix";
-import type { User } from "@blazell/validators/client";
+import { useLoaderData } from "@remix-run/react";
+import { useEffect } from "react";
+import { Replicache } from "replicache";
+import type { RootLoaderData } from "~/root";
 import { useReplicache } from "~/zustand/replicache";
-import { ReplicacheStore } from "~/replicache/store";
 
 function DashboardReplicacheProvider({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const { dashboardRep, userRep, setDashboardRep } = useReplicache();
-	const users = ReplicacheStore.scan<User>(userRep, "user");
-	const user = users?.[0];
+	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	const setDashboardRep = useReplicache((state) => state.setDashboardRep);
 	const { getToken } = useAuth();
 
 	useEffect(() => {
-		if (dashboardRep || !user) {
+		if (dashboardRep) {
 			return;
 		}
 
 		const r = new Replicache({
-			name: `dashboard_${user.id}`,
+			name: "dashboard",
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
@@ -81,7 +80,7 @@ function DashboardReplicacheProvider({
 			},
 		});
 		setDashboardRep(r);
-	}, [user, dashboardRep, setDashboardRep, getToken]);
+	}, [dashboardRep, setDashboardRep, getToken]);
 	return <>{children}</>;
 }
 

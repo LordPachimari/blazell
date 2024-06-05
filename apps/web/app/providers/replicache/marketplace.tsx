@@ -25,10 +25,6 @@ function MarketplaceReplicacheProvider({
 			mutators: DashboardMutators,
 			pullInterval: null,
 			indexes: {
-				handle: {
-					jsonPointer: "/handle",
-					allowEmpty: true,
-				},
 				categoryPK: {
 					jsonPointer: "/categoryPK",
 					allowEmpty: true,

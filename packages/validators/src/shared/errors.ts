@@ -94,3 +94,7 @@ export class NotFound extends Data.TaggedError("NotFound")<{
 export class ImageUploadError extends Data.TaggedError("ImageUploadError")<{
 	readonly message: string;
 }> {}
+
+export class ClientMutatorError extends Data.TaggedError("ClientMutatorError")<{
+	readonly message: string;
+}> {}

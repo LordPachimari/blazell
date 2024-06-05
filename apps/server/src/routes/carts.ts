@@ -3,7 +3,7 @@ import { getAuth } from "@hono/clerk-auth";
 import { ErrorService } from "@blazell/api";
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { cartSubtotal, generateID, generateReplicachePK } from "@blazell/utils";
+import { cartSubtotal, generateID } from "@blazell/utils";
 import {
 	CartError,
 	CheckoutFormSchema,
@@ -33,22 +33,17 @@ app.post("/create-cart", async (c) => {
 							id: cartID,
 							countryCode,
 							createdAt: new Date().toISOString(),
-							replicachePK: generateReplicachePK({
-								prefix: "cart",
-								id: cartID,
-							}),
+							currencyCode: "AUD",
 							...(auth?.userId && { userID: auth.userId }),
 						}),
 					);
-					const addressID = generateID({ prefix: "address" });
 					const [shippingAddress] = yield* Effect.tryPromise(() =>
 						transaction
 							.insert(schema.addresses)
 							.values({
 								countryCode,
 								createdAt: new Date().toISOString(),
-								replicachePK: addressID,
-								id: addressID,
+								id: generateID({ prefix: "address" }),
 							})
 							.returning({ id: schema.addresses.id }),
 					);
@@ -127,17 +122,34 @@ app.post("/complete-cart", async (c) => {
 					}
 
 					const newUserID = generateID({ prefix: "user" });
+					const newShippingAddressID = generateID({ prefix: "address" });
 
 					/* create new user if not found */
 					if (!existingUser) {
 						yield* Effect.tryPromise(() =>
 							transaction.insert(schema.users).values({
 								id: newUserID,
-								replicachePK: newUserID,
 								createdAt: new Date().toISOString(),
 								version: 0,
 								email: checkoutInfo.email,
 								fullName: checkoutInfo.fullName,
+							}),
+						);
+					}
+
+					/* create new address*/
+					if (!cart.shippingAddressID) {
+						yield* Effect.tryPromise(() =>
+							transaction.insert(schema.addresses).values({
+								id: newShippingAddressID,
+								address: checkoutInfo.shippingAddress.address,
+								city: checkoutInfo.shippingAddress.city,
+								countryCode: checkoutInfo.shippingAddress.countryCode,
+								postalCode: checkoutInfo.shippingAddress.postalCode,
+								province: checkoutInfo.shippingAddress.province,
+								version: 0,
+								createdAt: new Date().toISOString(),
+								userID: existingUser ? existingUser.id : newUserID,
 							}),
 						);
 					}
@@ -162,25 +174,20 @@ app.post("/complete-cart", async (c) => {
 							Effect.gen(function* () {
 								//TODO: DO ACTUAL MATH ON TOTAL AND SUBTOTAL
 								const subtotal = yield* cartSubtotal(lineItems, cart);
-								const orderID = generateID({ prefix: "order" });
 								const newOrder: InsertOrder = {
-									id: orderID,
+									id: generateID({ prefix: "order" }),
 									countryCode: cart.countryCode ?? "AU",
 									currencyCode: "AUD",
 									createdAt: new Date().toISOString(),
-									replicachePK: generateReplicachePK({
-										id: orderID,
-										filterID: existingUser?.id ?? newUserID,
-										prefix: "order",
-									}),
 									email: checkoutInfo.email ?? "email not provided",
-									billingAddressID: cart.billingAddressID,
-									shippingAddressID: cart.shippingAddressID,
+									//TODO
+									billingAddressID:
+										cart.shippingAddressID ?? newShippingAddressID,
+									shippingAddressID:
+										cart.shippingAddressID ?? newShippingAddressID,
 									phone: checkoutInfo.phone,
 									fullName: checkoutInfo.fullName,
-									...(cart.userID
-										? { userID: cart.userID }
-										: { userID: existingUser ? existingUser.id : newUserID }),
+									userID: existingUser ? existingUser.id : newUserID,
 									storeID,
 									total: subtotal,
 									status: "pending",
@@ -197,69 +204,51 @@ app.post("/complete-cart", async (c) => {
 							.values(Array.from(storeIDToOrder.values()))
 							.returning({ id: schema.orders.id }),
 					);
-					yield* Effect.all(
-						[
-							/* for each line item, update the orderID, so that order will include those items */
-							/* for each line item, remove the cartID, so that cart will not include items that were successfully ordered */
-							Effect.forEach(
-								Array.from(storeIDToLineItem.entries()),
-								([storeID, items]) =>
-									Effect.gen(function* () {
-										const effect = Effect.forEach(
-											items,
-											(item) => {
-												return Effect.tryPromise(() =>
-													transaction.update(schema.lineItems).set({
+					yield* Effect.all([
+						/* for each line item, update the orderID, so that order will include those items */
+						/* for each line item, remove the cartID, so that cart will not include items that were successfully ordered */
+						Effect.forEach(
+							Array.from(storeIDToLineItem.entries()),
+							([storeID, items]) =>
+								Effect.gen(function* () {
+									const effect = Effect.forEach(
+										items,
+										(item) => {
+											return Effect.tryPromise(() =>
+												transaction
+													.update(schema.lineItems)
+													.set({
 														cartID: null,
-														replicachePK: generateReplicachePK({
-															id: item.id,
-															filterID: storeIDToOrder.get(storeID)!.id,
-															prefix: "line_item",
-														}),
 														orderID: storeIDToOrder.get(storeID)!.id,
-													}),
-												);
-											},
-											{ concurrency: "unbounded" },
-										);
-										return yield* effect;
+													})
+													.where(eq(schema.lineItems.id, item.id)),
+											);
+										},
+										{ concurrency: "unbounded" },
+									);
+									return yield* effect;
+								}),
+							{ concurrency: "unbounded" },
+						),
+
+						/* save user info for the cart */
+						Effect.tryPromise(() =>
+							transaction
+								.update(schema.carts)
+								.set({
+									fullName: cart.fullName,
+									email: cart.email,
+									phone: cart.phone,
+									version: sql`${schema.carts.version} + 1`,
+									userID: existingUser ? existingUser.id : newUserID,
+									...(!cart.shippingAddressID && {
+										shippingAddressID: newShippingAddressID,
 									}),
-								{ concurrency: "unbounded" },
-							),
+								})
 
-							/* save user info for the cart */
-							Effect.tryPromise(() =>
-								transaction
-									.update(schema.carts)
-									.set({
-										fullName: cart.fullName,
-										email: cart.email,
-										phone: cart.phone,
-										version: sql`${schema.carts.version} + 1`,
-										...(!cart.userID && {
-											userID: existingUser ? existingUser.id : newUserID,
-										}),
-									})
-									.where(eq(schema.carts.id, id)),
-							),
-
-							/* save address info for the cart */
-							Effect.tryPromise(() =>
-								transaction
-									.update(schema.addresses)
-									.set({
-										address: checkoutInfo.shippingAddress.address,
-										city: checkoutInfo.shippingAddress.city,
-										countryCode: checkoutInfo.shippingAddress.countryCode,
-										postalCode: checkoutInfo.shippingAddress.postalCode,
-										province: checkoutInfo.shippingAddress.province,
-										version: sql`${schema.addresses.version} + 1`,
-									})
-									.where(eq(schema.addresses.id, cart.shippingAddressID!)),
-							),
-						],
-						{ concurrency: 3 },
-					);
+								.where(eq(schema.carts.id, id)),
+						),
+					]);
 					return orderIDs.map((order) => order.id);
 				}).pipe(
 					Effect.catchTags({
@@ -309,7 +298,7 @@ app.post("/complete-cart", async (c) => {
 						Effect.scoped,
 					),
 				Http.request
-					.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/user`)
+					.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
 					.pipe(
 						Http.request.jsonBody(["cart", "orders"]),
 						Effect.andThen(Http.client.fetch),

@@ -3,7 +3,10 @@ import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import { Textarea } from "@blazell/ui/textarea";
 import type { UpdateProduct, UpdateVariant } from "@blazell/validators";
+import { useFormContext } from "react-hook-form";
+import { FieldErrorMessage } from "~/components/field-error";
 import type { DebouncedFunc } from "~/types/debounce";
+import type { ProductForm } from "../product-input";
 
 export function ProductInfo({
 	title,
@@ -22,6 +25,7 @@ export function ProductInfo({
 	>;
 	defaultVariantID: string | undefined;
 }) {
+	const { register, formState, clearErrors } = useFormContext<ProductForm>();
 	return (
 		<Card className="mb-4">
 			<CardHeader>
@@ -31,20 +35,19 @@ export function ProductInfo({
 				<span>
 					<Label htmlFor="name">Title</Label>
 					<Input
-						id="name"
 						type="text"
-						// {...register("title")}
-						// state={formState.errors.title ? "error" : "neutral"}
-						// stateText={formState.errors.title?.message}
+						defaultValue={title ?? ""}
 						onChange={async (e) => {
 							defaultVariantID &&
 								(await onVariantInputChange({
 									updates: { title: e.currentTarget.value },
 									id: defaultVariantID,
 								}));
+							clearErrors();
 						}}
 						className="w-full my-2"
 					/>
+					<FieldErrorMessage message={formState.errors.title?.message} />
 				</span>
 				<div>
 					<Label htmlFor="description" className="mt-4">

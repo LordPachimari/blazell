@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import type { GetRowsWTableName } from "../types";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
@@ -24,7 +24,6 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 							columns: {
 								id: true,
 								version: true,
-								replicachePK: true,
 							},
 						}),
 			),
@@ -62,6 +61,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 													optionValues: true,
 												},
 											},
+											defaultVariant: true,
 										},
 									},
 									founder: true,
@@ -110,21 +110,18 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 								columns: {
 									id: true,
 									version: true,
-									replicachePK: true,
 								},
 								with: {
 									products: {
 										columns: {
 											id: true,
 											version: true,
-											replicachePK: true,
 										},
 										with: {
 											variants: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 											defaultVariant: true,
@@ -134,21 +131,18 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 										columns: {
 											id: true,
 											version: true,
-											replicachePK: true,
 										},
 										with: {
 											user: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 											items: {
 												columns: {
 													id: true,
 													version: true,
-													replicachePK: true,
 												},
 											},
 										},
@@ -205,17 +199,19 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 								}),
 							),
 
-							Effect.sync(() =>
+							Effect.sync(() => {
+								const customers = store.orders
+									.map((order) => {
+										return order.user;
+									})
+									.filter((user) => user !== null);
+
 								rowsWTableName.push({
 									tableName: "users" as const,
 									//@ts-ignore
-									rows: store.orders
-										.map((order) => {
-											return order.user;
-										})
-										.filter((user) => user !== null),
-								}),
-							),
+									rows: customers,
+								});
+							}),
 
 							Effect.sync(() =>
 								rowsWTableName.push({

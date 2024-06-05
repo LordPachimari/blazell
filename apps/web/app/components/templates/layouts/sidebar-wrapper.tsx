@@ -16,13 +16,10 @@ export function SidebarLayoutWrapper({
 
 	return (
 		<div
-			className={cn(
-				"min-w-full transition-all duration-200 ease-in-out overflow-x-scroll",
-				{
-					"md:pl-14": !noSidebarPaths.has(location.pathname),
-					"md:pl-44": !noSidebarPaths.has(location.pathname) && mode === "open",
-				},
-			)}
+			className={cn("min-w-full transition-all duration-200 ease-in-out", {
+				"lg:pl-14": !noSidebarPaths.has(location.pathname),
+				"lg:pl-44": !noSidebarPaths.has(location.pathname) && mode === "open",
+			})}
 		>
 			{children}
 		</div>

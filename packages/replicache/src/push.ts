@@ -3,6 +3,7 @@ import { Clock, Console, Effect, Layer } from "effect";
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { type Cloudflare, Database } from "@blazell/shared";
 import {
+	type InvalidValue,
 	MutatorNotFoundError,
 	NeonDatabaseError,
 	type Mutation,
@@ -49,6 +50,7 @@ export const push = ({
 	| TableNotFound
 	| NeonDatabaseError
 	| NotFound
+	| InvalidValue
 	| MutatorNotFoundError,
 	Scope | Cloudflare | ReplicacheContext
 > =>
@@ -248,10 +250,10 @@ const processMutation = ({
 						});
 						//Poke to the client. This will trigger a pull that will render an error toast
 						const subspaces =
-							affectedSpacesMap.get("user") ??
-							new Set<(typeof SPACE_RECORD)["user"][number]>();
+							affectedSpacesMap.get("global") ??
+							new Set<(typeof SPACE_RECORD)["global"][number]>();
 						subspaces.add("errors");
-						affectedSpacesMap.set("user", subspaces);
+						affectedSpacesMap.set("global", subspaces);
 						return yield* Effect.succeed({});
 					}),
 				ImageUploadError: (error) =>
@@ -262,10 +264,10 @@ const processMutation = ({
 						});
 						//Poke to the client. This will trigger a pull that will render an error toast
 						const subspaces =
-							affectedSpacesMap.get("user") ??
-							new Set<(typeof SPACE_RECORD)["user"][number]>();
+							affectedSpacesMap.get("global") ??
+							new Set<(typeof SPACE_RECORD)["global"][number]>();
 						subspaces.add("errors");
-						affectedSpacesMap.set("user", subspaces);
+						affectedSpacesMap.set("global", subspaces);
 						return yield* Effect.succeed({});
 					}),
 			}),

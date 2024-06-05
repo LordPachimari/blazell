@@ -10,16 +10,16 @@ export const lineItems = pgTable(
 	"line_items",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		cartID: varchar("cart_id").references(() => carts.id),
 		orderID: varchar("order_id").references(() => orders.id),
 		title: varchar("title").notNull(),
 		variantID: varchar("variant_id")
 			.notNull()
-			.references(() => variants.id),
+			.references(() => variants.id, { onDelete: "cascade" }),
 		productID: varchar("product_id")
 			.notNull()
-			.references(() => products.id),
+			.references(() => products.id, { onDelete: "cascade" }),
 		createdAt: varchar("created_at").notNull(),
 		updatedAt: varchar("updated_at").$onUpdate(() => new Date().toISOString()),
 		storeID: varchar("store_id").notNull(),

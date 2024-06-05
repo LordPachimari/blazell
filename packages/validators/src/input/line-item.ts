@@ -10,6 +10,7 @@ export const CreateLineItemSchema = z.object({
 		variant: VariantSchema.optional(),
 		product: ProductSchema.optional(),
 	}),
+	newCartID: z.string().optional(),
 });
 export const UpdateLineItemSchema = LineItemSchema.pick({
 	quantity: true,

@@ -1,20 +1,18 @@
-import { useCallback, useEffect, useMemo } from "react";
-
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { UpdateVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
-import { ReplicacheStore } from "~/replicache/store";
+import debounce from "lodash.debounce";
+import { useCallback, useMemo } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Media } from "./product-media";
 import { Pricing } from "./product-pricing";
 import Stock from "./product-stock";
-import type { UpdateVariant } from "@blazell/validators";
-import debounce from "lodash.debounce";
-import { generateReplicachePK } from "@blazell/utils";
+import { useDashboardStore } from "~/zustand/store";
 
 interface ProductVariantProps {
 	setIsOpen: (value: boolean) => void;
@@ -23,6 +21,7 @@ interface ProductVariantProps {
 	variantID: string | null;
 	productID: string;
 	setVariantID: (id: string | null) => void;
+	isPublished: boolean;
 }
 
 export default function ProductVariant({
@@ -32,29 +31,22 @@ export default function ProductVariant({
 	variantID,
 	productID,
 	setVariantID,
+	isPublished,
 }: Readonly<ProductVariantProps>) {
-	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const variant = variantID
-		? ReplicacheStore.getByPK<Variant>(
-				dashboardRep,
-				generateReplicachePK({
-					id: variantID,
-					prefix: "variant",
-					filterID: productID,
-				}),
-			)
-		: undefined;
+	const rep = useReplicache((state) => state.dashboardRep);
+	const variantMap = useDashboardStore((state) => state.variantMap);
+	const variant = variantMap.get(variantID ?? "");
 
 	const updateVariant = useCallback(
 		async (props: UpdateVariant) => {
-			if (dashboardRep) {
-				await dashboardRep.mutate.updateVariant({
+			if (rep) {
+				await rep.mutate.updateVariant({
 					id: props.id,
 					updates: props.updates,
 				});
 			}
 		},
-		[dashboardRep],
+		[rep],
 	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -64,12 +56,6 @@ export default function ProductVariant({
 		}, 800),
 		[updateVariant],
 	);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!productID || variantID === null) setIsOpen(false);
-	}, [variantID, productID]);
-	if (!variant) return null;
-	if (!productID) return null;
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="md:w-[800px] bg-mauve-2 p-4 pt-4 gap-0">
@@ -84,14 +70,18 @@ export default function ProductVariant({
 						<Icons.close size={20} strokeWidth={strokeWidth} />
 					</Button>
 				</span>
-				<ScrollArea className="h-[calc(80vh)] px-4 py-2">
+				<ScrollArea className="h-[calc(80vh)] px-2 md:px-4 py-2">
 					<VariantOptions
 						options={options}
 						variant={variant}
 						productID={productID}
 					/>
-					<Media images={variant.images ?? []} variantID={variant.id} />
-					<Pricing prices={variant.prices ?? []} variantID={variant.id} />
+					<Media images={variant?.images ?? []} variantID={variant?.id} />
+					<Pricing
+						prices={variant?.prices ?? []}
+						variantID={variant?.id}
+						isPublished={isPublished}
+					/>
 					<Stock
 						variant={variant}
 						updateVariant={updateVariant}
@@ -108,7 +98,7 @@ function VariantOptions({
 	productID,
 }: {
 	options: ProductOption[];
-	variant: Variant;
+	variant: Variant | null | undefined;
 	productID: string;
 }) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -118,14 +108,15 @@ function VariantOptions({
 			prevOptionValueID,
 			optionValueID,
 		}: { prevOptionValueID?: string; optionValueID: string }) => {
-			await dashboardRep?.mutate.assignOptionValueToVariant({
-				variantID: variant.id,
-				optionValueID,
-				productID,
-				...(prevOptionValueID && { prevOptionValueID }),
-			});
+			variant &&
+				(await dashboardRep?.mutate.assignOptionValueToVariant({
+					variantID: variant.id,
+					optionValueID,
+					productID,
+					...(prevOptionValueID && { prevOptionValueID }),
+				}));
 		},
-		[dashboardRep],
+		[dashboardRep, variant],
 	);
 	const optionValueToID = useMemo(
 		() =>
@@ -142,7 +133,7 @@ function VariantOptions({
 	);
 	const optionIDToVariantOptionValue = useMemo(
 		() =>
-			(variant.optionValues ?? []).reduce(
+			(variant?.optionValues ?? []).reduce(
 				(acc, value) => {
 					acc[value.optionValue.optionID] = {
 						id: value.optionValue.id,
@@ -152,14 +143,14 @@ function VariantOptions({
 				},
 				{} as Record<string, { id: string; value: string }>,
 			),
-		[variant.optionValues],
+		[variant?.optionValues],
 	);
 
 	return (
 		<div className="flex w-full flex-col gap-4 py-2">
 			<h1
 				className={cn("font-bold text-lg", {
-					"text-red-500": !variant.optionValues?.length,
+					"text-ruby-7": !variant?.optionValues?.length,
 				})}
 			>
 				Select options:
@@ -167,7 +158,7 @@ function VariantOptions({
 			{options.map((option) => {
 				return (
 					<div className="flex items-center  gap-2" key={option.id}>
-						<span className="flex h-10 min-w-[4rem] items-center font-semibold dark:bg-black justify-center">
+						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-2xl border-mauve-7 justify-center">
 							{option.name}
 						</span>
 						:
@@ -178,18 +169,17 @@ function VariantOptions({
 							onValueChange={async (value) => {
 								const prevOptionValueID =
 									optionIDToVariantOptionValue[option.id]?.id;
-								await assignOptionValueToVariant({
-									...(prevOptionValueID && { prevOptionValueID }),
-									optionValueID: optionValueToID[value]!,
-								});
+								const newOptionValueID = optionValueToID[value];
+								console.log("new option value", newOptionValueID);
+								newOptionValueID &&
+									(await assignOptionValueToVariant({
+										...(prevOptionValueID && { prevOptionValueID }),
+										optionValueID: newOptionValueID,
+									}));
 							}}
 						>
 							{option.optionValues?.map((v) => (
-								<ToggleGroupItem
-									value={v.value}
-									key={v.value}
-									className="bg-white"
-								>
+								<ToggleGroupItem value={v.value} key={v.value}>
 									{v.value}
 								</ToggleGroupItem>
 							))}

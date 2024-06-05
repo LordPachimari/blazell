@@ -5,6 +5,8 @@ import { Link } from "@remix-run/react";
 import { buttonVariants } from "@blazell/ui/button";
 import { Logo } from "~/components/molecules/logo";
 import type { User } from "@blazell/validators/client";
+import { cn } from "@blazell/ui";
+import { ClientOnly } from "remix-utils/client-only";
 
 function Header({
 	authID,
@@ -12,7 +14,7 @@ function Header({
 	user,
 }: {
 	authID: string | null;
-	cartID: string | null | undefined;
+	cartID: string | null;
 	user: User | undefined;
 }) {
 	return (
@@ -24,12 +26,12 @@ function Header({
 
 			{/* Right corner */}
 			<div className="hidden gap-6 sm:flex items-center ">
-				<ThemeToggle />
+				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
 				<CartSheet cartID={cartID} />
 				{/* <CartToggle /> */}
 				<Link
 					to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
-					className={buttonVariants()}
+					className={cn("rounded-full", buttonVariants())}
 				>
 					Dashboard
 				</Link>

@@ -3,9 +3,8 @@ import type {
 	DeletePrices,
 	UpdatePrice,
 } from "@blazell/validators";
-import type { WriteTransaction } from "replicache";
-import { getEntityFromID } from "./util/get-id";
 import type { Price, Variant } from "@blazell/validators/client";
+import type { WriteTransaction } from "replicache";
 
 export function entityNotFound(id: string) {
 	console.info(`Entity ${id} not found`);
@@ -15,7 +14,7 @@ export function entityNotFound(id: string) {
 async function createPrices(tx: WriteTransaction, input: CreatePrices) {
 	const { prices, id } = input;
 
-	const entity = (await getEntityFromID(tx, id)) as Variant | undefined;
+	const entity = (await tx.get(id)) as Variant | undefined;
 
 	if (!entity) {
 		return entityNotFound(id);
@@ -26,7 +25,7 @@ async function createPrices(tx: WriteTransaction, input: CreatePrices) {
 		entityPrices.push(price as Price);
 	}
 
-	await tx.set(entity.replicachePK, {
+	await tx.set(id, {
 		...entity,
 		prices: entityPrices,
 	});
@@ -35,7 +34,7 @@ async function createPrices(tx: WriteTransaction, input: CreatePrices) {
 async function updatePrice(tx: WriteTransaction, input: UpdatePrice) {
 	const { priceID, updates, id } = input;
 
-	const entity = (await getEntityFromID(tx, id)) as Variant | undefined;
+	const entity = (await tx.get(id)) as Variant | undefined;
 
 	if (!entity) {
 		return entityNotFound(id);
@@ -49,7 +48,7 @@ async function updatePrice(tx: WriteTransaction, input: UpdatePrice) {
 			})
 		: [];
 
-	await tx.set(entity.replicachePK, {
+	await tx.set(entity.id, {
 		...entity,
 		prices: entityPrices,
 	});
@@ -58,7 +57,7 @@ async function updatePrice(tx: WriteTransaction, input: UpdatePrice) {
 async function deletePrices(tx: WriteTransaction, input: DeletePrices) {
 	const { priceIDs, id } = input;
 
-	const entity = (await getEntityFromID(tx, id)) as Variant | undefined;
+	const entity = (await tx.get(id)) as Variant | undefined;
 
 	if (!entity) {
 		return entityNotFound(id);
@@ -68,9 +67,9 @@ async function deletePrices(tx: WriteTransaction, input: DeletePrices) {
 		? entity.prices.filter((price) => !priceIDs.includes(price.id))
 		: [];
 
-	await tx.set(entity.replicachePK, {
+	await tx.set(id, {
 		...entity,
 		prices: entityPrices,
 	});
 }
-export { createPrices, updatePrice, deletePrices };
+export { createPrices, deletePrices, updatePrice };

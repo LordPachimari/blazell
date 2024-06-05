@@ -2,25 +2,25 @@ import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Icons } from "@blazell/ui/icons";
 import { Noise } from "@blazell/ui/noise";
+import { Skeleton } from "@blazell/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@blazell/ui/tabs";
 import type { Product, Store as StoreType } from "@blazell/validators/client";
 import { Link, useNavigate } from "@remix-run/react";
-import { ReplicacheStore } from "~/replicache/store";
-import { useReplicache } from "~/zustand/replicache";
-import { ProductCard } from "../product/product-card";
-import { StoreInfo } from "./store-info";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
+import { ProductCard } from "../product/product-card";
+import { StoreInfo } from "./store-info";
 
 export function Store({
 	store,
+	isInitialized,
+	products,
 }: {
 	store: StoreType | undefined;
+	isInitialized: boolean;
+	products: Product[];
 }) {
-	const rep = useReplicache((state) => state.dashboardRep);
-	const products = ReplicacheStore.scan<Product>(rep, `product_${store?.id}`);
 	const navigate = useNavigate();
-	console.log("header", store?.headerImage);
 	return (
 		<div className="relative">
 			<Button
@@ -31,39 +31,46 @@ export function Store({
 				<Icons.left size={20} className="text-black dark:text-white" />
 				Select stores
 			</Button>
-			{store?.headerImage ? (
-				<div
-					className={cn(
-						"max-h-[210px] w-fit min-w-[10rem] rounded-lg p-0 relative grid grid-cols-1 border border-mauve-7",
-					)}
-				>
-					{store.headerImage.croppedImage?.uploaded ? (
+
+			<div
+				className={cn(
+					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
+				)}
+			>
+				{!isInitialized && <Skeleton className="w-full h-[210px]" />}
+				{store?.headerImage?.croppedImage ? (
+					store.headerImage.croppedImage.uploaded ? (
 						<Image
-							fit="contain"
+							fit="fill"
 							quality={100}
 							src={store.headerImage.croppedImage?.url}
 							alt="header"
-							className="rounded-lg"
-							height={210}
+							className="rounded-2xl w-full"
 						/>
 					) : (
 						<img
 							src={toImageURL(
-								store.headerImage.croppedImage?.base64,
-								store.headerImage.croppedImage?.fileType,
+								store.headerImage.croppedImage.base64,
+								store.headerImage.croppedImage.fileType,
 							)}
 							alt="header"
-							className="rounded-lg object-contain"
+							className={cn("rounded-2xl w-full object-fill", {
+								"h-[210px]": !store.headerImage.croppedImage.base64,
+							})}
 						/>
-					)}
-				</div>
-			) : (
-				<div className="h-[210px] rounded-lg w-full grid grid-cols-1 border bg-crimson-7 border-mauve-7">
-					<Noise />
-				</div>
-			)}
+					)
+				) : (
+					<div className="h-[210px] w-full bg-crimson-7 ">
+						<Noise />
+					</div>
+				)}
+			</div>
 
-			<StoreInfo store={store} productCount={products.length} />
+			<StoreInfo
+				store={store}
+				productCount={products?.length ?? 0}
+				isInitialized={isInitialized}
+			/>
 
 			<Tabs defaultValue="products" className="mt-6">
 				<TabsList variant="outline">
@@ -75,26 +82,36 @@ export function Store({
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="products">
-					<ProductSection products={products} />
+					<ProductSection products={products} isInitialized={!!isInitialized} />
 				</TabsContent>
-				<TabsContent value="announcements">No announcements.</TabsContent>
+				<TabsContent value="announcements">
+					<p className="text-mauve-11">No announcements found.</p>
+				</TabsContent>
 			</Tabs>
 		</div>
 	);
 }
 const ProductSection = ({
 	products,
+	isInitialized,
 }: {
 	products: Product[];
+	isInitialized: boolean;
 }) => {
 	return (
 		<section className="w-full">
 			<section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-				{products.map((product) => (
+				{!isInitialized &&
+					Array.from({ length: 4 }).map((_, i) => (
+						<Skeleton key={i} className="w-full h-[300px]" />
+					))}
+				{products.length === 0 && (
+					<p className="text-mauve-11">No products found.</p>
+				)}
+				{products?.map((product) => (
 					<Link
 						key={product.id}
 						to={`/dashboard/products/${product.id}`}
-						unstable_viewTransition
 						prefetch="viewport"
 					>
 						<ProductCard product={product} key={product.id} />

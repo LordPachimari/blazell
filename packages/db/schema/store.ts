@@ -17,7 +17,7 @@ export const stores = pgTable(
 	"stores",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		replicachePK: varchar("replicache_pk").notNull(),
+
 		name: text("name").notNull(),
 		logo: json("logo").$type<{
 			id: string;

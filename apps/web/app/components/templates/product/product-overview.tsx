@@ -1,28 +1,30 @@
+import { cn } from "@blazell/ui";
+import { Separator } from "@blazell/ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type {
 	Product,
 	ProductOption,
+	PublishedProduct,
+	PublishedVariant,
 	Variant,
 } from "@blazell/validators/client";
-import { useEffect, useState } from "react";
-import { Gallery } from "./gallery";
-import { ProductContainer } from "./product-container";
-import { GeneralInfo } from "./product-info";
-import { Separator } from "@blazell/ui/separator";
-import { AddToCart } from "./add-to-cart";
-import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
-import { AspectRatio } from "@blazell/ui/aspect-ratio";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { useCallback, useEffect, useState } from "react";
 import Image from "~/components/molecules/image";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
+import { AddToCart } from "./add-to-cart";
+import { Gallery } from "./gallery";
+import { GeneralInfo } from "./product-info";
 
 interface ProductOverviewProps {
-	product: Product | null | undefined;
+	product: Product | PublishedProduct | undefined;
 	isDashboard?: boolean;
-	variants: Variant[];
-	selectedVariantIDOrHandle: string | null;
+	variants: (Variant | PublishedVariant)[];
+	selectedVariantIDOrHandle: string | undefined;
 	selectedVariant: Variant | null;
-	setVariantIDOrHandle: (prop: string | null) => void;
+	setVariantIDOrHandle: (prop: string | undefined) => void;
 	cartID?: string | undefined;
+	defaultVariant: Variant | PublishedVariant | undefined;
 }
 
 const ProductOverview = ({
@@ -33,68 +35,77 @@ const ProductOverview = ({
 	selectedVariantIDOrHandle,
 	selectedVariant,
 	cartID,
+	defaultVariant,
 }: ProductOverviewProps) => {
-	console.log("variants", variants);
-	console.log("product", product);
 	return (
-		<main className="relative lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] mt-12  p-2 md:p-4">
+		<main className="relative flex h-[calc(100vh + 70vh)] flex-col items-center  lg:items-start lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] lg:mt-20 ">
 			<Gallery
-				images={
-					selectedVariant?.images ?? product?.defaultVariant?.images ?? []
-				}
+				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
 			/>
-			<ProductContainer>
-				<div className="min-h-[60vh]">
-					<GeneralInfo product={product} />
-					<Separator className="my-4" />
+			<div
+				className={cn(
+					"bg-mauve-2 lg:mt-0 dark:bg-mauve-3 dark:lg:bg-transparent w-full lg:bg-transparent col-span-4 lg:col-span-3 p-4 rounded-t-lg z-20",
+				)}
+			>
+				<div className="min-h-[50vh]">
+					<GeneralInfo product={product} defaultVariant={defaultVariant} />
 					<ProductVariants
 						variants={variants}
 						{...(isDashboard && { isDashboard })}
 						setVariantIDOrHandle={setVariantIDOrHandle}
 						selectedVariantIDOrHandle={selectedVariantIDOrHandle}
+						isDashboard={isDashboard}
 					/>
 					<ProductOptions
 						options={product?.options ?? []}
 						selectedVariant={selectedVariant}
 						variants={variants}
 						setVariantIDOrHandle={setVariantIDOrHandle}
+						isDashboard={isDashboard}
 					/>
 				</div>
-
-				<AddToCart
-					{...(cartID && { cartID })}
-					product={product}
-					variant={selectedVariant ?? product?.defaultVariant}
-					{...(isDashboard && { isDashboard })}
-				/>
-			</ProductContainer>
+				<div className="flex justify-center w-full h-32 py-4 pt-6">
+					<AddToCart
+						{...(cartID && { cartID })}
+						product={product}
+						variant={selectedVariant ?? defaultVariant}
+						{...(isDashboard && { isDashboard })}
+					/>
+				</div>
+			</div>
 		</main>
 	);
 };
 export { ProductOverview };
 
 const ProductVariants = ({
-	isDashboard,
+	isDashboard = false,
 	variants,
 	selectedVariantIDOrHandle,
 	setVariantIDOrHandle,
 }: {
 	isDashboard?: boolean;
-	variants: Variant[];
-	selectedVariantIDOrHandle: string | null;
-	setVariantIDOrHandle: (prop: string | null) => void;
+	variants: (Variant | PublishedVariant)[];
+	selectedVariantIDOrHandle: string | undefined;
+	setVariantIDOrHandle: (prop: string | undefined) => void;
 }) => {
-	console.log(selectedVariantIDOrHandle);
+	console.log("selectedVariantIDOrHandle", selectedVariantIDOrHandle);
 	return (
-		<section>
-			<h2 className="py-2">Variant</h2>
+		<section className="py-4">
+			{variants.length > 0 && (
+				<>
+					<Separator className="my-4" />
+					<h2 className="flex min-w-[4rem] py-2 items-center font-semibold text-base">
+						VARIANT
+					</h2>
+				</>
+			)}
 			<ToggleGroup
-				className="flex justify-start "
+				className="grid grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 "
 				type="single"
 				value={selectedVariantIDOrHandle ?? ""}
 				variant="outline"
-				onValueChange={async (value) => {
-					console.log("value", value);
+				onValueChange={(value) => {
 					setVariantIDOrHandle(value);
 				}}
 			>
@@ -102,9 +113,9 @@ const ProductVariants = ({
 					<ToggleGroupItem
 						key={v.id}
 						value={isDashboard ? v.id : v.handle ?? ""}
-						className="bg-white min-w-[6rem] min-h-[9rem] p-0 rounded-xl hover:border-brand-3"
+						className="relative w-[6rem] min-h-[6rem] p-0 "
 					>
-						<AspectRatio ratio={2 / 3}>
+						<div className="relative">
 							{!v.images?.[0] ? (
 								<ImagePlaceholder />
 							) : v.images?.[0].uploaded ? (
@@ -112,6 +123,8 @@ const ProductVariants = ({
 									src={v.images?.[0].url}
 									alt={v.images?.[0].name ?? "Product image"}
 									className="rounded-xl"
+									fit="contain"
+									width={100}
 								/>
 							) : (
 								<img
@@ -120,7 +133,7 @@ const ProductVariants = ({
 									className="rounded-xl"
 								/>
 							)}
-						</AspectRatio>
+						</div>
 					</ToggleGroupItem>
 				))}
 			</ToggleGroup>
@@ -138,8 +151,8 @@ const ProductOptions = ({
 	options: ProductOption[];
 	selectedVariant: Variant | null;
 
-	setVariantIDOrHandle: (prop: string | null) => void;
-	variants: Variant[];
+	setVariantIDOrHandle: (prop: string | undefined) => void;
+	variants: (Variant | PublishedVariant)[];
 	isDashboard?: boolean;
 }) => {
 	const [variantOptions, setVariantOptions] = useState<Record<string, string>>(
@@ -160,40 +173,43 @@ const ProductOptions = ({
 			setVariantOptions({});
 		}
 	}, [selectedVariant]);
-	console.log("variant options", variantOptions);
-	console.log("selected variant", selectedVariant);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (Object.keys(variantOptions).length > 0) {
-			let variantFound = false;
-			for (const variant of variants) {
-				let optionValuesEqual = true;
-				for (const value of variant.optionValues ?? []) {
-					if (
-						variantOptions[value.optionValue.optionID] !==
-						value.optionValue.value
-					) {
-						optionValuesEqual = false;
+	const setVariant = useCallback(
+		(options: Record<string, string>) => {
+			if (Object.keys(options).length > 0) {
+				let variantFound = false;
+				for (const variant of variants) {
+					let optionValuesEqual = true;
+					if (variant.optionValues?.length === 0) optionValuesEqual = false;
+					for (const value of variant.optionValues ?? []) {
+						if (
+							options[value.optionValue.optionID] !== value.optionValue.value
+						) {
+							optionValuesEqual = false;
+						}
+					}
+					if (optionValuesEqual) {
+						variantFound = true;
+						console.log("hello?", variant);
+						setVariantIDOrHandle(
+							isDashboard ? variant.id : variant.handle ?? undefined,
+						);
+						break;
 					}
 				}
-				if (optionValuesEqual) {
-					variantFound = true;
-					setVariantIDOrHandle(isDashboard ? variant.id : variant.handle);
-					break;
-				}
+				//variant not found
+				if (!variantFound) setVariantIDOrHandle(undefined);
 			}
-			//variant not found
-			if (!variantFound) setVariantIDOrHandle(null);
-		}
-	}, [variantOptions, isDashboard]);
+		},
+		[variants, setVariantIDOrHandle, isDashboard],
+	);
 	return (
-		<section>
+		<section className="pb-4">
 			{options.map((option) => {
 				return (
 					<div className="flex flex-col" key={option.id}>
 						<span className="flex min-w-[4rem] py-2 items-center font-semibold text-base ">
-							{option.name}
+							{(option.name ?? "").toUpperCase()}
 						</span>
 						<ToggleGroup
 							className="flex justify-start"
@@ -201,18 +217,16 @@ const ProductOptions = ({
 							value={variantOptions[option.id] ?? ""}
 							variant="outline"
 							onValueChange={async (value) => {
-								setVariantOptions((prev) => ({
-									...prev,
+								const newVariantOptions = {
+									...variantOptions,
 									[option.id]: value,
-								}));
+								};
+								setVariantOptions(newVariantOptions);
+								setVariant(newVariantOptions);
 							}}
 						>
 							{option.optionValues?.map((v) => (
-								<ToggleGroupItem
-									key={v.id}
-									value={v.value}
-									className="bg-white"
-								>
+								<ToggleGroupItem key={v.id} value={v.value}>
 									{v.value}
 								</ToggleGroupItem>
 							))}
