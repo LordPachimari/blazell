@@ -93,6 +93,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 		const exist = await fetch(
 			`${window.ENV.WORKER_URL}/users/${value.username}`,
 		).then((res) => res.json());
+		console.log("exist", exist);
 		if (exist) {
 			toast.error("Username already exists!");
 			setIsLoading(false);

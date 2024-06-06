@@ -1,15 +1,23 @@
 {
 	"extends": "@blazell/tsconfig/base.json",
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"**/.server/**/*.ts",
+		"**/.server/**/*.tsx",
+		"**/.client/**/*.ts",
+		"**/.client/**/*.tsx"
+	],
 	"compilerOptions": {
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"types": ["@remix-run/cloudflare", "vite/client"],
 		"baseUrl": ".",
 		"paths": {
 			"~/*": ["./app/*"]
 		},
-		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 
-		// Remix takes care of building everything in `remix build`.
+		// Vite takes care of building everything, not tsc.
 		"noEmit": true
 	},
-	"include": ["."],
 	"exclude": ["node_modules"]
 }

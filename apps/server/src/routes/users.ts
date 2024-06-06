@@ -92,15 +92,14 @@ app.get(
 	// }),
 	async (c) => {
 		const db = c.get("db" as never) as Db;
-		const auth = getAuth(c);
 		const username = c.req.param("username");
-		if (!auth?.userId) return c.json(null, 200);
 		const result = await db.query.users.findFirst({
 			where: (users, { eq }) => eq(users.username, username),
 			columns: {
 				id: true,
 			},
 		});
+		console.log("result", result);
 
 		if (!result) return c.json(null, 200);
 

@@ -8,6 +8,12 @@ import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-sidebar";
 import { ThemeToggle } from "./theme-toggle";
 import { ClientOnly } from "remix-utils/client-only";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@blazell/ui/tooltip";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -62,33 +68,11 @@ const Sidebar = () => {
 
 	return (
 		<div className="flex">
-			<Button
-				variant="ghost"
-				size="icon"
-				className="fixed lg:hidden bottom-4 left-3 z-50"
-				onClick={() =>
-					fetcher.submit(
-						{ sidebarState: nextMode },
-						{
-							method: "post",
-							action: "/action/set-sidebar",
-							navigate: false,
-							fetcherKey: "sidebar-fetcher",
-						},
-					)
-				}
-			>
-				{mode === "open" ? (
-					<Icons.left size={20} strokeWidth={strokeWidth} />
-				) : (
-					<Icons.menu size={20} strokeWidth={strokeWidth} />
-				)}
-			</Button>
 			<nav
 				className={cn(
-					"left-[-100px] lg:left-0 group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out lg:hover:w-44 ",
+					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
-						"lg:w-44 left-0": mode === "open",
+						"w-44 left-0": mode === "open",
 						"hidden lg:hidden": noSidebarPaths.has(location.pathname),
 					},
 				)}
@@ -104,7 +88,7 @@ const Sidebar = () => {
 					<Button
 						size={"icon"}
 						variant={"ghost"}
-						className="hidden lg:block text-mauve-11 text-lg rounded-full"
+						className="text-mauve-11 text-lg rounded-full"
 						type="submit"
 						onClick={() =>
 							fetcher.submit(
@@ -151,7 +135,7 @@ const Sidebar = () => {
 										"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out lg:group-hover:opacity-100",
 
 										`/${mainPath}` === item.href && "text-crimson-9",
-										mode === "open" ? "lg:opacity-100" : "opacity-0",
+										mode === "open" ? "opacity-100" : "opacity-0",
 									)}
 								>
 									{item.title}
@@ -175,4 +159,55 @@ const Sidebar = () => {
 	);
 };
 
-export default Sidebar;
+const MobileSidebar = () => {
+	const location = useLocation();
+	const splitPath = location.pathname.split("/");
+	const mainPath = splitPath[1];
+
+	return (
+		<div className="flex">
+			<nav
+				className={cn(
+					"fixed lg:hidden bottom-1 group ml-[3px] w-[calc(100%-6px)] rounded-2xl bg-component justify-between flex flex-col z-40 overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out",
+					{
+						hidden: noSidebarPaths.has(location.pathname),
+					},
+				)}
+			>
+				<div />
+				<ul className="justify-between items-center flex w-full gap-4 p-2">
+					{items.map((item) => {
+						const Icon = Icons[item.icon ?? "chevronLeft"];
+
+						return (
+							<Link
+								to={item.href}
+								key={item.title}
+								className={cn("group/link  ")}
+								prefetch="viewport"
+							>
+								<div className="flex justify-center  hover:bg-mauve-a-2 items-center rounded-full px-2 cursor-pointer w-[45px] h-[45px]">
+									<Icon
+										className={cn(
+											`/${mainPath}` === item.href
+												? "text-crimson-9"
+												: "text-mauve-11 group-hover/link:text-crimson-9",
+										)}
+										size={20}
+										strokeWidth={strokeWidth}
+									/>
+								</div>
+							</Link>
+						);
+					})}
+
+					<div className={cn("flex justify-center")}>
+						<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
+					</div>
+				</ul>
+			</nav>
+		</div>
+	);
+};
+
+export { Sidebar, MobileSidebar };

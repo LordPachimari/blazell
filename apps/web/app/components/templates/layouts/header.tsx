@@ -25,10 +25,9 @@ function Header({
 			<Logo to="/" className="absolute  left-1/2 flex -translate-x-1/2" />
 
 			{/* Right corner */}
-			<div className="hidden gap-6 sm:flex items-center ">
+			<div className="hidden gap-6 lg:flex items-center ">
 				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
 				<CartSheet cartID={cartID} />
-				{/* <CartToggle /> */}
 				<Link
 					to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 					className={cn("rounded-full", buttonVariants())}

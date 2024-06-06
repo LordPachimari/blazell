@@ -18,7 +18,7 @@
 		"@blazell/utils": "workspace:*",
 		"@blazell/validators": "workspace:*",
 		"drizzle-orm": "^0.30.7",
-		"effect": "^3.1.5",
+		"effect": "^3.2.9",
 		"replicache": "14.2.2",
 		"ulidx": "^2.3.0",
 		"zod": "^3.23.8"

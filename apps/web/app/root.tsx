@@ -12,7 +12,6 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	type ShouldRevalidateFunction,
 } from "@remix-run/react";
 //@ts-ignore
 import stylesheet from "./tailwind.css?url";
@@ -22,7 +21,7 @@ import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import type { User } from "@blazell/validators/client";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
-import Sidebar from "./components/templates/layouts/sidebar";
+import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
@@ -36,11 +35,11 @@ import type { Theme } from "@blazell/validators";
 import sonnerStyles from "./sonner.css?url";
 //@ts-ignore
 import vaulStyles from "./vaul.css?url";
-import type { Env } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
 import { GlobalStoreProvider } from "./zustand/store";
 import { GlobalStoreMutator } from "./zustand/store-mutator";
+import type { AppEnv } from "load-context";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -56,7 +55,7 @@ export const links: LinksFunction = () => {
 };
 export type RootLoaderData = {
 	ENV: Omit<
-		Env,
+		AppEnv,
 		"CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY" | "SESSION_SECRET"
 	>;
 	requestInfo: {
@@ -88,26 +87,28 @@ export const loader: LoaderFunction = (args) => {
 					Authorization: `Bearer ${token}`,
 				},
 			}).then((res) => res.json() as Promise<User | undefined>);
-			return json({
-				ENV: {
-					REPLICACHE_KEY: context.env.REPLICACHE_KEY,
-					WORKER_URL: context.env.WORKER_URL,
-					PARTYKIT_HOST: context.env.PARTYKIT_HOST,
-					TRANSFORMER_URL: context.env.TRANSFORMER_URL,
-				},
-				requestInfo: {
-					hints: getHints(request),
-					origin: getDomainUrl(request),
-					path: new URL(request.url).pathname,
-					userPrefs: {
-						theme: prefsCookie.theme,
-						sidebarState: prefsCookie.sidebarState,
+			return json(
+				{
+					ENV: {
+						REPLICACHE_KEY: context.env.REPLICACHE_KEY,
+						WORKER_URL: context.env.WORKER_URL,
+						PARTYKIT_HOST: context.env.PARTYKIT_HOST,
 					},
+					requestInfo: {
+						hints: getHints(request),
+						origin: getDomainUrl(request),
+						path: new URL(request.url).pathname,
+						userPrefs: {
+							theme: prefsCookie.theme,
+							sidebarState: prefsCookie.sidebarState,
+						},
+					},
+					...(user && { user }),
+					authID: userId,
+					cartID: userContextCookie.cartID,
 				},
-				...(user && { user }),
-				authID: userId,
-				cartID: userContextCookie.cartID,
-			});
+				{ headers: { "Cache-Control": "private, max-age=1800" } },
+			);
 		},
 	);
 };
@@ -125,6 +126,7 @@ function App() {
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
 								<Sidebar />
+								<MobileSidebar />
 								<Header
 									cartID={data.cartID ?? null}
 									authID={data.authID}

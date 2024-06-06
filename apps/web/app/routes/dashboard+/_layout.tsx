@@ -19,7 +19,7 @@ export const loader: LoaderFunction = async (args) => {
 	if (!user) {
 		return redirect("/create-user");
 	}
-	return json(user, { headers: { "Cache-Control": "private, s-maxage=3600" } });
+	return json(user, { headers: { "Cache-Control": "private, max-age=1800" } });
 };
 
 export default function DashboardLayout() {

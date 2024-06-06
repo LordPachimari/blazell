@@ -74,7 +74,7 @@ const ProductCard = ({
 	return (
 		<Link
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
-			prefetch="viewport"
+			prefetch="intent"
 			className="group border hover:scale-105 cursor-pointer relative border-mauve-7 h-fit rounded-lg transition-all duration-200 ease-in-out"
 			unstable_viewTransition={true}
 		>

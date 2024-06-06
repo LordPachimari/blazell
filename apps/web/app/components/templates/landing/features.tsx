@@ -1,11 +1,5 @@
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
-import {
-	ShoppingBag,
-	Truck,
-	BadgeDollarSign,
-	BarChartBig,
-	Settings,
-} from "lucide-react";
+import { Truck, BadgeDollarSign, BarChartBig, Settings } from "lucide-react";
 import { ProductTypeCards } from "./wobble-cards";
 import type { Theme } from "@blazell/validators";
 type Feature = {
@@ -16,7 +10,7 @@ type Feature = {
 function Features({ theme }: { theme: Theme }) {
 	const features = [
 		{
-			title: "Real-time",
+			title: "Organize",
 			description:
 				"Organize auctions, schedule merch drops, and see your income grow in real-time.",
 			component: (
@@ -77,7 +71,7 @@ function Features({ theme }: { theme: Theme }) {
 	] satisfies Feature[];
 
 	return (
-		<div className="flex flex-col items-center sm:px-4">
+		<div className="flex flex-col items-center pt-10 px-4">
 			<section className="w-full flex flex-col items-center">
 				<h2 className="text-center text-4xl font-bold lg:text-5xl lg:tracking-tight">
 					Everything you need to start selling

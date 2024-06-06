@@ -4,22 +4,23 @@ import {
 } from "@remix-run/dev";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { remixDevTools } from "remix-development-tools";
 import { flatRoutes } from "remix-flat-routes";
-import { getLoadContext } from "./load-context";
 import MillionLint from "@million/lint";
+import { getLoadContext } from "./load-context";
+
 export default defineConfig({
 	ssr: {
 		noExternal: ["react-easy-crop", "tslib"],
 	},
-	build: {
-		target: "ES2022",
-	},
 	plugins: [
 		MillionLint.vite(),
-		remixDevTools(),
 		remixCloudflareDevProxy({ getLoadContext }),
 		remix({
+			future: {
+				v3_fetcherPersist: true,
+				v3_relativeSplatPath: true,
+				v3_throwAbortReason: true,
+			},
 			serverModuleFormat: "esm",
 			ignoredRouteFiles: ["**/.*"],
 			routes: async (defineRoutes) => {

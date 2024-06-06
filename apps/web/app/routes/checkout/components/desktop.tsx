@@ -10,11 +10,16 @@ import { useGlobalStore } from "~/zustand/store";
 import { CartInfo } from "./cart-info";
 import { CustomerInfo } from "./customer-info";
 import { ShippingAddressInfo } from "./shipping-address-info";
+import { toast } from "@blazell/ui/toast";
 
 export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 	const users = useGlobalStore((state) => state.users);
 	const cartMap = useGlobalStore((state) => state.cartMap);
 	const cart = cartMap.get(cartID);
+
+	const items = useGlobalStore((state) =>
+		state.lineItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+	);
 
 	const [user] = users;
 
@@ -55,6 +60,10 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 
 	//TODO: CREATE ACTUAL WORKFLOW
 	async function onSubmit(data: CheckoutForm) {
+		if (items.length === 0) {
+			toast.error("Cart is empty");
+			return;
+		}
 		setIsLoading(true);
 		console.log(data);
 
@@ -81,8 +90,8 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 	}
 
 	return (
-		<main className="w-full p-4 mt-4 md:mt-24 flex justify-center">
-			<div className="max-w-[1340px] w-full ">
+		<main className="w-full p-4 mt-14 flex justify-center">
+			<div className="max-w-[1300px] w-full mb-20 ">
 				<h1 className="w-full text-center font-bold text-4xl mb-6">Checkout</h1>
 
 				<FormProvider {...methods}>
@@ -107,7 +116,7 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 						</div>
 
 						<div className="order-0 md:order-1 w-full md:w-5/12">
-							<CartInfo cart={cart} />
+							<CartInfo cart={cart} items={items} />
 
 							<section className="mt-4 hidden md:flex">
 								<Button className="w-full" type="submit" disabled={isLoading}>

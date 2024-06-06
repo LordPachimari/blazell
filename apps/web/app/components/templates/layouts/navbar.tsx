@@ -12,8 +12,8 @@ function Navbar(props: { children: React.ReactNode }) {
 		<header
 			{...props}
 			className={cn(
-				"group hidden backdrop-blur-md fixed px-20 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  lg:flex items-center justify-between border border-mauve-7 py-2 transition-all duration-300 hover:border bg-component",
-				noHeaderPaths(location.pathname) && "hidden lg:hidden",
+				"group bg-transparent border-b backdrop-blur-sm lg:backdrop-blur-md fixed px-20 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  lg:flex items-center justify-between lg:border lg:border-mauve-7 py-2 transition-all duration-300 hover:border lg:bg-component",
+				noHeaderPaths(location.pathname) && "lg:hidden",
 				requestInfo.userPrefs.sidebarState === "open" &&
 					!noSidebarPaths.has(location.pathname) &&
 					isScrolled &&

@@ -1,4 +1,4 @@
-name = 'pachi-web'
+name = 'blazell-web'
 compatibility_date ='2023-09-22'
 account_id = '3551fbe61550836037b63f206e50bc73'
 
@@ -16,7 +16,6 @@ CLERK_AFTER_SIGN_IN_URL='/dashboard'
 CLERK_AFTER_SIGN_UP_URL='/create-user'
 SESSION_SECRET = 'Gno04Yd09KSo67sVXfatS6wIKXFw17mB'
 PARTYKIT_HOST = 'localhost:1999'
-TRANSFORMER_URL = 'http://localhost:8080/transform'
 
 [env.development.vars]
 REPLICACHE_KEY = 'l024b847d70a04f84b3768c6d1d1db25f'
@@ -29,4 +28,15 @@ CLERK_AFTER_SIGN_IN_URL='/dashboard'
 CLERK_AFTER_SIGN_UP_URL='/create-user'
 SESSION_SECRET = 'Gno04Yd09KSo67sVXfatS6wIKXFw17mB'
 PARTYKIT_HOST = 'blazell.lordpachimari.partykit.dev'
-TRANSFORMER_URL = 'https://image-transform.fly.dev'
+
+[env.production.vars]
+REPLICACHE_KEY = 'l024b847d70a04f84b3768c6d1d1db25f'
+WORKER_URL = 'https://blazell.com'
+CLERK_PUBLISHABLE_KEY='pk_test_Z2xvd2luZy1zaHJpbXAtMTguY2xlcmsuYWNjb3VudHMuZGV2JA'
+CLERK_SECRET_KEY='sk_test_ttYvsb8N3zBTbo6jir8wtkxNICBXoEteybvYlE8CSK'
+CLERK_SIGN_IN_URL='/sign-in'
+CLERK_SIGN_UP_URL='/sign-up'
+CLERK_AFTER_SIGN_IN_URL='/dashboard'
+CLERK_AFTER_SIGN_UP_URL='/create-user'
+SESSION_SECRET = 'Gno04Yd09KSo67sVXfatS6wIKXFw17mB'
+PARTYKIT_HOST = 'blazell.lordpachimari.partykit.dev'

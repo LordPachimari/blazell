@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@blazell/validators": "workspace:*",
 		"dayjs": "^1.11.10",
-		"effect": "^3.1.5",
+		"effect": "^3.2.9",
 		"ulidx": "^2.3.0"
 	},
 	"devDependencies": {
@@ -23,6 +23,6 @@
 		"@blazell/tsconfig": "workspace:*",
 		"dotenv-cli": "^7.3.0",
 		"typescript": "^5.4.5",
-		"@cloudflare/workers-types": "^4.20240405.0"
+		"@cloudflare/workers-types": "^4.20240512.0 "
 	}
 }
