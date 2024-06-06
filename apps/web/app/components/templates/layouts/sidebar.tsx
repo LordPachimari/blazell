@@ -3,17 +3,12 @@ import { Button } from "@blazell/ui/button";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useOptimisticSidebarMode } from "~/hooks/use-sidebar";
+import { ClientOnly } from "remix-utils/client-only";
+import { useOptimisticSidebarMode, useSidebarState } from "~/hooks/use-sidebar";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-sidebar";
 import { ThemeToggle } from "./theme-toggle";
-import { ClientOnly } from "remix-utils/client-only";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@blazell/ui/tooltip";
+import { useDashboardState } from "~/zustand/state";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -49,22 +44,26 @@ const items: SidebarItem[] = [
 ];
 
 const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/create-user"]);
+
 const Sidebar = () => {
 	const fetcher = useFetcher<typeof action>();
-	const userPreference = useUserPreferences();
-	const optimisticMode = useOptimisticSidebarMode();
-
-	const mode = optimisticMode ?? userPreference.sidebarState ?? "closed";
+	const mode = useSidebarState();
 	const nextMode = mode === "open" ? "closed" : "open";
 	useHotkeys(["s"], () => {
 		fetcher.submit(
 			{ sidebarState: nextMode },
-			{ method: "post", action: "/action/set-sidebar", navigate: false },
+			{
+				method: "post",
+				action: "/action/set-sidebar",
+				navigate: false,
+				fetcherKey: "sidebar-fetcher",
+			},
 		);
 	});
 	const location = useLocation();
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
+	console.log("nextMode", nextMode);
 
 	return (
 		<div className="flex">
@@ -72,7 +71,7 @@ const Sidebar = () => {
 				className={cn(
 					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
-						"w-44 left-0": mode === "open",
+						"w-44": mode === "open",
 						"hidden lg:hidden": noSidebarPaths.has(location.pathname),
 					},
 				)}
@@ -164,6 +163,9 @@ const MobileSidebar = () => {
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
 
+	const opened = useDashboardState((state) => state.opened);
+	const setOpened = useDashboardState((state) => state.setOpened);
+
 	return (
 		<div className="flex">
 			<nav
@@ -176,6 +178,20 @@ const MobileSidebar = () => {
 			>
 				<div />
 				<ul className="justify-between items-center flex w-full gap-4 p-2">
+					<Button
+						variant="ghost"
+						size="icon"
+						className={cn("bottom-4 left-3 z-50 md:hidden", {
+							hidden: mainPath !== "dashboard",
+						})}
+						onClick={() => setOpened(!opened)}
+					>
+						{opened ? (
+							<Icons.left size={20} strokeWidth={strokeWidth} />
+						) : (
+							<Icons.menu size={20} strokeWidth={strokeWidth} />
+						)}
+					</Button>
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
 
@@ -183,7 +199,7 @@ const MobileSidebar = () => {
 							<Link
 								to={item.href}
 								key={item.title}
-								className={cn("group/link  ")}
+								className={cn("group/link")}
 								prefetch="viewport"
 							>
 								<div className="flex justify-center  hover:bg-mauve-a-2 items-center rounded-full px-2 cursor-pointer w-[45px] h-[45px]">
@@ -210,4 +226,4 @@ const MobileSidebar = () => {
 	);
 };
 
-export { Sidebar, MobileSidebar };
+export { MobileSidebar, Sidebar };

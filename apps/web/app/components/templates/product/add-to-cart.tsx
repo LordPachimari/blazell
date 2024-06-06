@@ -49,7 +49,7 @@ const AddToCart = ({
 			);
 		}
 
-		rep?.mutate.createLineItem({
+		await rep?.mutate.createLineItem({
 			lineItem: {
 				id: newID,
 				cartID: cartID ?? newCartID,

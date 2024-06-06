@@ -6,7 +6,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.get("/:handle", async (c) => {
 	const db = c.get("db" as never) as Db;
 	const handle = c.req.param("handle");
-	console.log("handle", handle);
 
 	const variant = await db.query.variants.findFirst({
 		where: (variants, { eq }) => eq(variants.handle, handle),

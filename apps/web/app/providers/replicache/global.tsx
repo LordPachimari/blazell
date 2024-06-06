@@ -4,12 +4,14 @@ import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { GlobalMutators } from "@blazell/replicache";
 
-export default function GlobalReplicacheProvider({
+export function GlobalReplicacheProvider({
 	children,
 	cartID,
+	fakeAuthID,
 }: Readonly<{
 	children: React.ReactNode;
 	cartID: string | undefined;
+	fakeAuthID?: string;
 }>) {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
@@ -42,6 +44,7 @@ export default function GlobalReplicacheProvider({
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
 						...(cartID && { "x-cart-id": cartID }),
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
@@ -65,6 +68,7 @@ export default function GlobalReplicacheProvider({
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 				});
@@ -80,7 +84,7 @@ export default function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, getToken, cartID]);
+	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID]);
 
 	return <>{children}</>;
 }

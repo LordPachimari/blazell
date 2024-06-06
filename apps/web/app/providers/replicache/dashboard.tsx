@@ -8,8 +8,10 @@ import { useReplicache } from "~/zustand/replicache";
 
 function DashboardReplicacheProvider({
 	children,
+	fakeAuthID,
 }: Readonly<{
 	children: React.ReactNode;
+	fakeAuthID?: string;
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const setDashboardRep = useReplicache((state) => state.setDashboardRep);
@@ -41,6 +43,7 @@ function DashboardReplicacheProvider({
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
@@ -64,6 +67,7 @@ function DashboardReplicacheProvider({
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 				});
@@ -80,7 +84,7 @@ function DashboardReplicacheProvider({
 			},
 		});
 		setDashboardRep(r);
-	}, [dashboardRep, setDashboardRep, getToken]);
+	}, [dashboardRep, setDashboardRep, getToken, fakeAuthID]);
 	return <>{children}</>;
 }
 

@@ -14,6 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	invariantResponse(submission.status === "success", "Invalid theme received");
 	const { theme } = submission.value;
+	console.log("theme", theme);
 	cookie.theme = theme === "system" ? "" : theme;
 	const maxAge = theme === "system" ? -1 : 31536000;
 	return json(

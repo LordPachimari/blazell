@@ -3,6 +3,7 @@ import { ThemeFormSchema } from "@blazell/validators";
 import { useFetchers } from "@remix-run/react";
 import { useHints } from "~/hooks/use-hints";
 import { useRequestInfo } from "~/hooks/use-request-info";
+import { cons } from "effect/List";
 
 /**
  * @returns the user's theme preference, or the client hint theme if the user
@@ -34,6 +35,7 @@ export function useOptimisticThemeMode() {
 		});
 
 		if (submission.status === "success") {
+			console.log("what", submission.value.theme);
 			return submission.value.theme;
 		}
 	}

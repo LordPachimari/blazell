@@ -27,7 +27,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 		state.lineItems.filter((item) => item.cartID === cartID),
 	);
 
-	const [parent] = useAutoAnimate(/* optional config */);
+	const [parent] = useAutoAnimate({ duration: 200 });
 
 	const { opened, setOpened } = useCartState();
 

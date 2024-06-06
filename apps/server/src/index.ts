@@ -1,4 +1,4 @@
-import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
+import { clerkMiddleware, type getAuth } from "@hono/clerk-auth";
 import { Pool } from "@neondatabase/serverless";
 import { schema, type Db } from "@blazell/db";
 import { ReplicacheContext, pull, push, staticPull } from "@blazell/replicache";
@@ -28,12 +28,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use(
 	"*",
 	cors({
-		origin: [
-			"http://localhost:5173",
-			"http://localhost:3000",
-			"https://pachi-dev.vercel.app",
-			"https://pachi.vercel.app",
-		],
+		origin: ["http://localhost:5173"],
 		allowMethods: ["POST", "GET", "OPTIONS"],
 		maxAge: 600,
 		credentials: true,
@@ -44,15 +39,18 @@ app.use("*", clerkMiddleware());
 app.use("*", async (c, next) => {
 	const client = new Pool({ connectionString: c.env.DATABASE_URL });
 	const db = drizzle(client, { schema });
+	// const auth = getAuth(c);
+	const fakeAuthId = c.req.header("x-fake-auth-id");
 
 	c.set("db" as never, db);
+	c.set("auth" as never, { userId: fakeAuthId });
 
 	return next();
 });
 
 app.post("/pull/:spaceID", async (c) => {
 	// 1: PARSE INPUT
-	const auth = getAuth(c);
+	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
 	const db = c.get("db" as never) as Db;
 	const subspaceIDs = c.req.queries("subspaces");
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
@@ -121,7 +119,7 @@ app.post("/static-pull", async (c) => {
 
 app.post("/push/:spaceID", async (c) => {
 	// 1: PARSE INPUT
-	const auth = getAuth(c);
+	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
 	const db = c.get("db" as never) as Db;
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
 		c.req.param("spaceID"),

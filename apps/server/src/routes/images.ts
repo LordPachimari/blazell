@@ -1,5 +1,5 @@
 import * as Http from "@effect/platform/HttpClient";
-import { getAuth } from "@hono/clerk-auth";
+import type { getAuth } from "@hono/clerk-auth";
 import { UploadResponseSchema, type Bindings } from "@blazell/validators";
 import { Effect, pipe } from "effect";
 import { Hono } from "hono";
@@ -37,7 +37,7 @@ app.get("/:key", async (c) => {
 	return response;
 });
 app.post("/upload", async (c) => {
-	const auth = getAuth(c);
+	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
 	if (!auth?.userId) return c.text("Unauthorized", 401);
 	const body = await c.req.parseBody();
 	if (!body.file) {

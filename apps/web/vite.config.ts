@@ -7,13 +7,14 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { flatRoutes } from "remix-flat-routes";
 import MillionLint from "@million/lint";
 import { getLoadContext } from "./load-context";
-
+import { remixDevTools } from "remix-development-tools";
 export default defineConfig({
 	ssr: {
 		noExternal: ["react-easy-crop", "tslib"],
 	},
 	plugins: [
 		MillionLint.vite(),
+		remixDevTools(),
 		remixCloudflareDevProxy({ getLoadContext }),
 		remix({
 			future: {

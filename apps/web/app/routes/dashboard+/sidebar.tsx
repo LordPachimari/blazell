@@ -1,6 +1,8 @@
 import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
+import { useDashboardState } from "~/zustand/state";
 
 export type DashboardSidebarItem = {
 	title: string;
@@ -41,11 +43,15 @@ interface DashboardSidebarProps {
 }
 const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 	const { pathname } = useLocation();
+
+	const opened = useDashboardState((state) => state.opened);
+
 	return (
 		<div className="w-full h-full flex relative inset-0 ">
 			<nav
 				className={cn(
-					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm transition-all duration-200 ease-in-out z-30 ",
+					"flex left-[-120px] md:left-0 lg:left-[60px] flex-col w-12 justify-center bg-component fixed h-full border-r border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm transition-all duration-200 ease-in-out z-30 ",
+					{ "left-0": opened },
 				)}
 			>
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">

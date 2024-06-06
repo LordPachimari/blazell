@@ -24,13 +24,6 @@ function MarketplaceReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
-			indexes: {
-				categoryPK: {
-					jsonPointer: "/categoryPK",
-					allowEmpty: true,
-				},
-			},
-
 			//@ts-ignore
 			puller: async (req) => {
 				const start = performance.now();

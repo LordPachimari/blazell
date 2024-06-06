@@ -5,8 +5,10 @@ import { useReplicache } from "~/zustand/replicache";
 
 function PartykitProvider({
 	cartID,
+	fakeAuthID,
 }: Readonly<{
 	cartID: string | undefined;
+	fakeAuthID?: string;
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const globalRep = useReplicache((state) => state.globalRep);
@@ -93,6 +95,7 @@ function PartykitProvider({
 							headers: {
 								"Content-Type": "application/json",
 								Authorization: `Bearer ${token}`,
+								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 							},
 							body: JSON.stringify(req),
 						},

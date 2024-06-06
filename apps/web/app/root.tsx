@@ -27,7 +27,7 @@ import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
 import { useUser } from "./hooks/use-user";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
-import UserReplicacheProvider from "./providers/replicache/global";
+import { GlobalReplicacheProvider } from "./providers/replicache/global";
 import { prefs, userContext } from "./sessions.server";
 import { getDomainUrl } from "./utils/helpers";
 import type { Theme } from "@blazell/validators";
@@ -70,6 +70,7 @@ export type RootLoaderData = {
 	user?: User;
 	authID: string | null;
 	cartID?: string;
+	fakeAuthID?: string;
 };
 
 export const loader: LoaderFunction = (args) => {
@@ -106,8 +107,9 @@ export const loader: LoaderFunction = (args) => {
 					...(user && { user }),
 					authID: userId,
 					cartID: userContextCookie.cartID,
+					fakeAuthID: userContextCookie.fakeAuthID,
 				},
-				{ headers: { "Cache-Control": "private, max-age=1800" } },
+				// { headers: { "Cache-Control": "private, max-age=1800" } },
 			);
 		},
 	);
@@ -118,11 +120,18 @@ function App() {
 	const nonce = useNonce();
 	const user = useUser();
 	const theme = useTheme();
+	console.log("theme", theme);
+
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>
 			<MarketplaceReplicacheProvider>
-				<UserReplicacheProvider cartID={data.cartID}>
-					<DashboardReplicacheProvider>
+				<GlobalReplicacheProvider
+					cartID={data.cartID}
+					{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
+				>
+					<DashboardReplicacheProvider
+						{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
+					>
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
 								<Sidebar />
@@ -131,16 +140,22 @@ function App() {
 									cartID={data.cartID ?? null}
 									authID={data.authID}
 									user={user}
+									{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
 								/>
 								<Outlet />
 								<Toaster />
 							</GlobalStoreMutator>
 						</GlobalStoreProvider>
 						<ClientOnly>
-							{() => <PartykitProvider cartID={data.cartID} />}
+							{() => (
+								<PartykitProvider
+									cartID={data.cartID}
+									{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
+								/>
+							)}
 						</ClientOnly>
 					</DashboardReplicacheProvider>
-				</UserReplicacheProvider>
+				</GlobalReplicacheProvider>
 			</MarketplaceReplicacheProvider>
 		</Document>
 	);
@@ -161,6 +176,7 @@ function Document({
 	env?: Record<string, string>;
 	allowIndexing?: boolean;
 }) {
+	console.log("theme", theme);
 	return (
 		<html lang="en" className={`${theme}`}>
 			<head>

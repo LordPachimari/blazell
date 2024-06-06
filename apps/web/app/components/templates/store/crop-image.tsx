@@ -33,7 +33,11 @@ const CropImage = ({
 	);
 
 	return (
-		<div className={cn("w-[600px] max-h-[500px] h-[500px]")}>
+		<div
+			className={cn(
+				"md:w-[600px] max-h-[500px] md:h-[500px] w-full h-[80vh] z-40",
+			)}
+		>
 			<Cropper
 				image={src}
 				aspect={ASPECT_RATIO}

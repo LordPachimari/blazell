@@ -1,4 +1,4 @@
-import { getAuth } from "@hono/clerk-auth";
+import type { getAuth } from "@hono/clerk-auth";
 import { schema, type Db } from "@blazell/db";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -23,7 +23,7 @@ app.get("/:name", async (c) => {
 });
 
 app.post("/update-store/:id", async (c) => {
-	const auth = getAuth(c);
+	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
 	if (!auth?.userId) {
 		return c.text("You are not authorized", 401);
 	}

@@ -12,7 +12,6 @@ import {
 import { ulid } from "ulidx";
 import { ReplicacheContext } from "./context/replicache";
 import { RecordManager } from "./record-manager";
-import { satisfies } from "effect/Function";
 
 export const pull = ({
 	body: pull,

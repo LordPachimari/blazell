@@ -34,6 +34,8 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 			}),
 		[products, windowSize.width],
 	);
+
+	console.log("products", products);
 	return (
 		<div className="p-2 md:p-6 md:pt-10 flex flex-col gap-4">
 			{productGrids.map((grid, index) => (
@@ -44,7 +46,6 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 					{grid.map((column, columnIndex) => (
 						<div key={columnIndex} className="flex flex-col gap-2">
 							{column.map((product) => {
-								console.log("product", product);
 								if (!product) return null;
 								return (
 									<ProductCard

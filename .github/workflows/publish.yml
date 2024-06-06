@@ -2,7 +2,6 @@ on:
     push:
       branches:
         - main
-  
   jobs:
     publish:
       runs-on: ubuntu-latest
@@ -22,14 +21,14 @@ on:
             apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
             githubToken: ${{ secrets.GITHUB_TOKEN }}
-            projectName: YOUR_PROJECT_NAME
-            directory: YOUR_BUILD_OUTPUT_DIRECTORY
+            projectName: Blazell
+            directory: web
             # Optional: Supply a deployment name if you want to have GitHub Deployments triggered
             deploymentName: Production
             # Optional: Switch what branch you are publishing to.
             # By default, this will be the branch which triggered this workflow
             branch: main
             # Optional: Change the working directory
-            workingDirectory: my-site
+            workingDirectory: web
             # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
-            wranglerVersion: '3'
+            wranglerVersion: '3.57.1'

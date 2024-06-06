@@ -12,10 +12,12 @@ function Header({
 	authID,
 	cartID,
 	user,
+	fakeAuthID,
 }: {
 	authID: string | null;
 	cartID: string | null;
 	user: User | undefined;
+	fakeAuthID?: string;
 }) {
 	return (
 		<Navbar>
@@ -26,10 +28,11 @@ function Header({
 
 			{/* Right corner */}
 			<div className="hidden gap-6 lg:flex items-center ">
-				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
+				<ThemeToggle />
 				<CartSheet cartID={cartID} />
 				<Link
-					to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
+					to={!fakeAuthID ? "/create-user" : "/dashboard"}
+					// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 					className={cn("rounded-full", buttonVariants())}
 				>
 					Dashboard
