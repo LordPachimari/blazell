@@ -45,12 +45,8 @@ export const links: LinksFunction = () => {
 		// Preload svg sprite as a resource to avoid render blocking
 		//TODO: ADD ICON
 		{ rel: "stylesheet", href: stylesheet },
-		...(process.env.NODE_ENV === "development"
-			? [
-					{ rel: "stylesheet", href: sonnerStyles },
-					{ rel: "stylesheet", href: vaulStyles },
-				]
-			: []),
+		{ rel: "stylesheet", href: sonnerStyles },
+		{ rel: "stylesheet", href: vaulStyles },
 	].filter(Boolean);
 };
 export type RootLoaderData = {
