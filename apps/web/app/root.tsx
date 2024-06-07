@@ -136,14 +136,14 @@ function App() {
 					>
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
-								{/* <Sidebar />
-								<MobileSidebar /> */}
-								{/* <Header
-								cartID={data.cartID ?? null}
+								<Sidebar />
+								<MobileSidebar />
+								<Header
+									cartID={data.cartID ?? null}
 									authID={data.authID}
 									user={user}
 									{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
-								/> */}
+								/>
 								<Outlet />
 								<Toaster />
 							</GlobalStoreMutator>
