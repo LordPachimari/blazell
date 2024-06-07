@@ -6,6 +6,7 @@ import { buttonVariants } from "@blazell/ui/button";
 import { Logo } from "~/components/molecules/logo";
 import type { User } from "@blazell/validators/client";
 import { cn } from "@blazell/ui";
+import { ClientOnly } from "remix-utils/client-only";
 
 function Header({
 	cartID,
@@ -25,7 +26,7 @@ function Header({
 
 			{/* Right corner */}
 			<div className="hidden gap-6 lg:flex items-center ">
-				<ThemeToggle />
+				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
 				<CartSheet cartID={cartID} />
 				<Link
 					to={!fakeAuthID ? "/create-user" : "/dashboard"}
