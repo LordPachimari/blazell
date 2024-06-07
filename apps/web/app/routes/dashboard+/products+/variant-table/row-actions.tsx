@@ -26,7 +26,7 @@ export function RowActions({
 	// const task = taskSchema.parse(row.original);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
+			<DropdownMenuTrigger asChild>
 				<button
 					type="button"
 					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"

@@ -14,7 +14,7 @@ import type { Product, Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import debounce from "lodash.debounce";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
@@ -55,9 +55,6 @@ export function ProductInput({
 	});
 	console.log("errors", methods.formState.errors);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-
-	console.log("variants", variants);
-	const publishButtonRef = useRef<HTMLButtonElement>(null);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onPublish = useCallback(() => {
@@ -210,10 +207,7 @@ export function ProductInput({
 									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
-								<DeleteOrPublish
-									setIsOpen1={setIsOpen1}
-									ref={publishButtonRef}
-								/>
+								<DeleteOrPublish setIsOpen1={setIsOpen1} />
 							</div>
 						</section>
 						<section className="w-full table gap-0">
@@ -250,7 +244,7 @@ export function ProductInput({
 
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} ref={publishButtonRef} />
+							<DeleteOrPublish setIsOpen1={setIsOpen1} />
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
@@ -269,10 +263,8 @@ export function ProductInput({
 
 function DeleteOrPublish({
 	setIsOpen1,
-	ref,
 }: {
 	setIsOpen1: (value: boolean) => void;
-	ref: React.RefObject<HTMLButtonElement>;
 }) {
 	return (
 		<>
@@ -287,7 +279,7 @@ function DeleteOrPublish({
 				Delete
 			</Button>
 
-			<Button size="md" type="submit" ref={ref}>
+			<Button size="md" type="submit">
 				Publish
 			</Button>
 		</>
