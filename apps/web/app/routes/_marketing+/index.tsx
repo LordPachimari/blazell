@@ -25,7 +25,7 @@ export default function Index() {
 				</div>
 			</ShineBorder>
 			{/* <Hero /> */}
-			<Features theme={theme} />
+			{/* <Features theme={theme} /> */}
 			<div className="h-40" />
 			<Footer />
 		</main>
