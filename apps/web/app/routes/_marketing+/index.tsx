@@ -24,8 +24,8 @@ export default function Index() {
 					<h1 className="font-freeman">Under development</h1>
 				</div>
 			</ShineBorder>
-			{/* <Hero /> */}
-			{/* <Features theme={theme} /> */}
+			<Hero />
+			<Features theme={theme} />
 			<div className="h-40" />
 			<Footer />
 		</main>

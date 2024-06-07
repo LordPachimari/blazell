@@ -137,7 +137,7 @@ function App() {
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
 								<Sidebar />
-								<MobileSidebar />
+								{/* <MobileSidebar /> */}
 								<Header
 									cartID={data.cartID ?? null}
 									authID={data.authID}
