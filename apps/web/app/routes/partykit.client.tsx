@@ -31,7 +31,6 @@ function PartykitProvider({
 			if (globalRep) {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/global?${subspaces
@@ -47,7 +46,6 @@ function PartykitProvider({
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -80,6 +78,7 @@ function PartykitProvider({
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
 			console.log("message", subspaces);
+			console.log("fakeAuthID", fakeAuthID);
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {

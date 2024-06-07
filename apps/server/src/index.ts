@@ -68,6 +68,7 @@ app.post("/pull/:spaceID", async (c) => {
 		c.req.param("spaceID"),
 	);
 	const body = PullRequest.decodeUnknownSync(await c.req.json());
+	console.log("subspaceIDs", subspaceIDs);
 
 	const CloudflareLive = Layer.succeed(
 		Cloudflare,

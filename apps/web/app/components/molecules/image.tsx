@@ -50,6 +50,7 @@ const Image = React.forwardRef<
 	params.append("src", src);
 	// const localURL = "http://localhost:8080/transform";
 	const prodURL = "https://blazell.com/images/transform";
+	// const devURL = "";
 
 	const url = new URL(prodURL);
 	url.search = params.toString();
