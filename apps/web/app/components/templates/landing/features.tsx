@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
-import { Truck, BadgeDollarSign, BarChartBig, Settings } from "lucide-react";
-import { ProductTypeCards } from "./wobble-cards";
 import type { Theme } from "@blazell/validators";
+import { BadgeDollarSign, BarChartBig, Settings, Truck } from "lucide-react";
+import { ProductTypeCards } from "./wobble-cards";
 type Feature = {
 	title: string;
 	description: string;
@@ -81,7 +81,7 @@ function Features({ theme }: { theme: Theme }) {
 					selling
 				</p>
 				<ul className="mt-8 grid w-full gap-4  sm:grid-cols-2 md:w-10/12 xl:grid-cols-3">
-					{features.map((item, i) => (
+					{features.map((item) => (
 						<Card
 							key={item.title}
 							className="aspect-square h-fit relative cursor-pointer hover:scale-105 transition-all duration-100 ease-out gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"

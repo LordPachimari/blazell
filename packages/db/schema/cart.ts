@@ -1,15 +1,9 @@
-import {
-	index,
-	integer,
-	pgTable,
-	uniqueIndex,
-	varchar,
-} from "drizzle-orm/pg-core";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { users } from "./user";
-import { addresses } from "./address";
 import { relations } from "drizzle-orm";
+import { addresses } from "./address";
 import { lineItems } from "./line-item";
+import { users } from "./user";
 
 export const carts = pgTable(
 	"carts",

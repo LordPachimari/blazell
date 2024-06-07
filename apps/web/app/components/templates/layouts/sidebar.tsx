@@ -4,11 +4,10 @@ import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ClientOnly } from "remix-utils/client-only";
-import { useOptimisticSidebarMode, useSidebarState } from "~/hooks/use-sidebar";
-import { useUserPreferences } from "~/hooks/use-user-preferences";
+import { useSidebarState } from "~/hooks/use-sidebar";
 import type { action } from "~/routes/action.set-sidebar";
-import { ThemeToggle } from "./theme-toggle";
 import { useDashboardState } from "~/zustand/state";
+import { ThemeToggle } from "./theme-toggle";
 export type SidebarItem = {
 	title: string;
 	href: string;

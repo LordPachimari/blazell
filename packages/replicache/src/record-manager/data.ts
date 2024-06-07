@@ -1,5 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
-import { Console, Effect, pipe } from "effect";
+import { Effect, pipe } from "effect";
 import { isDefined, keys, mapToObj } from "remeda";
 import type { PatchOperation, ReadonlyJSONObject } from "replicache";
 
@@ -19,10 +19,10 @@ import {
 	type SpaceRecord,
 } from "@blazell/validators";
 
-import { type Cloudflare, Database } from "@blazell/shared";
+import { Database, type Cloudflare } from "@blazell/shared";
 
-import { SpaceRecordGetter, fullRowsGetter } from "./space/getter";
 import { ReplicacheContext } from "../context";
+import { SpaceRecordGetter, fullRowsGetter } from "./space/getter";
 
 interface SpaceRecordDiff {
 	newIDs: Map<TableName, Set<string>>;
@@ -111,7 +111,7 @@ const getOldSpaceRecord = ({
 	});
 };
 
-const getNewSpaceRecord = <T extends SpaceID>({
+const getNewSpaceRecord = ({
 	newSpaceRecordKey,
 }: {
 	newSpaceRecordKey: string;
@@ -372,7 +372,7 @@ const createSpacePatch = ({
 	});
 };
 
-const createSpaceResetPatch = <T extends SpaceID>(): Effect.Effect<
+const createSpaceResetPatch = (): Effect.Effect<
 	PatchOperation[],
 	InvalidValue | NeonDatabaseError,
 	Cloudflare | ReplicacheContext | Database

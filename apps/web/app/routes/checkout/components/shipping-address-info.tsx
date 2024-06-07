@@ -12,11 +12,7 @@ import {
 } from "@blazell/ui/select";
 import { FieldErrorMessage } from "~/components/field-error";
 
-export const ShippingAddressInfo = ({
-	addressID,
-}: {
-	addressID: string | undefined | null;
-}) => {
+export const ShippingAddressInfo = () => {
 	const [parent] = useAutoAnimate({ duration: 100 });
 
 	const { register, formState, control, clearErrors } =

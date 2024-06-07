@@ -1,7 +1,6 @@
 import { cn } from "@blazell/ui";
 import React from "react";
 import ImagePlaceholder from "./image-placeholder";
-import { toImageURL } from "~/utils/helpers";
 
 type Fit = "cover" | "contain" | "fill" | "inside" | "outside";
 
@@ -49,10 +48,10 @@ const Image = React.forwardRef<
 	}
 
 	params.append("src", src);
-	const localURL = "http://localhost:8080/transform";
+	// const localURL = "http://localhost:8080/transform";
 	const prodURL = "https://blazell.com/images/transform";
 
-	const url = new URL(localURL);
+	const url = new URL(prodURL);
 	url.search = params.toString();
 	if (!fit && !width && !height) {
 		return (

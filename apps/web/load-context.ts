@@ -8,7 +8,6 @@ import { z } from "zod";
 // even if no `wrangler.toml` exists.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
-interface Env {}
 
 type Cloudflare = Omit<PlatformProxy<AppEnv>, "dispose">;
 const AppEnvSchema = z.object({

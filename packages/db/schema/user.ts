@@ -38,7 +38,7 @@ export const users = pgTable(
 		usernameIndex: uniqueIndex("username_index1").on(users.username),
 	}),
 );
-export const userRelations = relations(users, ({ many, one }) => ({
+export const userRelations = relations(users, ({ many }) => ({
 	stores: many(stores, { relationName: "founder.stores" }),
 	addresses: many(addresses),
 }));

@@ -1,5 +1,4 @@
 import { cn } from "@blazell/ui";
-import { Button } from "@blazell/ui/button";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
 import { useDashboardState } from "~/zustand/state";

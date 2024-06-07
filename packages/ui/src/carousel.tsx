@@ -1,8 +1,7 @@
-import * as React from "react";
 import useEmblaCarousel, {
 	type UseEmblaCarouselType,
 } from "embla-carousel-react";
-import { ArrowRight } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "./";
 import { Button } from "./button";
@@ -253,10 +252,10 @@ const CarouselNext = React.forwardRef<
 CarouselNext.displayName = "CarouselNext";
 
 export {
-	type CarouselApi,
 	Carousel,
 	CarouselContent,
 	CarouselItem,
-	CarouselPrevious,
 	CarouselNext,
+	CarouselPrevious,
+	type CarouselApi,
 };

@@ -1,5 +1,5 @@
 import { Badge } from "@blazell/ui/badge";
-import type { Order, Product } from "@blazell/validators/client";
+import type { Product } from "@blazell/validators/client";
 
 export function ProductStatus({ status }: { status: Product["status"] }) {
 	return status === "draft" ? (

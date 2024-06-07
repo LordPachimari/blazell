@@ -7,19 +7,17 @@ import {
 	pgTable,
 	primaryKey,
 	text,
-	uniqueIndex,
 	varchar,
 } from "drizzle-orm/pg-core";
 
 import { collections } from "./collection";
-import { prices } from "./price";
 import { productOptions } from "./product-option";
 import { stores } from "./store";
 import { tags } from "./tag";
 import { variants } from "./variant";
 
 export const productStatus = ["draft", "published", "archived"] as const;
-const weightUnits = ["kg", "g", "lb", "oz"] as const;
+// const weightUnits = ["kg", "g", "lb", "oz"] as const;
 
 export const products = pgTable(
 	"products",

@@ -6,7 +6,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@blazell/ui/table";
-import type { UpdateVariant } from "@blazell/validators";
 import type { Variant } from "@blazell/validators/client";
 import { flexRender, type ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -16,7 +15,6 @@ import { getVariantColumns } from "./columns";
 interface VariantTableProps {
 	variants: Variant[];
 	setVariantID: (variant: string | null) => void;
-	updateVariant: (props: UpdateVariant) => Promise<void>;
 
 	deleteVariant: (id: string) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
@@ -24,7 +22,6 @@ interface VariantTableProps {
 export default function VariantTable({
 	variants,
 	setVariantID,
-	updateVariant,
 	deleteVariant,
 	duplicateVariant,
 }: VariantTableProps) {
@@ -32,11 +29,10 @@ export default function VariantTable({
 		() =>
 			getVariantColumns({
 				setVariantID,
-				updateVariant,
 				deleteVariant,
 				duplicateVariant,
 			}),
-		[setVariantID, updateVariant, deleteVariant, duplicateVariant],
+		[setVariantID, deleteVariant, duplicateVariant],
 	);
 	const table = useDataTable({
 		columns,

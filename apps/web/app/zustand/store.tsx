@@ -12,13 +12,8 @@ import type {
 } from "@blazell/validators/client";
 import React from "react";
 import type { ExperimentalDiff, ReadonlyJSONValue } from "replicache";
-import { createStore, useStore, type StoreApi } from "zustand";
+import { createStore, useStore } from "zustand";
 type Entity = ReadonlyJSONValue & { id: string };
-type ReadonlyStoreApi<T> = Pick<StoreApi<T>, "getState" | "subscribe">;
-type WithReact<S extends ReadonlyStoreApi<unknown>> = S & {
-	/** @deprecated please use api.getInitialState() */
-	getServerState?: () => ExtractState<S>;
-};
 type ExtractState<S> = S extends {
 	getState: () => infer T;
 }
@@ -382,12 +377,12 @@ const useGlobalStore = <_, U>(
 
 export {
 	DashboardStoreProvider,
-	createDashboardStore,
-	useDashboardStore,
-	MarketplaceStoreProvider,
-	createMarketplaceStore,
-	useMarketplaceStore,
 	GlobalStoreProvider,
+	MarketplaceStoreProvider,
+	createDashboardStore,
 	createGlobalStore,
+	createMarketplaceStore,
+	useDashboardStore,
 	useGlobalStore,
+	useMarketplaceStore,
 };

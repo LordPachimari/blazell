@@ -1,18 +1,12 @@
 import { Input } from "@blazell/ui/input";
+import type { CheckoutForm } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
-import type { CheckoutForm, UpdateCart } from "@blazell/validators";
 import { useFormContext } from "react-hook-form";
 import { FieldErrorMessage } from "~/components/field-error";
 
 export const CustomerInfo = ({
-	fullName,
-	email,
-	phone,
 	user,
 }: {
-	fullName: string | null | undefined;
-	email: string | null | undefined;
-	phone: string | null | undefined;
 	user: User | null | undefined;
 }) => {
 	const { register, formState, clearErrors } = useFormContext<CheckoutForm>();
@@ -24,7 +18,6 @@ export const CustomerInfo = ({
 					id="fullName"
 					key="fullName"
 					placeholder="Full name"
-					// defaultValue={fullName ?? ""}
 					{...register("fullName")}
 					onChange={(e) => {
 						register("fullName").onChange(e);
@@ -36,7 +29,6 @@ export const CustomerInfo = ({
 					<Input
 						id="email"
 						type="email"
-						defaultValue={email ?? ""}
 						autoCapitalize="none"
 						autoCorrect="off"
 						placeholder="Email"
@@ -50,7 +42,6 @@ export const CustomerInfo = ({
 				<FieldErrorMessage message={formState.errors.email?.message} />
 				<Input
 					id="phone"
-					defaultValue={phone ?? ""}
 					autoCapitalize="none"
 					autoCorrect="off"
 					placeholder="Phone"

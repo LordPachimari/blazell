@@ -23,12 +23,6 @@ export function ProductCategory() {
 	);
 }
 
-type Category = {
-	name: string;
-	id: string;
-	children: Category[];
-};
-
 export function CategoryDropdown() {
 	return (
 		<DropdownMenu>

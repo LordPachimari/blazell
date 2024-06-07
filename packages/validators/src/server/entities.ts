@@ -1,4 +1,4 @@
-import type { Image, schema } from "@blazell/db";
+import type { schema } from "@blazell/db";
 
 import type { InferSelectModel } from "drizzle-orm";
 

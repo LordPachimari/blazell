@@ -1,18 +1,15 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
 
-import { Button } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import type { Product } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
-import { toast } from "@blazell/ui/toast";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;
@@ -20,7 +17,7 @@ interface DataTableRowActionsProps {
 	duplicateProduct: (keys: string[]) => void;
 }
 
-export function RowActions<TData>({
+export function RowActions({
 	row,
 	deleteProduct,
 	duplicateProduct,

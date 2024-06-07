@@ -1,13 +1,8 @@
 import { Effect } from "effect";
 
-import {
-	CreateCartSchema,
-	CreateLineItemSchema,
-	UpdateLineItemSchema,
-} from "@blazell/validators";
-import { z } from "zod";
-import { zod } from "../../util/zod";
+import { CreateCartSchema } from "@blazell/validators";
 import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const createCart = zod(CreateCartSchema, (input) =>
 	Effect.gen(function* () {

@@ -64,7 +64,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});
@@ -117,7 +117,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});
@@ -170,7 +170,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});

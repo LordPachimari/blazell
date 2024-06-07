@@ -19,6 +19,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
 import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 import { ProductCategory } from "./input/product-category";
 import { ProductInfo } from "./input/product-info";
 import { Media } from "./input/product-media";
@@ -26,7 +27,6 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
-import { useDashboardStore } from "~/zustand/store";
 export interface ProductInputProps {
 	product: Product | undefined;
 	productID: string;
@@ -236,7 +236,6 @@ export function ProductInput({
 							<Variants
 								options={product?.options}
 								productID={productID}
-								updateVariant={updateVariant}
 								variants={variants}
 								defaultVariant={defaultVariant}
 								isPublished={product?.status === "published"}
@@ -257,8 +256,6 @@ export function ProductInput({
 							<ProductStatus
 								status={product?.status}
 								updateProduct={updateProduct}
-								publishProduct={publishProduct}
-								publishButtonRef={publishButtonRef}
 								onPublish={onPublish}
 							/>
 							<ProductCategory />

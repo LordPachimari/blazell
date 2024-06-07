@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { UpdateVariant } from "@blazell/validators";
-
 import type { Product, Variant } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
@@ -12,12 +10,10 @@ import { RowActions } from "./row-actions";
 
 export function getVariantColumns({
 	setVariantID,
-	updateVariant,
 	deleteVariant,
 	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
-	updateVariant: (props: UpdateVariant) => Promise<void>;
 	deleteVariant: (id: string) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {

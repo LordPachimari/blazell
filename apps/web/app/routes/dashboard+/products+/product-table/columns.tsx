@@ -1,8 +1,7 @@
-import { CrossCircledIcon, StopwatchIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
-import { CircleIcon } from "lucide-react";
 
 import { Checkbox } from "@blazell/ui/checkbox";
+import { LoadingSpinner } from "@blazell/ui/loading";
 import { productStatuses } from "@blazell/validators";
 import type { Product } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
@@ -13,26 +12,6 @@ import type { DataTableFilterableColumn } from "~/types/table";
 import { toImageURL } from "~/utils/helpers";
 import { useDashboardStore } from "~/zustand/store";
 import { RowActions } from "./row-actions";
-import { LoadingSpinner } from "@blazell/ui/loading";
-
-function StatusIcon({ status }: { status: Product["status"] }) {
-	return status === "draft" ? (
-		<CrossCircledIcon
-			className="mr-2 h-4 w-4 text-muted-foreground"
-			aria-hidden="true"
-		/>
-	) : status === "published" ? (
-		<StopwatchIcon
-			className="mr-2 h-4 w-4 text-muted-foreground"
-			aria-hidden="true"
-		/>
-	) : (
-		<CircleIcon
-			className="mr-2 h-4 w-4 text-muted-foreground"
-			aria-hidden="true"
-		/>
-	);
-}
 
 export function getProductsColumns({
 	deleteProduct,

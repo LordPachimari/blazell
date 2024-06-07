@@ -1,4 +1,4 @@
-import type { Product, PublishedProduct } from "@blazell/validators/client";
+import type { PublishedProduct } from "@blazell/validators/client";
 
 interface GridComponentProps {
 	data: PublishedProduct[];

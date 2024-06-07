@@ -1,9 +1,9 @@
-import { Console, Effect, pipe } from "effect";
+import { Effect, pipe } from "effect";
 
-import type { GetRowsWTableName } from "../types";
-import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
 import { Database } from "@blazell/shared";
+import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
 import { ReplicacheContext } from "../../../context";
+import type { GetRowsWTableName } from "../types";
 
 export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {

@@ -1,12 +1,11 @@
 import type { Order } from "@blazell/validators/client";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
 import { isArray } from "effect/Array";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 
-type LoaderData = {
-	orders: Order[];
-};
+// type LoaderData = {
+// 	orders: Order[];
+// };
 export const loader: LoaderFunction = async (args) => {
 	const url = new URL(args.request.url);
 	const ids = url.searchParams.get("id");
@@ -28,7 +27,7 @@ export const loader: LoaderFunction = async (args) => {
 	});
 };
 export default function OrderConfirmation() {
-	const { orders } = useLoaderData<LoaderData>();
+	// const { orders } = useLoaderData<LoaderData>();
 	return (
 		<SidebarLayoutWrapper>
 			<main className="p-4 flex justify-center mt-10 md:mt-20">

@@ -1,9 +1,7 @@
 import { DashboardMutators } from "@blazell/replicache";
 import { useAuth } from "@clerk/remix";
-import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-import type { RootLoaderData } from "~/root";
 import { useReplicache } from "~/zustand/replicache";
 
 function DashboardReplicacheProvider({

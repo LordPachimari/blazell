@@ -6,12 +6,9 @@ import { buttonVariants } from "@blazell/ui/button";
 import { Logo } from "~/components/molecules/logo";
 import type { User } from "@blazell/validators/client";
 import { cn } from "@blazell/ui";
-import { ClientOnly } from "remix-utils/client-only";
 
 function Header({
-	authID,
 	cartID,
-	user,
 	fakeAuthID,
 }: {
 	authID: string | null;

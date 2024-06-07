@@ -100,13 +100,8 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 						onSubmit={methods.handleSubmit(onSubmit)}
 					>
 						<div className="order-1 md:order-0 w-full md:w-7/12 gap-4 flex flex-col">
-							<CustomerInfo
-								user={user}
-								email={cart?.email}
-								fullName={cart?.fullName}
-								phone={cart?.phone}
-							/>
-							<ShippingAddressInfo addressID={cart?.shippingAddressID} />
+							<CustomerInfo user={user} />
+							<ShippingAddressInfo />
 							{/* <PaymentInfo /> */}
 							<section className="mt-2 md:hidden">
 								<Button className="w-full" type="submit" disabled={isLoading}>

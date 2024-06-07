@@ -1,7 +1,14 @@
 import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@blazell/ui/tooltip";
 import type {
 	CreatePrices,
 	InsertPrice,
@@ -12,14 +19,6 @@ import debounce from "lodash.debounce";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
-import { Icons } from "@blazell/ui/icons";
-import { toast } from "@blazell/ui/toast";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@blazell/ui/tooltip";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];

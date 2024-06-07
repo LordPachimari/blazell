@@ -2,11 +2,10 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 import * as React from "react";
 
+import { Button } from "@blazell/ui/button";
 import { Card, CardContent } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
-import { LoadingSpinner } from "@blazell/ui/loading";
 import { toast } from "@blazell/ui/toast";
-import { Button } from "@blazell/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
@@ -26,11 +25,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 	onDuplicate,
 }: DataTableFloatingBarProps<TData>) {
 	const rows = table.getFilteredSelectedRowModel().rows;
-
-	const [isPending, startTransition] = React.useTransition();
-	const [method, setMethod] = React.useState<
-		"update-status" | "update-priority" | "export" | "delete"
-	>();
 
 	// Clear selection on Escape key press
 	React.useEffect(() => {
@@ -57,7 +51,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										variant="ghost"
 										size="icon"
 										className="rounded-full"
-										disabled={isPending}
 										onClick={() => {
 											if (rows.length > 20)
 												return toast.error(
@@ -67,15 +60,11 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 											table.toggleAllRowsSelected(false);
 										}}
 									>
-										{isPending && method === "export" ? (
-											<LoadingSpinner />
-										) : (
-											<Icons.copy
-												className="text-mauve-11"
-												aria-hidden="true"
-												size={15}
-											/>
-										)}
+										<Icons.copy
+											className="text-mauve-11"
+											aria-hidden="true"
+											size={15}
+										/>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
@@ -84,21 +73,12 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 							</Tooltip>
 							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
-									<Button
-										variant="ghost"
-										size="icon"
-										className="rounded-full"
-										disabled={isPending}
-									>
-										{isPending && method === "export" ? (
-											<LoadingSpinner />
-										) : (
-											<DownloadIcon
-												className="text-mauve-11"
-												aria-hidden="true"
-												fontSize={15}
-											/>
-										)}
+									<Button variant="ghost" size="icon" className="rounded-full">
+										<DownloadIcon
+											className="text-mauve-11"
+											aria-hidden="true"
+											fontSize={15}
+										/>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
@@ -111,7 +91,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										variant="ghost"
 										size="icon"
 										className="rounded-full"
-										disabled={isPending}
 										onClick={() => {
 											onDelete(rows.map((row) => row.original.id));
 											table.toggleAllRowsSelected(false);

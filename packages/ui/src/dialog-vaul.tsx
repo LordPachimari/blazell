@@ -1,7 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import { Icons } from "./icons";
-import { cn } from ".";
 import { Drawer } from "vaul";
+import { cn } from ".";
+import { Icons } from "./icons";
 //@ts-ignore
 const { Root, Trigger } = Drawer;
 function DialogContent({ children }: { children: React.ReactNode }) {
@@ -30,5 +29,9 @@ function DialogTitle(props: React.HTMLAttributes<HTMLDivElement>) {
 	);
 }
 
-export { DialogContent, DialogTitle };
-export { Root as DialogRoot, Trigger as DialogTrigger };
+export {
+	DialogContent,
+	Root as DialogRoot,
+	DialogTitle,
+	Trigger as DialogTrigger,
+};
