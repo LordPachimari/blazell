@@ -127,7 +127,6 @@ export function EditStore({ store }: { store: Store }) {
 		storeImageInputRef.current?.click();
 	};
 	const onHeaderCropComplete = (cropped: Area, croppedPixels: Area) => {
-		console.log("cropped", cropped, croppedPixels);
 		setHeaderCroppedArea(cropped);
 		setHeaderCroppedAreaPixels(croppedPixels);
 	};
@@ -166,7 +165,6 @@ export function EditStore({ store }: { store: Store }) {
 	const onStoreImageChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			if (e.target.files && e.target.files.length > 0) {
-				console.log("uploading store image");
 				const file = e.target.files[0]!;
 				const fileReader = new FileReader();
 				fileReader.onloadend = () => {

@@ -22,15 +22,6 @@ const CropImage = ({
 	type: "store" | "header";
 }) => {
 	const [zoom, setZoom] = useState(1);
-	console.log(
-		"check",
-		(type === "store" &&
-			view !== "cropStoreImage" &&
-			//@ts-ignore
-			type === "header" &&
-			view !== "cropHeaderImage") ||
-			view === "default",
-	);
 
 	return (
 		<div

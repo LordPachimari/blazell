@@ -34,7 +34,6 @@ export function useOptimisticThemeMode() {
 		});
 
 		if (submission.status === "success") {
-			console.log("what", submission.value.theme);
 			return submission.value.theme;
 		}
 	}

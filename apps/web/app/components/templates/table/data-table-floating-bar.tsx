@@ -37,7 +37,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [table]);
-	console.log("rows", rows);
 
 	return (
 		<div className="fixed inset-x-0 bottom-10 rounded-2xl z-30 mx-auto w-fit px-4">

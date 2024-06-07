@@ -65,7 +65,6 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 			return;
 		}
 		setIsLoading(true);
-		console.log(data);
 
 		const orderIDs = await fetch(
 			`${window.ENV.WORKER_URL}/carts/complete-cart`,

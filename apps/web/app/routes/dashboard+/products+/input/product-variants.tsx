@@ -61,7 +61,6 @@ export function Variants({
 		setVariantID(newVariant.id);
 		setIsOpen(true);
 	}, [dashboardRep, productID, defaultVariant]);
-	console.log("isOpen", isOpen);
 
 	const deleteVariant = useCallback(
 		async (id: string) => {

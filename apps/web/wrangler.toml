@@ -19,7 +19,7 @@ PARTYKIT_HOST = 'localhost:1999'
 
 [env.development.vars]
 REPLICACHE_KEY = 'l024b847d70a04f84b3768c6d1d1db25f'
-WORKER_URL = 'http://localhost:8787'
+WORKER_URL = 'https://blazell-worker-development.pachimari.workers.dev'
 CLERK_PUBLISHABLE_KEY='pk_test_Z2xvd2luZy1zaHJpbXAtMTguY2xlcmsuYWNjb3VudHMuZGV2JA'
 CLERK_SECRET_KEY='sk_test_ttYvsb8N3zBTbo6jir8wtkxNICBXoEteybvYlE8CSK'
 CLERK_SIGN_IN_URL='/sign-in'

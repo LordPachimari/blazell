@@ -170,7 +170,6 @@ function VariantOptions({
 								const prevOptionValueID =
 									optionIDToVariantOptionValue[option.id]?.id;
 								const newOptionValueID = optionValueToID[value];
-								console.log("new option value", newOptionValueID);
 								newOptionValueID &&
 									(await assignOptionValueToVariant({
 										...(prevOptionValueID && { prevOptionValueID }),

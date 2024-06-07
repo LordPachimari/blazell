@@ -62,7 +62,6 @@ const Sidebar = () => {
 	const location = useLocation();
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
-	console.log("nextMode", nextMode);
 
 	return (
 		<div className="flex">

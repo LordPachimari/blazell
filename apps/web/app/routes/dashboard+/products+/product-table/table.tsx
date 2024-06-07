@@ -56,8 +56,6 @@ function ProductsTable({
 		estimateSize: () => 34,
 		overscan: 20,
 	});
-	console.log("rows", rows);
-	console.log("products", products);
 
 	return (
 		<div className="space-y-4">

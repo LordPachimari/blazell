@@ -148,7 +148,6 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 					headerCroppedImage:
 						map.get(updates.headerCroppedImage?.id ?? "") ?? null,
 				};
-				console.log("object", object);
 				return object;
 			}),
 			Effect.flatMap(

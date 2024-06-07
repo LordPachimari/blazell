@@ -10,9 +10,7 @@ import { userContext } from "~/sessions.server";
 export const loader: LoaderFunction = async (args) => {
 	const cookieHeader = args.request.headers.get("Cookie");
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	console.log("userContextCookie", userContextCookie);
 	if (!userContextCookie.fakeAuthID) {
-		console.log("No fakeAuthID");
 		return redirect("/create-user");
 	}
 	// const { getToken, userId } = await getAuth(args);

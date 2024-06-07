@@ -178,7 +178,6 @@ function Document({
 	env?: Record<string, string>;
 	allowIndexing?: boolean;
 }) {
-	console.log("theme", theme);
 	return (
 		<html lang="en" className={`${theme}`}>
 			<head>

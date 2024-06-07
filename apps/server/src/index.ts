@@ -25,20 +25,26 @@ import { Schema } from "@effect/schema";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.use(
-	"*",
-	cors({
-		origin: [
-			"http://localhost:5173",
-			"https://development.blazell.pages.dev",
-			"https://blazell.com",
-			"http://localhost:8788",
-		],
+app.use("*", async (c, next) => {
+	const wrapped = cors({
+		origin:
+			c.env.ENVIRONMENT === "production"
+				? "https://blazell.com"
+				: c.env.ENVIRONMENT === "development"
+					? "https://development.blazell.pages.dev"
+					: [
+							"http://localhost:5173",
+							"https://development.blazell.pages.dev",
+							"https://blazell.com",
+							"http://localhost:8788",
+						],
+
 		allowMethods: ["POST", "GET", "OPTIONS"],
 		maxAge: 600,
 		credentials: true,
-	}),
-);
+	});
+	return wrapped(c, next);
+});
 app.use("*", clerkMiddleware());
 
 app.use("*", async (c, next) => {
@@ -61,9 +67,7 @@ app.post("/pull/:spaceID", async (c) => {
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
 		c.req.param("spaceID"),
 	);
-	console.log("cartID", c.req.header("x-cart-id"));
 	const body = PullRequest.decodeUnknownSync(await c.req.json());
-	console.log("subspaceIDs", subspaceIDs);
 
 	const CloudflareLive = Layer.succeed(
 		Cloudflare,

@@ -89,7 +89,6 @@ const ProductVariants = ({
 	selectedVariantIDOrHandle: string | undefined;
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 }) => {
-	console.log("selectedVariantIDOrHandle", selectedVariantIDOrHandle);
 	return (
 		<section className="py-4">
 			{variants.length > 0 && (
@@ -190,7 +189,6 @@ const ProductOptions = ({
 					}
 					if (optionValuesEqual) {
 						variantFound = true;
-						console.log("hello?", variant);
 						setVariantIDOrHandle(
 							isDashboard ? variant.id : variant.handle ?? undefined,
 						);

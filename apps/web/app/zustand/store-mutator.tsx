@@ -112,8 +112,6 @@ export const DashboardStoreMutator = ({
 				.scan<ActiveStoreID>({ prefix: "active" })
 				.values()
 				.toArray();
-			console.log("all", all);
-			console.log("activeStoreID", activeStoreID);
 			setIsInitialized(!!isInitialized);
 			setActiveStoreID(activeStoreID?.value ?? null);
 		},

@@ -48,7 +48,6 @@ function PartykitProvider({
 						},
 					);
 					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -84,7 +83,6 @@ function PartykitProvider({
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/dashboard?${subspaces
@@ -100,8 +98,6 @@ function PartykitProvider({
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -134,11 +130,9 @@ function PartykitProvider({
 		},
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
-			console.log("message", subspaces);
 			if (marketplaceRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/marketplace?${subspaces
@@ -153,8 +147,6 @@ function PartykitProvider({
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,

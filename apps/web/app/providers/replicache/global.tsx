@@ -36,7 +36,6 @@ export function GlobalReplicacheProvider({
 			},
 			//@ts-ignore
 			puller: async (req) => {
-				const now = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/global`, {
 					method: "POST",
@@ -49,8 +48,6 @@ export function GlobalReplicacheProvider({
 					body: JSON.stringify(req),
 					credentials: "include",
 				});
-				const end = performance.now();
-				console.log("pull time", end - now);
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -61,7 +58,6 @@ export function GlobalReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const now = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/global`, {
 					method: "POST",
@@ -73,8 +69,6 @@ export function GlobalReplicacheProvider({
 					body: JSON.stringify(req),
 				});
 
-				const end = performance.now();
-				console.log("push time", end - now);
 				return {
 					httpRequestInfo: {
 						httpStatusCode: result.status,

@@ -31,7 +31,6 @@ function Gallery({ images }: GalleryProps) {
 	);
 
 	const isScrolled = useIsWindowScrolled();
-	console.log("images", images);
 	return (
 		<div
 			className={cn(

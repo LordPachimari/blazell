@@ -41,7 +41,6 @@ function MarketplaceReplicacheProvider({
 					},
 				);
 				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -67,7 +66,6 @@ function MarketplaceReplicacheProvider({
 				);
 
 				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					httpRequestInfo: {

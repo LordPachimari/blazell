@@ -30,7 +30,6 @@ function Currencies({
 	);
 	const [opened, setDialogOpened] = useState(false);
 	const [currencyCodes, setCurrencyCodes] = useState<string[]>([]);
-	console.log("currencyCodes", currencyCodes);
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setDialogOpened}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
@@ -45,7 +44,6 @@ function Currencies({
 						type="multiple"
 						onValueChange={(value) => {
 							setCurrencyCodes(value.filter((v) => !existingPrices.has(v)));
-							console.log("what", value);
 						}}
 					>
 						{/* {Object.values(currencies).map((c) => ( */}
