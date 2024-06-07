@@ -16,7 +16,7 @@ export default function Index() {
 	const theme = useTheme();
 	return (
 		<main className="flex flex-col items-center">
-			<ShineBorder
+			{/* <ShineBorder
 				className="text-center absolute top-20 text-xl font-bold capitalize"
 				color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
 			>
@@ -27,7 +27,7 @@ export default function Index() {
 			<Hero />
 			<Features theme={theme} />
 			<div className="h-40" />
-			<Footer />
+			<Footer /> */}
 		</main>
 	);
 }
