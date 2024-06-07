@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async (args) => {
 		});
 	}
 	const product = (await fetch(
-		`${args.context.env.WORKER_URL}/products/${handle}`,
+		`${args.context.cloudflare.env.WORKER_URL}/products/${handle}`,
 	).then((res) => res.json())) as Product | null;
 	if (!product) {
 		throw new Response(null, {

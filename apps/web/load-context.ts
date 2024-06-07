@@ -10,7 +10,7 @@ import { z } from "zod";
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
 
 type Cloudflare = Omit<PlatformProxy<AppEnv>, "dispose">;
-const AppEnvSchema = z.object({
+export const AppEnvSchema = z.object({
 	REPLICACHE_KEY: z.string(),
 	WORKER_URL: z.string(),
 	SESSION_SECRET: z.string(),
@@ -20,29 +20,8 @@ const AppEnvSchema = z.object({
 });
 export type AppEnv = z.infer<typeof AppEnvSchema>;
 
-type LoadContext = {
-	cloudflare: Cloudflare;
-};
 declare module "@remix-run/cloudflare" {
 	interface AppLoadContext {
-		env: Cloudflare["env"];
-		cf: Cloudflare["cf"];
-		ctx: Cloudflare["ctx"];
-		cache: Cloudflare["caches"];
+		cloudflare: Cloudflare;
 	}
-}
-
-export function getLoadContext({
-	context,
-}: {
-	request: Request;
-	context: LoadContext;
-}) {
-	const env = AppEnvSchema.parse(context.cloudflare.env);
-	return {
-		env: env,
-		cf: context.cloudflare.cf,
-		ctx: context.cloudflare.ctx,
-		cache: context.cloudflare.caches,
-	};
 }

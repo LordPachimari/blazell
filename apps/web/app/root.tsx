@@ -39,7 +39,7 @@ import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
 import { GlobalStoreProvider } from "./zustand/store";
 import { GlobalStoreMutator } from "./zustand/store-mutator";
-import type { AppEnv } from "load-context";
+import { AppEnvSchema, type AppEnv } from "load-context";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -77,12 +77,15 @@ export const loader: LoaderFunction = (args) => {
 	return rootAuthLoader(
 		args,
 		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
+			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
+				context.cloudflare.env,
+			);
 			const cookieHeader = request.headers.get("Cookie");
 			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
 			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
 			const { getToken, userId } = await getAuth(args);
 			const token = await getToken();
-			const user = await fetch(`${context.env.WORKER_URL}/users`, {
+			const user = await fetch(`${WORKER_URL}/users`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -91,9 +94,9 @@ export const loader: LoaderFunction = (args) => {
 			return json(
 				{
 					ENV: {
-						REPLICACHE_KEY: context.env.REPLICACHE_KEY,
-						WORKER_URL: context.env.WORKER_URL,
-						PARTYKIT_HOST: context.env.PARTYKIT_HOST,
+						REPLICACHE_KEY: REPLICACHE_KEY,
+						WORKER_URL: WORKER_URL,
+						PARTYKIT_HOST: PARTYKIT_HOST,
 					},
 					requestInfo: {
 						hints: getHints(request),
@@ -120,7 +123,6 @@ function App() {
 	const nonce = useNonce();
 	const user = useUser();
 	const theme = useTheme();
-	console.log("theme", theme);
 
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>

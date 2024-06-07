@@ -47,7 +47,7 @@ export const loader: LoaderFunction = async (args) => {
 	// const { getToken, userId } = await getAuth(args);
 	// if (!userId) return redirect("/sign-up");
 	// const token = await getToken();
-	const user = await fetch(`${args.context.env.WORKER_URL}/users`, {
+	const user = await fetch(`${args.context.cloudflare.env.WORKER_URL}/users`, {
 		method: "GET",
 		headers: {
 			// Authorization: `Bearer ${token}`,

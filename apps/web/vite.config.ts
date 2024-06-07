@@ -6,7 +6,6 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { flatRoutes } from "remix-flat-routes";
 import MillionLint from "@million/lint";
-import { getLoadContext } from "./load-context";
 import { remixDevTools } from "remix-development-tools";
 export default defineConfig({
 	ssr: {
@@ -15,7 +14,7 @@ export default defineConfig({
 	plugins: [
 		MillionLint.vite(),
 		remixDevTools(),
-		remixCloudflareDevProxy({ getLoadContext }),
+		remixCloudflareDevProxy(),
 		remix({
 			future: {
 				v3_fetcherPersist: true,

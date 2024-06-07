@@ -1,7 +1,4 @@
-import * as Http from "@effect/platform/HttpClient";
-import type { getAuth } from "@hono/clerk-auth";
-import { UploadResponseSchema, type Bindings } from "@blazell/validators";
-import { Effect, pipe } from "effect";
+import type { Bindings } from "@blazell/validators";
 import { Hono } from "hono";
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -35,39 +32,6 @@ app.get("/:key", async (c) => {
 
 	c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
 	return response;
-});
-app.post("/upload", async (c) => {
-	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
-	if (!auth?.userId) return c.text("Unauthorized", 401);
-	const body = await c.req.parseBody();
-	if (!body.file) {
-		return c.text("No file found", 400);
-	}
-
-	await Effect.runPromise(
-		pipe(
-			Effect.sync(() => {
-				const formData = new FormData();
-				formData.append("file", body.file as string);
-				return formData;
-			}),
-			Effect.map((formData) =>
-				Http.request
-					.post(
-						`api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/images/v1`,
-					)
-					.pipe(
-						Http.request.formDataBody(formData),
-						Http.client.fetch,
-						Effect.andThen(Http.response.schemaBodyJson(UploadResponseSchema)),
-						Effect.retry({ times: 3 }),
-						Effect.scoped,
-					),
-			),
-		),
-	);
-
-	return c.text("Uploaded successfully", 200);
 });
 
 app.get("/transform", async (c) => {

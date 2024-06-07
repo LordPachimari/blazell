@@ -6,7 +6,7 @@
 		"beautify": "biome format ./src --write",
 		"dev": "wrangler dev src/index.ts",
 		"deploy-prod": "wrangler deploy --minify --env production src/index.ts",
-		"deploy-dev": "wrangler deploy --minify --env dev src/index.ts",
+		"deploy-dev": "wrangler deploy --minify --env development src/index.ts",
 		"test": "vitest run",
 		"lint": "biome lint src",
 		"format": "biome format ./src",

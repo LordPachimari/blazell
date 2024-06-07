@@ -28,7 +28,12 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use(
 	"*",
 	cors({
-		origin: ["http://localhost:5173"],
+		origin: [
+			"http://localhost:5173",
+			"https://development.blazell.pages.dev",
+			"https://blazell.com",
+			"http://localhost:8788",
+		],
 		allowMethods: ["POST", "GET", "OPTIONS"],
 		maxAge: 600,
 		credentials: true,
