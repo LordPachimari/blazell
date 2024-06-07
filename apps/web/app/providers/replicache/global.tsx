@@ -28,12 +28,6 @@ export function GlobalReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: GlobalMutators,
 			pullInterval: null,
-			indexes: {
-				id: {
-					jsonPointer: "/id",
-					allowEmpty: true,
-				},
-			},
 			//@ts-ignore
 			puller: async (req) => {
 				const token = await getToken();

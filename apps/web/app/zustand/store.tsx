@@ -28,6 +28,7 @@ function commonDiffReducer({
 }) {
 	const newMap = new Map(map);
 	function add(key: string, newValue: Entity) {
+		console.log("adding...", key, newValue);
 		newMap.set(key, newValue);
 	}
 	function del(key: string) {

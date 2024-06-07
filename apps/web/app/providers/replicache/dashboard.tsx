@@ -25,16 +25,9 @@ function DashboardReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
-			indexes: {
-				id: {
-					jsonPointer: "/id",
-					allowEmpty: true,
-				},
-			},
 
 			//@ts-ignore
 			puller: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/dashboard`, {
 					method: "POST",
@@ -46,7 +39,6 @@ function DashboardReplicacheProvider({
 					body: JSON.stringify(req),
 					credentials: "include",
 				});
-				const end = performance.now();
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -57,7 +49,6 @@ function DashboardReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/dashboard`, {
 					method: "POST",
@@ -68,8 +59,6 @@ function DashboardReplicacheProvider({
 					},
 					body: JSON.stringify(req),
 				});
-
-				const end = performance.now();
 
 				return {
 					httpRequestInfo: {
