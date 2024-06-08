@@ -31,9 +31,8 @@ export function getVariantColumns({
 						<Image
 							src={row.original.images[0]?.url}
 							alt={row.original.images[0]?.name || "Uploaded image"}
-							className="rounded-md h-full w-full object-fill "
-							fit="fill"
-							quality={90}
+							className="rounded-md h-full w-full object-cover "
+							fit="cover"
 						/>
 					) : (
 						<img
@@ -42,7 +41,7 @@ export function getVariantColumns({
 								row.original.images[0]?.fileType,
 							)}
 							alt={row.original.images[0]?.name || "Uploaded image"}
-							className="rounded-md h-full w-full object-fill "
+							className="rounded-md h-full w-full object-cover "
 						/>
 					)}
 				</div>

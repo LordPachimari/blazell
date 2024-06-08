@@ -78,7 +78,7 @@ export interface Props {
 	isDisabled?(id: UniqueIdentifier): boolean;
 	isImage?: boolean;
 	updateImagesOrder?(props: { order: Record<string, number> }): Promise<void>;
-	onItemRemove?(id: UniqueIdentifier): Promise<void>;
+	onItemRemove?(id: UniqueIdentifier, url: string): Promise<void>;
 }
 
 const dropAnimationConfig: DropAnimation = {
@@ -160,9 +160,9 @@ export function Sortable({
 		items.findIndex((item) => item.id === id) + 1;
 	const activeIndex = activeId ? getIndex(activeId) : -1;
 	const handleRemove = removable
-		? async (id: UniqueIdentifier) => {
+		? async (id: UniqueIdentifier, url: string) => {
 				setItems((items) => items.filter((item) => item.id !== id));
-				await onItemRemove?.(id);
+				await onItemRemove?.(id, url);
 			}
 		: undefined;
 
@@ -322,7 +322,7 @@ interface SortableItemProps {
 	index: number;
 	handle: boolean;
 	useDragOverlay?: boolean;
-	onRemove?(id: UniqueIdentifier): Promise<void>;
+	onRemove?(id: UniqueIdentifier, url: string): Promise<void>;
 	style(values: unknown): React.CSSProperties;
 	renderItem?(args: unknown): React.ReactElement;
 	wrapperStyle: Props["wrapperStyle"];
@@ -387,7 +387,7 @@ export function SortableItem({
 				isSorting,
 				overIndex,
 			})}
-			{...(onRemove && { onRemove: () => onRemove(id) })}
+			{...(onRemove && { onRemove: () => onRemove(id, item.url) })}
 			transform={transform}
 			transition={transition}
 			{...(wrapperStyle && {

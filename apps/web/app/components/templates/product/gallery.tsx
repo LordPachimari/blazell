@@ -51,7 +51,7 @@ function Gallery({ images }: GalleryProps) {
 										<img
 											alt={name}
 											className={cn(
-												"md:rounded-xl lg:border lg:border-mauve-7",
+												"md:rounded-xl lg:border lg:border-mauve-7 object-cover",
 											)}
 											src={toImageURL(base64, fileType)}
 										/>
@@ -61,7 +61,7 @@ function Gallery({ images }: GalleryProps) {
 											className={cn(
 												"lg:rounded-2xl lg:border lg:border-mauve-7",
 											)}
-											fit="fill"
+											fit="cover"
 										/>
 									)}
 								</CarouselItem>
@@ -88,7 +88,7 @@ function Gallery({ images }: GalleryProps) {
 										<img
 											alt={name}
 											className={cn(
-												"rounded-xl border hover:border-crimson-9 cursor-pointer",
+												"rounded-xl object-cover border hover:border-crimson-9 cursor-pointer",
 											)}
 											src={toImageURL(base64, fileType)}
 											onKeyDown={() => onClick(index)}
@@ -101,7 +101,7 @@ function Gallery({ images }: GalleryProps) {
 											className={cn(
 												"rounded-2xl border hover:border-crimson-9 cursor-pointer",
 											)}
-											fit="fill"
+											fit="cover"
 										/>
 									</button>
 								)}

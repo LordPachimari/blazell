@@ -43,7 +43,7 @@ export const UploadStoreImageSchema = z.object({
 export type UploadStoreImage = z.infer<typeof UploadStoreImageSchema>;
 export const DeleteStoreImageSchema = z.object({
 	storeID: z.string(),
-	id: z.string(),
+	url: z.string(),
 	type: z.enum(["store", "header"] as const),
 });
 export type DeleteStoreImage = z.infer<typeof DeleteStoreImageSchema>;

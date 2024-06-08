@@ -255,28 +255,27 @@ const processMutation = ({
 						affectedSpacesMap.set("global", subspaces);
 						return yield* Effect.succeed({});
 					}),
-				// ImageUploadError: (error) =>
-				// 	Effect.gen(function* () {
-				// 		yield* createClientError({
-				// 			title: "Failed to upload image",
-				// 			message: error.message,
-				// 		});
-				// 		//Poke to the client. This will trigger a pull that will render an error toast
-				// 		const subspaces =
-				// 			affectedSpacesMap.get("global") ??
-				// 			new Set<(typeof SPACE_RECORD)["global"][number]>();
-				// 		subspaces.add("errors");
-				// 		affectedSpacesMap.set("global", subspaces);
-				// 		return yield* Effect.succeed({});
-				// 	}),
+				ImageUploadError: (error) =>
+					Effect.gen(function* () {
+						yield* createClientError({
+							title: "Failed to upload image",
+							message: error.message,
+						});
+						//Poke to the client. This will trigger a pull that will render an error toast
+						const subspaces =
+							affectedSpacesMap.get("global") ??
+							new Set<(typeof SPACE_RECORD)["global"][number]>();
+						subspaces.add("errors");
+						affectedSpacesMap.set("global", subspaces);
+						return yield* Effect.succeed({});
+					}),
 			}),
 
 			/* for some reason the above AuthorizationError is not being removed from the type error */
 			Effect.catchTags({
 				AuthorizationError: () => Effect.succeed({}),
-				// ImageUploadError: () => Effect.succeed({}),
+				ImageUploadError: () => Effect.succeed({}),
 			}),
-			Effect.orDie,
 		);
 
 		const affectedSpace = affectedSpaces[name as keyof AffectedSpaces];

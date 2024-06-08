@@ -1,5 +1,3 @@
-import { clerkMiddleware, type getAuth } from "@hono/clerk-auth";
-import { Pool } from "@neondatabase/serverless";
 import { schema, type Db } from "@blazell/db";
 import { ReplicacheContext, pull, push, staticPull } from "@blazell/replicache";
 import { Cloudflare, Database } from "@blazell/shared";
@@ -10,17 +8,19 @@ import {
 	type Bindings,
 	type SpaceRecord,
 } from "@blazell/validators";
+import { Schema } from "@effect/schema";
+import { clerkMiddleware, type getAuth } from "@hono/clerk-auth";
+import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { Effect, Layer } from "effect";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import users from "./routes/users";
-import orders from "./routes/orders";
 import carts from "./routes/carts";
-import variants from "./routes/variants";
-import stores from "./routes/stores";
+import orders from "./routes/orders";
 import products from "./routes/products";
-import { Schema } from "@effect/schema";
+import stores from "./routes/stores";
+import users from "./routes/users";
+import variants from "./routes/variants";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -30,7 +30,12 @@ app.use("*", async (c, next) => {
 			c.env.ENVIRONMENT === "production"
 				? "https://blazell.com"
 				: c.env.ENVIRONMENT === "development"
-					? "https://development.blazell.pages.dev"
+					? [
+							"https://development.blazell.pages.dev",
+							"http://localhost:8788",
+							"http://localhost:5173",
+							"https://blazell.com",
+						]
 					: [
 							"http://localhost:5173",
 							"https://development.blazell.pages.dev",

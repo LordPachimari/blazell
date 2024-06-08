@@ -107,7 +107,7 @@ export default async function getCroppedImg(
 							id: imageKey,
 							fileType: file.type,
 							uploaded: false,
-							url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
+							url: "",
 							name: "cropped",
 							order: 0,
 							base64: base64String,

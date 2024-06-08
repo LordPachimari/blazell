@@ -28,6 +28,7 @@ app.post("/update-store/:id", async (c) => {
 		return c.text("You are not authorized", 401);
 	}
 	const db = c.get("db" as never) as Db;
+
 	const id = c.req.param("id");
 
 	const { name } = z.object({ name: z.string() }).parse(await c.req.json());

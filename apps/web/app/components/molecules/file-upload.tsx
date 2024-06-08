@@ -110,7 +110,6 @@ export function FileUpload(props: FileUploaderProps) {
 					toast.error(`Cannot upload more than ${maxFiles} files`);
 					return;
 				}
-				yield* Console.log("Updating, Accepted Files", acceptedFiles);
 
 				const dbImages = (yield* Effect.forEach(
 					acceptedFiles,
@@ -128,7 +127,7 @@ export function FileUpload(props: FileUploaderProps) {
 											id: imageKey,
 											name: file.name,
 											order: files?.length ?? 0 + index + 1,
-											url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
+											url: "",
 											uploaded: false,
 											base64: base64String,
 											fileType: file.type,
@@ -147,7 +146,6 @@ export function FileUpload(props: FileUploaderProps) {
 				).pipe(
 					Effect.tap((images) => Console.log("Images", images)),
 				)) as Image[];
-				yield* Console.log("Updating, DB Images", dbImages);
 
 				yield* Effect.tryPromise(() => onFilesChange(dbImages));
 
@@ -156,8 +154,6 @@ export function FileUpload(props: FileUploaderProps) {
 						toast.error(`File ${file.file.name} was rejected`);
 					}
 				}
-
-				yield* Console.log("FINALE");
 			}).pipe(Effect.orDie);
 			await Effect.runPromise(effect);
 			await onUploadCompleted?.();

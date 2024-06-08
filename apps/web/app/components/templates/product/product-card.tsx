@@ -25,7 +25,7 @@ const ProductCard = ({
 							src={defaultVariant?.thumbnail?.url}
 							alt={defaultVariant?.thumbnail?.name ?? "Product image"}
 							className="rounded-xl"
-							fit="fill"
+							fit="cover"
 						/>
 					) : (
 						<img
@@ -34,7 +34,7 @@ const ProductCard = ({
 								defaultVariant?.thumbnail.fileType,
 							)}
 							alt={defaultVariant?.thumbnail?.name ?? "Product image"}
-							className="rounded-xl"
+							className="rounded-xl object-cover"
 						/>
 					)}
 				</section>

@@ -41,11 +41,10 @@ export function Store({
 				{store?.headerImage?.croppedImage ? (
 					store.headerImage.croppedImage.uploaded ? (
 						<Image
-							fit="fill"
-							quality={100}
+							fit="cover"
 							src={store.headerImage.croppedImage?.url}
 							alt="header"
-							className="rounded-2xl w-full"
+							className="rounded-2xl w-full object-cover"
 						/>
 					) : (
 						<img
@@ -54,7 +53,7 @@ export function Store({
 								store.headerImage.croppedImage.fileType,
 							)}
 							alt="header"
-							className={cn("rounded-2xl w-full object-fill", {
+							className={cn("rounded-2xl w-full object-cover", {
 								"h-[210px]": !store.headerImage.croppedImage.base64,
 							})}
 						/>

@@ -16,7 +16,6 @@ const Image = React.forwardRef<
 		fit?: Fit;
 	}
 >(({ className, fit, quality, width, height, alt, src, ...props }, ref) => {
-	console.log("src", src);
 	if (!src)
 		return (
 			<div className={cn("flex justify-center items-center", className)}>

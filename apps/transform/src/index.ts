@@ -3,48 +3,14 @@ import { Hono } from "hono";
 const app = new Hono<{
 	Bindings: {
 		ENVIRONMENT: "development" | "production";
-		R2: R2Bucket;
 	};
 }>();
-app.get("/images/:key", async (c) => {
-	const key = c.req.param("key");
-
-	const cacheKey = new Request(c.req.url.toString(), c.req);
-	const cache = caches.default;
-
-	let response = await cache.match(cacheKey);
-
-	if (response) {
-		console.log(`Cache hit for: ${c.req.url}.`);
-		return new Response(response.body, response);
-	}
-
-	const object = await c.env.R2.get(`images/${key}`);
-
-	if (object === null) {
-		console.log("key", key);
-		return c.text("Image Not Found", { status: 404 });
-	}
-
-	const headers = new Headers();
-	object.writeHttpMetadata(headers);
-	headers.set("etag", object.httpEtag);
-	headers.set("cache-control", "public, max-age=31536000, immutable");
-
-	response = new Response(object.body, {
-		headers,
-	});
-
-	c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
-	return response;
-});
 
 app.get("/transform", async (c) => {
 	const request = c.req.raw;
 	const url = new URL(request.url);
 
 	const options = { cf: { image: {} } };
-	console.log("step 1");
 
 	if (url.searchParams.has("fit"))
 		//@ts-ignore
@@ -88,15 +54,13 @@ app.get("/transform", async (c) => {
 	}
 
 	const imageURL = url.searchParams.get("image");
-	console.log("step 2 imageURL", imageURL);
 	if (!imageURL) {
 		return c.text('Missing "image" value', 400);
 	}
+	console.log("options", JSON.stringify(options));
 
 	try {
 		const { hostname } = new URL(imageURL);
-
-		console.log("step 3 imageURL", imageURL);
 
 		// if (!/\.(jpe?g|png|gif|webp|bmp|tiff|svg)$/i.test(pathname)) {
 		// 	return c.text("Disallowed file extension", 400);
@@ -116,10 +80,8 @@ app.get("/transform", async (c) => {
 
 	try {
 		const response = await fetch(imageRequest, options);
-		if (!response.ok) {
-			console.log("status text", response.statusText);
-			console.log("status", response.status);
-		}
+		console.log("status text", response.statusText);
+		console.log("status", response.status);
 		const newResponse = new Response(response.body, response);
 		return newResponse;
 	} catch (error) {

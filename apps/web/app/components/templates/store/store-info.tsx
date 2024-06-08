@@ -31,8 +31,7 @@ export function StoreInfo({
 						{store?.storeImage ? (
 							store?.storeImage?.croppedImage?.uploaded ? (
 								<Image
-									fit="contain"
-									quality={100}
+									fit="cover"
 									src={store?.storeImage.croppedImage?.url}
 									alt="header"
 									className="rounded-2xl"
@@ -45,7 +44,7 @@ export function StoreInfo({
 										store?.storeImage?.croppedImage?.fileType,
 									)}
 									alt="header"
-									className="rounded-2xl object-contain"
+									className="rounded-2xl object-cover"
 								/>
 							)
 						) : (

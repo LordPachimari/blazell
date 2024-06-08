@@ -122,14 +122,14 @@ const ProductVariants = ({
 									src={v.images?.[0].url}
 									alt={v.images?.[0].name ?? "Product image"}
 									className="rounded-xl"
-									fit="contain"
+									fit="cover"
 									width={100}
 								/>
 							) : (
 								<img
 									src={toImageURL(v.images?.[0].base64, v.images?.[0].fileType)}
 									alt={v.images?.[0].name ?? "Product image"}
-									className="rounded-xl"
+									className="rounded-xl object-cover"
 								/>
 							)}
 						</div>

@@ -25,8 +25,10 @@ import getCroppedImg from "~/utils/crop";
 import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 import CropImage from "./crop-image";
+import { useRequestInfo } from "~/hooks/use-request-info";
 export type View = "default" | "cropStoreImage" | "cropHeaderImage";
 export function EditStore({ store }: { store: Store }) {
+	const requestInfo = useRequestInfo();
 	const [isLoading, setIsLoading] = useState(false);
 	const [view, setView] = useState<
 		"default" | "cropStoreImage" | "cropHeaderImage"
@@ -89,15 +91,28 @@ export function EditStore({ store }: { store: Store }) {
 	const onSubmit = async (data: { name: string; description: string }) => {
 		setIsLoading(true);
 		if (data.name !== store.name) {
-			const exist = await fetch(`${window.ENV.WORKER_URL}/stores/${data.name}`);
+			const response = await fetch(
+				`${window.ENV.WORKER_URL}/stores/${data.name}`,
+			);
+			const exist = await response.json();
+
 			if (exist) {
-				return setError("name", { message: "Store name already exists" });
+				setError("name", { message: "Store name already exists" });
+				setIsLoading(false);
+				return;
 			}
 
 			const token = await getToken();
-			await fetch(`${window.ENV.WORKER_URL}/update-store/${store.id}`, {
+			await fetch(`${window.ENV.WORKER_URL}/stores/update-store/${store.id}`, {
 				method: "POST",
-				headers: { Authorization: `Bearer ${token}` },
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+					...(requestInfo.userContext.fakeAuthID && {
+						"x-fake-auth-id": requestInfo.userContext.fakeAuthID,
+					}),
+				},
+				body: JSON.stringify({ name: data.name }),
 			});
 		}
 		saveStoreUpdates({ description: data.description });
@@ -149,7 +164,7 @@ export function EditStore({ store }: { store: Store }) {
 							name: file.name,
 							order: 0,
 							uploaded: false,
-							url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
+							url: "",
 							base64: base64String,
 							fileType: file.type,
 						});
@@ -176,7 +191,7 @@ export function EditStore({ store }: { store: Store }) {
 							name: file.name,
 							order: 0,
 							uploaded: false,
-							url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
+							url: "",
 							base64: base64String,
 							fileType: file.type,
 						});
@@ -251,7 +266,7 @@ export function EditStore({ store }: { store: Store }) {
 				(await dashboardRep?.mutate.deleteStoreImage({
 					storeID: store.id,
 					type: "header",
-					id: store.headerImage.id,
+					url: store.headerImage.url,
 				}));
 			setHeaderSrc(undefined);
 		} else {
@@ -466,7 +481,7 @@ function Output({ croppedArea, src }: { croppedArea: Area; src: string }) {
 
 	return (
 		<div className="overflow-hidden h-[160px] relative">
-			<Image src={src} alt="" fit="contain" style={imageStyle} />
+			<Image src={src} alt="" fit="cover" style={imageStyle} />
 		</div>
 	);
 }

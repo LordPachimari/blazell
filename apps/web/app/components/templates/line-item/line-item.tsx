@@ -40,7 +40,7 @@ export const LineItem = ({
 					<Image
 						width={100}
 						height={100}
-						fit="fill"
+						fit="cover"
 						src={lineItem.variant.thumbnail?.url}
 						className="rounded-2xl"
 						alt={lineItem.variant.thumbnail?.name ?? ""}

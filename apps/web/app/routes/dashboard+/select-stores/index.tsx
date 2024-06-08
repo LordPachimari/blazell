@@ -56,8 +56,8 @@ export default function SelectStores() {
 										<Image
 											src={_store.storeImage.url}
 											alt={_store.name}
-											className="rounded-xl"
-											fit="fill"
+											className="rounded-xl object-cover"
+											fit="cover"
 										/>
 									) : (
 										<img
@@ -66,7 +66,7 @@ export default function SelectStores() {
 												_store.storeImage.fileType,
 											)}
 											alt={_store.name}
-											className="rounded-xl object-fill"
+											className="rounded-xl object-cover"
 										/>
 									)}
 								</section>

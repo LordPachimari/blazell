@@ -23,7 +23,7 @@ export const LargeFirstTile = ({
 	updateImagesOrder?: (props: {
 		order: Record<string, number>;
 	}) => Promise<void>;
-	onItemRemove?: (id: string) => Promise<void>;
+	onItemRemove?: (id: string, url: string) => Promise<void>;
 }) => (
 	<Sortable
 		{...props}

@@ -66,7 +66,7 @@ export function getProductsColumns({
 								src={defaultVariant?.thumbnail?.url}
 								alt={defaultVariant?.thumbnail?.name || "Uploaded image"}
 								className="rounded-md h-full object-cover"
-								fit="fill"
+								fit="cover"
 								width={100}
 								height={100}
 							/>

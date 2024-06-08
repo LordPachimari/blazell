@@ -82,7 +82,7 @@ const ProductCard = ({
 				className="h-auto max-w-full rounded-lg hover:brightness-50"
 				src={product.defaultVariant?.thumbnail?.url}
 				alt=""
-				fit="fill"
+				fit="cover"
 			/>
 			<div className="absolute inset-0 bg-gradient-to-b from-transparent via-black-a-7 dark:from-transparent dark:to-black-a-6 to-black-a-11 rounded-lg opacity-0 group-hover:opacity-70 transition duration-450 ease-in-out" />
 			<div className="flex absolute flex-end w-full px-2 bottom-0 group-hover:backdrop-blur-[1px] rounded-b-lg">
