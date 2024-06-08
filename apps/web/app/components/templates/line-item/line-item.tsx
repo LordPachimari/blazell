@@ -77,7 +77,7 @@ export const LineItem = ({
 											await updateItem?.(lineItem.id, lineItem.quantity - 1);
 										}}
 									>
-										<Icons.minus size={10} />
+										<Icons.Minus size={10} />
 									</button>
 									<p className="text-sm text-mauve-11 px-2">
 										{lineItem.quantity}
@@ -89,7 +89,7 @@ export const LineItem = ({
 											await updateItem?.(lineItem.id, lineItem.quantity + 1)
 										}
 									>
-										<Icons.plus size={10} />
+										<Icons.Plus size={10} />
 									</button>
 								</>
 							)}
@@ -103,7 +103,7 @@ export const LineItem = ({
 								className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
 								onClick={async () => await deleteItem?.(lineItem.id)}
 							>
-								<Icons.trash size={12} />
+								<Icons.Trash size={12} />
 							</button>
 						)}
 					</div>
@@ -131,14 +131,14 @@ export const LineItemSkeleton = () => {
 							type="button"
 							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 						>
-							<Icons.minus size={10} />
+							<Icons.Minus size={10} />
 						</button>
 						<Skeleton className="w-[15px] h-[15px] mx-2" />
 						<button
 							type="button"
 							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 						>
-							<Icons.plus size={10} />
+							<Icons.Plus size={10} />
 						</button>
 					</div>
 				</div>
@@ -148,7 +148,7 @@ export const LineItemSkeleton = () => {
 						type="button"
 						className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
 					>
-						<Icons.trash size={12} />
+						<Icons.Trash size={12} />
 					</button>
 				</div>
 			</div>

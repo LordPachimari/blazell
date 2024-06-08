@@ -1,18 +1,15 @@
 import { useAuth } from "@clerk/remix";
 import usePartySocket from "partysocket/react";
+import { useRequestInfo } from "~/hooks/use-request-info";
 
 import { useReplicache } from "~/zustand/replicache";
 
-function PartykitProvider({
-	cartID,
-	fakeAuthID,
-}: Readonly<{
-	cartID: string | undefined;
-	fakeAuthID?: string;
-}>) {
+function PartykitProvider() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
+	const { userContext } = useRequestInfo();
+	const { cartID, fakeAuthID } = userContext;
 	const { getToken } = useAuth();
 
 	usePartySocket({

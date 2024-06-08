@@ -1,22 +1,16 @@
+import { cn } from "@blazell/ui";
+import { buttonVariants } from "@blazell/ui/button";
+import { Link } from "@remix-run/react";
+import { ClientOnly } from "remix-utils/client-only";
+import { Logo } from "~/components/molecules/logo";
+import { useRequestInfo } from "~/hooks/use-request-info";
+import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
-import { CartSheet } from "../cart/cart-sheet";
-import { Link } from "@remix-run/react";
-import { buttonVariants } from "@blazell/ui/button";
-import { Logo } from "~/components/molecules/logo";
-import type { User } from "@blazell/validators/client";
-import { cn } from "@blazell/ui";
-import { ClientOnly } from "remix-utils/client-only";
 
-function Header({
-	cartID,
-	fakeAuthID,
-}: {
-	authID: string | null;
-	cartID: string | null;
-	user: User | undefined;
-	fakeAuthID?: string;
-}) {
+function Header() {
+	const { userContext } = useRequestInfo();
+	const { cartID, fakeAuthID } = userContext;
 	return (
 		<Navbar>
 			{/* Left corner */}
@@ -27,7 +21,7 @@ function Header({
 			{/* Right corner */}
 			<div className="hidden gap-6 lg:flex items-center ">
 				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
-				<CartSheet cartID={cartID} />
+				<CartSheet cartID={cartID ?? null} />
 				<Link
 					to={!fakeAuthID ? "/create-user" : "/dashboard"}
 					// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}

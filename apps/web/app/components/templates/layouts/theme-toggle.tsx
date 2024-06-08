@@ -20,31 +20,31 @@ export function ThemeToggle() {
 	const mode = optimisticMode ?? userPreference.theme ?? "system";
 	const modeLabel = {
 		light: (
-			<Icons.sun
+			<Icons.Sun
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">Light</span>
-			</Icons.sun>
+			</Icons.Sun>
 		),
 		dark: (
-			<Icons.moon
+			<Icons.Moon
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">Dark</span>
-			</Icons.moon>
+			</Icons.Moon>
 		),
 		system: (
-			<Icons.laptop
+			<Icons.Laptop
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">System</span>
-			</Icons.laptop>
+			</Icons.Laptop>
 		),
 	};
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

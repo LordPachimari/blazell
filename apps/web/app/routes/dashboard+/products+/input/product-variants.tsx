@@ -121,7 +121,7 @@ export function Variants({
 					onClick={createVariant}
 					disabled={options?.length === 0}
 				>
-					<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
+					<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant
 				</Button>
 				<ProductVariant

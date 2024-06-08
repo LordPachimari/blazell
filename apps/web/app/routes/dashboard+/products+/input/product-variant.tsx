@@ -67,7 +67,7 @@ export default function ProductVariant({
 						size="icon"
 						onClick={() => setVariantID(null)}
 					>
-						<Icons.close size={20} strokeWidth={strokeWidth} />
+						<Icons.Close size={20} strokeWidth={strokeWidth} />
 					</Button>
 				</span>
 				<ScrollArea className="h-[calc(80vh)] px-2 md:px-4 py-2">

@@ -28,7 +28,7 @@ export function Store({
 				className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
 				onClick={() => navigate("/dashboard/select-stores")}
 			>
-				<Icons.left size={20} className="text-black dark:text-white" />
+				<Icons.Left size={20} className="text-black dark:text-white" />
 				Select stores
 			</Button>
 

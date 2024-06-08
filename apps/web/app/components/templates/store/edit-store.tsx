@@ -290,7 +290,7 @@ export function EditStore({ store }: { store: Store }) {
 									onClick={() => setView("default")}
 								>
 									Back
-									<Icons.left size={20} />
+									<Icons.Left size={20} />
 								</Button>
 							)}
 							<div className="absolute top-3 left-3 flex gap-2">
@@ -303,7 +303,7 @@ export function EditStore({ store }: { store: Store }) {
 											onClick={() => setView("cropStoreImage")}
 										>
 											store
-											<Icons.right size={20} />
+											<Icons.Right size={20} />
 										</Button>
 									)}
 								{view === "default" &&
@@ -315,7 +315,7 @@ export function EditStore({ store }: { store: Store }) {
 											onClick={() => setView("cropHeaderImage")}
 										>
 											header
-											<Icons.right size={20} />
+											<Icons.Right size={20} />
 										</Button>
 									)}
 							</div>
@@ -328,7 +328,7 @@ export function EditStore({ store }: { store: Store }) {
 							className="text-mauve-11 absolute top-3 right-3"
 							onClick={() => setIsOpen(false)}
 						>
-							<Icons.close />
+							<Icons.Close />
 						</Button>
 					</span>
 					<div className="w-full relative">
@@ -336,7 +336,6 @@ export function EditStore({ store }: { store: Store }) {
 							<CropImage
 								src={headerSrc}
 								crop={headerCrop}
-								view={view}
 								onCropComplete={onHeaderCropComplete}
 								setCrop={setHeaderCrop}
 								setCroppedArea={setHeaderCroppedArea}
@@ -347,7 +346,6 @@ export function EditStore({ store }: { store: Store }) {
 							<CropImage
 								src={storeSrc ?? null}
 								crop={storeCrop}
-								view={view}
 								onCropComplete={onStoreCropComplete}
 								setCrop={setStoreCrop}
 								setCroppedArea={setStoreCroppedArea}
@@ -415,7 +413,7 @@ export function EditStore({ store }: { store: Store }) {
 										variant={"ghost"}
 										onClick={deleteStoreImage}
 									>
-										<Icons.close className="text-mauve-11" />
+										<Icons.Close className="text-mauve-11" />
 									</Button>
 								)}
 							</div>

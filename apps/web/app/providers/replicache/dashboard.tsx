@@ -2,18 +2,19 @@ import { DashboardMutators } from "@blazell/replicache";
 import { useAuth } from "@clerk/remix";
 import { useEffect } from "react";
 import { Replicache } from "replicache";
+import { useRequestInfo } from "~/hooks/use-request-info";
 import { useReplicache } from "~/zustand/replicache";
 
 function DashboardReplicacheProvider({
 	children,
-	fakeAuthID,
 }: Readonly<{
 	children: React.ReactNode;
-	fakeAuthID?: string;
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const setDashboardRep = useReplicache((state) => state.setDashboardRep);
 	const { getToken } = useAuth();
+	const { userContext } = useRequestInfo();
+	const { fakeAuthID } = userContext;
 
 	useEffect(() => {
 		if (dashboardRep) {

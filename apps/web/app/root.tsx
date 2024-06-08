@@ -14,32 +14,31 @@ import {
 	useLoaderData,
 } from "@remix-run/react";
 //@ts-ignore
-import stylesheet from "./tailwind.css?url";
-import { ClientOnly } from "remix-utils/client-only";
+import type { Theme } from "@blazell/validators";
+import type { User } from "@blazell/validators/client";
 import { ClerkApp } from "@clerk/remix";
 import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
-import type { User } from "@blazell/validators/client";
+import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
 import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
-import { useUser } from "./hooks/use-user";
-import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
 import { GlobalReplicacheProvider } from "./providers/replicache/global";
+import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
 import { prefs, userContext } from "./sessions.server";
+import stylesheet from "./tailwind.css?url";
 import { getDomainUrl } from "./utils/helpers";
-import type { Theme } from "@blazell/validators";
 //@ts-ignore
 import sonnerStyles from "./sonner.css?url";
 //@ts-ignore
-import vaulStyles from "./vaul.css?url";
+import { AppEnvSchema, type AppEnv } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
+import vaulStyles from "./vaul.css?url";
 import { GlobalStoreProvider } from "./zustand/store";
 import { GlobalStoreMutator } from "./zustand/store-mutator";
-import { AppEnvSchema, type AppEnv } from "load-context";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -62,11 +61,13 @@ export type RootLoaderData = {
 			theme?: Theme;
 			sidebarState?: string;
 		};
+		userContext: {
+			user?: User;
+			authID: string | null;
+			cartID?: string;
+			fakeAuthID?: string;
+		};
 	};
-	user?: User;
-	authID: string | null;
-	cartID?: string;
-	fakeAuthID?: string;
 };
 
 export const loader: LoaderFunction = (args) => {
@@ -102,11 +103,13 @@ export const loader: LoaderFunction = (args) => {
 							theme: prefsCookie.theme,
 							sidebarState: prefsCookie.sidebarState,
 						},
+						userContext: {
+							...(user && { user }),
+							authID: userId,
+							cartID: userContextCookie.cartID,
+							fakeAuthID: userContextCookie.fakeAuthID,
+						},
 					},
-					...(user && { user }),
-					authID: userId,
-					cartID: userContextCookie.cartID,
-					fakeAuthID: userContextCookie.fakeAuthID,
 				},
 				// { headers: { "Cache-Control": "private, max-age=1800" } },
 			);
@@ -117,41 +120,23 @@ export const loader: LoaderFunction = (args) => {
 function App() {
 	const data = useLoaderData<RootLoaderData>();
 	const nonce = useNonce();
-	const user = useUser();
 	const theme = useTheme();
 
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>
 			<MarketplaceReplicacheProvider>
-				<GlobalReplicacheProvider
-					cartID={data.cartID}
-					{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
-				>
-					<DashboardReplicacheProvider
-						{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
-					>
+				<GlobalReplicacheProvider>
+					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
 								<Sidebar />
 								<MobileSidebar />
-								<Header
-									cartID={data.cartID ?? null}
-									authID={data.authID}
-									user={user}
-									{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
-								/>
+								<Header />
 								<Outlet />
 								<Toaster />
 							</GlobalStoreMutator>
 						</GlobalStoreProvider>
-						<ClientOnly>
-							{() => (
-								<PartykitProvider
-									cartID={data.cartID}
-									{...(data.fakeAuthID && { fakeAuthID: data.fakeAuthID })}
-								/>
-							)}
-						</ClientOnly>
+						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>
 					</DashboardReplicacheProvider>
 				</GlobalReplicacheProvider>
 			</MarketplaceReplicacheProvider>

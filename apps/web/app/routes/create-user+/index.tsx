@@ -65,7 +65,6 @@ export async function action({ request }: ActionFunctionArgs) {
 	const cookieHeader = request.headers.get("Cookie");
 	const cookie = (await userContext.parse(cookieHeader)) || {};
 	const formData = await request.formData();
-	console.log({ formData });
 
 	const submission = parseWithZod(formData, {
 		schema: z.object({
@@ -147,7 +146,13 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 			{
 				fakeAuthID,
 			},
-			{ method: "POST", navigate: false, preventScrollReset: true },
+			{
+				method: "POST",
+				navigate: false,
+				preventScrollReset: true,
+				action: "/create-user",
+				fetcherKey: "create-user",
+			},
 		);
 
 		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {

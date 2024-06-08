@@ -64,7 +64,7 @@ function ProductsTable({
 				filterableColumns={filterableColumns}
 				toolbarButton={
 					<Button size="md" onClick={createProduct} type="button">
-						<Icons.plus
+						<Icons.Plus
 							className="mr-1 font-bold"
 							size={15}
 							aria-hidden="true"

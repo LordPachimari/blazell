@@ -15,25 +15,25 @@ const items: DashboardSidebarItem[] = [
 		title: "Stores",
 		href: "/dashboard/store",
 
-		icon: "store",
+		icon: "Store",
 		items: [],
 	},
 	{
 		title: "Products",
 		href: "/dashboard/products",
-		icon: "product",
+		icon: "Product",
 		items: [],
 	},
 	{
 		title: "Orders",
 		href: "/dashboard/orders",
-		icon: "billing",
+		icon: "Billing",
 		items: [],
 	},
 	{
 		title: "Customers",
 		href: "/dashboard/customers",
-		icon: "customer",
+		icon: "Customer",
 		items: [],
 	},
 ];

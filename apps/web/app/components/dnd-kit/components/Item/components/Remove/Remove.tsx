@@ -10,7 +10,7 @@ export function Remove(props: ActionProps) {
 				background: "rgba(255, 70, 70, 0.1)",
 			}}
 		>
-			<Icons.close className="text-ruby-9 font-bold" size={20} />
+			<Icons.Close className="text-ruby-9 font-bold" size={20} />
 		</Action>
 	);
 }

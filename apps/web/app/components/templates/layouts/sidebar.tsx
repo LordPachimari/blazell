@@ -19,25 +19,25 @@ const items: SidebarItem[] = [
 	{
 		title: "Dashboard",
 		href: "/dashboard",
-		icon: "dashboard",
+		icon: "Dashboard",
 		items: [],
 	},
 	{
 		title: "Marketplace",
 		href: "/marketplace",
-		icon: "marketplace",
+		icon: "Marketplace",
 		items: [],
 	},
 	{
 		title: "Auctions",
 		href: "/auction",
-		icon: "billing",
+		icon: "Billing",
 		items: [],
 	},
 	{
 		title: "Settings",
 		href: "/settings",
-		icon: "settings",
+		icon: "Settings",
 		items: [],
 	},
 ];
@@ -185,9 +185,9 @@ const MobileSidebar = () => {
 						onClick={() => setOpened(!opened)}
 					>
 						{opened ? (
-							<Icons.left size={20} strokeWidth={strokeWidth} />
+							<Icons.Left size={20} strokeWidth={strokeWidth} />
 						) : (
-							<Icons.menu size={20} strokeWidth={strokeWidth} />
+							<Icons.Menu size={20} strokeWidth={strokeWidth} />
 						)}
 					</Button>
 					{items.map((item) => {

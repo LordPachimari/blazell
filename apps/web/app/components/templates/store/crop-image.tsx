@@ -2,11 +2,9 @@ import { cn } from "@blazell/ui";
 import { useState } from "react";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "~/types/crop";
-import type { View } from "./edit-store";
 export const ASPECT_RATIO = 5 / 2;
 const CropImage = ({
 	src,
-	view,
 	crop,
 	setCrop,
 	setCroppedArea,
@@ -17,7 +15,6 @@ const CropImage = ({
 	setCroppedArea: React.Dispatch<React.SetStateAction<Area>>;
 	onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void;
 	setCrop: React.Dispatch<React.SetStateAction<Point | undefined>>;
-	view: View;
 	crop: Point | undefined;
 	type: "store" | "header";
 }) => {

@@ -33,7 +33,7 @@ export function ErrorBoundary() {
 							</pre>
 						</div>
 						<Link to="/" className="text-body-md underline">
-							<Icons.left name="arrow-left">Back to home</Icons.left>
+							<Icons.Left name="arrow-left">Back to home</Icons.Left>
 						</Link>
 					</div>
 				),

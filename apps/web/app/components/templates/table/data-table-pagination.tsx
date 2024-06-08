@@ -58,7 +58,7 @@ export function DataTablePagination<TData>({
 						disabled={!table.getCanPreviousPage()}
 					>
 						<span className="sr-only">Go to first page</span>
-						<Icons.doubleLeft
+						<Icons.DoubleLeft
 							size={16}
 							strokeWidth={strokeWidth}
 							className="text-mauve-11"
@@ -73,7 +73,7 @@ export function DataTablePagination<TData>({
 						disabled={!table.getCanPreviousPage()}
 					>
 						<span className="sr-only">Go to previous page</span>
-						<Icons.left
+						<Icons.Left
 							size={16}
 							strokeWidth={strokeWidth}
 							className="text-mauve-11"
@@ -88,7 +88,7 @@ export function DataTablePagination<TData>({
 						disabled={!table.getCanNextPage()}
 					>
 						<span className="sr-only">Go to next page</span>
-						<Icons.right
+						<Icons.Right
 							size={16}
 							strokeWidth={strokeWidth}
 							className="text-mauve-11"
@@ -103,7 +103,7 @@ export function DataTablePagination<TData>({
 						disabled={!table.getCanNextPage()}
 					>
 						<span className="sr-only">Go to last page</span>
-						<Icons.doubleRight
+						<Icons.DoubleRight
 							size={16}
 							strokeWidth={strokeWidth}
 							className="text-mauve-11"

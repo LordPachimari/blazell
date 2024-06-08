@@ -26,7 +26,6 @@ function MarketplaceReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/pull/marketplace`,
@@ -40,7 +39,6 @@ function MarketplaceReplicacheProvider({
 						credentials: "include",
 					},
 				);
-				const end = performance.now();
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -51,7 +49,6 @@ function MarketplaceReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/push/marketplace`,
@@ -64,8 +61,6 @@ function MarketplaceReplicacheProvider({
 						body: JSON.stringify(req),
 					},
 				);
-
-				const end = performance.now();
 
 				return {
 					httpRequestInfo: {

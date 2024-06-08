@@ -171,7 +171,7 @@ export function ProductInput({
 						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/products")}
 					>
-						<Icons.left size={20} className="text-black dark:text-white" />
+						<Icons.Left size={20} className="text-black dark:text-white" />
 						Back to products
 					</Button>
 					<AlertDialogComponent

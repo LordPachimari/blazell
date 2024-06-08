@@ -139,7 +139,7 @@ const AboutStore = ({
 						</p>
 					)}
 
-					<Icons.right size={17} strokeWidth={strokeWidth} />
+					<Icons.Right size={17} strokeWidth={strokeWidth} />
 				</span>
 			</DialogTrigger>
 			<DialogContent className="md:w-[600px] bg-mauve-2">
@@ -150,7 +150,7 @@ const AboutStore = ({
 					className="text-mauve-11 absolute rounded-full top-3 right-3"
 					onClick={() => setIsOpen(false)}
 				>
-					<Icons.close />
+					<Icons.Close />
 				</Button>
 				<DialogTitle>About</DialogTitle>
 				<p className="text-mauve-11">{store?.description}</p>

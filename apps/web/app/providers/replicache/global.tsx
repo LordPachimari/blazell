@@ -3,18 +3,17 @@ import { Replicache } from "replicache";
 import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { GlobalMutators } from "@blazell/replicache";
+import { useRequestInfo } from "~/hooks/use-request-info";
 
 export function GlobalReplicacheProvider({
 	children,
-	cartID,
-	fakeAuthID,
 }: Readonly<{
 	children: React.ReactNode;
-	cartID: string | undefined;
-	fakeAuthID?: string;
 }>) {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
+	const { userContext } = useRequestInfo();
+	const { cartID, fakeAuthID } = userContext;
 
 	const { getToken } = useAuth();
 

@@ -59,7 +59,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 											table.toggleAllRowsSelected(false);
 										}}
 									>
-										<Icons.copy
+										<Icons.Copy
 											className="text-mauve-11"
 											aria-hidden="true"
 											size={15}
@@ -95,7 +95,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 											table.toggleAllRowsSelected(false);
 										}}
 									>
-										<Icons.trash
+										<Icons.Trash
 											size={15}
 											aria-hidden="true"
 											className="text-ruby-9"
