@@ -42,7 +42,7 @@ export default function Orders() {
 				{orderID ? (
 					<OrderPreview orderID={orderID} />
 				) : (
-					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-3 hover:bg-mauve-a-3 border-mauve-7 rounded-2xl">
+					<div className="h-[60rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-3 hover:bg-mauve-a-3 border-mauve-7 rounded-2xl">
 						<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
 					</div>
 				)}

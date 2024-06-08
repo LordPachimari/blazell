@@ -33,7 +33,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 
 	return (
 		<Card
-			className="overflow-hidden w-[24rem] p-0 sticky top-10"
+			className="overflow-hidden h-[60rem] w-[24rem] p-0 sticky top-10"
 			x-chunk="dashboard-05-chunk-4"
 		>
 			<CardHeader className="flex border-b border-mauve-7 p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">

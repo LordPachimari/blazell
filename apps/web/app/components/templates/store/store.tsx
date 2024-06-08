@@ -34,7 +34,7 @@ export function Store({
 
 			<div
 				className={cn(
-					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
+					"max-h-[210px] md:min-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
 				)}
 			>
 				{!isInitialized && <Skeleton className="w-full h-[210px]" />}

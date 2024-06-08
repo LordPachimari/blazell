@@ -97,6 +97,19 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  apps/media:
+    dependencies:
+      hono:
+        specifier: ^4.4.4
+        version: 4.4.4
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240529.0
+        version: 4.20240605.0
+      wrangler:
+        specifier: ^3.57.2
+        version: 3.60.0(@cloudflare/workers-types@4.20240605.0)
+
   apps/partykit:
     dependencies:
       '@blazell/db':
@@ -188,19 +201,6 @@ importers:
       vitest-environment-miniflare:
         specifier: ^2.14.1
         version: 2.14.2(vitest@0.34.6)
-      wrangler:
-        specifier: ^3.57.2
-        version: 3.60.0(@cloudflare/workers-types@4.20240605.0)
-
-  apps/transform:
-    dependencies:
-      hono:
-        specifier: ^4.4.4
-        version: 4.4.4
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20240529.0
-        version: 4.20240605.0
       wrangler:
         specifier: ^3.57.2
         version: 3.60.0(@cloudflare/workers-types@4.20240605.0)
@@ -432,7 +432,7 @@ importers:
         version: link:../validators
       drizzle-orm:
         specifier: ^0.30.7
-        version: 0.30.10(@neondatabase/serverless@0.9.3)(pg@8.11.5)
+        version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(react@18.3.1)
       effect:
         specifier: ^3.2.9
         version: 3.2.9
@@ -527,7 +527,7 @@ importers:
         version: 1.0.2
       drizzle-orm:
         specifier: ^0.30.7
-        version: 0.30.10(@neondatabase/serverless@0.9.3)(pg@8.11.5)
+        version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(react@18.3.1)
       effect:
         specifier: ^3.2.9
         version: 3.2.9
