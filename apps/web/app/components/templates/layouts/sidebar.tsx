@@ -149,7 +149,7 @@ const Sidebar = () => {
 						},
 					)}
 				>
-					<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
+					<ThemeToggle />
 				</div>
 			</nav>
 		</div>

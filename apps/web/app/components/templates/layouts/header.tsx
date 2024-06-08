@@ -1,7 +1,6 @@
 import { cn } from "@blazell/ui";
 import { buttonVariants } from "@blazell/ui/button";
 import { Link } from "@remix-run/react";
-import { ClientOnly } from "remix-utils/client-only";
 import { Logo } from "~/components/molecules/logo";
 import { useRequestInfo } from "~/hooks/use-request-info";
 import { CartSheet } from "../cart/cart-sheet";
@@ -20,7 +19,7 @@ function Header() {
 
 			{/* Right corner */}
 			<div className="hidden gap-6 lg:flex items-center ">
-				<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
+				<ThemeToggle />
 				<CartSheet cartID={cartID ?? null} />
 				<Link
 					to={!fakeAuthID ? "/create-user" : "/dashboard"}

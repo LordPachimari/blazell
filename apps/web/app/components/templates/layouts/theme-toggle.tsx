@@ -1,4 +1,5 @@
-import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
+import { buttonVariants } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -9,6 +10,7 @@ import { Icons, strokeWidth } from "@blazell/ui/icons";
 import type { Theme } from "@blazell/validators";
 import { useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
+import { ClientOnly } from "remix-utils/client-only";
 import { useOptimisticThemeMode } from "~/hooks/use-theme";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-theme";
@@ -63,32 +65,35 @@ export function ThemeToggle() {
 	}, []);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon" className="rounded-full">
-					{modeLabel[mode]}
-					<span className="sr-only">Toggle theme</span>
-				</Button>
+			<DropdownMenuTrigger
+				className={cn(
+					buttonVariants({ size: "icon", variant: "ghost" }),
+					"rounded-full",
+				)}
+			>
+				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>
+				<span className="sr-only">Toggle theme</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("light")}
 				>
-					{modeLabel.light}
+					<ClientOnly>{() => modeLabel.light}</ClientOnly>
 					<span>Light</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("dark")}
 				>
-					{modeLabel.dark}
+					<ClientOnly>{() => modeLabel.dark}</ClientOnly>
 					<span>Dark</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("system")}
 				>
-					{modeLabel.system}
+					<ClientOnly>{() => modeLabel.system}</ClientOnly>
 					<span>System</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

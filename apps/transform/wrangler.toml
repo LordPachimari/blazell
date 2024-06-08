@@ -1,0 +1,17 @@
+name = "blazell-media"
+compatibility_date = "2023-12-01"
+
+[[r2_buckets]]
+binding = 'R2'
+bucket_name = 'blazell-bucket-development'
+
+[env.development]
+[[env.development.r2_buckets]]
+binding = 'R2'
+bucket_name = 'blazell-bucket-development'
+
+[env.development.vars]
+ENVIRONMENT='development'
+
+[env.production]
+ENVIRONMENT='development'

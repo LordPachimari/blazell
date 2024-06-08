@@ -16,6 +16,7 @@ const Image = React.forwardRef<
 		fit?: Fit;
 	}
 >(({ className, fit, quality, width, height, alt, src, ...props }, ref) => {
+	console.log("src", src);
 	if (!src)
 		return (
 			<div className={cn("flex justify-center items-center", className)}>
@@ -47,12 +48,11 @@ const Image = React.forwardRef<
 		params.append("quality", quality.toString());
 	}
 
-	params.append("src", src);
-	// const localURL = "http://localhost:8080/transform";
-	// const prodURL = "https://blazell.com/images/transform";
-	const devURL = "https://blazell-worker-development.pachimari.workers.dev";
+	params.append("image", src);
+	const MEDIA_URL =
+		"https://blazell-media-development.pachimari.workers.dev/transform";
 
-	const url = new URL(devURL);
+	const url = new URL(MEDIA_URL);
 	url.search = params.toString();
 	if (!fit && !width && !height) {
 		return (

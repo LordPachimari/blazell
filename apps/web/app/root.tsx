@@ -74,9 +74,8 @@ export const loader: LoaderFunction = (args) => {
 	return rootAuthLoader(
 		args,
 		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
-			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
-				context.cloudflare.env,
-			);
+			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL, MEDIA_URL } =
+				AppEnvSchema.parse(context.cloudflare.env);
 			const cookieHeader = request.headers.get("Cookie");
 			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
 			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
@@ -91,9 +90,10 @@ export const loader: LoaderFunction = (args) => {
 			return json(
 				{
 					ENV: {
-						REPLICACHE_KEY: REPLICACHE_KEY,
-						WORKER_URL: WORKER_URL,
-						PARTYKIT_HOST: PARTYKIT_HOST,
+						REPLICACHE_KEY,
+						WORKER_URL,
+						PARTYKIT_HOST,
+						MEDIA_URL,
 					},
 					requestInfo: {
 						hints: getHints(request),

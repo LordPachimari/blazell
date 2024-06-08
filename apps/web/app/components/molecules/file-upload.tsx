@@ -122,12 +122,13 @@ export function FileUpload(props: FileUploaderProps) {
 									if (fileReader.result instanceof ArrayBuffer) {
 										const imageKey = generateID({ prefix: "img" });
 										const base64String = base64.encode(fileReader.result);
+										console.log("MEDIA_URL", window.ENV.MEDIA_URL);
 
 										const image: Image = {
 											id: imageKey,
 											name: file.name,
 											order: files?.length ?? 0 + index + 1,
-											url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
+											url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
 											uploaded: false,
 											base64: base64String,
 											fileType: file.type,

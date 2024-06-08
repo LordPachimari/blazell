@@ -149,7 +149,7 @@ export function EditStore({ store }: { store: Store }) {
 							name: file.name,
 							order: 0,
 							uploaded: false,
-							url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
+							url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
 							base64: base64String,
 							fileType: file.type,
 						});
@@ -176,7 +176,7 @@ export function EditStore({ store }: { store: Store }) {
 							name: file.name,
 							order: 0,
 							uploaded: false,
-							url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
+							url: `${window.ENV.MEDIA_URL}/images/${imageKey}`,
 							base64: base64String,
 							fileType: file.type,
 						});

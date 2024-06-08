@@ -1,7 +1,6 @@
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { Product } from "@blazell/validators/client";
-import { useNavigate } from "@remix-run/react";
 import { useCallback, useTransition } from "react";
 import { PageHeader } from "~/components/page-header";
 import { useReplicache } from "~/zustand/replicache";
@@ -33,7 +32,6 @@ function Products({
 	products: Product[];
 	storeID: string | undefined;
 }) {
-	const navigate = useNavigate();
 	const [isPending, startTransition] = useTransition();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -53,7 +51,6 @@ function Products({
 				},
 			});
 			toast.success("Product created successfully.");
-			navigate(`/dashboard/products/${productID}`);
 		}
 	}, [dashboardRep, storeID]);
 	const deleteProduct = useCallback(
