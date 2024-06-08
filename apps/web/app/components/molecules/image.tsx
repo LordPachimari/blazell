@@ -49,9 +49,10 @@ const Image = React.forwardRef<
 
 	params.append("src", src);
 	// const localURL = "http://localhost:8080/transform";
-	const prodURL = "https://blazell.com/images/transform";
+	// const prodURL = "https://blazell.com/images/transform";
+	const devURL = "https://blazell-worker-development.pachimari.workers.dev";
 
-	const url = new URL(prodURL);
+	const url = new URL(devURL);
 	url.search = params.toString();
 	if (!fit && !width && !height) {
 		return (
