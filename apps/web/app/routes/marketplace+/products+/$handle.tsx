@@ -68,8 +68,8 @@ export default function Page() {
 	};
 
 	const selectedVariant = selectedVariantHandle
-		? variants.find((v) => v.handle === selectedVariantHandle) ?? null
-		: null;
+		? variants.find((v) => v.handle === selectedVariantHandle)
+		: undefined;
 	return (
 		<main className="flex justify-center relative">
 			<ProductOverview

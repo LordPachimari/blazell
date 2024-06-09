@@ -36,13 +36,13 @@ export const LineItem = ({
 	return (
 		<>
 			<li className="w-full flex gap-2">
-				<Card className="aspect-square flex items-center justify-center p-0 rounded-2xl relative w-[100px]">
+				<Card className="aspect-square flex items-center justify-center p-0 rounded-xl relative w-[100px]">
 					<Image
 						width={100}
 						height={100}
 						fit="cover"
 						src={lineItem.variant.thumbnail?.url}
-						className="rounded-2xl"
+						className="rounded-xl"
 						alt={lineItem.variant.thumbnail?.name ?? ""}
 					/>
 				</Card>

@@ -30,8 +30,11 @@ import {
 	Trash,
 	WalletCards,
 	X,
+	Star,
 	type LucideIcon,
 	type LucideProps,
+	Bookmark,
+	ShoppingCart,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -68,6 +71,9 @@ export const Icons = {
 	CircleCheck: CircleCheck,
 	CircleError: CircleX,
 	CircleInfo: Info,
+	Star,
+	Bookmark,
+	ShoppingCart,
 	GitHub: (props: LucideProps) => (
 		<svg viewBox="0 0 438.549 438.549" {...props}>
 			<title>Github</title>
