@@ -1,6 +1,6 @@
 import type { Product } from "@blazell/validators/client";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
-import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
 import { userContext } from "~/sessions.server";
 import { useMarketplaceStore } from "~/zustand/store";
@@ -37,6 +37,8 @@ export const loader: LoaderFunction = async (args) => {
 
 export default function Page() {
 	const { product: serverProduct, cartID } = useLoaderData<LoaderData>();
+	const navigate = useNavigate();
+
 	const productMap = useMarketplaceStore((state) => state.productMap);
 	const variantMap = useMarketplaceStore((state) => state.variantMap);
 	const product = productMap.get(serverProduct.id);
@@ -70,17 +72,30 @@ export default function Page() {
 	const selectedVariant = selectedVariantHandle
 		? variants.find((v) => v.handle === selectedVariantHandle)
 		: undefined;
+
 	return (
-		<main className="flex justify-center relative">
-			<ProductOverview
-				product={product ?? serverProduct}
-				variants={variants}
-				selectedVariant={selectedVariant}
-				setVariantIDOrHandle={setSelectedVariantHandle}
-				selectedVariantIDOrHandle={selectedVariantHandle}
-				cartID={cartID}
-				defaultVariant={defaultVariant}
-			/>
-		</main>
+		<div
+			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-mauve-a-3 backdrop-blur-md overflow-y-auto"
+			onClick={() => {
+				navigate("/marketplace", {
+					preventScrollReset: true,
+					unstable_viewTransition: true,
+					replace: true,
+				});
+			}}
+			onKeyDown={() => console.log("key down")}
+		>
+			<main className="flex w-full justify-center relative">
+				<ProductOverview
+					product={product ?? serverProduct}
+					variants={variants}
+					selectedVariant={selectedVariant}
+					setVariantIDOrHandle={setSelectedVariantHandle}
+					selectedVariantIDOrHandle={selectedVariantHandle}
+					cartID={cartID}
+					defaultVariant={defaultVariant}
+				/>
+			</main>
+		</div>
 	);
 }

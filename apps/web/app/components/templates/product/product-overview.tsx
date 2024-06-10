@@ -1,4 +1,6 @@
 import { cn } from "@blazell/ui";
+import { Icons } from "@blazell/ui/icons";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type {
 	Product,
@@ -7,21 +9,13 @@ import type {
 	PublishedVariant,
 	Variant,
 } from "@blazell/validators/client";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@blazell/ui/accordion";
 import { useCallback, useEffect, useState } from "react";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
 import { Actions } from "./actions";
-import { Gallery } from "./gallery";
+import { DesktopGallery, MobileGallery } from "./gallery";
 import { GeneralInfo } from "./product-info";
-import { Icons } from "@blazell/ui/icons";
-import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 
 interface ProductOverviewProps {
 	product: Product | PublishedProduct | undefined;
@@ -44,96 +38,57 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 }: ProductOverviewProps) => {
-	const isScrolled = useIsWindowScrolled();
-
 	const [isShaking, setIsShaking] = useState(false);
-	console.log("Shaking", isShaking);
-	return (
-		<main className="relative flex h-[calc(100vh + 70vh)] flex-col items-center  lg:items-start lg:grid grid-cols-4 lg:grid-cols-7 w-full max-w-[1300px] lg:mt-20 px-4">
-			<div
-				className={cn(
-					"sticky top-0 lg:relative  transition-all col-span-4 duration-500 ease-in-out  w-full min-w-[20rem] lg:max-w-[40rem] gap-4",
-					isScrolled && "brightness-50 lg:brightness-100",
-				)}
-			>
-				<Gallery
-					images={selectedVariant?.images ?? defaultVariant?.images ?? []}
-				/>
-				<ProductDetails product={product} className="hidden lg:block pt-10" />
-			</div>
 
-			<div
-				className={cn(
-					"lg:bg-mauve-a-2 dark:lg:bg-mauve-2 sticky lg:h-[85vh] top-20 lg:border lg:border-mauve-7 lg:rounded-2xl bg-mauve-2 lg:mt-0 dark:bg-mauve-3  w-full col-span-4 lg:col-span-3 p-4 rounded-t-lg z-20",
-				)}
-			>
-				<GeneralInfo defaultVariant={defaultVariant} />
-				<Actions
-					{...(cartID && { cartID })}
-					product={product}
-					defaultVariant={defaultVariant}
-					selectedVariant={selectedVariant}
-					setIsShaking={setIsShaking}
-					variants={variants}
-					{...(isDashboard && { isDashboard })}
-				/>
-				<ProductVariants
-					variants={variants}
-					{...(isDashboard && { isDashboard })}
-					setVariantIDOrHandle={setVariantIDOrHandle}
-					selectedVariantIDOrHandle={selectedVariantIDOrHandle}
-					isDashboard={isDashboard}
-				/>
-				<ProductOptions
-					options={product?.options ?? []}
-					selectedVariant={selectedVariant}
-					variants={variants}
-					setVariantIDOrHandle={setVariantIDOrHandle}
-					isDashboard={isDashboard}
-					isShaking={isShaking}
-				/>
-				<DeliveryOptions />
-				<ProductDetails className="lg:hidden px-0 border-t" product={product} />
-				<div className="h-[200px]" />
+	return (
+		<main className="relative h-[calc(100vh + 70vh] flex flex-col lg:flex-row w-full">
+			<MobileGallery
+				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
+			/>
+			<DesktopGallery
+				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
+			/>
+
+			<div className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0">
+				<ScrollArea
+					className={cn(
+						"dark:lg:bg-mauve-2 lg:border-l border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px] bg-white lg:mt-0 dark:bg-mauve-3 w-full z-20",
+					)}
+				>
+					<div className="p-4 h-full w-full">
+						<GeneralInfo defaultVariant={defaultVariant} product={product} />
+						<Actions
+							{...(cartID && { cartID })}
+							product={product}
+							defaultVariant={defaultVariant}
+							selectedVariant={selectedVariant}
+							setIsShaking={setIsShaking}
+							variants={variants}
+							{...(isDashboard && { isDashboard })}
+						/>
+						<ProductVariants
+							variants={variants}
+							{...(isDashboard && { isDashboard })}
+							setVariantIDOrHandle={setVariantIDOrHandle}
+							selectedVariantIDOrHandle={selectedVariantIDOrHandle}
+							isDashboard={isDashboard}
+						/>
+						<ProductOptions
+							options={product?.options ?? []}
+							selectedVariant={selectedVariant}
+							variants={variants}
+							setVariantIDOrHandle={setVariantIDOrHandle}
+							isDashboard={isDashboard}
+							isShaking={isShaking}
+						/>
+						<DeliveryOptions />
+					</div>
+				</ScrollArea>
 			</div>
 		</main>
 	);
 };
-
 export { ProductOverview };
-
-const ProductDetails = ({
-	product,
-	className,
-}: { product: Product | PublishedProduct | undefined; className?: string }) => {
-	return (
-		<Accordion
-			type="single"
-			className={cn("w-full px-8 pb-4", className)}
-			collapsible
-			defaultValue="item-1"
-		>
-			<AccordionItem value="item-1">
-				<AccordionTrigger className="text-lg">
-					Product description
-				</AccordionTrigger>
-				<AccordionContent className="text-base text-mauve-11">
-					{product?.description}
-				</AccordionContent>
-			</AccordionItem>
-			<AccordionItem value="item-2">
-				<AccordionTrigger className="text-lg">Specification</AccordionTrigger>
-				<AccordionContent className="text-base text-mauve-11">
-					Specifications include advanced processor capabilities, extensive
-					storage options, and seamless connectivity. The product is designed to
-					handle demanding tasks efficiently. Additional features include
-					high-resolution display, long-lasting battery life, and intuitive user
-					interface for enhanced productivity.
-				</AccordionContent>
-			</AccordionItem>
-		</Accordion>
-	);
-};
 
 const ProductVariants = ({
 	isDashboard = false,
@@ -169,7 +124,8 @@ const ProductVariants = ({
 					<ToggleGroupItem
 						key={v.id}
 						value={isDashboard ? v.id : v.handle ?? ""}
-						className="relative w-[6rem] min-h-[6rem] p-0 "
+						className="relative w-[6rem] min-h-[6rem] p-0"
+						onClick={(e) => e.stopPropagation()}
 					>
 						<div className="relative">
 							{!v.images?.[0] ? (
@@ -285,6 +241,7 @@ const ProductOptions = ({
 								setVariantOptions(newVariantOptions);
 								setVariant(newVariantOptions);
 							}}
+							onClick={(e) => e.stopPropagation()}
 						>
 							{option.optionValues?.map((val) => {
 								const variant = variants.find((variant) => {
@@ -321,6 +278,7 @@ const DeliveryOptions = () => {
 				type="single"
 				/* eslint-disable */ // field has onChange method so it shouldn't be passed to radio group
 				onChange={() => {}}
+				onClick={(e) => e.stopPropagation()}
 			>
 				{Array.from({ length: 3 }).map((_, index) => (
 					<ToggleGroupItem

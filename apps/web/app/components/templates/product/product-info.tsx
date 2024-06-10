@@ -1,42 +1,42 @@
-import { Icons } from "@blazell/ui/icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import type { PublishedVariant } from "@blazell/validators";
-import type { Variant } from "@blazell/validators/client";
+import type {
+	Product,
+	PublishedProduct,
+	Variant,
+} from "@blazell/validators/client";
 import Price from "~/components/molecules/price";
 
 interface GeneralInfoProps {
 	defaultVariant: Variant | PublishedVariant | undefined | null;
+	product: Product | PublishedProduct | undefined;
 }
 
-function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
+function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 	return (
 		<section className="flex flex-col ">
-			<span className="flex justify-between">
-				<h1 className="font-semibold text-2xl">{`${
+			<div className="w-[200px] flex gap-2">
+				<Avatar className="h-16 w-16">
+					<AvatarImage src="https://github.com/shadcn.png" />
+					<AvatarFallback>N</AvatarFallback>
+				</Avatar>
+				<div>
+					<p className="font-medium text-lg">{"Store name"}</p>
+				</div>
+			</div>
+			<div className="flex flex-col gap-3 py-2">
+				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-			</span>
-			<Reviews />
+				<p>{product?.description}</p>
+			</div>
 
 			<Price
-				className="text-3xl py-2 font-black"
+				className="text-xl py-4 font-black"
 				amount={defaultVariant?.prices?.[0]?.amount ?? 0}
 				currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
 			/>
 		</section>
-	);
-}
-function Reviews() {
-	return (
-		<div className="flex gap-2 py-4 items-center">
-			<span className="flex">
-				{Array.from({ length: 5 }, (_, index) => (
-					<Icons.Star key={index} fill="var(--yellow-9)" strokeWidth={0} />
-				))}
-			</span>
-
-			<p className="text-mauve-11 text-sm">{"(5.0)"}</p>
-			<p className="underline cursor-pointer text-sm">345 reviews</p>
-		</div>
 	);
 }
 
