@@ -49,10 +49,10 @@ const ProductOverview = ({
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
 			/>
 
-			<div className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0">
+			<div className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white z-40">
 				<ScrollArea
 					className={cn(
-						"dark:lg:bg-mauve-2 lg:border-l border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px] bg-white lg:mt-0 dark:bg-mauve-3 w-full z-20",
+						"border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full z-20",
 					)}
 				>
 					<div className="p-4 h-full w-full">

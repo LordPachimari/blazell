@@ -29,10 +29,13 @@ export const loader: LoaderFunction = async (args) => {
 	const cookieHeader = args.request.headers.get("Cookie");
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
 
-	return json({
-		product,
-		cartID: userContextCookie.cartID,
-	});
+	return json(
+		{
+			product,
+			cartID: userContextCookie.cartID,
+		},
+		{ headers: { "Cache-Control": "public, max-age=1800" } },
+	);
 };
 
 export default function Page() {
@@ -75,7 +78,7 @@ export default function Page() {
 
 	return (
 		<div
-			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-mauve-a-3 backdrop-blur-md overflow-y-auto"
+			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-zinc-900/80 backdrop-blur-sm overflow-y-auto"
 			onClick={() => {
 				navigate("/marketplace", {
 					preventScrollReset: true,
@@ -93,7 +96,7 @@ export default function Page() {
 					setVariantIDOrHandle={setSelectedVariantHandle}
 					selectedVariantIDOrHandle={selectedVariantHandle}
 					cartID={cartID}
-					defaultVariant={defaultVariant}
+					defaultVariant={serverProduct.defaultVariant ?? defaultVariant}
 				/>
 			</main>
 		</div>
