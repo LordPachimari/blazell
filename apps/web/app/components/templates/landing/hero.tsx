@@ -21,7 +21,7 @@ function Hero() {
 		};
 	}, []);
 	return (
-		<section className="flex h-screen w-screen flex-col items-center justify-center px-4 pt-10 sm:px-14 md:pt-8 lg:flex-row lg:pt-16">
+		<section className="flex h-screen w-full flex-col items-center justify-center px-2 pt-10 sm:px-4 md:pt-8 lg:flex-row lg:pt-16">
 			<div className="py-6 lg:order-1">
 				<img
 					src="/assets/hero.png"
@@ -36,9 +36,9 @@ function Hero() {
 						Blazell
 					</span>
 				</h1>
-				<span className="block text-balance  max-w-xl bg-clip-text text-lg text-mauve-11 my-6">
+				<span className="block text-wrap max-w-xl bg-clip-text text-lg text-mauve-11 my-6">
 					Blazell is a global marketplace. We provide a platform for
-					<span className="flex items-start gap-8 relative space-y-2 ">
+					<span className="inline-flex text-wrap gap-12 relative">
 						<AnimatePresence initial={false}>
 							<span className="relative opacity-0">
 								{headlines[currentIndex]!.text}
@@ -48,7 +48,7 @@ function Hero() {
 								initial={{ y: "-100%", opacity: 0 }}
 								animate={{ y: 0, opacity: 1 }}
 								exit={{ opacity: 0, transition: { duration: 0.2 } }}
-								className={`not-sr-only absolute top-0 -bottom-4 block text-2xl font-freeman text-transparent bg-clip-text bg-gradient-to-br ${
+								className={`not-sr-only absolute top-0 -bottom-4 block text-3xl font-freeman text-transparent bg-clip-text bg-gradient-to-br ${
 									headlines[currentIndex]!.gradient
 								}`}
 							>
@@ -56,7 +56,7 @@ function Hero() {
 							</motion.span>
 						</AnimatePresence>
 
-						<span>to sell products to the world!</span>
+						<span className="pt-1">to sell products to the world!</span>
 					</span>
 				</span>
 				<div className="mt-6 flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">

@@ -11,10 +11,8 @@ export default function MarketplaceLayout() {
 		<MarketplaceStoreProvider>
 			<MarketplaceStoreMutator>
 				<SidebarLayoutWrapper>
-					<main className="p-4 mt-14 lg:mt-0 flex justify-center px-0 lg:p-10 lg:px-0 0">
-						<div className="max-w-[1320px]">
-							<Products category="qwe" marketplaceRep={marketplaceRep} />
-						</div>
+					<main className="p-2 lg:p-4 mt-16 flex justify-center">
+						<Products category="qwe" marketplaceRep={marketplaceRep} />
 					</main>
 					<Outlet />
 				</SidebarLayoutWrapper>

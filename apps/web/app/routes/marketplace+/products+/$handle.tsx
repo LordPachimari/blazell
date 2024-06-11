@@ -1,6 +1,7 @@
 import type { Product } from "@blazell/validators/client";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
+import { useEffect } from "react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
 import { userContext } from "~/sessions.server";
 import { useMarketplaceStore } from "~/zustand/store";
@@ -34,13 +35,14 @@ export const loader: LoaderFunction = async (args) => {
 			product,
 			cartID: userContextCookie.cartID,
 		},
-		{ headers: { "Cache-Control": "public, max-age=1800" } },
+		{ headers: { "Cache-Control": "public, max-age=3600" } },
 	);
 };
 
 export default function Page() {
 	const { product: serverProduct, cartID } = useLoaderData<LoaderData>();
 	const navigate = useNavigate();
+	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 
 	const productMap = useMarketplaceStore((state) => state.productMap);
 	const variantMap = useMarketplaceStore((state) => state.variantMap);
@@ -75,10 +77,35 @@ export default function Page() {
 	const selectedVariant = selectedVariantHandle
 		? variants.find((v) => v.handle === selectedVariantHandle)
 		: undefined;
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape" || event.key === "Esc") {
+				// Handle Escape key press here
+				navigate("/marketplace", {
+					preventScrollReset: true,
+					unstable_viewTransition: true,
+					replace: true,
+				});
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [navigate]);
+
+	useEffect(() => {
+		document.body.style.overflow = "hidden";
+		return () => {
+			document.body.style.overflow = "auto";
+		};
+	}, []);
 
 	return (
 		<div
-			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-zinc-900/80 backdrop-blur-sm overflow-y-auto"
+			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-zinc-900/80 backdrop-blur-sm overflow-y-scroll"
 			onClick={() => {
 				navigate("/marketplace", {
 					preventScrollReset: true,
@@ -89,15 +116,21 @@ export default function Page() {
 			onKeyDown={() => console.log("key down")}
 		>
 			<main className="flex w-full justify-center relative">
-				<ProductOverview
-					product={product ?? serverProduct}
-					variants={variants}
-					selectedVariant={selectedVariant}
-					setVariantIDOrHandle={setSelectedVariantHandle}
-					selectedVariantIDOrHandle={selectedVariantHandle}
-					cartID={cartID}
-					defaultVariant={serverProduct.defaultVariant ?? defaultVariant}
-				/>
+				{isInitialized && !product ? (
+					<h1 className="font-freeman text-3xl mt-80 text-white dark:text-black">
+						Product does not exist or has been deleted.
+					</h1>
+				) : (
+					<ProductOverview
+						product={product ?? serverProduct}
+						variants={variants}
+						selectedVariant={selectedVariant}
+						setVariantIDOrHandle={setSelectedVariantHandle}
+						selectedVariantIDOrHandle={selectedVariantHandle}
+						cartID={cartID}
+						defaultVariant={defaultVariant ?? serverProduct.defaultVariant}
+					/>
+				)}
 			</main>
 		</div>
 	);

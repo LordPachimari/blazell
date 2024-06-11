@@ -76,7 +76,7 @@ function MobileGallery({ images }: GalleryProps) {
 
 const DesktopGallery = ({ images }: GalleryProps) => {
 	return (
-		<div className="hidden py-4 lg:flex flex-col w-full gap-4 col-span-5 items-center justify-center h-full">
+		<div className="hidden py-4 lg:flex flex-col w-full gap-4 col-span-5 items-center justify-center h-full overflow-y-scroll">
 			{images.map(({ uploaded, base64, url, name, id, fileType }) => {
 				if (!uploaded)
 					return (

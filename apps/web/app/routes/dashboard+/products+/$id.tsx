@@ -44,7 +44,7 @@ function PreviewTab({
 	view: string | null;
 }>) {
 	return (
-		<Form className="fixed top-0 z-30 mt-4 h-10 w-11/12 bg-component rounded-xl shadow-md md:w-[12rem] dark:mauve-5 backdrop-blur-sm flex items-center justify-between transition-all duration-500 ease-in-out">
+		<Form className="fixed top-0 z-20 mt-4 h-10 w-11/12 bg-component rounded-xl shadow-md md:w-[12rem] dark:mauve-5 backdrop-blur-sm flex items-center justify-between transition-all duration-500 ease-in-out">
 			<button
 				name="view"
 				value="preview"

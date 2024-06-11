@@ -49,10 +49,14 @@ const ProductOverview = ({
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
 			/>
 
-			<div className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white z-40">
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+			<div
+				className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<ScrollArea
 					className={cn(
-						"border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full z-20",
+						"border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
 					)}
 				>
 					<div className="p-4 h-full w-full">
