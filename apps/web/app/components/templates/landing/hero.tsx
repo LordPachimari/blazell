@@ -21,7 +21,7 @@ function Hero() {
 		};
 	}, []);
 	return (
-		<section className="flex animate-slidein h-screen w-full flex-col items-center justify-center px-2 pt-10 sm:px-4 md:pt-8 lg:flex-row lg:pt-16">
+		<section className="flex h-screen w-full flex-col items-center justify-center px-2 pt-10 sm:px-4 md:pt-8 lg:flex-row lg:pt-16">
 			<div className="py-6 lg:order-1">
 				<img
 					src="/assets/hero.png"
