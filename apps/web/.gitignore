@@ -6,3 +6,8 @@ node_modules
 .dev.vars
 
 .wrangler
+.wrangler.toml
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

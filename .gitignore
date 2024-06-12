@@ -51,3 +51,6 @@ dist/
 
 # turbo
 .turbo
+
+.wrangler
+.wrangler.toml

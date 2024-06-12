@@ -30,12 +30,7 @@ app.use("*", async (c, next) => {
 			c.env.ENVIRONMENT === "production"
 				? "https://blazell.com"
 				: c.env.ENVIRONMENT === "development"
-					? [
-							"https://development.blazell.pages.dev",
-							"http://localhost:8788",
-							"http://localhost:5173",
-							"https://blazell.com",
-						]
+					? ["https://development.blazell.pages.dev"]
 					: [
 							"http://localhost:5173",
 							"https://development.blazell.pages.dev",
