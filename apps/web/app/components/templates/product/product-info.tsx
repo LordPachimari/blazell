@@ -1,33 +1,41 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import type { PublishedVariant } from "@blazell/validators";
 import type {
 	Product,
 	PublishedProduct,
 	Variant,
 } from "@blazell/validators/client";
-import PriceLabel from "~/components/molecules/price-label";
+import Price from "~/components/molecules/price";
 
 interface GeneralInfoProps {
-	product: Product | PublishedProduct | null | undefined;
 	defaultVariant: Variant | PublishedVariant | undefined | null;
+	product: Product | PublishedProduct | undefined;
 }
 
-function GeneralInfo({ product, defaultVariant }: GeneralInfoProps) {
+function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 	return (
 		<section className="flex flex-col ">
-			<span className="flex justify-between">
-				<h1 className="font-semibold uppercase text-2xl">{`${
+			<div className="w-[200px] flex gap-2">
+				<Avatar className="h-16 w-16">
+					<AvatarImage src="https://github.com/shadcn.png" />
+					<AvatarFallback>N</AvatarFallback>
+				</Avatar>
+				<div>
+					<p className="font-medium text-lg">{"Store name"}</p>
+				</div>
+			</div>
+			<div className="flex flex-col gap-3 py-2">
+				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-				<PriceLabel
-					title={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
-					amount={defaultVariant?.prices?.[0]?.amount ?? 0}
-					currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
-				/>
-			</span>
+				<p>{product?.description}</p>
+			</div>
 
-			<p className="text-base text-mauve-11 py-4 text-balance">
-				{product?.description}
-			</p>
+			<Price
+				className="text-xl py-4 font-black"
+				amount={defaultVariant?.prices?.[0]?.amount ?? 0}
+				currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
+			/>
 		</section>
 	);
 }

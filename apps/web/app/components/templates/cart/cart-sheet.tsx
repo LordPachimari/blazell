@@ -1,6 +1,6 @@
 import { cn } from "@blazell/ui";
 import { Button, buttonVariants } from "@blazell/ui/button";
-import { strokeWidth } from "@blazell/ui/icons";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -10,7 +10,6 @@ import {
 	DialogTrigger,
 } from "@blazell/ui/dialog-vaul";
 import { Link } from "@remix-run/react";
-import { ShoppingCart } from "lucide-react";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { useCartState } from "~/zustand/state";
@@ -48,7 +47,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 		<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
 			<DialogTrigger asChild>
 				<Button variant={"ghost"} size={"icon"} className="rounded-full">
-					<ShoppingCart
+					<Icons.ShoppingCart
 						size={20}
 						strokeWidth={strokeWidth}
 						className="text-mauve-11"

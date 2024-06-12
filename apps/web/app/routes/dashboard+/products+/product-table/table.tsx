@@ -65,7 +65,7 @@ function ProductsTable({
 				toolbarButton={
 					<Button size="md" onClick={createProduct} type="button">
 						<Icons.Plus
-							className="mr-1 font-bold"
+							className="mr-1 font-bold "
 							size={15}
 							aria-hidden="true"
 						/>

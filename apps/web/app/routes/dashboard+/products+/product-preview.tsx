@@ -29,8 +29,8 @@ const ProductPreview = ({ product }: ProductPreviewProps) => {
 		});
 	};
 	const selectedVariant = selectedVariantID
-		? variants.find((v) => v.id === selectedVariantID) ?? null
-		: null;
+		? variants.find((v) => v.id === selectedVariantID)
+		: undefined;
 	return (
 		<ProductOverview
 			product={product}

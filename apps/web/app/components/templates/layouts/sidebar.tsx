@@ -67,7 +67,7 @@ const Sidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-40 w-14  overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
+					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-30 w-14  overflow-hidden border border-mauve-7  backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
 						"w-44": mode === "open",
 						"hidden lg:hidden": noSidebarPaths.has(location.pathname),
@@ -115,6 +115,7 @@ const Sidebar = () => {
 									"group/link flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2 ",
 								)}
 								prefetch="viewport"
+								unstable_viewTransition={true}
 							>
 								<div className="flex justify-center ">
 									<Icon
@@ -168,7 +169,7 @@ const MobileSidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"fixed lg:hidden bottom-1 group ml-[3px] w-[calc(100%-6px)] rounded-2xl bg-component justify-between flex flex-col z-40 overflow-hidden border border-mauve-7  backdrop-blur-md transition-all duration-200 ease-in-out",
+					"fixed lg:hidden bottom-1 group ml-[3px] w-[calc(100%-6px)] rounded-2xl bg-component justify-between flex flex-col z-40 overflow-hidden border border-mauve-7  backdrop-blur-sm transition-all duration-200 ease-in-out",
 					{
 						hidden: noSidebarPaths.has(location.pathname),
 					},

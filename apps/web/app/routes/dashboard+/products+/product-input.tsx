@@ -131,9 +131,12 @@ export function ProductInput({
 
 	const deleteProduct = useCallback(async () => {
 		await dashboardRep?.mutate.deleteProduct({ keys: [productID] });
-	}, [dashboardRep, productID]);
+		toast.success("Product deleted!");
+		navigate("/dashboard/products");
+	}, [dashboardRep, productID, navigate]);
 	const publishProduct = useCallback(async () => {
 		await dashboardRep?.mutate.publishProduct({ id: productID });
+		toast.success("Product published!");
 	}, [dashboardRep, productID]);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onProductInputChange = useCallback(
@@ -181,8 +184,6 @@ export function ProductInput({
 						description="All your followers will be notified."
 						onContinue={async () => {
 							await publishProduct();
-							toast.success("Product published!");
-							navigate("/dashboard/products");
 						}}
 					/>
 					<AlertDialogComponent
@@ -191,9 +192,6 @@ export function ProductInput({
 						title="Are you sure you want to delete? "
 						onContinue={async () => {
 							await deleteProduct();
-							toast.success("Product deleted!");
-							navigate("/dashboard/products");
-							navigate("/dashboard/products");
 						}}
 					/>
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">

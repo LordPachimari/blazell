@@ -23,8 +23,9 @@ function Header() {
 				<CartSheet cartID={cartID ?? null} />
 				<Link
 					to={!fakeAuthID ? "/create-user" : "/dashboard"}
+					prefetch="viewport"
 					// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
-					className={cn("rounded-full", buttonVariants())}
+					className={cn(buttonVariants(), "rounded-lg")}
 				>
 					Dashboard
 				</Link>

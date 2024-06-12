@@ -240,6 +240,13 @@ export default {
 						"background-position": "0% 0%",
 					},
 				},
+				shake: {
+					"0%": { transform: "translateX(0)" },
+					"25%": { transform: "translateX(5px)" },
+					"50%": { transform: "translateX(-5px)" },
+					"75%": { transform: "translateX(5px)" },
+					"100%": { transform: "translateX(0)" },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -247,6 +254,7 @@ export default {
 				fadeIn: "fadeIn .3s ease-in-out",
 				blink: "blink 1.4s both infinite",
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
+				shake: "shake 0.5s linear infinite",
 			},
 			boxShadow: {
 				border: "0px 0px 0px 1px #E5E7EB",

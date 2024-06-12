@@ -9,6 +9,14 @@ app.get("/:handle", async (c) => {
 
 	const variant = await db.query.variants.findFirst({
 		where: (variants, { eq }) => eq(variants.handle, handle),
+		with: {
+			prices: true,
+			optionValues: {
+				with: {
+					optionValue: true,
+				},
+			},
+		},
 	});
 
 	if (!variant) {

@@ -9,7 +9,7 @@ import {
 } from "@remix-run/cloudflare";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@blazell/ui/button";
 import { CardContent, CardHeader } from "@blazell/ui/card";
@@ -36,6 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { FieldErrorMessage } from "~/components/field-error";
 import { userContext } from "~/sessions.server";
 
 type LoaderData = {
@@ -114,6 +115,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const fetcher = useFetcher();
+	const countries = useMemo(() => Object.entries(ISO_1666), []);
 
 	const {
 		control,
@@ -154,7 +156,6 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 				fetcherKey: "create-user",
 			},
 		);
-
 		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {
 			method: "POST",
 			body: JSON.stringify({
@@ -227,7 +228,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 										</SelectTrigger>
 										<SelectContent>
 											<ScrollArea className="h-[300px]">
-												{Object.entries(ISO_1666).map(([code, name]) => (
+												{countries.map(([code, name]) => (
 													<SelectItem key={code} value={code}>
 														{name}
 													</SelectItem>
@@ -237,11 +238,15 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 									</Select>
 								)}
 							/>
+							<FieldErrorMessage
+								message={errors.countryCode?.message}
+								className="px-1"
+							/>
 
 							<div className="flex w-full justify-center pt-4">
 								<Button
 									type="submit"
-									className="w-[200px]"
+									className="w-[200px] rounded-xl"
 									disabled={isLoading}
 								>
 									Finish
