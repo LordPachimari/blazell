@@ -22,13 +22,13 @@ jobs:
             accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
             githubToken: ${{ secrets.GITHUB_TOKEN }}
             projectName: Blazell
-            directory: web
+            directory: /apps/web
             # Optional: Supply a deployment name if you want to have GitHub Deployments triggered
             deploymentName: Production
             # Optional: Switch what branch you are publishing to.
             # By default, this will be the branch which triggered this workflow
             branch: main
             # Optional: Change the working directory
-            workingDirectory: web
+            workingDirectory: /apps/web
             # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
             wranglerVersion: '3.57.1'

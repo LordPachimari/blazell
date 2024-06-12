@@ -49,10 +49,7 @@ export const links: LinksFunction = () => {
 	].filter(Boolean);
 };
 export type RootLoaderData = {
-	ENV: Omit<
-		AppEnv,
-		"CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY" | "SESSION_SECRET"
-	>;
+	ENV: Omit<AppEnv, "CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY">;
 	requestInfo: {
 		hints: ReturnType<typeof getHints>;
 		origin: string;

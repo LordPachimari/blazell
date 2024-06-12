@@ -13,7 +13,6 @@ type Cloudflare = Omit<PlatformProxy<AppEnv>, "dispose">;
 export const AppEnvSchema = z.object({
 	REPLICACHE_KEY: z.string(),
 	WORKER_URL: z.string(),
-	SESSION_SECRET: z.string(),
 	PARTYKIT_HOST: z.string(),
 	CLERK_PUBLISHABLE_KEY: z.string(),
 	CLERK_SECRET_KEY: z.string(),
