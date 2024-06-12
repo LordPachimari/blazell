@@ -1,3 +1,4 @@
+import { cn } from "@blazell/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
@@ -44,7 +45,10 @@ function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 					<span
 						onClick={handleToggle}
 						onKeyDown={handleToggle}
-						className="pl-1 underline cursor-pointer bg-transparent transition text-mauve-11"
+						className={cn(
+							"pl-1 underline cursor-pointer bg-transparent transition text-mauve-11",
+							displayText.length < 200 && "hidden",
+						)}
 					>
 						{isTruncated ? "Reveal" : "Hide"}
 					</span>
