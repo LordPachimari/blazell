@@ -8,5 +8,5 @@ interface Preferences {
 }
 export function useUserPreferences(): Preferences {
 	const data = useRouteLoaderData<RootLoaderData>("root");
-	return data!.requestInfo.userPrefs as Preferences;
+	return data?.requestInfo.userPrefs as Preferences;
 }
