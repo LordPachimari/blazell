@@ -31,7 +31,7 @@ export default function Orders() {
 			<section className="w-full xl:w-8/12">
 				<div className="flex flex-col pb-4">
 					<PageHeader title="Orders" />
-					<div className="flex gap-4">
+					<div className="hidden md:flex gap-4">
 						<Revenue type="daily" amount={20} />
 						<Revenue type="weekly" amount={200} />
 						<Revenue type="monthly" amount={2000} />

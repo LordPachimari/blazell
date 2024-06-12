@@ -35,9 +35,9 @@ export default function DashboardLayout() {
 			<DashboardStoreMutator>
 				<SidebarLayoutWrapper>
 					<DashboardSidebar>
-						<main className="md:pl-40 w-full">
+						<div className="md:pl-40 w-full ">
 							<Outlet />
-						</main>
+						</div>
 					</DashboardSidebar>
 				</SidebarLayoutWrapper>
 			</DashboardStoreMutator>

@@ -17,7 +17,7 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="p-10 w-full">
+		<main className="p-4 md:p-10 w-full">
 			<PageHeader title="Products" />
 			<Products products={products} storeID={store?.id} />
 		</main>

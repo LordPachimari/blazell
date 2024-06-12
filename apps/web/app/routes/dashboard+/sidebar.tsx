@@ -49,7 +49,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"flex flex-col w-12 opacity-0 md:opacity-100 m-1 md:m-0 justify-center bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out z-20 ",
+					"flex flex-col w-12 opacity-0 md:opacity-100 m-1 md:m-0 justify-center bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r lg:border-t-0 lg:border-l-0 lg:border-b-0 border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out z-20 ",
 					{ "opacity-100": opened },
 				)}
 			>
