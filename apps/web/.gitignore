@@ -12,5 +12,5 @@ dist
 # Change them to your taste:
 wrangler.toml
 
-.million
+/.million
 store.json
