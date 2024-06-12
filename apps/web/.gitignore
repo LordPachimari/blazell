@@ -5,9 +5,9 @@ node_modules
 .env
 .dev.vars
 
-.wrangler
-.wrangler.toml
-
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+dist
+# Change them to your taste:
+wrangler.toml
