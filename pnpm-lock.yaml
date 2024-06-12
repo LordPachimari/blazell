@@ -432,7 +432,7 @@ importers:
         version: link:../validators
       drizzle-orm:
         specifier: ^0.30.7
-        version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(react@18.3.1)
+        version: 0.30.10(@neondatabase/serverless@0.9.3)(pg@8.11.5)
       effect:
         specifier: ^3.2.9
         version: 3.2.9
@@ -527,7 +527,7 @@ importers:
         version: 1.0.2
       drizzle-orm:
         specifier: ^0.30.7
-        version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(react@18.3.1)
+        version: 0.30.10(@neondatabase/serverless@0.9.3)(pg@8.11.5)
       effect:
         specifier: ^3.2.9
         version: 3.2.9
