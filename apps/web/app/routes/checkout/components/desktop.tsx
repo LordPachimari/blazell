@@ -37,6 +37,7 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 		}
 	}, [opened]);
 	console.log("errors", methods.formState.errors);
+	console.log("user", user);
 
 	const prefill = (cart: Cart, user?: User) => {
 		methods.setValue("fullName", cart.fullName ?? "");

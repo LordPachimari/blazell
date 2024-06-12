@@ -14,44 +14,50 @@ export const CustomerInfo = ({
 		<section>
 			<h1 className="text-xl text-mauve-10 my-2">Customer information</h1>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-				<Input
-					id="fullName"
-					key="fullName"
-					placeholder="Full name"
-					{...register("fullName")}
-					onChange={(e) => {
-						register("fullName").onChange(e);
-						clearErrors();
-					}}
-				/>
-				<FieldErrorMessage message={formState.errors.fullName?.message} />
-				{!user && (
+				<div>
 					<Input
-						id="email"
-						type="email"
-						autoCapitalize="none"
-						autoCorrect="off"
-						placeholder="Email"
-						{...register("email")}
+						id="fullName"
+						key="fullName"
+						placeholder="Full name"
+						{...register("fullName")}
 						onChange={(e) => {
-							register("email").onChange(e);
+							register("fullName").onChange(e);
 							clearErrors();
 						}}
 					/>
+					<FieldErrorMessage message={formState.errors.fullName?.message} />
+				</div>
+				{!user && (
+					<div>
+						<Input
+							id="email"
+							type="email"
+							autoCapitalize="none"
+							autoCorrect="off"
+							placeholder="Email"
+							{...register("email")}
+							onChange={(e) => {
+								register("email").onChange(e);
+								clearErrors();
+							}}
+						/>
+						<FieldErrorMessage message={formState.errors.email?.message} />
+					</div>
 				)}
-				<FieldErrorMessage message={formState.errors.email?.message} />
-				<Input
-					id="phone"
-					autoCapitalize="none"
-					autoCorrect="off"
-					placeholder="Phone"
-					{...register("phone")}
-					onChange={(e) => {
-						register("phone").onChange(e);
-						clearErrors();
-					}}
-				/>
-				<FieldErrorMessage message={formState.errors.phone?.message} />
+				<div>
+					<Input
+						id="phone"
+						autoCapitalize="none"
+						autoCorrect="off"
+						placeholder="Phone"
+						{...register("phone")}
+						onChange={(e) => {
+							register("phone").onChange(e);
+							clearErrors();
+						}}
+					/>
+					<FieldErrorMessage message={formState.errors.phone?.message} />
+				</div>
 			</div>
 		</section>
 	);
