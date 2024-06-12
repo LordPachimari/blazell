@@ -11,9 +11,12 @@ It is currently in development and demo mode. I know that authentication process
 - Remix
 - Cloudflare workers
 - Cloudflare pages
+- Cloudflare images
 - Neondatabase (serverless postgres)
 - DrizzleORM
 - TailwindCSS (shadcn + vaul)
+- Replicache (sync engine)
+- Zustand (state-management)
 - Vite
 
 # Future of blazell
