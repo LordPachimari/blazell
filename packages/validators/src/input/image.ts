@@ -28,6 +28,7 @@ export const UploadResponseSchema = Schema.Struct({
 			id: Schema.String,
 		}),
 		Schema.Null,
+		Schema.Undefined,
 	),
 	success: Schema.Boolean,
 	errors: Schema.Array(

@@ -1,10 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
+import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
 import type {
 	Product,
 	PublishedProduct,
 	Variant,
 } from "@blazell/validators/client";
+import { useState } from "react";
 import Price from "~/components/molecules/price";
 
 interface GeneralInfoProps {
@@ -13,6 +15,15 @@ interface GeneralInfoProps {
 }
 
 function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
+	const [isTruncated, setIsTruncated] = useState(true);
+
+	const handleToggle = () => {
+		setIsTruncated(!isTruncated);
+	};
+
+	const displayText = isTruncated
+		? truncateString(product?.description ?? "", 200)
+		: product?.description ?? "";
 	return (
 		<section className="flex flex-col ">
 			<div className="w-[200px] flex gap-2">
@@ -28,7 +39,16 @@ function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-				<p>{product?.description}</p>
+				<p>
+					{displayText}
+					<span
+						onClick={handleToggle}
+						onKeyDown={handleToggle}
+						className="pl-1 underline cursor-pointer bg-transparent transition text-mauve-11"
+					>
+						{isTruncated ? "Reveal" : "Hide"}
+					</span>
+				</p>
 			</div>
 
 			<Price

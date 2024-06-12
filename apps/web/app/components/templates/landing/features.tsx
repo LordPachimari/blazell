@@ -71,8 +71,8 @@ function Features({ theme }: { theme: Theme }) {
 	] satisfies Feature[];
 
 	return (
-		<div className="flex flex-col items-center pt-10 px-4">
-			<section className="w-full flex flex-col items-center">
+		<div className="flex flex-col items-center pt-10 px-4 ">
+			<section className="w-full flex flex-col items-center animate-slidein">
 				<h2 className="text-center text-4xl font-bold lg:text-5xl lg:tracking-tight">
 					Everything you need to start selling
 				</h2>
@@ -97,13 +97,13 @@ function Features({ theme }: { theme: Theme }) {
 					))}
 				</ul>
 			</section>
-			<section className="w-full flex flex-col items-center mt-20">
+			<section className="w-full flex flex-col items-center mt-20 animate-slidein">
 				<h2 className="text-center text-4xl font-bold py-20 lg:text-5xl lg:tracking-tight">
 					What can you sell on Blazell?
 				</h2>
 				<ProductTypeCards />
 			</section>
-			<section className="w-full flex flex-col items-center mt-20">
+			<section className="w-full flex flex-col items-center mt-20 animate-slidein">
 				<h2 className="text-center text-4xl font-bold pt-20 lg:text-5xl lg:tracking-tight">
 					More customizations
 				</h2>
@@ -113,7 +113,7 @@ function Features({ theme }: { theme: Theme }) {
 				</p>
 			</section>
 
-			<section className="w-full flex flex-col items-center mt-20">
+			<section className="w-full flex flex-col items-center mt-20 animate-slidein">
 				<h2 className="text-center text-4xl font-bold pt-20 lg:text-5xl lg:tracking-tight">
 					See who is selling on Blazell
 				</h2>

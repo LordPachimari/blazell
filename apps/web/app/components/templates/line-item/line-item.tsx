@@ -3,7 +3,7 @@ import { Icons } from "@blazell/ui/icons";
 import { Separator } from "@blazell/ui/separator";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { toast } from "@blazell/ui/toast";
-import { getLineItemPriceAmount, truncateString } from "@blazell/utils";
+import { getLineItemPriceAmount } from "@blazell/utils";
 import type { LineItem as LineItemType } from "@blazell/validators/client";
 import { Effect } from "effect";
 import Image from "~/components/molecules/image";
@@ -48,8 +48,8 @@ export const LineItem = ({
 				</Card>
 				<div className="flex gap-2 w-full justify-between">
 					<div className="w-full flex flex-col justify-between">
-						<h2 className="text-sm text-balance font-bold">
-							{truncateString(lineItem.title, 20)}
+						<h2 className="line-clamp-1 text-sm text-balance font-bold">
+							{lineItem.title}
 						</h2>
 						<div>
 							{lineItem.variant?.optionValues?.map((v) => (

@@ -8,7 +8,6 @@ import {
 } from "@blazell/ui/dialog";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Skeleton } from "@blazell/ui/skeleton";
-import { truncateString } from "@blazell/utils";
 import type { Store } from "@blazell/validators/client";
 import { useState } from "react";
 import { ClientOnly } from "remix-utils/client-only";
@@ -133,9 +132,7 @@ const AboutStore = ({
 					{!isInitialized ? (
 						<Skeleton className="w-[300px] h-[10px]" />
 					) : (
-						<p className="text-ellipsis overflow-hidden">
-							{truncateString(store?.description ?? "", 70)}
-						</p>
+						<p className="line-clamp-1">{store?.description ?? ""}</p>
 					)}
 
 					<Icons.Right size={17} strokeWidth={strokeWidth} />

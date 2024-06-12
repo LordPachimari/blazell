@@ -247,6 +247,16 @@ export default {
 					"75%": { transform: "translateX(5px)" },
 					"100%": { transform: "translateX(0)" },
 				},
+				slidein: {
+					from: {
+						opacity: "0",
+						transform: "translateY(-10px)",
+					},
+					to: {
+						opacity: "1",
+						transform: "translateY(0)",
+					},
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -255,6 +265,7 @@ export default {
 				blink: "blink 1.4s both infinite",
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
 				shake: "shake 0.5s linear infinite",
+				slidein: "slidein 1s ease 300ms",
 			},
 			boxShadow: {
 				border: "0px 0px 0px 1px #E5E7EB",

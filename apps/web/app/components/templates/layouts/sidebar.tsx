@@ -115,7 +115,6 @@ const Sidebar = () => {
 									"group/link flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2 ",
 								)}
 								prefetch="viewport"
-								unstable_viewTransition={true}
 							>
 								<div className="flex justify-center ">
 									<Icon

@@ -41,7 +41,7 @@ const ProductCard = ({
 			</CardContent>
 			<CardFooter className="flex w-full flex-col items-center p-2 h-13 justify-between ">
 				<section className="relative h-full md:p-0 w-full ">
-					<h1 className="line-clamp-1  text-base truncate font-bold text-ellipsis overflow-hidden">
+					<h1 className="line-clamp-1 text-base truncate font-bold text-ellipsis overflow-hidden">
 						{defaultVariant?.title ?? "Untitled"}
 					</h1>
 				</section>

@@ -116,7 +116,7 @@ const ProductVariants = ({
 				</>
 			)}
 			<ToggleGroup
-				className="grid grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 "
+				className="grid grid-cols-3 lg:grid-cols-3 gap-2 "
 				type="single"
 				value={selectedVariantIDOrHandle ?? ""}
 				variant="outline"

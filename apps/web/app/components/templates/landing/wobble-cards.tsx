@@ -2,8 +2,8 @@ import { WobbleCard } from "../../wobble-card";
 
 export function ProductTypeCards() {
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full">
-			<WobbleCard containerClassName="col-span-1 lg:col-span-3 bg-blue-900 min-h-[500px] lg:min-h-[600px] xl:min-h-[300px]">
+		<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full animate-slidein">
+			<WobbleCard containerClassName="col-span-1 bg-ruby-9 dark:bg-crimson-8 lg:col-span-3 min-h-[500px] lg:min-h-[600px] xl:min-h-[300px]">
 				<div className="max-w-sm">
 					<h2 className="max-w-sm md:max-w-lg  text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] text-white">
 						Physical products
@@ -14,7 +14,7 @@ export function ProductTypeCards() {
 				</div>
 			</WobbleCard>
 			<WobbleCard
-				containerClassName="col-span-1 lg:col-span-2 h-full bg-pink-800 min-h-[500px] lg:min-h-[300px]"
+				containerClassName="col-span-1 lg:col-span-2 h-full bg-iris-9 dark:bg-iris-7 min-h-[500px] lg:min-h-[300px]"
 				className=""
 			>
 				<div className="max-w-xs">
@@ -26,7 +26,7 @@ export function ProductTypeCards() {
 					</p>
 				</div>
 			</WobbleCard>
-			<WobbleCard containerClassName="col-span-1 min-h-[300px]">
+			<WobbleCard containerClassName="col-span-1 min-h-[300px] bg-jade-10 dark:bg-jade-7">
 				<h2 className="max-w-80  text-left text-balance text-base md:text-xl lg:text-3xl font-semibold tracking-[-0.015em] text-white">
 					Digital giftcards.
 				</h2>

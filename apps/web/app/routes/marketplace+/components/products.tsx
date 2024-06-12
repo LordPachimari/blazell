@@ -1,13 +1,10 @@
 import { cn } from "@blazell/ui";
-import { LoadingSpinner } from "@blazell/ui/loading";
+import { Skeleton } from "@blazell/ui/skeleton";
 import type { PublishedProduct } from "@blazell/validators/client";
 import { Link } from "@remix-run/react";
-import { useEffect, useMemo, useState } from "react";
 import type { Replicache } from "replicache";
 import Image from "~/components/molecules/image";
 import Price from "~/components/molecules/price";
-import { useWindowSize } from "~/hooks/use-window-size";
-import { generateGrid, type SquareCounts } from "~/utils/grid-generator";
 import { useMarketplaceStore } from "~/zustand/store";
 
 interface ProductsProps {
@@ -15,104 +12,39 @@ interface ProductsProps {
 	category: string;
 }
 
-function useResponsiveGrid() {
-	const size = useWindowSize(50);
-	const [gridState, setGridState] = useState({ cols: 8, rows: 12 });
-
-	useEffect(() => {
-		if (size.width && size.width < 640) {
-			setGridState({ cols: 3, rows: 12 });
-		} else if (size.width && size.width < 768) {
-			setGridState({ cols: 4, rows: 12 });
-		} else if (size.width && size.width < 1024) {
-			setGridState({ cols: 5, rows: 12 });
-		} else if (size.width && size.width < 1280) {
-			setGridState({ cols: 6, rows: 12 });
-		} else if (size.width && size.width < 1536) {
-			setGridState({ cols: 8, rows: 12 });
-		} else {
-			setGridState({ cols: 10, rows: 12 });
-		}
-	}, [size.width]);
-
-	return gridState;
-}
-
 const Products = ({ marketplaceRep }: ProductsProps) => {
-	const gridState = useResponsiveGrid();
-	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 	const products = useMarketplaceStore((state) => state.products);
-	const productMap = useMarketplaceStore((state) => state.productMap);
-	const highScoreEntities: { id: string }[] = [];
-	const lowScoreEntities: { id: string }[] = [];
+	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 
-	for (const entry of products) {
-		if ((entry.score ?? 0) <= 1) {
-			lowScoreEntities.push(entry);
-		} else {
-			highScoreEntities.push(entry);
-		}
-	}
-	const squareSizes: SquareCounts = useMemo(
-		() => ({
-			2: 6,
-			1: Number.POSITIVE_INFINITY,
-		}),
-		[],
-	);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const generatedGrid = useMemo(
-		() =>
-			generateGrid(
-				gridState.rows,
-				gridState.cols,
-				squareSizes,
-				highScoreEntities,
-				lowScoreEntities,
-			),
-		[highScoreEntities, lowScoreEntities, gridState, squareSizes],
-	);
 	if (!isInitialized)
 		return (
-			<section className="flex w-screen h-screen justify-center mt-72">
-				<LoadingSpinner className="w-12 h-12 mr-14" />
+			<section className="flex flex-col w-full gap-2">
+				<div className="w-full h-screen grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
+					{Array.from({ length: 24 }).map((_, i) => (
+						<Skeleton
+							key={i}
+							className={cn(
+								"border border-mauve-7 row-span-1 h-auto col-span-1",
+								{
+									"row-span-2 col-span-2": i === 3 || i === 10,
+								},
+							)}
+						/>
+					))}
+				</div>
 			</section>
 		);
 	return (
 		<section className="flex flex-col gap-2">
-			{generatedGrid.map((grid, index) => {
-				const idSet = new Set<string>();
-				const flattedGrid: { id: string; size: number }[] = [];
-
-				for (let i = 0; i < grid.length; i++) {
-					for (let j = 0; j < grid[0]!.length; j++) {
-						const value = grid[i]?.[j];
-						if (value && !idSet.has(value.id)) {
-							flattedGrid.push(value);
-							idSet.add(value.id);
-						}
-					}
-				}
-
-				return (
-					<div
-						key={index}
-						className="grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12"
-					>
-						{flattedGrid.map((gridValue) => {
-							const entity = productMap.get(gridValue.id)!;
-							return (
-								<ProductCard
-									key={entity.id}
-									product={entity}
-									rep={marketplaceRep}
-								/>
-							);
-						})}
-					</div>
-				);
-			})}
+			<div className="grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
+				{products.map((product) => (
+					<ProductCard
+						key={product.id}
+						product={product}
+						rep={marketplaceRep}
+					/>
+				))}
+			</div>
 		</section>
 	);
 };
@@ -152,9 +84,11 @@ const ProductCard = ({
 					<h1 className="font-freeman line-clamp-1 group-hover:blur-1px text-white dark:text-black text-ellipsis overflow-hidden">
 						{product.defaultVariant.title}
 					</h1>
-					<p className="hidden line-clamp-2 text-xs md:flex text-mauve-2 group-hover:blur-1px font-semibold text-ellipsis overflow-hidden">
-						{product.description ?? ""}
-					</p>
+					<div className="hidden lg:block ">
+						<p className="overflow-hidden line-clamp-2 text-xs text-mauve-2 group-hover:blur-1px font-semibold">
+							{product.description ?? ""}
+						</p>
+					</div>
 				</div>
 			</div>
 

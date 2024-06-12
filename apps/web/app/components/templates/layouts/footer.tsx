@@ -14,7 +14,7 @@ export default function Footer() {
 					<p className="md:ml-auto">
 						Crafted by{" "}
 						<a
-							href="https://vercel.com"
+							href="https://github.com/LordPachimari"
 							className="text-black font-semibold dark:text-white"
 						>
 							LordPachi
