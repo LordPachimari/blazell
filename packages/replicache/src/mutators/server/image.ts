@@ -7,12 +7,14 @@ import {
 	NotFound,
 	UpdateImagesOrderSchema,
 	UploadImagesSchema,
+	UploadResponseSchema,
 } from "@blazell/validators";
 import type { Variant } from "@blazell/validators/server";
 import * as base64 from "base64-arraybuffer";
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 import { TableMutator } from "../../context/table-mutator";
 import { zod } from "../../util/zod";
+import * as Http from "@effect/platform/HttpClient";
 
 const uploadImages = zod(UploadImagesSchema, (input) =>
 	Effect.gen(function* () {
@@ -61,34 +63,51 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 					const file = new File([bytes], "store image", {
 						type: image.fileType,
 					});
-					return file;
+					const formData = new FormData();
+					formData.append("file", file);
+					return formData;
 				}),
-				Effect.flatMap((file) =>
-					Effect.tryPromise(() =>
-						env.R2.put(`images/${image.id}`, file, {
-							httpMetadata: {
-								contentType: image.fileType,
-							},
-						}),
-					).pipe(
-						Effect.retry({ times: 3 }),
-						Effect.catchTags({
-							UnknownException: (error) =>
-								new ImageUploadError({ message: error.message }),
-						}),
-					),
+				Effect.flatMap((formData) =>
+					Http.request
+						.post(
+							`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1`,
+						)
+						.pipe(
+							Http.request.setHeaders({
+								Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+							}),
+							Http.request.formDataBody(formData),
+							Http.client.fetch,
+							Effect.flatMap(
+								Http.response.schemaBodyJson(UploadResponseSchema),
+							),
+							Effect.scoped,
+							Effect.orDie,
+						),
 				),
-				Effect.flatMap(() =>
+				Effect.flatMap((response) =>
 					Effect.gen(function* () {
-						return yield* Effect.succeed({
+						if (response.errors.length > 0) {
+							yield* Console.log("Error uploading image", response.errors);
+							yield* new ImageUploadError({
+								message: "Error uploading image",
+							});
+						}
+						return response;
+					}),
+				),
+
+				Effect.retry({ times: 3 }),
+				Effect.map(
+					(response) =>
+						({
 							id: image.id,
-							url: image.url,
+							url: response.result?.variants[0]!,
 							order: image.order,
 							name: image.name,
 							uploaded: true,
 							fileType: image.fileType,
-						} satisfies Image);
-					}),
+						}) satisfies Image,
 				),
 			);
 		});
@@ -110,11 +129,13 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 
 const deleteImage = zod(DeleteImageSchema, (input) => {
 	return Effect.gen(function* () {
-		const { imageID, entityID } = input;
+		const { imageID, entityID, url } = input;
 
 		const tableMutator = yield* TableMutator;
 		const { manager } = yield* Database;
 		const { env } = yield* Cloudflare;
+		const splitted = url.split("/");
+		const cloudflareID = splitted[splitted.length - 2];
 
 		let entity: Variant | undefined = undefined;
 		const isVariant = entityID.startsWith("variant");
@@ -137,22 +158,41 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 			);
 		}
 
-		yield* pipe(
-			Effect.tryPromise(() => env.R2.delete(`images/${imageID}`)),
-			Effect.retry({ times: 3 }),
-			Effect.orDie,
-
-			Effect.zipLeft(
-				tableMutator.update(
-					entityID,
-					{
-						images:
-							entity.images?.filter((image) => image.id !== imageID) ?? [],
-					},
-					"variants",
-				),
-			),
+		yield* tableMutator.update(
+			entityID,
+			{
+				images: entity.images?.filter((image) => image.id !== imageID) ?? [],
+			},
+			"variants",
 		);
+
+		if (cloudflareID)
+			yield* Http.request
+				.del(
+					`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${imageID}`,
+				)
+				.pipe(
+					Http.request.setHeaders({
+						Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+					}),
+					Http.client.fetch,
+					Effect.retry({ times: 3 }),
+					Effect.scoped,
+					Effect.catchTags({
+						RequestError: (e) =>
+							Effect.gen(function* () {
+								yield* Console.error("Error deleting image", e.message);
+
+								return yield* Effect.succeed({});
+							}),
+						ResponseError: (e) =>
+							Effect.gen(function* () {
+								yield* Console.error("Error deleting image", e.message);
+
+								return yield* Effect.succeed({});
+							}),
+					}),
+				);
 	});
 });
 

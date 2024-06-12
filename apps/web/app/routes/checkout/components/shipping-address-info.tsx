@@ -10,12 +10,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@blazell/ui/select";
+import { FieldErrorMessage } from "~/components/field-error";
 
-export const ShippingAddressInfo = ({
-	addressID,
-}: {
-	addressID: string | undefined | null;
-}) => {
+export const ShippingAddressInfo = () => {
 	const [parent] = useAutoAnimate({ duration: 100 });
 
 	const { register, formState, control, clearErrors } =
@@ -30,15 +27,14 @@ export const ShippingAddressInfo = ({
 					id="address"
 					autoCapitalize="none"
 					placeholder="Address"
-					state={
-						formState.errors.shippingAddress?.address ? "error" : "neutral"
-					}
-					stateText={formState.errors.shippingAddress?.address?.message}
 					{...register("shippingAddress.address")}
 					onChange={(e) => {
 						register("shippingAddress.address").onChange(e);
 						clearErrors();
 					}}
+				/>
+				<FieldErrorMessage
+					message={formState.errors.shippingAddress?.address?.message}
 				/>
 
 				<Controller
@@ -66,9 +62,10 @@ export const ShippingAddressInfo = ({
 									</ScrollArea>
 								</SelectContent>
 							</Select>
-							{formState.errors.shippingAddress?.countryCode?.message && (
-								<p className="text-xs text-rose-500">Pick country</p>
-							)}
+
+							<FieldErrorMessage
+								message={formState.errors.shippingAddress?.countryCode?.message}
+							/>
 						</div>
 					)}
 				/>
@@ -76,8 +73,6 @@ export const ShippingAddressInfo = ({
 					id="city"
 					autoCapitalize="none"
 					autoCorrect="off"
-					state={formState.errors.shippingAddress?.city ? "error" : "neutral"}
-					stateText={formState.errors.shippingAddress?.city?.message}
 					placeholder="City"
 					{...register("shippingAddress.city")}
 					onChange={(e) => {
@@ -85,35 +80,36 @@ export const ShippingAddressInfo = ({
 						clearErrors();
 					}}
 				/>
+				<FieldErrorMessage
+					message={formState.errors.shippingAddress?.city?.message}
+				/>
 				<Input
 					id="postalCode"
 					autoCapitalize="none"
 					autoCorrect="off"
 					placeholder="Postal code"
-					state={
-						formState.errors.shippingAddress?.postalCode ? "error" : "neutral"
-					}
-					stateText={formState.errors.shippingAddress?.postalCode?.message}
 					{...register("shippingAddress.postalCode")}
 					onChange={(e) => {
 						register("shippingAddress.postalCode").onChange(e);
 						clearErrors();
 					}}
 				/>
+				<FieldErrorMessage
+					message={formState.errors.shippingAddress?.postalCode?.message}
+				/>
 				<Input
 					id="State/province"
 					autoCapitalize="none"
 					autoCorrect="off"
 					placeholder="State/province"
-					state={
-						formState.errors.shippingAddress?.province ? "error" : "neutral"
-					}
-					stateText={formState.errors.shippingAddress?.province?.message}
 					{...register("shippingAddress.province")}
 					onChange={(e) => {
 						register("shippingAddress.province").onChange(e);
 						clearErrors();
 					}}
+				/>
+				<FieldErrorMessage
+					message={formState.errors.shippingAddress?.province?.message}
 				/>
 			</div>
 		</section>

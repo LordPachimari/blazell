@@ -83,7 +83,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				type="button"
 				onClick={createOption}
 			>
-				<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
+				<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
 				Add option
 			</Button>
 			{options && options.length > 0 && (
@@ -112,7 +112,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 								})
 							}
 						>
-							<Icons.close className="text-ruby-9" size={20} />
+							<Icons.Close className="text-ruby-9" size={20} />
 						</button>
 					</li>
 				))}

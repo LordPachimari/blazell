@@ -3,7 +3,7 @@ import type { Db } from "@blazell/db";
 import { Database } from "@blazell/shared";
 import { CreateUserSchema, type Bindings } from "@blazell/validators";
 import * as Http from "@effect/platform/HttpClient";
-import { getAuth } from "@hono/clerk-auth";
+import type { getAuth } from "@hono/clerk-auth";
 import { Effect } from "effect";
 import { Hono } from "hono";
 
@@ -27,6 +27,7 @@ app.post("/create-user", async (c) => {
 				),
 			).pipe(
 				Effect.flatMap((_) => _),
+				Effect.retry({ times: 3 }),
 				Effect.catchAll((e) =>
 					Effect.succeed({
 						type: "ERROR",
@@ -68,7 +69,7 @@ app.post("/create-user", async (c) => {
 
 app.get("/", async (c) => {
 	const db = c.get("db" as never) as Db;
-	const auth = getAuth(c);
+	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
 	if (!auth?.userId) return c.json(null, 200);
 	const cachedUser = await c.env.KV.get(auth.userId);
 	if (cachedUser) return c.json(JSON.parse(cachedUser), 200);
@@ -92,16 +93,13 @@ app.get(
 	// }),
 	async (c) => {
 		const db = c.get("db" as never) as Db;
-		const auth = getAuth(c);
 		const username = c.req.param("username");
-		if (!auth?.userId) return c.json(null, 200);
 		const result = await db.query.users.findFirst({
 			where: (users, { eq }) => eq(users.username, username),
 			columns: {
 				id: true,
 			},
 		});
-
 		if (!result) return c.json(null, 200);
 
 		return c.json(result, 200);

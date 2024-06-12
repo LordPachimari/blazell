@@ -31,8 +31,7 @@ export function StoreInfo({
 						{store?.storeImage ? (
 							store?.storeImage?.croppedImage?.uploaded ? (
 								<Image
-									fit="contain"
-									quality={100}
+									fit="cover"
 									src={store?.storeImage.croppedImage?.url}
 									alt="header"
 									className="rounded-2xl"
@@ -45,7 +44,7 @@ export function StoreInfo({
 										store?.storeImage?.croppedImage?.fileType,
 									)}
 									alt="header"
-									className="rounded-2xl object-contain"
+									className="rounded-2xl object-cover"
 								/>
 							)
 						) : (
@@ -139,7 +138,7 @@ const AboutStore = ({
 						</p>
 					)}
 
-					<Icons.right size={17} strokeWidth={strokeWidth} />
+					<Icons.Right size={17} strokeWidth={strokeWidth} />
 				</span>
 			</DialogTrigger>
 			<DialogContent className="md:w-[600px] bg-mauve-2">
@@ -150,7 +149,7 @@ const AboutStore = ({
 					className="text-mauve-11 absolute rounded-full top-3 right-3"
 					onClick={() => setIsOpen(false)}
 				>
-					<Icons.close />
+					<Icons.Close />
 				</Button>
 				<DialogTitle>About</DialogTitle>
 				<p className="text-mauve-11">{store?.description}</p>

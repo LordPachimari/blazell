@@ -14,11 +14,12 @@ import type { Product, Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import debounce from "lodash.debounce";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
 import { useReplicache } from "~/zustand/replicache";
+import { useDashboardStore } from "~/zustand/store";
 import { ProductCategory } from "./input/product-category";
 import { ProductInfo } from "./input/product-info";
 import { Media } from "./input/product-media";
@@ -26,7 +27,6 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
-import { useDashboardStore } from "~/zustand/store";
 export interface ProductInputProps {
 	product: Product | undefined;
 	productID: string;
@@ -55,9 +55,6 @@ export function ProductInput({
 	});
 	console.log("errors", methods.formState.errors);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-
-	console.log("variants", variants);
-	const publishButtonRef = useRef<HTMLButtonElement>(null);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onPublish = useCallback(() => {
@@ -134,9 +131,12 @@ export function ProductInput({
 
 	const deleteProduct = useCallback(async () => {
 		await dashboardRep?.mutate.deleteProduct({ keys: [productID] });
-	}, [dashboardRep, productID]);
+		toast.success("Product deleted!");
+		navigate("/dashboard/products");
+	}, [dashboardRep, productID, navigate]);
 	const publishProduct = useCallback(async () => {
 		await dashboardRep?.mutate.publishProduct({ id: productID });
+		toast.success("Product published!");
 	}, [dashboardRep, productID]);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onProductInputChange = useCallback(
@@ -174,7 +174,7 @@ export function ProductInput({
 						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/products")}
 					>
-						<Icons.left size={20} className="text-black dark:text-white" />
+						<Icons.Left size={20} className="text-black dark:text-white" />
 						Back to products
 					</Button>
 					<AlertDialogComponent
@@ -184,8 +184,6 @@ export function ProductInput({
 						description="All your followers will be notified."
 						onContinue={async () => {
 							await publishProduct();
-							toast.success("Product published!");
-							navigate("/dashboard/products");
 						}}
 					/>
 					<AlertDialogComponent
@@ -194,9 +192,6 @@ export function ProductInput({
 						title="Are you sure you want to delete? "
 						onContinue={async () => {
 							await deleteProduct();
-							toast.success("Product deleted!");
-							navigate("/dashboard/products");
-							navigate("/dashboard/products");
 						}}
 					/>
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">
@@ -210,10 +205,7 @@ export function ProductInput({
 									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
-								<DeleteOrPublish
-									setIsOpen1={setIsOpen1}
-									ref={publishButtonRef}
-								/>
+								<DeleteOrPublish setIsOpen1={setIsOpen1} />
 							</div>
 						</section>
 						<section className="w-full table gap-0">
@@ -236,7 +228,6 @@ export function ProductInput({
 							<Variants
 								options={product?.options}
 								productID={productID}
-								updateVariant={updateVariant}
 								variants={variants}
 								defaultVariant={defaultVariant}
 								isPublished={product?.status === "published"}
@@ -251,14 +242,12 @@ export function ProductInput({
 
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} ref={publishButtonRef} />
+							<DeleteOrPublish setIsOpen1={setIsOpen1} />
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
 								status={product?.status}
 								updateProduct={updateProduct}
-								publishProduct={publishProduct}
-								publishButtonRef={publishButtonRef}
 								onPublish={onPublish}
 							/>
 							<ProductCategory />
@@ -272,10 +261,8 @@ export function ProductInput({
 
 function DeleteOrPublish({
 	setIsOpen1,
-	ref,
 }: {
 	setIsOpen1: (value: boolean) => void;
-	ref: React.RefObject<HTMLButtonElement>;
 }) {
 	return (
 		<>
@@ -290,7 +277,7 @@ function DeleteOrPublish({
 				Delete
 			</Button>
 
-			<Button size="md" type="submit" ref={ref}>
+			<Button size="md" type="submit">
 				Publish
 			</Button>
 		</>

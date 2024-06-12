@@ -3,16 +3,17 @@ import { Replicache } from "replicache";
 import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { GlobalMutators } from "@blazell/replicache";
+import { useRequestInfo } from "~/hooks/use-request-info";
 
-export default function GlobalReplicacheProvider({
+export function GlobalReplicacheProvider({
 	children,
-	cartID,
 }: Readonly<{
 	children: React.ReactNode;
-	cartID: string | undefined;
 }>) {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
+	const { userContext } = useRequestInfo();
+	const { cartID, fakeAuthID } = userContext;
 
 	const { getToken } = useAuth();
 
@@ -26,15 +27,8 @@ export default function GlobalReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: GlobalMutators,
 			pullInterval: null,
-			indexes: {
-				id: {
-					jsonPointer: "/id",
-					allowEmpty: true,
-				},
-			},
 			//@ts-ignore
 			puller: async (req) => {
-				const now = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/global`, {
 					method: "POST",
@@ -42,12 +36,11 @@ export default function GlobalReplicacheProvider({
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
 						...(cartID && { "x-cart-id": cartID }),
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
 				});
-				const end = performance.now();
-				console.log("pull time", end - now);
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -58,19 +51,17 @@ export default function GlobalReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const now = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/global`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 				});
 
-				const end = performance.now();
-				console.log("push time", end - now);
 				return {
 					httpRequestInfo: {
 						httpStatusCode: result.status,
@@ -80,7 +71,7 @@ export default function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, getToken, cartID]);
+	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID]);
 
 	return <>{children}</>;
 }

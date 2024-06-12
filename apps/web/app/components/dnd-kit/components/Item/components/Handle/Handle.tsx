@@ -1,5 +1,5 @@
-import React, { forwardRef } from "react";
 import { GripVerticalIcon } from "lucide-react";
+import { forwardRef } from "react";
 
 import { Action, type ActionProps } from "../Action";
 

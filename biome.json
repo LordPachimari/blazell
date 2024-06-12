@@ -9,12 +9,13 @@
 			"recommended": true,
 			"style": {
 				"noNonNullAssertion": "warn",
-				"useSingleVarDeclarator":"off"
+				"useSingleVarDeclarator": "off",
+				"noParameterAssign": "warn"
 			},
 			"suspicious": {
 				"noExplicitAny": "warn",
-				"noArrayIndexKey":"warn",
-				"noAssignInExpressions":"warn"
+				"noArrayIndexKey": "warn",
+				"noAssignInExpressions": "warn"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"
@@ -22,7 +23,6 @@
 			"complexity": {
 				"noStaticOnlyClass": "off"
 			}
-			
 		}
 	},
 	"formatter": {

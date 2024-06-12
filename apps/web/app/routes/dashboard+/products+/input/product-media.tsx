@@ -25,11 +25,12 @@ export function Media({
 		[dashboardRep, variantID],
 	);
 	const deleteImage = useCallback(
-		async (imageID: string) => {
+		async (imageID: string, url: string) => {
 			variantID &&
 				(await dashboardRep?.mutate.deleteImage({
 					imageID,
 					entityID: variantID,
+					url,
 				}));
 		},
 		[variantID, dashboardRep],
@@ -49,7 +50,6 @@ export function Media({
 		},
 		[dashboardRep, variantID],
 	);
-	console.log("images", images);
 	return (
 		<Card className="overflow-hidden my-4">
 			<CardHeader className="pb-4">

@@ -25,7 +25,7 @@ export default function CustomerRoute() {
 						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/customers")}
 					>
-						<Icons.left size={20} className="text-black dark:text-white" />
+						<Icons.Left size={20} className="text-black dark:text-white" />
 						Back to customers
 					</Button>
 					<h1 className="font-freeman text-lg">

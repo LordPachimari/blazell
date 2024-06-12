@@ -1,11 +1,11 @@
-import { Clock, Console, Effect, Layer } from "effect";
+import { Clock, Effect, Layer } from "effect";
 
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
-import { type Cloudflare, Database } from "@blazell/shared";
+import { Database, type Cloudflare } from "@blazell/shared";
 import {
-	type InvalidValue,
 	MutatorNotFoundError,
 	NeonDatabaseError,
+	type InvalidValue,
 	type Mutation,
 	type NotFound,
 	type PushRequest,
@@ -32,7 +32,6 @@ import {
 	type UserMutatorsMapType,
 } from "./mutators/server";
 import { createClientError } from "./mutators/server/client-error";
-import type { satisfies } from "effect/Function";
 
 const publicMutators = new Set(Object.keys(UserMutators));
 
@@ -46,7 +45,7 @@ export const push = ({
 	partyKitOrigin: string;
 }): Effect.Effect<
 	void,
-	| ZodError<any>
+	| ZodError
 	| TableNotFound
 	| NeonDatabaseError
 	| NotFound

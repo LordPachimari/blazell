@@ -158,7 +158,7 @@ export const Item = React.memo(
 										<Image
 											src={item.url}
 											alt={item.name ?? "Uploaded image"}
-											fit="fill"
+											fit="cover"
 											width={228}
 											height={228}
 											className="border border-mauve-7 rounded-md"
@@ -167,7 +167,7 @@ export const Item = React.memo(
 										<img
 											src={toImageURL(item.base64, item.fileType)}
 											alt={item.name ?? "Uploaded image"}
-											className="border w-[228px] h-[228px] border-mauve-7 rounded-md"
+											className="border w-[228px] h-[228px] object-cover border-mauve-7 rounded-md"
 										/>
 									)}
 								</div>

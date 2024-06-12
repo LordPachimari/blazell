@@ -12,33 +12,31 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	type ShouldRevalidateFunction,
 } from "@remix-run/react";
 //@ts-ignore
-import stylesheet from "./tailwind.css?url";
-import { ClientOnly } from "remix-utils/client-only";
+import type { Theme } from "@blazell/validators";
+import type { User } from "@blazell/validators/client";
 import { ClerkApp } from "@clerk/remix";
 import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
-import type { User } from "@blazell/validators/client";
+import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
-import Sidebar from "./components/templates/layouts/sidebar";
+import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
-import { useUser } from "./hooks/use-user";
+import { GlobalReplicacheProvider } from "./providers/replicache/global";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
-import UserReplicacheProvider from "./providers/replicache/global";
 import { prefs, userContext } from "./sessions.server";
+import stylesheet from "./tailwind.css?url";
 import { getDomainUrl } from "./utils/helpers";
-import type { Theme } from "@blazell/validators";
 //@ts-ignore
 import sonnerStyles from "./sonner.css?url";
 //@ts-ignore
-import vaulStyles from "./vaul.css?url";
-import type { Env } from "load-context";
+import { AppEnvSchema, type AppEnv } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
+import vaulStyles from "./vaul.css?url";
 import { GlobalStoreProvider } from "./zustand/store";
 import { GlobalStoreMutator } from "./zustand/store-mutator";
 export const links: LinksFunction = () => {
@@ -46,17 +44,13 @@ export const links: LinksFunction = () => {
 		// Preload svg sprite as a resource to avoid render blocking
 		//TODO: ADD ICON
 		{ rel: "stylesheet", href: stylesheet },
-		...(process.env.NODE_ENV === "development"
-			? [
-					{ rel: "stylesheet", href: sonnerStyles },
-					{ rel: "stylesheet", href: vaulStyles },
-				]
-			: []),
+		{ rel: "stylesheet", href: sonnerStyles },
+		{ rel: "stylesheet", href: vaulStyles },
 	].filter(Boolean);
 };
 export type RootLoaderData = {
 	ENV: Omit<
-		Env,
+		AppEnv,
 		"CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY" | "SESSION_SECRET"
 	>;
 	requestInfo: {
@@ -67,47 +61,58 @@ export type RootLoaderData = {
 			theme?: Theme;
 			sidebarState?: string;
 		};
+		userContext: {
+			user?: User;
+			authID: string | null;
+			cartID?: string;
+			fakeAuthID?: string;
+		};
 	};
-	user?: User;
-	authID: string | null;
-	cartID?: string;
 };
 
 export const loader: LoaderFunction = (args) => {
 	return rootAuthLoader(
 		args,
 		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
+			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
+				context.cloudflare.env,
+			);
 			const cookieHeader = request.headers.get("Cookie");
 			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
 			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
 			const { getToken, userId } = await getAuth(args);
 			const token = await getToken();
-			const user = await fetch(`${context.env.WORKER_URL}/users`, {
+			const user = await fetch(`${WORKER_URL}/users`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
 			}).then((res) => res.json() as Promise<User | undefined>);
-			return json({
-				ENV: {
-					REPLICACHE_KEY: context.env.REPLICACHE_KEY,
-					WORKER_URL: context.env.WORKER_URL,
-					PARTYKIT_HOST: context.env.PARTYKIT_HOST,
-					TRANSFORMER_URL: context.env.TRANSFORMER_URL,
-				},
-				requestInfo: {
-					hints: getHints(request),
-					origin: getDomainUrl(request),
-					path: new URL(request.url).pathname,
-					userPrefs: {
-						theme: prefsCookie.theme,
-						sidebarState: prefsCookie.sidebarState,
+			return json(
+				{
+					ENV: {
+						REPLICACHE_KEY,
+						WORKER_URL,
+						PARTYKIT_HOST,
+					},
+					requestInfo: {
+						hints: getHints(request),
+						origin: getDomainUrl(request),
+						path: new URL(request.url).pathname,
+						userPrefs: {
+							theme: prefsCookie.theme,
+							sidebarState: prefsCookie.sidebarState,
+						},
+						userContext: {
+							...(user && { user }),
+							authID: userId,
+							cartID: userContextCookie.cartID,
+							fakeAuthID: userContextCookie.fakeAuthID,
+						},
 					},
 				},
-				...(user && { user }),
-				authID: userId,
-				cartID: userContextCookie.cartID,
-			});
+				// { headers: { "Cache-Control": "private, max-age=1800" } },
+			);
 		},
 	);
 };
@@ -115,30 +120,25 @@ export const loader: LoaderFunction = (args) => {
 function App() {
 	const data = useLoaderData<RootLoaderData>();
 	const nonce = useNonce();
-	const user = useUser();
 	const theme = useTheme();
+
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>
 			<MarketplaceReplicacheProvider>
-				<UserReplicacheProvider cartID={data.cartID}>
+				<GlobalReplicacheProvider>
 					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
 							<GlobalStoreMutator>
 								<Sidebar />
-								<Header
-									cartID={data.cartID ?? null}
-									authID={data.authID}
-									user={user}
-								/>
+								<MobileSidebar />
+								<Header />
 								<Outlet />
 								<Toaster />
 							</GlobalStoreMutator>
 						</GlobalStoreProvider>
-						<ClientOnly>
-							{() => <PartykitProvider cartID={data.cartID} />}
-						</ClientOnly>
+						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>
 					</DashboardReplicacheProvider>
-				</UserReplicacheProvider>
+				</GlobalReplicacheProvider>
 			</MarketplaceReplicacheProvider>
 		</Document>
 	);

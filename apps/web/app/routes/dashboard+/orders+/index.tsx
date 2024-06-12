@@ -9,7 +9,7 @@ import {
 import { Progress } from "@blazell/ui/progress";
 import { useCallback, useState } from "react";
 import { PageHeader } from "~/components/page-header";
-import { OrderPreview } from "./order-preview";
+import { OrderPreview, OrderPreviewMobile } from "./order-preview";
 import { OrdersTable } from "./orders-table/table";
 import { useDashboardStore } from "~/zustand/store";
 
@@ -19,7 +19,13 @@ export default function Orders() {
 		// await dashboardRep?.mutate.createOrder({
 		// });
 	}, []);
-	const [orderID, setOrderID] = useState<string | undefined>(undefined);
+	const [orderID, _setOrderID] = useState<string | undefined>(undefined);
+	const [opened, setOpened] = useState(false);
+	const setOrderID = (id: string | undefined) => {
+		_setOrderID(id);
+		if (id) return setOpened(true);
+		setOpened(false);
+	};
 	return (
 		<main className="w-full p-4 lg:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full xl:w-8/12">
@@ -40,7 +46,14 @@ export default function Orders() {
 			</section>
 			<section className="w-full lg:w-4/12 relative lg:flex flex-col items-start hidden">
 				{orderID ? (
-					<OrderPreview orderID={orderID} />
+					<>
+						<OrderPreview orderID={orderID} />
+						<OrderPreviewMobile
+							orderID={orderID}
+							opened={opened}
+							setOpened={setOpened}
+						/>
+					</>
 				) : (
 					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-3 hover:bg-mauve-a-3 border-mauve-7 rounded-2xl">
 						<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>

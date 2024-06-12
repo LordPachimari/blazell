@@ -14,17 +14,12 @@ import { useEffect, useState } from "react";
 export function ProductStatus({
 	status,
 	updateProduct,
-	publishProduct,
-	publishButtonRef,
 	onPublish,
 }: {
 	status: Product["status"] | undefined;
 	updateProduct: (updates: UpdateProduct["updates"]) => Promise<void>;
-	publishProduct: () => Promise<void>;
-	publishButtonRef: React.RefObject<HTMLButtonElement>;
 	onPublish: () => void;
 }) {
-	const [open, setIsOpen] = useState(false);
 	const [statusState, setStatusState] = useState<Product["status"]>(
 		status ?? "draft",
 	);

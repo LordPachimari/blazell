@@ -1,9 +1,8 @@
 import { DashboardMutators } from "@blazell/replicache";
 import { useAuth } from "@clerk/remix";
-import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-import type { RootLoaderData } from "~/root";
+import { useRequestInfo } from "~/hooks/use-request-info";
 import { useReplicache } from "~/zustand/replicache";
 
 function DashboardReplicacheProvider({
@@ -14,6 +13,8 @@ function DashboardReplicacheProvider({
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const setDashboardRep = useReplicache((state) => state.setDashboardRep);
 	const { getToken } = useAuth();
+	const { userContext } = useRequestInfo();
+	const { fakeAuthID } = userContext;
 
 	useEffect(() => {
 		if (dashboardRep) {
@@ -25,28 +26,20 @@ function DashboardReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
-			indexes: {
-				id: {
-					jsonPointer: "/id",
-					allowEmpty: true,
-				},
-			},
 
 			//@ts-ignore
 			puller: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/dashboard`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
 				});
-				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -57,19 +50,16 @@ function DashboardReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/dashboard`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,
+						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 				});
-
-				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					httpRequestInfo: {
@@ -80,7 +70,7 @@ function DashboardReplicacheProvider({
 			},
 		});
 		setDashboardRep(r);
-	}, [dashboardRep, setDashboardRep, getToken]);
+	}, [dashboardRep, setDashboardRep, getToken, fakeAuthID]);
 	return <>{children}</>;
 }
 

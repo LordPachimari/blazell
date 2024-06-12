@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { UpdateVariant } from "@blazell/validators";
-
 import type { Product, Variant } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
@@ -12,12 +10,10 @@ import { RowActions } from "./row-actions";
 
 export function getVariantColumns({
 	setVariantID,
-	updateVariant,
 	deleteVariant,
 	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
-	updateVariant: (props: UpdateVariant) => Promise<void>;
 	deleteVariant: (id: string) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
@@ -35,9 +31,8 @@ export function getVariantColumns({
 						<Image
 							src={row.original.images[0]?.url}
 							alt={row.original.images[0]?.name || "Uploaded image"}
-							className="rounded-md h-full w-full object-fill "
-							fit="fill"
-							quality={90}
+							className="rounded-md h-full w-full object-cover "
+							fit="cover"
 						/>
 					) : (
 						<img
@@ -46,7 +41,7 @@ export function getVariantColumns({
 								row.original.images[0]?.fileType,
 							)}
 							alt={row.original.images[0]?.name || "Uploaded image"}
-							className="rounded-md h-full w-full object-fill "
+							className="rounded-md h-full w-full object-cover "
 						/>
 					)}
 				</div>

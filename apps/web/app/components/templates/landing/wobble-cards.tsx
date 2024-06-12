@@ -1,4 +1,3 @@
-import React from "react";
 import { WobbleCard } from "../../wobble-card";
 
 export function ProductTypeCards() {

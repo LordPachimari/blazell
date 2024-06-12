@@ -1,13 +1,7 @@
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
-import {
-	ShoppingBag,
-	Truck,
-	BadgeDollarSign,
-	BarChartBig,
-	Settings,
-} from "lucide-react";
-import { ProductTypeCards } from "./wobble-cards";
 import type { Theme } from "@blazell/validators";
+import { BadgeDollarSign, BarChartBig, Settings, Truck } from "lucide-react";
+import { ProductTypeCards } from "./wobble-cards";
 type Feature = {
 	title: string;
 	description: string;
@@ -16,7 +10,7 @@ type Feature = {
 function Features({ theme }: { theme: Theme }) {
 	const features = [
 		{
-			title: "Real-time",
+			title: "Organize",
 			description:
 				"Organize auctions, schedule merch drops, and see your income grow in real-time.",
 			component: (
@@ -77,7 +71,7 @@ function Features({ theme }: { theme: Theme }) {
 	] satisfies Feature[];
 
 	return (
-		<div className="flex flex-col items-center sm:px-4">
+		<div className="flex flex-col items-center pt-10 px-4">
 			<section className="w-full flex flex-col items-center">
 				<h2 className="text-center text-4xl font-bold lg:text-5xl lg:tracking-tight">
 					Everything you need to start selling
@@ -87,7 +81,7 @@ function Features({ theme }: { theme: Theme }) {
 					selling
 				</p>
 				<ul className="mt-8 grid w-full gap-4  sm:grid-cols-2 md:w-10/12 xl:grid-cols-3">
-					{features.map((item, i) => (
+					{features.map((item) => (
 						<Card
 							key={item.title}
 							className="aspect-square h-fit relative cursor-pointer hover:scale-105 transition-all duration-100 ease-out gap-4 rounded-xl shadow-sm hover:shadow-md border p-4"

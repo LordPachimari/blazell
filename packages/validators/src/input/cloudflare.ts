@@ -1,7 +1,7 @@
 export type Bindings = {
 	ORIGIN_URL: string;
 	DATABASE_URL: string;
-	ENVIRONMENT: "prod" | "test" | "staging" | "dev";
+	ENVIRONMENT: "production" | "test" | "staging" | "development" | "local";
 	R2: R2Bucket;
 	CLERK_SERCRET_KEY: string;
 	CLERK_PUBLISHABLE_KEY: string;

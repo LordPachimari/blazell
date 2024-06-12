@@ -1,16 +1,15 @@
 import { useAuth } from "@clerk/remix";
 import usePartySocket from "partysocket/react";
+import { useRequestInfo } from "~/hooks/use-request-info";
 
 import { useReplicache } from "~/zustand/replicache";
 
-function PartykitProvider({
-	cartID,
-}: Readonly<{
-	cartID: string | undefined;
-}>) {
+function PartykitProvider() {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
+	const { userContext } = useRequestInfo();
+	const { cartID, fakeAuthID } = userContext;
 	const { getToken } = useAuth();
 
 	usePartySocket({
@@ -29,7 +28,6 @@ function PartykitProvider({
 			if (globalRep) {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/global?${subspaces
@@ -45,8 +43,6 @@ function PartykitProvider({
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -62,7 +58,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});
@@ -79,10 +75,10 @@ function PartykitProvider({
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
 			console.log("message", subspaces);
+			console.log("fakeAuthID", fakeAuthID);
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/dashboard?${subspaces
@@ -93,12 +89,11 @@ function PartykitProvider({
 							headers: {
 								"Content-Type": "application/json",
 								Authorization: `Bearer ${token}`,
+								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 							},
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -114,7 +109,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});
@@ -131,11 +126,9 @@ function PartykitProvider({
 		},
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
-			console.log("message", subspaces);
 			if (marketplaceRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const start = performance.now();
 					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/marketplace?${subspaces
@@ -150,8 +143,6 @@ function PartykitProvider({
 							body: JSON.stringify(req),
 						},
 					);
-					const end = performance.now();
-					console.log("pull time", end - start);
 
 					return {
 						response: result.status === 200 ? await result.json() : undefined,
@@ -167,7 +158,7 @@ function PartykitProvider({
 		onClose() {
 			console.log("closed");
 		},
-		onError(e) {
+		onError() {
 			console.log("error");
 		},
 	});

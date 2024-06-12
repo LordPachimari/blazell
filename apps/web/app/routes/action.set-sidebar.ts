@@ -17,7 +17,6 @@ export async function action({ request }: ActionFunctionArgs) {
 		"Invalid sidebar state received",
 	);
 	const { sidebarState } = submission.value;
-	console.log("sidebarState", sidebarState);
 	cookie.sidebarState = sidebarState;
 	return json(
 		{ result: submission.reply() },

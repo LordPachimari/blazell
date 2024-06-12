@@ -56,8 +56,6 @@ function ProductsTable({
 		estimateSize: () => 34,
 		overscan: 20,
 	});
-	console.log("rows", rows);
-	console.log("products", products);
 
 	return (
 		<div className="space-y-4">
@@ -66,8 +64,8 @@ function ProductsTable({
 				filterableColumns={filterableColumns}
 				toolbarButton={
 					<Button size="md" onClick={createProduct} type="button">
-						<Icons.plus
-							className="mr-1 font-bold"
+						<Icons.Plus
+							className="mr-1 font-bold "
 							size={15}
 							aria-hidden="true"
 						/>

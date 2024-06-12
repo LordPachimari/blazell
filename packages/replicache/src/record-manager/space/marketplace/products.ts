@@ -79,7 +79,7 @@ export const productsCVD: GetRowsWTableName = ({ fullRows }) => {
 						tableName: "products" as const,
 						rows: productsCVD.map((product) => {
 							product.variants = [];
-							product.score = generateRandomWithBias(0, 4, 0, 0);
+							product.score = generateRandomWithBias(1, 2, 1, 5);
 							return product;
 						}),
 					}),

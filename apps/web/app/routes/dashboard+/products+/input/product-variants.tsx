@@ -9,7 +9,7 @@ import {
 } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { generateID } from "@blazell/utils";
-import type { InsertVariant, UpdateVariant } from "@blazell/validators";
+import type { InsertVariant } from "@blazell/validators";
 import type { ProductOption, Variant } from "@blazell/validators/client";
 import { useCallback, useState } from "react";
 import { useReplicache } from "~/zustand/replicache";
@@ -20,7 +20,6 @@ import ProductVariant from "./product-variant";
 interface ProductVariantsProps {
 	options: ProductOption[] | undefined;
 	productID: string;
-	updateVariant: (props: UpdateVariant) => Promise<void>;
 	variants: Variant[];
 	defaultVariant: Variant | null | undefined;
 	isPublished: boolean;
@@ -28,7 +27,6 @@ interface ProductVariantsProps {
 export function Variants({
 	options,
 	productID,
-	updateVariant,
 	variants,
 	defaultVariant,
 	isPublished,
@@ -63,7 +61,6 @@ export function Variants({
 		setVariantID(newVariant.id);
 		setIsOpen(true);
 	}, [dashboardRep, productID, defaultVariant]);
-	console.log("isOpen", isOpen);
 
 	const deleteVariant = useCallback(
 		async (id: string) => {
@@ -111,7 +108,6 @@ export function Variants({
 				<VariantTable
 					setVariantID={setVariantID}
 					variants={variants ?? []}
-					updateVariant={updateVariant}
 					deleteVariant={deleteVariant}
 					duplicateVariant={duplicateVariant}
 				/>
@@ -125,7 +121,7 @@ export function Variants({
 					onClick={createVariant}
 					disabled={options?.length === 0}
 				>
-					<Icons.plusCircle className="h-3.5 w-3.5 mr-2" />
+					<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
 					Add Variant
 				</Button>
 				<ProductVariant

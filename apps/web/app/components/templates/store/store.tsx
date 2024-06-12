@@ -28,24 +28,23 @@ export function Store({
 				className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
 				onClick={() => navigate("/dashboard/select-stores")}
 			>
-				<Icons.left size={20} className="text-black dark:text-white" />
+				<Icons.Left size={20} className="text-black dark:text-white" />
 				Select stores
 			</Button>
 
 			<div
 				className={cn(
-					"max-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
+					"max-h-[210px] md:min-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
 				)}
 			>
 				{!isInitialized && <Skeleton className="w-full h-[210px]" />}
 				{store?.headerImage?.croppedImage ? (
 					store.headerImage.croppedImage.uploaded ? (
 						<Image
-							fit="fill"
-							quality={100}
+							fit="cover"
 							src={store.headerImage.croppedImage?.url}
 							alt="header"
-							className="rounded-2xl w-full"
+							className="rounded-2xl w-full object-cover"
 						/>
 					) : (
 						<img
@@ -54,7 +53,7 @@ export function Store({
 								store.headerImage.croppedImage.fileType,
 							)}
 							alt="header"
-							className={cn("rounded-2xl w-full object-fill", {
+							className={cn("rounded-2xl w-full object-cover", {
 								"h-[210px]": !store.headerImage.croppedImage.base64,
 							})}
 						/>

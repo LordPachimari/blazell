@@ -1,17 +1,19 @@
 import { SelectSeparator } from "@blazell/ui/select";
-import type { Cart } from "@blazell/validators/client";
+import type {
+	Cart,
+	LineItem as LineItemType,
+} from "@blazell/validators/client";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useCallback } from "react";
 import { Total } from "~/components/templates/cart/total-info";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { useReplicache } from "~/zustand/replicache";
-import { useGlobalStore } from "~/zustand/store";
 
-export const CartInfo = ({ cart }: { cart: Cart | null | undefined }) => {
+export const CartInfo = ({
+	cart,
+	items,
+}: { cart: Cart | null | undefined; items: LineItemType[] }) => {
 	const rep = useReplicache((state) => state.globalRep);
-	const items = useGlobalStore((state) =>
-		state.lineItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
-	);
 	const [parent] = useAutoAnimate(/* optional config */);
 	const deleteItem = useCallback(
 		async (id: string) => {

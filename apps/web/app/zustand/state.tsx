@@ -18,4 +18,14 @@ const useCartState = create<CartState>((set) => ({
 	setOpened: (open) => set({ opened: open }),
 }));
 
-export { useCartState, useGalleryState };
+interface DashboardState {
+	opened: boolean;
+	setOpened(newValue: boolean): void;
+}
+
+const useDashboardState = create<DashboardState>((set) => ({
+	opened: false,
+	setOpened: (open) => set({ opened: open }),
+}));
+
+export { useCartState, useGalleryState, useDashboardState };

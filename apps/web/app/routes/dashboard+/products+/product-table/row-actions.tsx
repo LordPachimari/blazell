@@ -1,18 +1,17 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
 
-import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
+import { buttonVariants } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import type { Product } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
-import { toast } from "@blazell/ui/toast";
 
 interface DataTableRowActionsProps {
 	row: Row<Product>;
@@ -20,7 +19,7 @@ interface DataTableRowActionsProps {
 	duplicateProduct: (keys: string[]) => void;
 }
 
-export function RowActions<TData>({
+export function RowActions({
 	row,
 	deleteProduct,
 	duplicateProduct,
@@ -29,17 +28,14 @@ export function RowActions<TData>({
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
-				<button
-					type="button"
-					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
-					onClick={(e) => {
-						e.stopPropagation();
-					}}
-				>
-					<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
-					<span className="sr-only">Open menu</span>
-				</button>
+			<DropdownMenuTrigger
+				className={cn(
+					buttonVariants({ size: "icon", variant: "ghost" }),
+					"rounded-full",
+				)}
+			>
+				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
+				<span className="sr-only">Open menu</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
 				<DropdownMenuItem

@@ -25,7 +25,7 @@ export function ProductInfo({
 	>;
 	defaultVariantID: string | undefined;
 }) {
-	const { register, formState, clearErrors } = useFormContext<ProductForm>();
+	const { formState, clearErrors } = useFormContext<ProductForm>();
 	return (
 		<Card className="mb-4">
 			<CardHeader>

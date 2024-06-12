@@ -1,4 +1,5 @@
-import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
+import { buttonVariants } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -9,6 +10,7 @@ import { Icons, strokeWidth } from "@blazell/ui/icons";
 import type { Theme } from "@blazell/validators";
 import { useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
+import { ClientOnly } from "remix-utils/client-only";
 import { useOptimisticThemeMode } from "~/hooks/use-theme";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
 import type { action } from "~/routes/action.set-theme";
@@ -20,31 +22,31 @@ export function ThemeToggle() {
 	const mode = optimisticMode ?? userPreference.theme ?? "system";
 	const modeLabel = {
 		light: (
-			<Icons.sun
+			<Icons.Sun
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">Light</span>
-			</Icons.sun>
+			</Icons.Sun>
 		),
 		dark: (
-			<Icons.moon
+			<Icons.Moon
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">Dark</span>
-			</Icons.moon>
+			</Icons.Moon>
 		),
 		system: (
-			<Icons.laptop
+			<Icons.Laptop
 				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
 				<span className="sr-only">System</span>
-			</Icons.laptop>
+			</Icons.Laptop>
 		),
 	};
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -63,32 +65,35 @@ export function ThemeToggle() {
 	}, []);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon" className="rounded-full">
-					{modeLabel[mode]}
-					<span className="sr-only">Toggle theme</span>
-				</Button>
+			<DropdownMenuTrigger
+				className={cn(
+					buttonVariants({ size: "icon", variant: "ghost" }),
+					"rounded-full",
+				)}
+			>
+				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>
+				<span className="sr-only">Toggle theme</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("light")}
 				>
-					{modeLabel.light}
+					<ClientOnly>{() => modeLabel.light}</ClientOnly>
 					<span>Light</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("dark")}
 				>
-					{modeLabel.dark}
+					<ClientOnly>{() => modeLabel.dark}</ClientOnly>
 					<span>Dark</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("system")}
 				>
-					{modeLabel.system}
+					<ClientOnly>{() => modeLabel.system}</ClientOnly>
 					<span>System</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

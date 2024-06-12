@@ -1,7 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import { Icons } from "./icons";
-import { cn } from ".";
 import { Drawer } from "vaul";
+import { cn } from ".";
+import { Icons } from "./icons";
 //@ts-ignore
 const { Root, Trigger } = Drawer;
 function DialogContent({ children }: { children: React.ReactNode }) {
@@ -11,7 +10,7 @@ function DialogContent({ children }: { children: React.ReactNode }) {
 			<Drawer.Content className="border-mauve-7 fixed bottom-0 top-0 z-50 m-2 flex w-5/6 flex-col rounded-2xl border bg-white dark:bg-mauve-3 backdrop-blur-md after:hidden sm:max-w-sm">
 				{children}
 				<Drawer.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-component">
-					<Icons.close className="h-4 w-4" />
+					<Icons.Close className="h-4 w-4" />
 					<span className="sr-only">Закрыть модальное окно</span>
 				</Drawer.Close>
 			</Drawer.Content>
@@ -30,5 +29,9 @@ function DialogTitle(props: React.HTMLAttributes<HTMLDivElement>) {
 	);
 }
 
-export { DialogContent, DialogTitle };
-export { Root as DialogRoot, Trigger as DialogTrigger };
+export {
+	DialogContent,
+	Root as DialogRoot,
+	DialogTitle,
+	Trigger as DialogTrigger,
+};

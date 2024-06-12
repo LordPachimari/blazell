@@ -1,0 +1,8 @@
+name = "blazell-media"
+compatibility_date = "2023-12-01"
+
+[env.development.vars]
+ENVIRONMENT='development'
+
+[env.production]
+ENVIRONMENT='development'

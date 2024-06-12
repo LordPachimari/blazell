@@ -1,7 +1,14 @@
 import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@blazell/ui/tooltip";
 import type {
 	CreatePrices,
 	InsertPrice,
@@ -12,14 +19,6 @@ import debounce from "lodash.debounce";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
-import { Icons } from "@blazell/ui/icons";
-import { toast } from "@blazell/ui/toast";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@blazell/ui/tooltip";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
@@ -63,7 +62,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 					<TooltipProvider>
 						<Tooltip delayDuration={250}>
 							<TooltipTrigger asChild>
-								<Icons.circleInfo
+								<Icons.CircleInfo
 									className="text-iris-9"
 									aria-hidden="true"
 									strokeWidth={1.25}
@@ -112,7 +111,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 							className="rounded-full"
 							onClick={async () => await deletePrices(price.id)}
 						>
-							<Icons.close className="text-ruby-9" />
+							<Icons.Close className="text-ruby-9" />
 						</Button>
 					</div>
 				))}
@@ -126,7 +125,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 						type="button"
 						className="mt-2 text-mauve-11"
 					>
-						<Icons.plus className="h-3.5 w-3.5 mr-2" />
+						<Icons.Plus className="h-3.5 w-3.5 mr-2" />
 						Add Price
 					</Button>
 				</Currencies>

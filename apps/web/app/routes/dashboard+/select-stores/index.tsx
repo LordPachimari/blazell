@@ -47,7 +47,7 @@ export default function SelectStores() {
 							await setActiveStoreID(_store.id);
 						}}
 					>
-						<Card className="text-center flex flex-col p-2 hover:scale-105 transition-all duration-100 ease-out justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[400px]">
+						<Card className="text-center min-w-[300px] flex flex-col p-2 hover:scale-105 transition-all duration-100 ease-out justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[400px]">
 							<CardContent className="p-0 ">
 								<section className="flex h-full w-full  border border-mauve-7 overflow-hidden rounded-xl items-center justify-center">
 									{!_store.storeImage ? (
@@ -56,8 +56,8 @@ export default function SelectStores() {
 										<Image
 											src={_store.storeImage.url}
 											alt={_store.name}
-											className="rounded-xl"
-											fit="fill"
+											className="rounded-xl object-cover"
+											fit="cover"
 										/>
 									) : (
 										<img
@@ -66,7 +66,7 @@ export default function SelectStores() {
 												_store.storeImage.fileType,
 											)}
 											alt={_store.name}
-											className="rounded-xl object-fill"
+											className="rounded-xl object-cover"
 										/>
 									)}
 								</section>

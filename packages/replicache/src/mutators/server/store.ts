@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import type { Image } from "@blazell/db";
 import { Cloudflare, Database } from "@blazell/shared";
@@ -10,10 +10,12 @@ import {
 	NotFound,
 	SetActiveStoreIDSchema,
 	UpdateStoreSchema,
+	UploadResponseSchema,
 } from "@blazell/validators";
 import * as base64 from "base64-arraybuffer";
 import { TableMutator } from "../../context/table-mutator";
 import { zod } from "../../util/zod";
+import * as Http from "@effect/platform/HttpClient";
 
 const createStore = zod(CreateStoreSchema, (input) =>
 	Effect.gen(function* () {
@@ -59,16 +61,16 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 		/* delete */
 		store.storeImage &&
 			updates.storeImage &&
-			imagesToDelete.push(store.storeImage.id);
+			imagesToDelete.push(store.storeImage.url);
 		store.storeImage?.croppedImage &&
 			updates.storeCroppedImage &&
-			imagesToDelete.push(store.storeImage.croppedImage.id);
+			imagesToDelete.push(store.storeImage.croppedImage.url);
 		store.headerImage &&
 			updates.headerImage &&
-			imagesToDelete.push(store.headerImage.id);
+			imagesToDelete.push(store.headerImage.url);
 		store.headerImage?.croppedImage &&
 			updates.headerCroppedImage &&
-			imagesToDelete.push(store.headerImage.croppedImage.id);
+			imagesToDelete.push(store.headerImage.croppedImage.url);
 
 		const uploadEffect = Effect.forEach(
 			imagesToUpload,
@@ -84,34 +86,49 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 						const file = new File([bytes], "store image", {
 							type: image.fileType,
 						});
-						return file;
+						const formData = new FormData();
+						formData.append("file", file);
+						return formData;
 					}),
-					Effect.flatMap((file) =>
-						Effect.tryPromise(() =>
-							env.R2.put(`images/${image.id}`, file, {
-								httpMetadata: {
-									contentType: image.fileType,
-								},
-							}),
-						).pipe(
-							Effect.retry({ times: 3 }),
-							Effect.catchTags({
-								UnknownException: (error) =>
-									new ImageUploadError({ message: error.message }),
-							}),
-						),
+					Effect.flatMap((formData) =>
+						Http.request
+							.post(
+								`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1`,
+							)
+							.pipe(
+								Http.request.setHeaders({
+									Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+								}),
+								Http.request.formDataBody(formData),
+								Http.client.fetch,
+								Effect.flatMap(
+									Http.response.schemaBodyJson(UploadResponseSchema),
+								),
+								Effect.scoped,
+								Effect.orDie,
+							),
 					),
-					Effect.flatMap(() =>
+					Effect.flatMap((response) =>
 						Effect.gen(function* () {
-							return yield* Effect.succeed({
+							if (response.errors.length > 0) {
+								yield* Console.log("Error uploading image", response.errors);
+								yield* new ImageUploadError({
+									message: "Error uploading image",
+								});
+							}
+							return response;
+						}),
+					),
+					Effect.map(
+						(response) =>
+							({
 								id: image.id,
-								url: image.url,
+								url: response.result?.variants[0]!,
 								order: image.order,
 								name: image.name,
 								uploaded: true,
 								fileType: image.fileType,
-							} satisfies Image);
-						}),
+							}) satisfies Image,
 					),
 				);
 			},
@@ -121,14 +138,39 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 		);
 		const deleteEffect = Effect.forEach(
 			imagesToDelete,
-			(id) =>
-				Effect.tryPromise(() => env.R2.delete(`images/${id}`)).pipe(
-					Effect.retry({ times: 3 }),
-					Effect.catchTags({
-						UnknownException: (error) =>
-							new ImageUploadError({ message: error.message }),
-					}),
-				),
+			(url) =>
+				Effect.gen(function* () {
+					const splitted = url.split("/");
+					const cloudflareID = splitted[splitted.length - 2];
+					if (!cloudflareID) return;
+					return yield* Http.request
+						.del(
+							`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
+						)
+						.pipe(
+							Http.request.setHeaders({
+								Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+							}),
+							Http.client.fetch,
+							Effect.retry({ times: 3 }),
+							Effect.scoped,
+							Effect.catchTags({
+								RequestError: (e) =>
+									Effect.gen(function* () {
+										yield* Console.error("Error deleting image", e.message);
+
+										return yield* Effect.succeed({});
+									}),
+								ResponseError: (e) =>
+									Effect.gen(function* () {
+										yield* Console.error("Error deleting image", e.message);
+
+										return yield* Effect.succeed({});
+									}),
+							}),
+						);
+				}),
+
 			{
 				concurrency: 4,
 			},
@@ -148,7 +190,6 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 					headerCroppedImage:
 						map.get(updates.headerCroppedImage?.id ?? "") ?? null,
 				};
-				console.log("object", object);
 				return object;
 			}),
 			Effect.flatMap(
@@ -200,29 +241,34 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 
 const deleteStoreImage = zod(DeleteStoreImageSchema, (input) =>
 	Effect.gen(function* () {
-		const { id, storeID, type } = input;
+		const { storeID, type, url } = input;
 		const { env } = yield* Cloudflare;
 		const tableMutator = yield* TableMutator;
+		const splitted = url.split("/");
+		const cloudflareID = splitted[splitted.length - 2];
 
-		yield* Effect.all(
-			[
-				Effect.tryPromise(() => env.R2.delete(`images/${id}`)).pipe(
-					Effect.retry({ times: 3 }),
-					Effect.catchTags({
-						UnknownException: (error) =>
-							new ImageUploadError({ message: error.message }),
-					}),
-				),
-				tableMutator.update(
-					storeID,
-					{
-						[type === "store" ? "storeImage" : "headerImage"]: null,
-					},
-					"stores",
-				),
-			],
-			{ concurrency: 2 },
+		yield* tableMutator.update(
+			storeID,
+			{
+				[type === "store" ? "storeImage" : "headerImage"]: null,
+			},
+			"stores",
 		);
+
+		if (cloudflareID)
+			yield* Http.request
+				.del(
+					`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
+				)
+				.pipe(
+					Http.request.setHeaders({
+						Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+					}),
+					Http.client.fetch,
+					Effect.retry({ times: 3 }),
+					Effect.scoped,
+					Effect.orDie,
+				);
 	}),
 );
 const setActiveStoreID = zod(SetActiveStoreIDSchema, (input) =>

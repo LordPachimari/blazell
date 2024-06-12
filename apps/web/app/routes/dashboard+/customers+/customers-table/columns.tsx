@@ -40,7 +40,7 @@ export function getCustomersColumns(): ColumnDef<Customer, unknown>[] {
 					title="Total"
 				/>
 			),
-			cell: ({ row }) => {
+			cell: () => {
 				return <div className="w-full flex justify-center">{69}</div>;
 			},
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import debounce from "lodash.debounce";
 
-function useWindowSize() {
+function useWindowSize(debounceNumber?: number) {
 	const [windowSize, setWindowSize] = useState({
 		width: 0,
 		height: 0,
@@ -14,7 +14,7 @@ function useWindowSize() {
 				width: window.innerWidth,
 				height: window.innerHeight,
 			});
-		}, 100); // Debounce for 100ms
+		}, debounceNumber ?? 0); // Debounce for 100ms
 
 		// Add event listener
 		window.addEventListener("resize", handleResize);
@@ -27,7 +27,7 @@ function useWindowSize() {
 			handleResize.cancel(); // Cancel the debounce on cleanup to prevent delayed execution
 			window.removeEventListener("resize", handleResize);
 		};
-	}, []); // Empty array ensures that effect is only run on mount and unmount
+	}, [debounceNumber]); // Empty array ensures that effect is only run on mount and unmount
 
 	return windowSize;
 }

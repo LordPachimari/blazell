@@ -1,0 +1,16 @@
+{
+	"name": "@blazell/media",
+	"version": "^0.1.0",
+	"scripts": {
+		"dev": "wrangler dev src/index.ts",
+		"deploy-prod": "wrangler deploy --minify --env production src/index.ts",
+		"deploy-dev": "wrangler deploy --minify --env development src/index.ts"
+	},
+	"dependencies": {
+		"hono": "^4.4.4"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20240529.0",
+		"wrangler": "^3.57.2"
+	}
+}

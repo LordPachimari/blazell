@@ -32,7 +32,6 @@ async function createProduct(tx: WriteTransaction, input: CreateProduct) {
 
 async function deleteProduct(tx: WriteTransaction, input: { keys: string[] }) {
 	const { keys } = input;
-	console.log("Deleting products", keys);
 	await Promise.all(keys.map((key) => tx.del(key)));
 }
 

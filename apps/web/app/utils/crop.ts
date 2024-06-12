@@ -38,11 +38,9 @@ export default async function getCroppedImg(
 	rotation = 0,
 	flip = { horizontal: false, vertical: false },
 ): Promise<Image | undefined> {
-	console.log("pixelCrop", pixelCrop);
 	const image = (await createImage(imageSrc)) as HTMLImageElement;
 	const canvas = document.createElement("canvas");
 	const ctx = canvas.getContext("2d");
-	console.log("ctx", ctx);
 
 	if (!ctx) {
 		return undefined;
@@ -99,8 +97,6 @@ export default async function getCroppedImg(
 	// As a blob
 	return new Promise((resolve) => {
 		croppedCanvas.toBlob((file) => {
-			console.log("hey");
-			console.log("file", file);
 			if (file) {
 				const fileReader = new FileReader();
 				fileReader.onloadend = () => {
@@ -111,7 +107,7 @@ export default async function getCroppedImg(
 							id: imageKey,
 							fileType: file.type,
 							uploaded: false,
-							url: `${window.ENV.WORKER_URL}/images/${imageKey}`,
+							url: "",
 							name: "cropped",
 							order: 0,
 							base64: base64String,

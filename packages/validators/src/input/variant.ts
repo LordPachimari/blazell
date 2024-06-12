@@ -2,7 +2,6 @@ import { ImageSchema, schema } from "@blazell/db";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { UpdateImagesOrderSchema } from "./image";
-import { prices } from "../../../db/schema";
 import { InsertPriceSchema, PriceSchema } from "./price";
 
 export const InsertVariantSchema = createInsertSchema(schema.variants);

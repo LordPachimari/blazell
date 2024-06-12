@@ -14,7 +14,6 @@ import {
 	TableRow,
 } from "@blazell/ui/table";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { getCustomersColumns } from "./columns";
 import type { Customer } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
@@ -30,7 +29,6 @@ function CustomersTable({
 	customers,
 	createCustomer,
 }: Readonly<CustomersTableProps>) {
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<Customer>[]>(
 		() => getCustomersColumns(),
 		[],

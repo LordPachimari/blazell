@@ -59,7 +59,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 			);
 
 			return products.map((product) => {
-				product.score = generateRandomWithBias(0, 4, 0, 0);
+				product.score = generateRandomWithBias(1, 4, 1, 10);
 				return product;
 			});
 		}

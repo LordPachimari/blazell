@@ -24,16 +24,8 @@ function MarketplaceReplicacheProvider({
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: DashboardMutators,
 			pullInterval: null,
-			indexes: {
-				categoryPK: {
-					jsonPointer: "/categoryPK",
-					allowEmpty: true,
-				},
-			},
-
 			//@ts-ignore
 			puller: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/pull/marketplace`,
@@ -47,8 +39,6 @@ function MarketplaceReplicacheProvider({
 						credentials: "include",
 					},
 				);
-				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -59,7 +49,6 @@ function MarketplaceReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const start = performance.now();
 				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/push/marketplace`,
@@ -72,9 +61,6 @@ function MarketplaceReplicacheProvider({
 						body: JSON.stringify(req),
 					},
 				);
-
-				const end = performance.now();
-				console.log("pull time", end - start);
 
 				return {
 					httpRequestInfo: {

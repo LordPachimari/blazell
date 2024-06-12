@@ -31,7 +31,7 @@ const OrderRoute = () => {
 						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/orders")}
 					>
-						<Icons.left size={20} className="text-black dark:text-white" />
+						<Icons.Left size={20} className="text-black dark:text-white" />
 						Back to orders
 					</Button>
 					<OrderInfo order={order} />
@@ -176,7 +176,7 @@ const PaymentInfo = ({
 					<dl className="grid gap-3">
 						<div className="flex items-center justify-between">
 							<dt className="flex items-center gap-1 text-muted-foreground">
-								<Icons.creditCard className="h-4 w-4" />
+								<Icons.CreditCard className="h-4 w-4" />
 								Visa
 							</dt>
 							<dd>**** **** **** 4532</dd>

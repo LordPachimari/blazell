@@ -1,15 +1,15 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import type { Row } from "@tanstack/react-table";
 
-import { Button } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	// DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import type { Variant } from "@blazell/validators/client";
+import { cn } from "@blazell/ui";
+import { buttonVariants } from "@blazell/ui/button";
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>;
@@ -28,17 +28,14 @@ export function RowActions({
 	// const task = taskSchema.parse(row.original);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
-				<button
-					type="button"
-					className="flex border items-center justify-center border-mauve-7 rounded-full h-10 w-10 p-0 data-[state=open]:bg-muted"
-					onClick={(e) => {
-						e.stopPropagation();
-					}}
-				>
-					<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
-					<span className="sr-only">Open menu</span>
-				</button>
+			<DropdownMenuTrigger
+				className={cn(
+					buttonVariants({ size: "icon", variant: "ghost" }),
+					"rounded-full",
+				)}
+			>
+				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
+				<span className="sr-only">Open menu</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
 				<DropdownMenuItem

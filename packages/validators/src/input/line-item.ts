@@ -1,6 +1,6 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 import { schema } from "@blazell/db";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 import { ProductSchema } from "./product";
 import { VariantSchema } from "./variant";
 

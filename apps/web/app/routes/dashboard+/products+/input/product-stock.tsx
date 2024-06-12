@@ -9,8 +9,6 @@ import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import type { Variant } from "@blazell/validators/client";
 import type { DebouncedFunc } from "~/types/debounce";
-import { useFormContext } from "react-hook-form";
-import type { ProductForm } from "../product-input";
 
 interface StockProps {
 	variant: Variant | InsertVariant | undefined | null;
@@ -25,7 +23,6 @@ const Stock = ({
 	updateVariant,
 	onVariantInputChange,
 }: StockProps) => {
-	const { register, formState } = useFormContext<ProductForm>();
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const [hasCode, setHasCode] = useState(false);
 

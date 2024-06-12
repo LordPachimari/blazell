@@ -1,6 +1,7 @@
 import { cn } from "@blazell/ui";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
+import { useDashboardState } from "~/zustand/state";
 
 export type DashboardSidebarItem = {
 	title: string;
@@ -14,25 +15,25 @@ const items: DashboardSidebarItem[] = [
 		title: "Stores",
 		href: "/dashboard/store",
 
-		icon: "store",
+		icon: "Store",
 		items: [],
 	},
 	{
 		title: "Products",
 		href: "/dashboard/products",
-		icon: "product",
+		icon: "Product",
 		items: [],
 	},
 	{
 		title: "Orders",
 		href: "/dashboard/orders",
-		icon: "billing",
+		icon: "Billing",
 		items: [],
 	},
 	{
 		title: "Customers",
 		href: "/dashboard/customers",
-		icon: "customer",
+		icon: "Customer",
 		items: [],
 	},
 ];
@@ -41,11 +42,15 @@ interface DashboardSidebarProps {
 }
 const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 	const { pathname } = useLocation();
+
+	const opened = useDashboardState((state) => state.opened);
+
 	return (
-		<div className="w-full h-full flex relative inset-0 ">
+		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"flex flex-col justify-center bg-component fixed h-full w-0 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm transition-all duration-200 ease-in-out z-30 ",
+					"flex flex-col w-12 opacity-0 md:opacity-100 m-1 md:m-0 justify-center bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out z-20 ",
+					{ "opacity-100": opened },
 				)}
 			>
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">

@@ -1,12 +1,12 @@
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { Product } from "@blazell/validators/client";
-import { useNavigate } from "@remix-run/react";
 import { useCallback, useTransition } from "react";
 import { PageHeader } from "~/components/page-header";
 import { useReplicache } from "~/zustand/replicache";
 import { useDashboardStore } from "~/zustand/store";
 import { ProductsTable } from "./product-table/table";
+import { useNavigate } from "@remix-run/react";
 
 function ProductsPage() {
 	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
