@@ -46,11 +46,11 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 	const opened = useDashboardState((state) => state.opened);
 
 	return (
-		<div className="w-full h-full flex relative inset-0 ">
+		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"flex left-[-120px] md:left-0 lg:left-[60px] flex-col w-12 justify-center bg-component fixed h-full border-r border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out z-20 ",
-					{ "left-0": opened },
+					"flex flex-col w-12 opacity-0 md:opacity-100 m-1 md:m-0 justify-center bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7 backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out z-20 ",
+					{ "opacity-100": opened },
 				)}
 			>
 				<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">

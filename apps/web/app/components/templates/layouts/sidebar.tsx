@@ -67,7 +67,7 @@ const Sidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-30 w-14  overflow-hidden border border-mauve-7  backdrop-blur-sm transition-all duration-200 ease-in-out hover:w-44 ",
+					"hidden group ml-[3px] my-[3px] h-[calc(100%-6px)] rounded-xl bg-component justify-between lg:flex flex-col fixed z-30 w-14  overflow-hidden border border-mauve-7  backdrop-blur-sm lg:backdrop-blur-md transition-all duration-200 ease-in-out hover:w-44 ",
 					{
 						"w-44": mode === "open",
 						"hidden lg:hidden": noSidebarPaths.has(location.pathname),

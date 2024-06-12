@@ -36,8 +36,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { userContext } from "~/sessions.server";
 import { FieldErrorMessage } from "~/components/field-error";
+import { userContext } from "~/sessions.server";
 
 type LoaderData = {
 	authID: string;
@@ -156,7 +156,6 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 				fetcherKey: "create-user",
 			},
 		);
-
 		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {
 			method: "POST",
 			body: JSON.stringify({
