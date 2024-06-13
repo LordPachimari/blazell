@@ -10,7 +10,7 @@ type Feature = {
 function Features({ theme }: { theme: Theme }) {
 	const features = [
 		{
-			title: "Organize",
+			title: "Real-time",
 			description:
 				"Organize auctions, schedule merch drops, and see your income grow in real-time.",
 			component: (

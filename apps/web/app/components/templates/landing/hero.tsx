@@ -56,7 +56,7 @@ function Hero() {
 							</motion.span>
 						</AnimatePresence>
 
-						<span className="pt-1">to sell products to the world!</span>
+						<span className="pt-1">to sell products worldwide!</span>
 					</span>
 				</span>
 				<div className="mt-6 flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
