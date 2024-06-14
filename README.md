@@ -19,6 +19,3 @@ It is currently in development and demo mode. I know that authentication process
 - Zustand (state-management)
 - Vite
 
-# Future of blazell
-
-Make Blazell one of the fastest, if not the fastest, e-commerce platforms, competing with major headless e-commerce platforms. (Delusional)
