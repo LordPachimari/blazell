@@ -26,6 +26,7 @@ const VariantUpdatesSchema = InsertVariantSchema.pick({
 	weightUnit: true,
 	allowBackorder: true,
 	thumbnail: true,
+	description: true,
 })
 	.partial()
 	.extend({

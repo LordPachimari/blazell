@@ -6,19 +6,26 @@ import { useRequestInfo } from "~/hooks/use-request-info";
 import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
+import { useWindowSize } from "~/hooks/use-window-size";
+import { GlobalSearchCombobox } from "~/components/search";
 
 function Header() {
 	const { userContext } = useRequestInfo();
 	const { cartID, fakeAuthID } = userContext;
+	const windowSize = useWindowSize();
 	return (
 		<Navbar>
 			{/* Left corner */}
 			{/* <MobileNavMenu /> */}
 			<div />
-			<Logo to="/" className="absolute  left-1/2 flex -translate-x-1/2" />
+			<Logo
+				to="/"
+				className="absolute xl:left-1/2 lg:left-32 left-1/2 flex -translate-x-1/2"
+			/>
 
 			{/* Right corner */}
-			<div className="hidden gap-6 lg:flex items-center ">
+			<div className="hidden gap-3 lg:flex items-center ">
+				{windowSize.width > 1024 && <GlobalSearchCombobox />}
 				<ThemeToggle />
 				<CartSheet cartID={cartID ?? null} />
 				<Link

@@ -17,8 +17,9 @@ export function SidebarLayoutWrapper({
 	return (
 		<div
 			className={cn("min-w-full transition-all duration-200 ease-in-out", {
-				"lg:pl-14": !noSidebarPaths.has(location.pathname),
-				"lg:pl-44": !noSidebarPaths.has(location.pathname) && mode === "open",
+				"lg:pl-[58px]": !noSidebarPaths.has(location.pathname),
+				"lg:pl-[178px]":
+					!noSidebarPaths.has(location.pathname) && mode === "open",
 			})}
 		>
 			{children}

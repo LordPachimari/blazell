@@ -22,12 +22,14 @@ import { filterableColumns, getProductsColumns } from "./columns";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { cn } from "@blazell/ui";
+import type { DebouncedFunc } from "~/types/debounce";
 interface ProductsTableProps {
 	products: Product[];
 	createProduct: () => Promise<void>;
 	deleteProduct: (keys: string[]) => void;
 	duplicateProduct: (keys: string[]) => void;
 	isPending?: boolean;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function ProductsTable({
@@ -36,6 +38,7 @@ function ProductsTable({
 	deleteProduct,
 	duplicateProduct,
 	isPending = false,
+	onSearch,
 }: Readonly<ProductsTableProps>) {
 	const columns = useMemo<ColumnDef<Product>[]>(
 		() => getProductsColumns({ deleteProduct, duplicateProduct, isPending }),
@@ -72,17 +75,17 @@ function ProductsTable({
 						New Product
 					</Button>
 				}
+				{...(onSearch && { onSearch })}
 			/>
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border border-mauve-7 rounded-2xl relative"
+				className="h-[calc(100vh-327px)] bg-component border border-mauve-7 rounded-2xl relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
 						<TableHeader className="w-full bg-mauve-2 sticky top-0 z-20 ">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
-									{/* <section className="w-full border"> */}
 									{headerGroup.headers.map((header) => {
 										return (
 											<TableHead key={header.id} colSpan={header.colSpan}>
@@ -95,7 +98,6 @@ function ProductsTable({
 											</TableHead>
 										);
 									})}
-									{/* </section> */}
 								</TableRow>
 							))}
 						</TableHeader>
@@ -132,7 +134,7 @@ function ProductsTable({
 									);
 								})
 							) : (
-								<TableRow className="border-none hover:bg-component">
+								<TableRow className="border-none hover:bg-transparent">
 									<TableCell
 										colSpan={columns.length}
 										className="h-full text-center"

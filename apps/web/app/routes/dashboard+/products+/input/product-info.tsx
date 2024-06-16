@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import { Textarea } from "@blazell/ui/textarea";
-import type { UpdateProduct, UpdateVariant } from "@blazell/validators";
+import type { UpdateVariant } from "@blazell/validators";
 import { useFormContext } from "react-hook-form";
 import { FieldErrorMessage } from "~/components/field-error";
 import type { DebouncedFunc } from "~/types/debounce";
@@ -11,21 +11,17 @@ import type { ProductForm } from "../product-input";
 export function ProductInfo({
 	title,
 	description,
-	onProductInputChange,
 	onVariantInputChange,
 	defaultVariantID,
 }: {
 	title: string | null | undefined;
 	description: string | null | undefined;
-	onProductInputChange: DebouncedFunc<
-		(props: UpdateProduct["updates"]) => Promise<void>
-	>;
 	onVariantInputChange: DebouncedFunc<
 		(updates: UpdateVariant) => Promise<void>
 	>;
 	defaultVariantID: string | undefined;
 }) {
-	const { formState, clearErrors } = useFormContext<ProductForm>();
+	const { formState } = useFormContext<ProductForm>();
 	return (
 		<Card className="mb-4">
 			<CardHeader>
@@ -43,7 +39,6 @@ export function ProductInfo({
 									updates: { title: e.currentTarget.value },
 									id: defaultVariantID,
 								}));
-							clearErrors();
 						}}
 						className="w-full my-2"
 					/>
@@ -58,9 +53,11 @@ export function ProductInfo({
 						defaultValue={description ?? ""}
 						className="min-h-32 mt-2"
 						onChange={async (e) => {
-							await onProductInputChange({
-								description: e.currentTarget.value,
-							});
+							defaultVariantID &&
+								(await onVariantInputChange({
+									updates: { description: e.currentTarget.value },
+									id: defaultVariantID,
+								}));
 						}}
 					/>
 				</div>

@@ -49,7 +49,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				productID,
 				updates: { name },
 			});
-		}, 800),
+		}, 300),
 		[dashboardRep],
 	);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -68,7 +68,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				productID,
 				newOptionValues,
 			});
-		}, 800),
+		}, 300),
 		[dashboardRep, options],
 	);
 

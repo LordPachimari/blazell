@@ -97,6 +97,7 @@ const duplicate = zod(VariantDuplicateSchema, (input) =>
 				updatedAt: new Date().toISOString(),
 				version: 0,
 				allowBackorder: variant.allowBackorder,
+				description: variant.description,
 				quantity: variant.quantity,
 				barcode: variant.barcode,
 				images: variant.images,

@@ -2,20 +2,15 @@ import { cn } from "@blazell/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
-import type {
-	Product,
-	PublishedProduct,
-	Variant,
-} from "@blazell/validators/client";
+import type { Variant } from "@blazell/validators/client";
 import { useState } from "react";
 import Price from "~/components/molecules/price";
 
 interface GeneralInfoProps {
 	defaultVariant: Variant | PublishedVariant | undefined | null;
-	product: Product | PublishedProduct | undefined;
 }
 
-function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
+function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
 	const [isTruncated, setIsTruncated] = useState(true);
 
 	const handleToggle = () => {
@@ -23,8 +18,8 @@ function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 	};
 
 	const displayText = isTruncated
-		? truncateString(product?.description ?? "", 200)
-		: product?.description ?? "";
+		? truncateString(defaultVariant?.description ?? "", 200)
+		: defaultVariant?.description ?? "";
 	return (
 		<section className="flex flex-col ">
 			<div className="w-[200px] flex gap-2">

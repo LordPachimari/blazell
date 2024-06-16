@@ -53,7 +53,7 @@ export default function ProductVariant({
 	const onVariantInputChange = useCallback(
 		debounce(async (props: UpdateVariant) => {
 			await updateVariant({ id: props.id, updates: props.updates });
-		}, 800),
+		}, 300),
 		[updateVariant],
 	);
 	return (

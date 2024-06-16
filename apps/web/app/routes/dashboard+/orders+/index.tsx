@@ -7,14 +7,26 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { Progress } from "@blazell/ui/progress";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "~/components/page-header";
 import { OrderPreview, OrderPreviewMobile } from "./order-preview";
 import { OrdersTable } from "./orders-table/table";
 import { useDashboardStore } from "~/zustand/store";
+import debounce from "lodash.debounce";
+import type { Order } from "@blazell/validators/client";
+import type {
+	SearchWorkerRequest,
+	SearchWorkerResponse,
+} from "~/worker/search";
+import { isString } from "remeda";
 
 export default function Orders() {
 	const orders = useDashboardStore((state) => state.orders);
+	const [searchResults, setSearchResults] = useState<Order[] | undefined>(
+		undefined,
+	);
+	const searchWorker = useDashboardStore((state) => state.searchWorker);
+	const [_, startTransition] = useTransition();
 	const createOrder = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
@@ -26,6 +38,43 @@ export default function Orders() {
 		if (id) return setOpened(true);
 		setOpened(false);
 	};
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onSearch = useCallback(
+		debounce((value: string) => {
+			if (value === "") {
+				setSearchResults(undefined);
+				return;
+			}
+			searchWorker?.postMessage({
+				type: "ORDER_SEARCH",
+				payload: {
+					query: value,
+				},
+			} satisfies SearchWorkerRequest);
+		}, 300),
+		[searchWorker],
+	);
+	useEffect(() => {
+		if (searchWorker) {
+			searchWorker.onmessage = (event: MessageEvent) => {
+				const { type, payload } = event.data as SearchWorkerResponse;
+				if (isString(type) && type === "ORDER_SEARCH") {
+					startTransition(() => {
+						const orders: Order[] = [];
+						const orderIDs = new Set<string>();
+						for (const item of payload) {
+							if (item.id.startsWith("order")) {
+								if (orderIDs.has(item.id)) continue;
+								orders.push(item as Order);
+								orderIDs.add(item.id);
+							}
+						}
+						setSearchResults(orders);
+					});
+				}
+			};
+		}
+	}, [searchWorker]);
 	return (
 		<main className="w-full p-4 lg:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full xl:w-8/12">
@@ -38,10 +87,11 @@ export default function Orders() {
 					</div>
 				</div>
 				<OrdersTable
-					orders={orders ?? []}
+					orders={searchResults ?? orders ?? []}
 					createOrder={createOrder}
 					orderID={orderID}
 					setOrderID={setOrderID}
+					onSearch={onSearch}
 				/>
 			</section>
 			<section className="w-full lg:w-4/12 relative lg:flex flex-col items-start hidden">
@@ -55,7 +105,7 @@ export default function Orders() {
 						/>
 					</>
 				) : (
-					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-3 hover:bg-mauve-a-3 border-mauve-7 rounded-2xl">
+					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-2 hover:bg-muted/50  border-mauve-7 rounded-2xl">
 						<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
 					</div>
 				)}

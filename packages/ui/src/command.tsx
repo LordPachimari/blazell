@@ -13,20 +13,20 @@ const Command = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive
 		ref={ref}
-		className={cn(
-			"flex h-full w-full flex-col overflow-hidden rounded-2xl bg-popover text-popover-foreground",
-			className,
-		)}
+		className={cn("flex h-full w-full flex-col overflow-hidden ", className)}
 		{...props}
 	/>
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps, DialogPosition {}
+interface CommandDialogProps extends DialogProps, DialogPosition {
+	dialogContentClassName?: string;
+}
 
 const CommandDialog = ({
 	children,
 	position = "default",
+	dialogContentClassName,
 	...props
 }: CommandDialogProps) => {
 	return (
@@ -34,7 +34,7 @@ const CommandDialog = ({
 			<DialogContent
 				//@ts-ignore
 				position={position}
-				className="overflow-hidden p-0"
+				className="w-full md:w-[600px] bg-component border border-mauve-7 p-0 backdrop-blur-md"
 			>
 				<Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:p-2 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
 					{children}
@@ -49,7 +49,7 @@ const CommandInput = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
 	<div className="flex items-center border-b px-3">
-		<MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+		<MagnifyingGlassIcon className="mr-2 h-6 w-6 shrink-0 opacity-50" />
 		<CommandPrimitive.Input
 			ref={ref}
 			className={cn(

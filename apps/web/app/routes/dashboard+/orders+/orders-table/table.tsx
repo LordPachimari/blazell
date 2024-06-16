@@ -21,6 +21,7 @@ import { useReplicache } from "~/zustand/replicache";
 import { filterableColumns, getOrdersColumns } from "./columns";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ScrollArea } from "@blazell/ui/scroll-area";
+import type { DebouncedFunc } from "~/types/debounce";
 
 interface OrdersTableProps {
 	orders: Order[];
@@ -28,6 +29,7 @@ interface OrdersTableProps {
 	setOrderID?: (id: string | undefined) => void;
 	orderID?: string | undefined;
 	toolbar?: boolean;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function OrdersTable({
@@ -36,6 +38,7 @@ function OrdersTable({
 	setOrderID,
 	orderID,
 	toolbar = true,
+	onSearch,
 }: Readonly<OrdersTableProps>) {
 	const columns = useMemo<ColumnDef<Order>[]>(() => getOrdersColumns(), []);
 	const table = useDataTable({
@@ -71,6 +74,7 @@ function OrdersTable({
 							</Button>
 						),
 					})}
+					{...(onSearch && { onSearch })}
 				/>
 			)}
 			{dashboardRep?.online && (
@@ -133,7 +137,7 @@ function OrdersTable({
 									);
 								})
 							) : (
-								<TableRow className="border-none hover:bg-component">
+								<TableRow className="border-none h-full hover:bg-transparent">
 									<TableCell
 										colSpan={columns.length}
 										className="h-24 text-center"

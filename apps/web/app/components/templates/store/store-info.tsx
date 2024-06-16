@@ -32,7 +32,7 @@ export function StoreInfo({
 								<Image
 									fit="cover"
 									src={store?.storeImage.croppedImage?.url}
-									alt="header"
+									alt="store"
 									className="rounded-2xl"
 									height={210}
 								/>
@@ -42,7 +42,7 @@ export function StoreInfo({
 										store?.storeImage?.croppedImage?.base64,
 										store?.storeImage?.croppedImage?.fileType,
 									)}
-									alt="header"
+									alt="store"
 									className="rounded-2xl object-cover"
 								/>
 							)

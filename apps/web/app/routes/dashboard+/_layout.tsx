@@ -3,7 +3,7 @@ import type { User } from "@blazell/validators/client";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Outlet } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import DashboardSidebar from "./sidebar";
+import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import { userContext } from "~/sessions.server";
@@ -34,6 +34,7 @@ export default function DashboardLayout() {
 		<DashboardStoreProvider>
 			<DashboardStoreMutator>
 				<SidebarLayoutWrapper>
+					<DashboardSidebarMobile />
 					<DashboardSidebar>
 						<div className="md:pl-40 w-full ">
 							<Outlet />
