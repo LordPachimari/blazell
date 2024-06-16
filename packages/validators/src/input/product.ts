@@ -19,7 +19,6 @@ const ProductUpdatesSchema = InsertProductSchema.pick({
 	collectionID: true,
 	discountable: true,
 	status: true,
-	description: true,
 });
 
 export const UpdateProductSchema = z.object({

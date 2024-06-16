@@ -98,7 +98,7 @@ export function getProductsColumns({
 				return (
 					<div>
 						<h1 className="font-freeman">
-							{defaultVariant?.title || "Untitled"}
+							{defaultVariant?.title ?? "Untitled"}
 						</h1>
 					</div>
 				);

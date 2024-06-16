@@ -1,3 +1,4 @@
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -74,6 +75,7 @@ export const Icons = {
 	Star,
 	Bookmark,
 	ShoppingCart,
+	MagnifyingGlassIcon: MagnifyingGlassIcon,
 	GitHub: (props: LucideProps) => (
 		<svg viewBox="0 0 438.549 438.549" {...props}>
 			<title>Github</title>

@@ -19,15 +19,18 @@ import type { Customer } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import type { DebouncedFunc } from "~/types/debounce";
 
 interface CustomersTableProps {
 	customers: Customer[];
 	createCustomer: () => Promise<void>;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function CustomersTable({
 	customers,
 	createCustomer,
+	onSearch,
 }: Readonly<CustomersTableProps>) {
 	const columns = useMemo<ColumnDef<Customer>[]>(
 		() => getCustomersColumns(),
@@ -61,6 +64,7 @@ function CustomersTable({
 						Create customer
 					</Button>
 				}
+				{...(onSearch && { onSearch })}
 			/>
 
 			<ScrollArea
@@ -117,7 +121,7 @@ function CustomersTable({
 									);
 								})
 							) : (
-								<TableRow className="border-none hover:bg-component">
+								<TableRow className="border-none hover:bg-transparent">
 									<TableCell
 										colSpan={columns.length}
 										className="h-24 text-center"

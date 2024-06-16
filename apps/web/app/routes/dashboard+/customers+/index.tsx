@@ -9,17 +9,67 @@ import {
 } from "@blazell/ui/card";
 import { Progress } from "@blazell/ui/progress";
 import { Skeleton } from "@blazell/ui/skeleton";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "~/components/page-header";
 import { useDashboardStore } from "~/zustand/store";
 import { CustomersTable } from "./customers-table/table";
+import debounce from "lodash.debounce";
+import type {
+	SearchWorkerRequest,
+	SearchWorkerResponse,
+} from "~/worker/search";
+import type { Customer } from "@blazell/validators/client";
+import { isString } from "remeda";
 
 export default function CustomersPage() {
 	const customers = useDashboardStore((state) => state.customers);
+	const searchWorker = useDashboardStore((state) => state.searchWorker);
+	const [searchResults, setSearchResults] = useState<Customer[] | undefined>(
+		undefined,
+	);
+	const [_, startTransition] = useTransition();
 	const createCustomer = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
 	}, []);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onSearch = useCallback(
+		debounce((value: string) => {
+			if (value === "") {
+				setSearchResults(undefined);
+				return;
+			}
+			searchWorker?.postMessage({
+				type: "CUSTOMER_SEARCH",
+				payload: {
+					query: value,
+				},
+			} satisfies SearchWorkerRequest);
+		}, 300),
+		[searchWorker],
+	);
+	useEffect(() => {
+		if (searchWorker) {
+			searchWorker.onmessage = (event: MessageEvent) => {
+				const { type, payload } = event.data as SearchWorkerResponse;
+				if (isString(type) && type === "CUSTOMER_SEARCH") {
+					startTransition(() => {
+						const customers: Customer[] = [];
+						const customerIDs = new Set<string>();
+						for (const item of payload) {
+							if (item.id.startsWith("user")) {
+								if (customerIDs.has(item.id)) continue;
+								customers.push(item as Customer);
+								customerIDs.add(item.id);
+							}
+						}
+						setSearchResults(customers);
+					});
+				}
+			};
+		}
+	}, [searchWorker]);
 	return (
 		<main className="w-full p-4 md:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full">
@@ -32,8 +82,9 @@ export default function CustomersPage() {
 				<div className="flex w-full gap-4 flex-col lg:flex-row">
 					<div className="w-full lg:w-8/12">
 						<CustomersTable
-							customers={customers ?? []}
+							customers={searchResults ?? customers ?? []}
 							createCustomer={createCustomer}
+							onSearch={onSearch}
 						/>
 					</div>
 					<div className="w-full lg:w-4/12 lg:block hidden relative">
@@ -50,7 +101,7 @@ function Stat({
 	number,
 }: { description: string; number: number }) {
 	return (
-		<Card>
+		<Card className="shadow-none">
 			<CardHeader className="pb-2">
 				<CardDescription>{description}</CardDescription>
 				<CardTitle className="text-4xl">+{number}</CardTitle>
@@ -68,7 +119,7 @@ function CustomersInfo() {
 	const customers = useDashboardStore((state) => state.customers);
 	const isInitialized = useDashboardStore((state) => state.isInitialized);
 	return (
-		<Card className="min-w-[24rem] sticky top-10">
+		<Card className="min-w-[24rem] sticky top-10 shadow-none">
 			<CardHeader className="pb-4">
 				<CardTitle>New customers</CardTitle>
 			</CardHeader>

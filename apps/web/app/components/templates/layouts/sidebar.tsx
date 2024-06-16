@@ -3,8 +3,10 @@ import { Button } from "@blazell/ui/button";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { ClientOnly } from "remix-utils/client-only";
+import { GlobalSearchCombobox } from "~/components/search";
+import { noHeaderPaths } from "~/constants";
 import { useSidebarState } from "~/hooks/use-sidebar";
+import { useWindowSize } from "~/hooks/use-window-size";
 import type { action } from "~/routes/action.set-sidebar";
 import { useDashboardState } from "~/zustand/state";
 import { ThemeToggle } from "./theme-toggle";
@@ -112,7 +114,7 @@ const Sidebar = () => {
 								to={item.href}
 								key={item.title}
 								className={cn(
-									"group/link flex h-10 w-full items-center gap-3 rounded-md px-2 cursor-pointer hover:bg-mauve-a-2 ",
+									"group/link flex h-10 w-full items-center gap-3 rounded-2xl px-2 cursor-pointer hover:bg-mauve-a-2 ",
 								)}
 								prefetch="viewport"
 							>
@@ -163,6 +165,7 @@ const MobileSidebar = () => {
 
 	const opened = useDashboardState((state) => state.opened);
 	const setOpened = useDashboardState((state) => state.setOpened);
+	const windowSize = useWindowSize();
 
 	return (
 		<div className="flex">
@@ -216,7 +219,9 @@ const MobileSidebar = () => {
 					})}
 
 					<div className={cn("flex justify-center")}>
-						<ClientOnly>{() => <ThemeToggle />}</ClientOnly>
+						{windowSize.width < 1024 && !noHeaderPaths(location.pathname) && (
+							<GlobalSearchCombobox />
+						)}
 					</div>
 				</ul>
 			</nav>

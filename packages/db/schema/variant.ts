@@ -19,8 +19,8 @@ export const variants = pgTable(
 	"variants",
 	{
 		id: varchar("id").notNull().primaryKey(),
-
 		title: varchar("title"),
+		description: text("description"),
 		handle: varchar("handle"),
 		barcode: varchar("barcode"),
 		quantity: integer("quantity").notNull(),

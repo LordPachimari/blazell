@@ -26,7 +26,6 @@ export const products = pgTable(
 
 		defaultVariantID: varchar("default_variant_id").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
-		description: text("description"),
 		collectionID: varchar("collection_pk").references(() => collections.id),
 		score: integer("score").default(0),
 		discountable: boolean("discountable").notNull().default(false),

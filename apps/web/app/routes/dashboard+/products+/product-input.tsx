@@ -138,20 +138,13 @@ export function ProductInput({
 		await dashboardRep?.mutate.publishProduct({ id: productID });
 		toast.success("Product published!");
 	}, [dashboardRep, productID]);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const onProductInputChange = useCallback(
-		debounce(async (updates: UpdateProduct["updates"]) => {
-			methods.clearErrors();
-			await updateProduct(updates);
-		}, 800),
-		[updateProduct],
-	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onVariantInputChange = useCallback(
 		debounce(async (props: UpdateVariant) => {
+			methods.clearErrors();
 			await updateVariant({ id: props.id, updates: props.updates });
-		}, 800),
+		}, 300),
 		[updateVariant],
 	);
 
@@ -166,7 +159,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-10 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
+				<main className="relative table min-h-screen max-w-7xl w-full gap-4 xl:gap-6 xl:flex min-w-[15rem] p-4 md:p-10">
 					<Button
 						variant="ghost"
 						type="button"
@@ -210,8 +203,7 @@ export function ProductInput({
 						</section>
 						<section className="w-full table gap-0">
 							<ProductInfo
-								description={product?.description}
-								onProductInputChange={onProductInputChange}
+								description={defaultVariant?.description}
 								title={defaultVariant?.title}
 								defaultVariantID={defaultVariant?.id}
 								onVariantInputChange={onVariantInputChange}

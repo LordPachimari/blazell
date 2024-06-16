@@ -18,7 +18,12 @@ const Image = React.forwardRef<
 >(({ className, fit, quality, width, height, alt, src, ...props }, ref) => {
 	if (!src)
 		return (
-			<div className={cn("flex justify-center items-center", className)}>
+			<div
+				className={cn(
+					"flex aspect-square min-h-36 bg-component max-w-full rounded-lg justify-center items-center",
+					className,
+				)}
+			>
 				<ImagePlaceholder />
 			</div>
 		);

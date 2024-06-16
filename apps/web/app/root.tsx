@@ -37,8 +37,15 @@ import { AppEnvSchema, type AppEnv } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
-import { GlobalStoreProvider } from "./zustand/store";
-import { GlobalStoreMutator } from "./zustand/store-mutator";
+import {
+	GlobalSearchProvider,
+	GlobalStoreProvider,
+	MarketplaceStoreProvider,
+} from "./zustand/store";
+import {
+	GlobalStoreMutator,
+	MarketplaceStoreMutator,
+} from "./zustand/store-mutator";
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -125,13 +132,19 @@ function App() {
 				<GlobalReplicacheProvider>
 					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
-							<GlobalStoreMutator>
-								<Sidebar />
-								<MobileSidebar />
-								<Header />
-								<Outlet />
-								<Toaster />
-							</GlobalStoreMutator>
+							<MarketplaceStoreProvider>
+								<GlobalSearchProvider>
+									<GlobalStoreMutator>
+										<MarketplaceStoreMutator>
+											<Sidebar />
+											<MobileSidebar />
+											<Header />
+											<Outlet />
+											<Toaster />
+										</MarketplaceStoreMutator>
+									</GlobalStoreMutator>
+								</GlobalSearchProvider>
+							</MarketplaceStoreProvider>
 						</GlobalStoreProvider>
 						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>
 					</DashboardReplicacheProvider>

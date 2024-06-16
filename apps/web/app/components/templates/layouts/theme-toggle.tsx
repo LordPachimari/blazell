@@ -67,7 +67,7 @@ export function ThemeToggle() {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				className={cn(
-					buttonVariants({ size: "icon", variant: "ghost" }),
+					buttonVariants({ size: "icon", variant: "outline" }),
 					"rounded-full",
 				)}
 			>

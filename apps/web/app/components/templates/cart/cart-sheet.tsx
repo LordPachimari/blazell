@@ -46,7 +46,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
 			<DialogTrigger asChild>
-				<Button variant={"ghost"} size={"icon"} className="rounded-full">
+				<Button variant={"outline"} size={"icon"} className="rounded-full">
 					<Icons.ShoppingCart
 						size={20}
 						strokeWidth={strokeWidth}

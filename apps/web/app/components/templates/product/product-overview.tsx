@@ -60,7 +60,7 @@ const ProductOverview = ({
 					)}
 				>
 					<div className="p-4 h-full w-full">
-						<GeneralInfo defaultVariant={defaultVariant} product={product} />
+						<GeneralInfo defaultVariant={defaultVariant} />
 						<Actions
 							{...(cartID && { cartID })}
 							product={product}

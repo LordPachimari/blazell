@@ -1,13 +1,6 @@
 {
 	"extends": "@blazell/tsconfig/base.json",
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"**/.server/**/*.ts",
-		"**/.server/**/*.tsx",
-		"**/.client/**/*.ts",
-		"**/.client/**/*.tsx"
-	],
+	"include": ["."],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 		"types": ["@remix-run/cloudflare", "vite/client"],

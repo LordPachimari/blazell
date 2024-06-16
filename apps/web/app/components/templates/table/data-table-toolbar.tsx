@@ -7,6 +7,7 @@ import { Input } from "@blazell/ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
 import type { DataTableSearchableColumn, Option } from "~/types/table";
+import type { DebouncedFunc } from "~/types/debounce";
 
 export interface DataTableFilterableColumn<TData>
 	extends DataTableSearchableColumn<TData> {
@@ -18,10 +19,7 @@ interface DataTableToolbarProps<TData> {
 	filterableColumns?: DataTableFilterableColumn<TData>[] | undefined;
 	toolbarButton?: React.ReactNode;
 	viewOptions?: boolean;
-}
-
-interface DataTableToolbarProps<TData> {
-	table: Table<TData>;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 export function DataTableToolbar<TData>({
@@ -29,6 +27,7 @@ export function DataTableToolbar<TData>({
 	table,
 	toolbarButton,
 	viewOptions = true,
+	onSearch,
 }: Readonly<DataTableToolbarProps<TData>>) {
 	const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -37,12 +36,9 @@ export function DataTableToolbar<TData>({
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
 					placeholder="Search..."
-					// value={
-					// 	(table.getColumn("fullName")?.getFilterValue() as string) ?? ""
-					// }
-					// onChange={(event) =>
-					// 	table.getColumn("fullName")?.setFilterValue(event.target.value)
-					// }
+					onChange={(event) => {
+						onSearch?.(event.target.value);
+					}}
 					className="h-10 w-[150px] md:w-[350px] rounded-xl"
 				/>
 

@@ -26,3 +26,9 @@ export function toImageURL(
 ) {
 	return `data:${fileType};base64,${base64}`;
 }
+
+export function isMacOs() {
+	if (typeof window === "undefined") return false;
+
+	return window.navigator.userAgent.includes("Mac");
+}
