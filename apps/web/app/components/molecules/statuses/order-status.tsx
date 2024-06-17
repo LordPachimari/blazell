@@ -5,7 +5,7 @@ export function OrderStatus({ status }: { status: Order["status"] }) {
 	return status === "pending" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-ruby-3 border-ruby-9 font-bold text-ruby-9 "
+			className="bg-red-3 border-red-9 font-bold text-red-9 "
 		>
 			Pending
 		</Badge>

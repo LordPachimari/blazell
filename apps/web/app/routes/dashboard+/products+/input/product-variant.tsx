@@ -150,7 +150,7 @@ function VariantOptions({
 		<div className="flex w-full flex-col gap-4 py-2">
 			<h1
 				className={cn("font-bold text-lg", {
-					"text-ruby-7": !variant?.optionValues?.length,
+					"text-red-7": !variant?.optionValues?.length,
 				})}
 			>
 				Select options:

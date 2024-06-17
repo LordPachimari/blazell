@@ -7,8 +7,8 @@ import { InsertPriceSchema, PriceSchema } from "./price";
 export const InsertVariantSchema = createInsertSchema(schema.variants);
 
 export const VariantSchema = createSelectSchema(schema.variants).extend({
-	thumbnail: ImageSchema.optional(),
-	images: z.array(ImageSchema).optional(),
+	thumbnail: ImageSchema.optional().nullable(),
+	images: z.array(ImageSchema).optional().nullable(),
 });
 export type InsertVariant = z.infer<typeof InsertVariantSchema>;
 export const CreateVariantSchema = z.object({

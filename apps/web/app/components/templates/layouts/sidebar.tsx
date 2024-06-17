@@ -9,7 +9,6 @@ import { useSidebarState } from "~/hooks/use-sidebar";
 import { useWindowSize } from "~/hooks/use-window-size";
 import type { action } from "~/routes/action.set-sidebar";
 import { useDashboardState } from "~/zustand/state";
-import { ThemeToggle } from "./theme-toggle";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -143,16 +142,7 @@ const Sidebar = () => {
 						);
 					})}
 				</ul>
-				<div
-					className={cn(
-						"w-full flex justify-center mb-6 pt-2 group-hover:justify-end group-hover:pr-2",
-						{
-							"justify-end pr-2": mode === "open",
-						},
-					)}
-				>
-					<ThemeToggle />
-				</div>
+				<div />
 			</nav>
 		</div>
 	);
@@ -165,7 +155,7 @@ const MobileSidebar = () => {
 
 	const opened = useDashboardState((state) => state.opened);
 	const setOpened = useDashboardState((state) => state.setOpened);
-	const windowSize = useWindowSize();
+	const windowSize = useWindowSize(100);
 
 	return (
 		<div className="flex">

@@ -74,7 +74,7 @@ export function ThemeToggle() {
 				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>
 				<span className="sr-only">Toggle theme</span>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent align="center">
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("light")}

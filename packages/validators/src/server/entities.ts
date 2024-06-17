@@ -18,3 +18,4 @@ export type Cart = InferSelectModel<typeof schema.carts>;
 export type LineItem = InferSelectModel<typeof schema.lineItems>;
 export type Order = InferSelectModel<typeof schema.orders>;
 export type ClientError = InferSelectModel<typeof schema.clientErrors>;
+export type Notification = InferSelectModel<typeof schema.notifications>;

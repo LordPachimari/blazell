@@ -6,6 +6,7 @@ import { createCart } from "./cart";
 
 async function createLineItem(tx: WriteTransaction, input: CreateLineItem) {
 	const { lineItem, newCartID } = input;
+	console.log("lineItem", lineItem);
 	if (newCartID) {
 		console.log("Creating new cart");
 		await createCart(tx, {

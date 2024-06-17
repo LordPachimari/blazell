@@ -29,9 +29,7 @@ import { useDashboardStore } from "~/zustand/store";
 export const OrderPreview = ({ orderID }: { orderID: string }) => {
 	const orderMap = useDashboardStore((state) => state.orderMap);
 	const order = orderMap.get(orderID);
-	const items = useDashboardStore((state) => state.lineItems).filter(
-		(item) => item.orderID === orderID,
-	);
+	const items = order?.items ?? [];
 
 	return (
 		<Card
@@ -173,10 +171,8 @@ export const OrderPreviewMobile = ({
 }: { opened: boolean; setOpened: (val: boolean) => void; orderID: string }) => {
 	const orderMap = useDashboardStore((state) => state.orderMap);
 	const order = orderMap.get(orderID);
-	const items = useDashboardStore((state) => state.lineItems).filter(
-		(item) => item.orderID === orderID,
-	);
-	const windowSize = useWindowSize();
+	const items = order?.items ?? [];
+	const windowSize = useWindowSize(100);
 	if (windowSize.width > 1024) return null;
 
 	return (

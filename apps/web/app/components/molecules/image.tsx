@@ -20,7 +20,7 @@ const Image = React.forwardRef<
 		return (
 			<div
 				className={cn(
-					"flex aspect-square min-h-36 bg-component max-w-full rounded-lg justify-center items-center",
+					"flex aspect-square h-20 w-20 bg-component max-w-full rounded-lg justify-center items-center",
 					className,
 				)}
 			>

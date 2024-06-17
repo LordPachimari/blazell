@@ -123,9 +123,7 @@ const CustomerNote = () => {
 };
 const OrderInfo = ({ order }: { order: Order | undefined }) => {
 	const isInitialized = useDashboardStore((state) => state.isInitialized);
-	const items = useDashboardStore((state) => state.lineItems).filter(
-		(item) => item.orderID === order?.id,
-	);
+	const items = order?.items ?? [];
 
 	return (
 		<Card>

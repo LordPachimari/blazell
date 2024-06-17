@@ -248,6 +248,27 @@ app.post("/complete-cart", async (c) => {
 
 								.where(eq(schema.carts.id, id)),
 						),
+
+						Effect.tryPromise(() =>
+							transaction.insert(schema.notifications).values([
+								{
+									id: generateID({ prefix: "notification" }),
+									createdAt: new Date().toISOString(),
+									type: "ORDER_PLACED" as const,
+									entityID: existingUser ? existingUser.id : newUserID,
+									description: "Order has been placed",
+									title: "Order Placed",
+								},
+								...Array.from(storeIDToOrder.keys()).map((storeID) => ({
+									id: generateID({ prefix: "notification" }),
+									createdAt: new Date().toISOString(),
+									type: "ORDER_PLACED" as const,
+									entityID: storeID,
+									description: "Order has been placed",
+									title: "Order Placed",
+								})),
+							]),
+						),
 					]);
 					return orderIDs.map((order) => order.id);
 				}).pipe(
@@ -300,7 +321,7 @@ app.post("/complete-cart", async (c) => {
 				Http.request
 					.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
 					.pipe(
-						Http.request.jsonBody(["cart", "orders"]),
+						Http.request.jsonBody(["cart", "orders", "notifications"]),
 						Effect.andThen(Http.client.fetch),
 						Effect.retry({ times: 3 }),
 						Effect.scoped,

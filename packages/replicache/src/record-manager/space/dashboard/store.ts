@@ -139,12 +139,6 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 													version: true,
 												},
 											},
-											items: {
-												columns: {
-													id: true,
-													version: true,
-												},
-											},
 										},
 									},
 								},
@@ -215,21 +209,12 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 
 							Effect.sync(() =>
 								rowsWTableName.push({
-									tableName: "lineItems" as const,
-									rows: store.orders.flatMap((order) => order.items),
-								}),
-							),
-							Effect.sync(() =>
-								rowsWTableName.push({
 									tableName: "orders" as const,
-									rows: store.orders.map((o) => {
-										o.items = [];
-										return o;
-									}),
+									rows: store.orders,
 								}),
 							),
 						],
-						{ concurrency: 6 },
+						{ concurrency: 5 },
 					);
 				});
 			},

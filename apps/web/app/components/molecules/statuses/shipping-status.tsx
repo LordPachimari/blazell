@@ -7,7 +7,7 @@ export function ShippingStatus({
 	return status === "pending" ? (
 		<Badge
 			variant={"outline"}
-			className="bg-ruby-3 border-ruby-9 text-ruby-9  font-bold"
+			className="bg-red-3 border-red-9 text-red-9  font-bold"
 		>
 			Pending
 		</Badge>
