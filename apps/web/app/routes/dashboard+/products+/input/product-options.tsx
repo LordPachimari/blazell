@@ -112,7 +112,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 								})
 							}
 						>
-							<Icons.Close className="text-ruby-9" size={20} />
+							<Icons.Close className="text-red-9" size={20} />
 						</button>
 					</li>
 				))}

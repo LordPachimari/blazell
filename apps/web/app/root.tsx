@@ -84,14 +84,20 @@ export const loader: LoaderFunction = (args) => {
 			const cookieHeader = request.headers.get("Cookie");
 			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
 			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-			const { getToken, userId } = await getAuth(args);
-			const token = await getToken();
-			const user = await fetch(`${WORKER_URL}/users`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${token}`,
+			const { userId } = await getAuth(args);
+			// const token = await getToken();
+			// const user = await fetch(`${WORKER_URL}/users`, {
+			// 	method: "GET",
+			// 	headers: {
+			// 		Authorization: `Bearer ${token}`,
+			// 	},
+			// }).then((res) => res.json() as Promise<User | undefined>);
+			const user = await fetch(
+				`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
+				{
+					method: "GET",
 				},
-			}).then((res) => res.json() as Promise<User | undefined>);
+			).then((res) => res.json() as Promise<User | undefined>);
 			return json(
 				{
 					ENV: {

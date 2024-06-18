@@ -32,6 +32,7 @@ import {
 	WalletCards,
 	X,
 	Star,
+	Bell,
 	type LucideIcon,
 	type LucideProps,
 	Bookmark,
@@ -76,6 +77,7 @@ export const Icons = {
 	Bookmark,
 	ShoppingCart,
 	MagnifyingGlassIcon: MagnifyingGlassIcon,
+	Notification: Bell,
 	GitHub: (props: LucideProps) => (
 		<svg viewBox="0 0 438.549 438.549" {...props}>
 			<title>Github</title>

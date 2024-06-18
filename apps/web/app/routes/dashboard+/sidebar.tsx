@@ -16,7 +16,6 @@ export type DashboardSidebarItem = {
 	title: string;
 	href: string;
 	icon: keyof typeof Icons;
-	items: [];
 };
 
 const items: DashboardSidebarItem[] = [
@@ -25,25 +24,21 @@ const items: DashboardSidebarItem[] = [
 		href: "/dashboard/store",
 
 		icon: "Store",
-		items: [],
 	},
 	{
 		title: "Products",
 		href: "/dashboard/products",
 		icon: "Product",
-		items: [],
 	},
 	{
 		title: "Orders",
 		href: "/dashboard/orders",
 		icon: "Billing",
-		items: [],
 	},
 	{
 		title: "Customers",
 		href: "/dashboard/customers",
 		icon: "Customer",
-		items: [],
 	},
 ];
 interface DashboardSidebarProps {
@@ -125,7 +120,7 @@ export const DashboardSidebarMobile = () => {
 	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
 	const storeMap = useDashboardStore((state) => state.storeMap);
 	const store = storeMap.get(activeStoreID ?? "");
-	const windowSize = useWindowSize();
+	const windowSize = useWindowSize(100);
 	if (windowSize.width > 768) return null;
 	return (
 		<DialogRoot direction="left" open={opened} onOpenChange={setOpened}>

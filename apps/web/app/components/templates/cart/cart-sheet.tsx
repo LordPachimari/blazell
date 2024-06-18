@@ -25,6 +25,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 	const items = useGlobalStore((state) =>
 		state.lineItems.filter((item) => item.cartID === cartID),
 	);
+	console.log("items", items, cart);
 
 	const [parent] = useAutoAnimate({ duration: 200 });
 

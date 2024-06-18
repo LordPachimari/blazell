@@ -10,7 +10,7 @@ const toast = {
 	},
 	error(message: string) {
 		return sonnerToast.error(message, {
-			icon: <Icons.CircleError className="text-ruby-9" />,
+			icon: <Icons.CircleError className="text-red-9" />,
 			duration: 5000,
 			dismissible: true,
 			closeButton: true,
@@ -37,7 +37,7 @@ const toast = {
 
 				return (
 					<span className="flex items-center gap-2">
-						<Icons.CircleError className="text-ruby-9" />
+						<Icons.CircleError className="text-red-9" />
 						{errorMessage}
 					</span>
 				);

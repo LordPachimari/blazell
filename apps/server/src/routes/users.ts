@@ -86,7 +86,7 @@ app.get("/", async (c) => {
 	return c.json(result, 200);
 });
 app.get(
-	"/:username",
+	"/username/:username",
 	// cache({
 	// 	cacheName: "blazell-hono-cache",
 	// 	cacheControl: "max-age=3600",
@@ -105,5 +105,21 @@ app.get(
 		return c.json(result, 200);
 	},
 );
+app.get(
+	"/id/:id",
+	// cache({
+	// 	cacheName: "blazell-hono-cache",
+	// 	cacheControl: "max-age=3600",
+	// }),
+	async (c) => {
+		const db = c.get("db" as never) as Db;
+		const id = c.req.param("id");
+		const result = await db.query.users.findFirst({
+			where: (users, { eq }) => eq(users.authID, id),
+		});
+		if (!result) return c.json(null, 200);
 
+		return c.json(result, 200);
+	},
+);
 export default app;

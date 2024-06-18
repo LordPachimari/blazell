@@ -5,17 +5,18 @@ import {
 } from "@blazell/validators";
 
 import { storeCVD } from "./dashboard";
-import { userCVD } from "./user";
+import { userCVD } from "./global/user";
 import { productsCVD } from "./marketplace";
 import type { GetRowsWTableName } from "./types";
-import { cartCVD } from "./user/cart";
-import { ordersCVD } from "./user/orders";
+import { cartCVD } from "./global/cart";
+import { ordersCVD } from "./global/orders";
 import { tableNameToTableMap, type TableName } from "@blazell/db";
 import { Effect, pipe } from "effect";
 import { generateRandomWithBias } from "@blazell/utils";
 import { Database } from "@blazell/shared";
-import { errorsCVD } from "./global";
+import { errorsCVD } from "./global/errors";
 import { inArray } from "drizzle-orm";
+import { notificationsCVD } from "./global/notifications";
 
 export type SpaceRecordGetterType = {
 	[K in SpaceID]: Record<SpaceRecord[K][number], GetRowsWTableName>;
@@ -29,6 +30,7 @@ export const SpaceRecordGetter: SpaceRecordGetterType = {
 		user: userCVD,
 		cart: cartCVD,
 		orders: ordersCVD,
+		notifications: notificationsCVD,
 	},
 	marketplace: {
 		products: productsCVD,
@@ -166,6 +168,32 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									email: true,
 									username: true,
 									phone: true,
+								},
+							},
+							store: {
+								columns: {
+									id: true,
+									storeImage: true,
+									name: true,
+								},
+							},
+							items: {
+								with: {
+									variant: {
+										with: {
+											optionValues: {
+												with: {
+													optionValue: {
+														with: {
+															option: true,
+														},
+													},
+												},
+											},
+											prices: true,
+										},
+									},
+									product: true,
 								},
 							},
 							shippingAddress: true,

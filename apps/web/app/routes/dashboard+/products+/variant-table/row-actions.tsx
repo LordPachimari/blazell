@@ -54,7 +54,7 @@ export function RowActions({
 					Duplicate
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="text-ruby-9"
+					className="text-red-9"
 					onClick={async (e) => {
 						e.stopPropagation();
 						await deleteVariant(row.original.id);

@@ -136,7 +136,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 		setIsLoading(true);
 
 		const exist = await fetch(
-			`${window.ENV.WORKER_URL}/users/${value.username}`,
+			`${window.ENV.WORKER_URL}/users/username/${value.username}`,
 		).then((res) => res.json());
 		if (exist) {
 			toast.error("Username already exists!");
@@ -208,7 +208,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 								{...register("username")}
 							/>
 							{errors?.username && (
-								<p className="px-1 text-xs text-ruby-9">
+								<p className="px-1 text-xs text-red-9">
 									{errors.username.message}
 								</p>
 							)}

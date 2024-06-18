@@ -15,7 +15,34 @@ app.get("/order", async (c) => {
 			db.query.orders.findMany({
 				where: (orders, { inArray }) => inArray(orders.id, ids),
 				with: {
-					items: true,
+					items: {
+						with: {
+							variant: {
+								with: {
+									optionValues: {
+										with: {
+											optionValue: {
+												with: {
+													option: true,
+												},
+											},
+										},
+									},
+									prices: true,
+								},
+							},
+							product: true,
+						},
+					},
+					shippingAddress: true,
+					billingAddress: true,
+					store: {
+						columns: {
+							id: true,
+							storeImage: true,
+							name: true,
+						},
+					},
 				},
 			}),
 		).pipe(Effect.orDie),

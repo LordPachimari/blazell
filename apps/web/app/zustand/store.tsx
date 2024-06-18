@@ -2,6 +2,7 @@ import type {
 	Cart,
 	Customer,
 	LineItem,
+	Notification,
 	Order,
 	Product,
 	PublishedProduct,
@@ -86,13 +87,11 @@ interface DashboardStore {
 	orders: Order[];
 	customers: Customer[];
 	variants: Variant[];
-	lineItems: LineItem[];
 	productMap: Map<string, Product>;
 	storeMap: Map<string, Store>;
 	orderMap: Map<string, Order>;
 	customerMap: Map<string, Customer>;
 	variantMap: Map<string, Variant>;
-	lineItemMap: Map<string, LineItem>;
 	terminateSearchWorker(): void;
 	setActiveStoreID(newValue: string | null): void;
 	setIsInitialized(newValue: boolean): void;
@@ -100,7 +99,6 @@ interface DashboardStore {
 	diffOrders(diff: ExperimentalDiff): void;
 	diffCustomers(diff: ExperimentalDiff): void;
 	diffVariants(diff: ExperimentalDiff): void;
-	diffLineItems(diff: ExperimentalDiff): void;
 	diffStores(diff: ExperimentalDiff): void;
 }
 const createDashboardStore = () =>
@@ -110,16 +108,16 @@ const createDashboardStore = () =>
 		activeStoreID: null,
 		stores: [],
 		products: [],
+		notifications: [],
 		orders: [],
 		customers: [],
 		variants: [],
-		lineItems: [],
 		productMap: new Map(),
 		storeMap: new Map(),
 		orderMap: new Map(),
 		customerMap: new Map(),
 		variantMap: new Map(),
-		lineItemMap: new Map(),
+		notificationMap: new Map(),
 		setActiveStoreID(newValue: string | null) {
 			set({ activeStoreID: newValue });
 		},
@@ -167,16 +165,6 @@ const createDashboardStore = () =>
 			set({
 				variants: newEntities as Variant[],
 				variantMap: newMap as Map<string, Variant>,
-			});
-		},
-		diffLineItems(diff: ExperimentalDiff) {
-			const { newEntities, newMap } = commonDiffReducer({
-				diff,
-				map: get().lineItemMap,
-			});
-			set({
-				lineItems: newEntities as LineItem[],
-				lineItemMap: newMap as Map<string, LineItem>,
 			});
 		},
 		diffStores(diff: ExperimentalDiff) {
@@ -333,16 +321,19 @@ interface GlobalStore {
 	users: User[];
 	orders: Order[];
 	carts: Cart[];
+	notifications: Notification[];
 	lineItems: LineItem[];
 	userMap: Map<string, User>;
 	cartMap: Map<string, Cart>;
 	orderMap: Map<string, Order>;
 	lineItemMap: Map<string, LineItem>;
+	notificationMap: Map<string, Notification>;
 	setIsInitialized(newValue: boolean): void;
 	diffUsers(diff: ExperimentalDiff): void;
 	diffCarts(diff: ExperimentalDiff): void;
 	diffOrders(diff: ExperimentalDiff): void;
 	diffLineItems(diff: ExperimentalDiff): void;
+	diffNotifications(diff: ExperimentalDiff): void;
 }
 const createGlobalStore = () =>
 	createStore<GlobalStore>((set, get) => ({
@@ -350,12 +341,14 @@ const createGlobalStore = () =>
 		carts: [],
 		users: [],
 		orders: [],
+		notifications: [],
 
 		lineItems: [],
 		userMap: new Map(),
 		cartMap: new Map(),
 		orderMap: new Map(),
 		lineItemMap: new Map(),
+		notificationMap: new Map(),
 
 		setIsInitialized(newValue: boolean) {
 			set({ isInitialized: newValue });
@@ -398,6 +391,17 @@ const createGlobalStore = () =>
 			set({
 				lineItems: newEntities as LineItem[],
 				lineItemMap: newMap as Map<string, LineItem>,
+			});
+		},
+
+		diffNotifications(diff: ExperimentalDiff) {
+			const { newEntities, newMap } = commonDiffReducer({
+				diff,
+				map: get().notificationMap,
+			});
+			set({
+				notifications: newEntities as Notification[],
+				notificationMap: newMap as Map<string, Notification>,
 			});
 		},
 	}));

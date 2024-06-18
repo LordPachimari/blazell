@@ -9,7 +9,7 @@ function PartykitProvider() {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID } = userContext;
+	const { cartID, fakeAuthID, user } = userContext;
 	const { getToken } = useAuth();
 
 	usePartySocket({
@@ -38,6 +38,9 @@ function PartykitProvider() {
 							headers: {
 								"Content-Type": "application/json",
 								Authorization: `Bearer ${token}`,
+								...(user?.id && {
+									"x-user-id": user.id,
+								}),
 								...(cartID && { "x-cart-id": cartID }),
 							},
 							body: JSON.stringify(req),

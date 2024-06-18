@@ -1,6 +1,5 @@
 import { Card } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
-import { Separator } from "@blazell/ui/separator";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { toast } from "@blazell/ui/toast";
 import { getLineItemPriceAmount } from "@blazell/utils";
@@ -48,7 +47,7 @@ export const LineItem = ({
 				</Card>
 				<div className="flex gap-2 w-full justify-between">
 					<div className="w-full flex flex-col justify-between">
-						<h2 className="line-clamp-1 text-sm text-balance font-bold">
+						<h2 className="line-clamp-1 text-base text-start font-bold">
 							{lineItem.title}
 						</h2>
 						<div>
@@ -96,11 +95,15 @@ export const LineItem = ({
 						</div>
 					</div>
 					<div className="flex flex-col items-end justify-between">
-						<Price amount={amount} currencyCode={currencyCode} />
+						<Price
+							amount={amount}
+							currencyCode={currencyCode}
+							className="font-bold"
+						/>
 						{!readonly && (
 							<button
 								type="button"
-								className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
+								className="w-8 text-red-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-red-10"
 								onClick={async () => await deleteItem?.(lineItem.id)}
 							>
 								<Icons.Trash size={12} />
@@ -109,7 +112,6 @@ export const LineItem = ({
 					</div>
 				</div>
 			</li>
-			<Separator className="my-2" />
 		</>
 	);
 };
@@ -146,7 +148,7 @@ export const LineItemSkeleton = () => {
 					<Skeleton className="w-[50px] h-[10px]" />
 					<button
 						type="button"
-						className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
+						className="w-8 text-red-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-red-10"
 					>
 						<Icons.Trash size={12} />
 					</button>

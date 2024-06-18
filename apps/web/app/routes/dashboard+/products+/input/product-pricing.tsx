@@ -111,7 +111,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 							className="rounded-full"
 							onClick={async () => await deletePrices(price.id)}
 						>
-							<Icons.Close className="text-ruby-9" />
+							<Icons.Close className="text-red-9" />
 						</Button>
 					</div>
 				))}

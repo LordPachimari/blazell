@@ -98,7 +98,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										<Icons.Trash
 											size={15}
 											aria-hidden="true"
-											className="text-ruby-9"
+											className="text-red-9"
 										/>
 									</Button>
 								</TooltipTrigger>

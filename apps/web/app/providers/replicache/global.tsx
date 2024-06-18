@@ -13,7 +13,7 @@ export function GlobalReplicacheProvider({
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID } = userContext;
+	const { cartID, fakeAuthID, user } = userContext;
 
 	const { getToken } = useAuth();
 
@@ -23,7 +23,7 @@ export function GlobalReplicacheProvider({
 		}
 
 		const r = new Replicache({
-			name: "user",
+			name: "global",
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: GlobalMutators,
 			pullInterval: null,
@@ -37,6 +37,7 @@ export function GlobalReplicacheProvider({
 						Authorization: `Bearer ${token}`,
 						...(cartID && { "x-cart-id": cartID }),
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
+						...(user?.id && { "x-user-id": user.id }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
@@ -71,7 +72,7 @@ export function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID]);
+	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID, user]);
 
 	return <>{children}</>;
 }

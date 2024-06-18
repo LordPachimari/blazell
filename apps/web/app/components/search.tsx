@@ -115,7 +115,7 @@ export function GlobalSearchCombobox() {
 		<>
 			<Button
 				variant={"outline"}
-				className={cn("hidden group relative lg:flex gap-2")}
+				className={cn("hidden group relative lg:flex gap-1")}
 				onClick={() => open()}
 			>
 				<Icons.MagnifyingGlassIcon
@@ -167,7 +167,7 @@ export function GlobalSearchCombobox() {
 										<Input
 											autoFocus
 											className="outline-none h-10 border-b bg-component border-mauve-7 p-4"
-											placeholder="Search in dashboard.."
+											placeholder="Global search"
 											value={query}
 											onChange={(e) => setQuery(e.target.value)}
 										/>

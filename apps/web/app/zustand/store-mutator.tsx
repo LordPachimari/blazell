@@ -16,6 +16,7 @@ export const GlobalStoreMutator = ({
 	const diffOrders = useGlobalStore((state) => state.diffOrders);
 	const diffLineItems = useGlobalStore((state) => state.diffLineItems);
 	const diffCarts = useGlobalStore((state) => state.diffCarts);
+	const diffNotifications = useGlobalStore((state) => state.diffNotifications);
 
 	const rep = useReplicache((state) => state.globalRep);
 
@@ -52,6 +53,12 @@ export const GlobalStoreMutator = ({
 			initialValuesInFirstDiff: true,
 		});
 	}, [rep, diffLineItems]);
+	useEffect(() => {
+		return rep?.experimentalWatch(diffNotifications, {
+			prefix: "notification",
+			initialValuesInFirstDiff: true,
+		});
+	}, [rep, diffNotifications]);
 	return <>{children}</>;
 };
 
@@ -95,7 +102,6 @@ export const DashboardStoreMutator = ({
 	const diffStores = useDashboardStore((state) => state.diffStores);
 	const diffCustomers = useDashboardStore((state) => state.diffCustomers);
 	const diffOrders = useDashboardStore((state) => state.diffOrders);
-	const diffLineItems = useDashboardStore((state) => state.diffLineItems);
 	const diffProducts = useDashboardStore((state) => state.diffProducts);
 	const diffVariants = useDashboardStore((state) => state.diffVariants);
 
@@ -146,11 +152,5 @@ export const DashboardStoreMutator = ({
 			initialValuesInFirstDiff: true,
 		});
 	}, [rep, diffVariants]);
-	useEffect(() => {
-		return rep?.experimentalWatch(diffLineItems, {
-			prefix: "line_item",
-			initialValuesInFirstDiff: true,
-		});
-	}, [rep, diffLineItems]);
 	return <>{children}</>;
 };

@@ -58,4 +58,7 @@ export type Order = Server.Order & {
 	user?: User;
 	shippingAddress?: Address;
 	billingAddress?: Address;
+	store?: Store;
+	items: LineItem[];
 };
+export type Notification = Server.Notification;
