@@ -14,7 +14,7 @@ export function getVariantColumns({
 	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
-	deleteVariant: (id: string) => Promise<void>;
+	deleteVariant: (keys: string[]) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
 	return [
