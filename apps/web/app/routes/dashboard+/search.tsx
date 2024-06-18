@@ -143,16 +143,18 @@ export function DashboardSearchCombobox() {
 					Search
 				</span>
 				<span className="sr-only">Search products</span>
-				<ClientOnly>
-					{() => (
-						<Kbd
-							title={isMacOs() ? "Command" : "Control"}
-							className="group-hover:text-crimson-9 text-mauve-11 border-mauve-7"
-						>
-							{isMacOs() ? "⌘" : "Ctrl"} K
-						</Kbd>
-					)}
-				</ClientOnly>
+				<div className="w-10">
+					<ClientOnly>
+						{() => (
+							<Kbd
+								title={isMacOs() ? "Command" : "Control"}
+								className="group-hover:text-crimson-9 text-mauve-11 border-mauve-7"
+							>
+								{isMacOs() ? "⌘" : "Ctrl"} K
+							</Kbd>
+						)}
+					</ClientOnly>
+				</div>
 			</button>
 
 			<Transition appear show={isOpen}>

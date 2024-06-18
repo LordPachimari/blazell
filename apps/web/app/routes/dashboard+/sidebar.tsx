@@ -11,6 +11,7 @@ import { useDashboardStore } from "~/zustand/store";
 import { DashboardSearchCombobox } from "./search";
 import { DialogContent, DialogRoot } from "@blazell/ui/dialog-vaul";
 import { useWindowSize } from "~/hooks/use-window-size";
+import { Skeleton } from "@blazell/ui/skeleton";
 
 export type DashboardSidebarItem = {
 	title: string;
@@ -187,6 +188,7 @@ export const DashboardSidebarMobile = () => {
 };
 const StoreInfo = ({ store }: { store: Store | undefined }) => {
 	const setOpened = useDashboardState((state) => state.setOpened);
+	const isInitialized = useDashboardStore((state) => state.isInitialized);
 	return (
 		<section className="w-full flex items-center flex-col mt-4">
 			<Link
@@ -219,7 +221,13 @@ const StoreInfo = ({ store }: { store: Store | undefined }) => {
 						<ImagePlaceholder />
 					)}
 				</Avatar>
-				<h1 className="font-freeman py-2">{store?.name}</h1>
+				{!isInitialized ? (
+					<Skeleton className="h-4 my-3 w-20" />
+				) : (
+					<h1 className="font-freeman py-2 overflow-hidden text-ellipsis">
+						{store?.name}
+					</h1>
+				)}
 			</Link>
 		</section>
 	);

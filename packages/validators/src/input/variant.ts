@@ -11,6 +11,13 @@ export const VariantSchema = createSelectSchema(schema.variants).extend({
 	images: z.array(ImageSchema).optional().nullable(),
 });
 export type InsertVariant = z.infer<typeof InsertVariantSchema>;
+export const GenerateVariantsSchema = z.object({
+	productID: z.string(),
+	prices: z.array(InsertPriceSchema).optional(),
+	newVariantIDs: z.array(z.string()),
+	newPricesIDs: z.array(z.string()),
+});
+export type GenerateVariants = z.infer<typeof GenerateVariantsSchema>;
 export const CreateVariantSchema = z.object({
 	variant: InsertVariantSchema,
 	prices: z.array(InsertPriceSchema).optional(),

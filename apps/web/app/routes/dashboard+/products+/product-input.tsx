@@ -218,8 +218,8 @@ export function ProductInput({
 								prices={defaultVariant?.prices ?? []}
 							/>
 							<Variants
-								options={product?.options}
 								productID={productID}
+								product={product}
 								variants={variants}
 								defaultVariant={defaultVariant}
 								isPublished={product?.status === "published"}

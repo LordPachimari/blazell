@@ -105,14 +105,15 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 									}));
 							}}
 						/>
-						<Button
-							size="icon"
-							variant={"ghost"}
-							className="rounded-full"
-							onClick={async () => await deletePrices(price.id)}
-						>
-							<Icons.Close className="text-red-9" />
-						</Button>
+						<div className="aspect-square h-7 w-7">
+							<button
+								type="button"
+								className="rounded-full aspect-square bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
+								onClick={async () => await deletePrices(price.id)}
+							>
+								<Icons.Close className="text-red-9" size={20} />
+							</button>
+						</div>
 					</div>
 				))}
 			</CardContent>

@@ -24,3 +24,13 @@ export type DeleteProductOptionValue = z.infer<
 export type InsertProductOptionValue = InferInsertModel<
 	typeof schema.productOptionValues
 >;
+
+export const AssignOptionValueToVariantSchema = z.object({
+	optionValueID: z.string(),
+	variantID: z.string(),
+	prevOptionValueID: z.string().optional(),
+	productID: z.string(),
+});
+export type AssignOptionValueToVariant = z.infer<
+	typeof AssignOptionValueToVariantSchema
+>;

@@ -15,7 +15,7 @@ interface DataTableRowActionsProps<TData> {
 	row: Row<TData>;
 
 	setVariantID: (id: string | null) => void;
-	deleteVariant: (id: string) => Promise<void>;
+	deleteVariant: (keys: string[]) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 
@@ -57,7 +57,7 @@ export function RowActions({
 					className="text-red-9"
 					onClick={async (e) => {
 						e.stopPropagation();
-						await deleteVariant(row.original.id);
+						await deleteVariant([row.original.id]);
 					}}
 				>
 					Delete

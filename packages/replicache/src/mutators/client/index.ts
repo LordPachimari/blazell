@@ -20,14 +20,13 @@ import { updateAddress } from "./address";
 import { createCart, updateCart } from "./cart";
 import { createOrder } from "./order";
 import {
-	assignOptionValueToVariant,
 	createProductOption,
 	deleteProductOption,
 	updateProductOption,
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
 import {
-	createVariant,
+	generateVariants,
 	deleteVariant,
 	duplicateVariant,
 	updateVariant,
@@ -35,6 +34,7 @@ import {
 import {
 	deleteProductOptionValue,
 	updateProductOptionValues,
+	assignOptionValueToVariant,
 } from "./product-option-value";
 import { deleteImage, updateImagesOrder, uploadImages } from "./image";
 
@@ -56,7 +56,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	assignOptionValueToVariant,
 	createPrices,
 	deletePrices,
-	createVariant,
+	generateVariants,
 	updateVariant,
 	deleteVariant,
 	duplicateVariant,

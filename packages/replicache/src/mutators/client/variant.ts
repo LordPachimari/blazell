@@ -1,23 +1,80 @@
 import {
 	InvalidValue,
-	type CreateVariant,
 	type DeleteInput,
 	type DuplicateVariant,
+	type GenerateVariants,
+	type InsertVariant,
 	type UpdateVariant,
 	type VariantDuplicate,
 } from "@blazell/validators";
 import type { DeepReadonlyObject, WriteTransaction } from "replicache";
-import type { Price, Variant } from "@blazell/validators/client";
+import type {
+	Price,
+	Product,
+	ProductOptionValue,
+	Variant,
+} from "@blazell/validators/client";
 import { Effect } from "effect";
+import { generateValueCombinations } from "../server/variant";
 
 export function variantNotFound(id: string) {
 	console.info(`Variant ${id} not found`);
 	throw new Error(`Variant ${id} not found`);
 }
-async function createVariant(tx: WriteTransaction, input: CreateVariant) {
-	const { variant } = input;
 
-	await tx.set(variant.id, variant);
+async function generateVariants(tx: WriteTransaction, input: GenerateVariants) {
+	const { productID, prices, newPricesIDs, newVariantIDs } = input;
+	const product = (await tx.get(productID)) as Product | undefined;
+	if (!product) {
+		return;
+	}
+	const variants = (await tx.scan<Variant>().values().toArray()).filter(
+		(value) => value.productID === productID,
+	);
+	const options = product.options ?? [];
+	const valueToOptionValue = new Map<string, ProductOptionValue>();
+	for (const option of options) {
+		for (const value of option.optionValues ?? []) {
+			valueToOptionValue.set(value.value, value);
+		}
+	}
+	const existingValueCombinations = variants.map((variant) =>
+		(variant.optionValues ?? []).map((value) => value.optionValue.value),
+	);
+	const newValueCombinations = generateValueCombinations({
+		existingCombos: existingValueCombinations,
+		values: options.map((option) =>
+			(option.optionValues ?? []).map((value) => value.value),
+		),
+	});
+	await Promise.all(
+		newValueCombinations.map((value, index) => {
+			const variantID = newVariantIDs[index]!;
+			const variant: InsertVariant & {
+				prices: Price[];
+				optionValues: { optionValue: ProductOptionValue }[];
+			} = {
+				id: variantID,
+				title: newValueCombinations[index]!.join("/"),
+				createdAt: new Date().toISOString(),
+				productID,
+				quantity: 1,
+				prices: (prices ?? []).map(
+					(price, index) =>
+						({
+							...price,
+							id: newPricesIDs[index]!,
+							variantID,
+							version: 0,
+						}) satisfies Price,
+				),
+				optionValues: value.map((val) => ({
+					optionValue: valueToOptionValue.get(val)!,
+				})),
+			};
+			return tx.set(variantID, variant);
+		}),
+	);
 }
 
 async function updateVariant(tx: WriteTransaction, input: UpdateVariant) {
@@ -35,8 +92,8 @@ async function updateVariant(tx: WriteTransaction, input: UpdateVariant) {
 }
 
 async function deleteVariant(tx: WriteTransaction, input: DeleteInput) {
-	const { id } = input;
-	await tx.del(id);
+	const { keys } = input;
+	await Promise.all(keys.map((key) => tx.del(key)));
 }
 async function duplicateVariant(tx: WriteTransaction, input: DuplicateVariant) {
 	const { duplicates } = input;
@@ -95,4 +152,4 @@ const duplicate = (tx: WriteTransaction, duplicate: VariantDuplicate) =>
 		yield* Effect.tryPromise(() => tx.set(newVariant.id, newVariant));
 	});
 
-export { createVariant, updateVariant, deleteVariant, duplicateVariant };
+export { generateVariants, updateVariant, deleteVariant, duplicateVariant };
