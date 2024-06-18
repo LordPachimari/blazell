@@ -3,7 +3,6 @@ import { z } from "zod";
 import { schema } from "@blazell/db";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { InsertVariantSchema } from "./variant";
-import { ProductOptionValueSchema } from "./product-option-value";
 
 const InsertProductSchema = createInsertSchema(schema.products).extend({
 	defaultVariant: InsertVariantSchema.optional(),
