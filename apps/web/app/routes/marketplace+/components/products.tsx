@@ -25,7 +25,7 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 						<Skeleton
 							key={i}
 							className={cn(
-								"border border-mauve-7 row-span-1 h-auto col-span-1",
+								"border border-mauve-5 dark:border-mauve-7   row-span-1 h-auto col-span-1",
 								{
 									"row-span-2 col-span-2": i === 3 || i === 10,
 								},
@@ -64,7 +64,7 @@ const ProductCard = ({
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"group border hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-mauve-7 h-fit rounded-lg transition-all duration-200 ease-in-out",
+				"group border hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-mauve-5 dark:border-mauve-7   h-fit rounded-lg transition-all duration-200 ease-in-out",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},

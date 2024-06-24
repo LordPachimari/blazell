@@ -19,13 +19,20 @@ import debounce from "lodash.debounce";
 import { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
+import { cn } from "@blazell/ui";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
 	variantID: string | undefined;
 	isPublished: boolean;
+	className?: string;
 }
-function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
+function Pricing({
+	prices,
+	variantID,
+	isPublished,
+	className,
+}: ProductPricingProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const updatePrice = useCallback(
@@ -55,8 +62,8 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className="min-h-[6rem] my-4">
-			<CardTitle className="pb-4 flex gap-2 items-center">
+		<Card className={cn("min-h-[6rem] my-2 p-0", className)}>
+			<CardTitle className="p-4 border-b flex gap-2 items-center">
 				Pricing
 				{isPublished && (
 					<TooltipProvider>
@@ -76,7 +83,12 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 					</TooltipProvider>
 				)}
 			</CardTitle>
-			<CardContent className="flex flex-col gap-2 pb-4">
+			<CardContent className="flex flex-col gap-2 p-4">
+				{prices.length === 0 && (
+					<div className="w-full h-full flex justify-center items-center">
+						<Icons.BadgeDollarSign className="text-crimson-9" />
+					</div>
+				)}
 				{prices.map((price) => (
 					<div
 						className="flex gap-2 w-full items-center"
@@ -108,7 +120,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 						<div className="aspect-square h-7 w-7">
 							<button
 								type="button"
-								className="rounded-full aspect-square bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
+								className="rounded-full aspect-square bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-5 dark:border-mauve-7   flex justify-center items-center"
 								onClick={async () => await deletePrices(price.id)}
 							>
 								<Icons.Close className="text-red-9" size={20} />
@@ -124,7 +136,7 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 						size="md"
 						variant="ghost"
 						type="button"
-						className="mt-2 text-mauve-11"
+						className="text-mauve-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
 					>
 						<Icons.Plus className="h-3.5 w-3.5 mr-2" />
 						Add Price

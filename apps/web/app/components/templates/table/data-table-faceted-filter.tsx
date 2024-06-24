@@ -69,7 +69,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 											<Badge
 												variant="secondary"
 												key={option.value}
-												className="rounded-sm px-1 font-normal"
+												className="rounded-sm bg-crimson-3 text-crimson-9 rounded-md px-1 font-normal"
 											>
 												{option.label}
 											</Badge>

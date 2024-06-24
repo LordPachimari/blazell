@@ -92,8 +92,8 @@ export function Variants({
 	);
 
 	return (
-		<Card className="my-4">
-			<CardHeader>
+		<Card className="my-2 p-0">
+			<CardHeader className="p-4 border-b">
 				<CardTitle>
 					<span className="flex w-full justify-between">
 						Variant<p className="text-sm text-mauve-9">{"(optional)"}</p>
@@ -103,7 +103,7 @@ export function Variants({
 					Create variants of your products based on size, colors etc.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="pb-4">
+			<CardContent className="p-4">
 				<ProductOptions
 					options={product?.options ?? []}
 					productID={productID}
@@ -120,7 +120,7 @@ export function Variants({
 					size="md"
 					variant="ghost"
 					type="button"
-					className="mt-2 text-mauve-11"
+					className="mt-2 text-mauve-11 rounded-none border-b-0 rounded-b-lg border-r-0 border-l-0"
 					onClick={generateVariants}
 					disabled={!product?.options?.length}
 				>

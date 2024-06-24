@@ -17,7 +17,7 @@ const ProductCard = ({
 	return (
 		<Card className="relative aspect-square p-2 min-w-[15rem] cursor-pointer hover:scale-105 transition-all duration-100 ease-out">
 			<CardContent className="relative flex h-full w-full flex-col gap-4">
-				<section className="flex h-full w-full  border border-mauve-7 overflow-hidden rounded-xl items-center justify-center">
+				<section className="flex h-full w-full  border border-mauve-5 dark:border-mauve-7   overflow-hidden rounded-xl items-center justify-center">
 					{!defaultVariant?.thumbnail ? (
 						<ImagePlaceholder />
 					) : defaultVariant?.thumbnail?.uploaded ? (

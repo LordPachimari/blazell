@@ -24,9 +24,9 @@ export function StoreInfo({
 	const [aboutOpen, setAboutOpen] = useState(false);
 	return (
 		<section>
-			<div className="relative flex h-full  w-full p-0 pt-8 gap-4 ">
-				<section className="flex h-full w-full  items-center md:w-[230px]">
-					<Avatar className="border-mauve-7 bg-mauve-3 border aspect-square w-full h-full max-w-44 max-h-44 min-w-32 min-h-32">
+			<div className="relative flex h-full items-center w-full p-0 pt-8 gap-4 ">
+				<section className="flex h-full  items-center md:w-[230px]">
+					<Avatar className="border-mauve-5 dark:border-mauve-7   bg-mauve-3 border aspect-square w-full h-full max-w-44 max-h-44 min-w-32 min-h-32">
 						{store?.storeImage ? (
 							store?.storeImage?.croppedImage?.uploaded ? (
 								<Image
@@ -76,8 +76,8 @@ export function StoreInfo({
 						isInitialized={!!isInitialized}
 					/>
 
-					<div className="absolute bottom-0">
-						<div className="flex gap-3">
+					<div className="pt-2">
+						<div className="flex gap-3 flex-wrap">
 							{!isInitialized ? (
 								<>
 									<Skeleton className="w-[100px] h-[15px]" />

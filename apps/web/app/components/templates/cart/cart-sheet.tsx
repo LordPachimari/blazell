@@ -56,7 +56,9 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
-				<DialogTitle className="p-4 border-b border-mauve-7">Cart</DialogTitle>
+				<DialogTitle className="p-4 border-b border-mauve-5 dark:border-mauve-7  ">
+					Cart
+				</DialogTitle>
 				<ScrollArea className="h-[75vh] px-4 pt-2">
 					<ul className="flex flex-col gap-2" ref={parent}>
 						{!isInitialized &&

@@ -37,7 +37,7 @@ export function RowActions({
 				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
 				<span className="sr-only">Open menu</span>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-[160px]">
+			<DropdownMenuContent align="center" className="w-[160px]">
 				<DropdownMenuItem
 					onClick={() => {
 						setVariantID(row.original.id);

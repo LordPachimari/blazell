@@ -85,7 +85,7 @@ function OrdersTable({
 			)}
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] bg-component border border-mauve-7 rounded-2xl relative"
+				className="h-[calc(100vh-400px)] bg-component border border-mauve-5 dark:border-mauve-7   rounded-2xl relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
