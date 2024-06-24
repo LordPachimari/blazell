@@ -56,14 +56,12 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"hidden md:flex flex-col px-1 w-44 opacity-0 md:opacity-100 m-1 md:m-0 justify-between bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r lg:border-t-0 lg:border-l-0 lg:border-b-0 border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7  transition-all duration-200 ease-in-out z-20 ",
+					"hidden md:flex flex-col px-1 w-44 opacity-0 shadow-sm md:opacity-100 m-1 md:m-0 bg-component fixed top-0 rounded-none h-full border-r border-mauve-5 dark:border-mauve-7   md:w-40  overflow-hidden md:border-mauve-5 dark:border-mauve-7    transition-all duration-200 ease-in-out z-20 ",
 				)}
 			>
-				<div>
-					<StoreInfo store={store} />
-					<DashboardSearchCombobox />
-				</div>
-				<ul className="justify-center items-center flex w-full flex-col gap-2 py-6">
+				<StoreInfo store={store} />
+				<DashboardSearchCombobox />
+				<ul className="justify-center items-center flex w-full flex-col gap-2">
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
 
@@ -124,11 +122,13 @@ export const DashboardSidebarMobile = () => {
 	const windowSize = useWindowSize(100);
 	if (windowSize.width > 768) return null;
 	return (
-		<DialogRoot direction="left" open={opened} onOpenChange={setOpened}>
-			<DialogContent
-				className="w-44 bg-component h-[calc(100vh-75px)] m-1"
-				overlay={false}
-			>
+		<DialogRoot
+			shouldScaleBackground={true}
+			direction="left"
+			open={opened}
+			onOpenChange={setOpened}
+		>
+			<DialogContent className="w-44 bg-component m-0 rounded-none rounded-tr-lg rounded-br-lg">
 				<nav className={cn("flex flex-col px-1 w-44 ")}>
 					<div>
 						<StoreInfo store={store} />
@@ -190,13 +190,13 @@ const StoreInfo = ({ store }: { store: Store | undefined }) => {
 	const setOpened = useDashboardState((state) => state.setOpened);
 	const isInitialized = useDashboardStore((state) => state.isInitialized);
 	return (
-		<section className="w-full flex items-center flex-col mt-4">
+		<section className="w-full flex items-center flex-col py-4">
 			<Link
 				to={"/dashboard/store"}
 				className="flex w-fit h-fit flex-col items-center"
 				onClick={() => setOpened(false)}
 			>
-				<Avatar className="border-mauve-7 bg-mauve-3 border aspect-square w-20 h-20">
+				<Avatar className="border-mauve-5 dark:border-mauve-7   bg-mauve-3 border aspect-square w-20 h-20">
 					{store?.storeImage ? (
 						store?.storeImage?.croppedImage?.uploaded ? (
 							<Image

@@ -1,0 +1,10 @@
+.tiptap p.is-empty::before {
+  color: #fbfbfb;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.p{
+  margin: 0;
+}

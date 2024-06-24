@@ -69,7 +69,7 @@ function CustomersTable({
 
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border rounded-2xl border-mauve-7 relative"
+				className="h-[calc(100vh-327px)] bg-component border rounded-2xl border-mauve-5 dark:border-mauve-7   relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>

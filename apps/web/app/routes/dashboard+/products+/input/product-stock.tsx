@@ -9,6 +9,7 @@ import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import type { Variant } from "@blazell/validators/client";
 import type { DebouncedFunc } from "~/types/debounce";
+import { cn } from "@blazell/ui";
 
 interface StockProps {
 	variant: Variant | InsertVariant | undefined | null;
@@ -16,12 +17,14 @@ interface StockProps {
 	onVariantInputChange: DebouncedFunc<
 		(updates: UpdateVariant) => Promise<void>
 	>;
+	className?: string;
 }
 
 const Stock = ({
 	variant,
 	updateVariant,
 	onVariantInputChange,
+	className,
 }: StockProps) => {
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const [hasCode, setHasCode] = useState(false);
@@ -33,13 +36,13 @@ const Stock = ({
 	}, [variant]);
 
 	return (
-		<Card className="my-4">
+		<Card className={cn("my-2", className)}>
 			<CardTitle>Stock</CardTitle>
 			<CardContent>
 				<Input
 					type="number"
 					className="my-2 w-20"
-					min={1}
+					min={0}
 					defaultValue={variant?.quantity ?? 1}
 					onChange={async (e) => {
 						variant &&
@@ -71,7 +74,7 @@ const Stock = ({
 					/>
 					<p className="text-sm">This product has SKU or Barcode</p>
 				</span>
-				<div className="my-2  flex  gap-4" ref={parent}>
+				<div ref={parent}>
 					{hasCode && (
 						<div className="flex justify-between gap-3 w-full">
 							<span className="w-full">

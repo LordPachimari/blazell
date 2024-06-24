@@ -79,7 +79,7 @@ function ProductsTable({
 			/>
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border border-mauve-7 rounded-2xl relative overflow-x-scroll"
+				className="h-[calc(100vh-327px)] bg-component border border-mauve-5 dark:border-mauve-7   rounded-2xl relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
@@ -150,7 +150,7 @@ function ProductsTable({
 												size="md"
 												onClick={createProduct}
 												type="button"
-												className="my-4"
+												className="my-2"
 											>
 												<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
 												New Product

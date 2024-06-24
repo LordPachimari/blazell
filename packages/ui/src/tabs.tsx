@@ -10,7 +10,7 @@ const tabsListVariants = cva("inline-flex ", {
 		variant: {
 			default:
 				"items-center justify-center h-10 rounded-md bg-muted p-1 text-muted-foreground",
-			outline: "gap-3 border-b border-mauve-7",
+			outline: "gap-3 border-b border-mauve-5 dark:border-mauve-7  ",
 			// Add more variants here
 		},
 	},
@@ -18,20 +18,23 @@ const tabsListVariants = cva("inline-flex ", {
 		variant: "default",
 	},
 });
-const tabsTriggerVariants = cva("inline-flex items-center justify-center", {
-	variants: {
-		variant: {
-			default:
-				"whitespace-nowrap rounded-sm px-3 py-1.5 text-mauve-11 font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-			outline:
-				"px-3 py-1.5 font-medium ring-offset-background transition-all data-[state=active]:border-b-2 data-[state=active]:border-mauve-12 text-mauve-11",
-			// Add more variants here
+export const tabsTriggerVariants = cva(
+	"inline-flex items-center justify-center",
+	{
+		variants: {
+			variant: {
+				default:
+					"whitespace-nowrap rounded-sm px-3 py-1.5 text-mauve-11 font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+				outline:
+					"px-3 py-1.5 font-medium ring-offset-background transition-all data-[state=active]:border-b-2 data-[state=active]:border-mauve-12",
+				// Add more variants here
+			},
+		},
+		defaultVariants: {
+			variant: "default",
 		},
 	},
-	defaultVariants: {
-		variant: "default",
-	},
-});
+);
 interface TabsListProps
 	extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>,
 		VariantProps<typeof tabsListVariants> {}

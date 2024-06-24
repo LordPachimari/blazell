@@ -15,7 +15,7 @@ const PriceLabel = ({
 	return (
 		<div
 			className={cn(
-				"flex items-center aspect-square rounded-xl border border-mauve-7 bg-component backdrop-blur-sm",
+				"flex items-center aspect-square rounded-xl border border-mauve-5 dark:border-mauve-7   bg-component backdrop-blur-sm",
 				className,
 				{
 					"min-h-12": size === "md",

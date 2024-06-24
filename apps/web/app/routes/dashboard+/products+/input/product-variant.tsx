@@ -1,5 +1,5 @@
 import { Button } from "@blazell/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
+import { Drawer, DrawerContent } from "@blazell/ui/drawer";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
@@ -56,128 +56,135 @@ export default function ProductVariant({
 		[updateVariant],
 	);
 	return (
-		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent className="md:w-[800px] bg-mauve-2 p-4 pt-4 gap-0">
-				<span className="flex w-full justify-between p-2 px-4">
-					<DialogTitle className="text-2xl">Variant</DialogTitle>
-					<Button
-						type="button"
-						variant={"ghost"}
-						size="icon"
-						onClick={() => setVariantID(null)}
-					>
-						<Icons.Close size={20} strokeWidth={strokeWidth} />
-					</Button>
-				</span>
-				<ScrollArea className="h-[calc(80vh)] px-2 md:px-4 py-2">
-					<VariantOptions
-						options={options}
-						variant={variant}
-						productID={productID}
-					/>
-					<Media images={variant?.images ?? []} variantID={variant?.id} />
-					<Pricing
-						prices={variant?.prices ?? []}
-						variantID={variant?.id}
-						isPublished={isPublished}
-					/>
-					<Stock
-						variant={variant}
-						updateVariant={updateVariant}
-						onVariantInputChange={onVariantInputChange}
-					/>
-				</ScrollArea>
-			</DialogContent>
-		</Dialog>
+		<Drawer open={isOpen} onOpenChange={setIsOpen}>
+			<DrawerContent className="p-4 flex w-full items-center pt-4 gap-0">
+				<Button
+					type="button"
+					variant={"ghost"}
+					size="icon"
+					className="hidden lg:flex absolute top-4 right-4"
+					onClick={() => setVariantID(null)}
+				>
+					<Icons.Close size={20} strokeWidth={strokeWidth} />
+				</Button>
+				<div className="md:w-[600px]">
+					<ScrollArea className="h-[calc(80vh)] px-2 md:px-4 py-2">
+						<VariantOptions
+							options={options}
+							variant={variant}
+							productID={productID}
+						/>
+						<Media
+							images={variant?.images ?? []}
+							variantID={variant?.id}
+							className="shadow-none"
+						/>
+						<Pricing
+							prices={variant?.prices ?? []}
+							variantID={variant?.id}
+							isPublished={isPublished}
+							className="shadow-none"
+						/>
+						<Stock
+							variant={variant}
+							updateVariant={updateVariant}
+							onVariantInputChange={onVariantInputChange}
+							className="shadow-none"
+						/>
+					</ScrollArea>
+				</div>
+			</DrawerContent>
+		</Drawer>
 	);
-	function VariantOptions({
-		options,
-		variant,
-		productID,
-	}: {
-		options: ProductOption[];
-		variant: Variant | null | undefined;
-		productID: string;
-	}) {
-		const dashboardRep = useReplicache((state) => state.dashboardRep);
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-		const assignOptionValueToVariant = useCallback(
-			async ({
-				prevOptionValueID,
-				optionValueID,
-			}: { prevOptionValueID?: string; optionValueID: string }) => {
-				variant &&
-					(await dashboardRep?.mutate.assignOptionValueToVariant({
-						variantID: variant.id,
-						optionValueID,
-						productID,
-						...(prevOptionValueID && { prevOptionValueID }),
-					}));
-			},
-			[dashboardRep, variant],
-		);
-		const optionValueToID = useMemo(
-			() =>
-				options.reduce(
-					(acc, option) => {
-						for (const value of option.optionValues ?? []) {
-							acc[value.value] = value.id;
-						}
-						return acc;
-					},
-					{} as Record<string, string>,
-				),
-			[options],
-		);
-		const optionIDToVariantOptionValue = useMemo(
-			() =>
-				(variant?.optionValues ?? []).reduce(
-					(acc, value) => {
-						acc[value.optionValue.optionID] = {
-							id: value.optionValue.id,
-							value: value.optionValue.value,
-						};
-						return acc;
-					},
-					{} as Record<string, { id: string; value: string }>,
-				),
-			[variant?.optionValues],
-		);
+}
 
-		return (
-			<div className="flex w-full flex-col gap-4">
-				{options.map((option) => {
-					return (
-						<div className="flex items-center  gap-2" key={option.id}>
-							<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-mauve-7 justify-center">
-								{option.name}
-							</span>
-							:
-							<ToggleGroup
-								type="single"
-								value={optionIDToVariantOptionValue[option.id]?.value ?? ""}
-								variant="outline"
-								onValueChange={async (value) => {
-									const prevOptionValueID =
-										optionIDToVariantOptionValue[option.id]?.id;
-									const newOptionValueID = optionValueToID[value];
-									newOptionValueID &&
-										(await assignOptionValueToVariant({
-											...(prevOptionValueID && { prevOptionValueID }),
-											optionValueID: newOptionValueID,
-										}));
-								}}
-							>
-								{option.optionValues?.map((v) => (
-									<ToggleGroupItem value={v.value} key={v.value}>
-										{v.value}
-									</ToggleGroupItem>
-								))}
-							</ToggleGroup>
-						</div>
-					);
-				})}
-			</div>
-		);
-	}
+function VariantOptions({
+	options,
+	variant,
+	productID,
+}: {
+	options: ProductOption[];
+	variant: Variant | null | undefined;
+	productID: string;
+}) {
+	const dashboardRep = useReplicache((state) => state.dashboardRep);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const assignOptionValueToVariant = useCallback(
+		async ({
+			prevOptionValueID,
+			optionValueID,
+		}: { prevOptionValueID?: string; optionValueID: string }) => {
+			variant &&
+				(await dashboardRep?.mutate.assignOptionValueToVariant({
+					variantID: variant.id,
+					optionValueID,
+					productID,
+					...(prevOptionValueID && { prevOptionValueID }),
+				}));
+		},
+		[dashboardRep, variant],
+	);
+	const optionValueToID = useMemo(
+		() =>
+			options.reduce(
+				(acc, option) => {
+					for (const value of option.optionValues ?? []) {
+						acc[value.value] = value.id;
+					}
+					return acc;
+				},
+				{} as Record<string, string>,
+			),
+		[options],
+	);
+	const optionIDToVariantOptionValue = useMemo(
+		() =>
+			(variant?.optionValues ?? []).reduce(
+				(acc, value) => {
+					acc[value.optionValue.optionID] = {
+						id: value.optionValue.id,
+						value: value.optionValue.value,
+					};
+					return acc;
+				},
+				{} as Record<string, { id: string; value: string }>,
+			),
+		[variant?.optionValues],
+	);
+
+	return (
+		<div className="flex w-full flex-col gap-4">
+			{options.map((option) => {
+				return (
+					<div className="flex items-center  gap-2" key={option.id}>
+						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-mauve-5 dark:border-mauve-7   justify-center">
+							{option.name}
+						</span>
+						:
+						<ToggleGroup
+							type="single"
+							value={optionIDToVariantOptionValue[option.id]?.value ?? ""}
+							variant="outline"
+							onValueChange={async (value) => {
+								const prevOptionValueID =
+									optionIDToVariantOptionValue[option.id]?.id;
+								const newOptionValueID = optionValueToID[value];
+								newOptionValueID &&
+									(await assignOptionValueToVariant({
+										...(prevOptionValueID && { prevOptionValueID }),
+										optionValueID: newOptionValueID,
+									}));
+							}}
+						>
+							{option.optionValues?.map((v) => (
+								<ToggleGroupItem value={v.value} key={v.value}>
+									{v.value}
+								</ToggleGroupItem>
+							))}
+						</ToggleGroup>
+					</div>
+				);
+			})}
+		</div>
+	);
 }

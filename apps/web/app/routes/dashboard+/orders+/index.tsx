@@ -79,7 +79,10 @@ export default function Orders() {
 		<main className="w-full p-4 lg:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full xl:w-8/12">
 				<div className="flex flex-col pb-4">
-					<PageHeader title="Orders" />
+					<PageHeader
+						title="Orders"
+						className="justify-center md:justify-start"
+					/>
 					<div className="hidden md:flex gap-4">
 						<Revenue type="daily" amount={20} />
 						<Revenue type="weekly" amount={200} />
@@ -105,7 +108,7 @@ export default function Orders() {
 						/>
 					</>
 				) : (
-					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-2 hover:bg-muted/50  border-mauve-7 rounded-2xl">
+					<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-mauve-2 hover:bg-muted/50  border-mauve-5 dark:border-mauve-7   rounded-2xl">
 						<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
 					</div>
 				)}
