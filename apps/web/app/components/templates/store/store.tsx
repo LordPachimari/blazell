@@ -59,7 +59,7 @@ export function Store({
 						/>
 					)
 				) : (
-					<div className="h-[210px] w-full bg-crimson-7 ">
+					<div className="h-[210px] w-full bg-brand-7 ">
 						<Noise />
 					</div>
 				)}

@@ -36,7 +36,7 @@ function Features({ theme }: { theme: Theme }) {
 			description: "Analyze your sells with our powerful analytics tool.",
 			component: (
 				<div className="flex justify-center items-center h-full">
-					<BarChartBig size={70} className="text-crimson-9" />
+					<BarChartBig size={70} className="text-brand-9" />
 				</div>
 			),
 		},
@@ -45,7 +45,7 @@ function Features({ theme }: { theme: Theme }) {
 			description: "Choose the best shipping method for your product.",
 			component: (
 				<div className="flex justify-center items-center h-full">
-					<Truck size={70} className="text-crimson-9" />
+					<Truck size={70} className="text-brand-9" />
 				</div>
 			),
 		},
@@ -55,7 +55,7 @@ function Features({ theme }: { theme: Theme }) {
 				"Handle your payment with ease, we support multiple payment methods.",
 			component: (
 				<div className="flex justify-center items-center h-full">
-					<BadgeDollarSign size={70} className="text-crimson-9" />
+					<BadgeDollarSign size={70} className="text-brand-9" />
 				</div>
 			),
 		},
@@ -64,7 +64,7 @@ function Features({ theme }: { theme: Theme }) {
 			description: "Use our rich API to build your own store.",
 			component: (
 				<div className="flex justify-center items-center h-full">
-					<Settings size={70} className="text-crimson-9" />
+					<Settings size={70} className="text-brand-9" />
 				</div>
 			),
 		},

@@ -5,13 +5,13 @@ export const Ping = ({ className }: { className?: string }) => {
 		<span className={cn("relative justify-center items-center flex h-3 w-3")}>
 			<span
 				className={cn(
-					"animate-ping absolute inline-flex h-full w-full rounded-full bg-crimson-9 opacity-75",
+					"animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-9 opacity-75",
 					className,
 				)}
 			/>
 			<span
 				className={cn(
-					"relative inline-flex rounded-full h-2 w-2 bg-crimson-9",
+					"relative inline-flex rounded-full h-2 w-2 bg-brand-9",
 					className,
 				)}
 			/>

@@ -69,7 +69,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 											<Badge
 												variant="secondary"
 												key={option.value}
-												className="rounded-sm bg-crimson-3 text-crimson-9 rounded-md px-1 font-normal"
+												className="rounded-sm bg-brand-3 text-brand-9 rounded-md px-1 font-normal"
 											>
 												{option.label}
 											</Badge>
@@ -107,7 +107,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 											className={cn(
 												"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
 												isSelected
-													? "bg-crimson-9 text-primary-foreground border-crimson-10"
+													? "bg-brand-9 text-primary-foreground border-brand-10"
 													: "opacity-50 [&_svg]:invisible",
 											)}
 										>

@@ -33,7 +33,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("bold"),
 					},
 				)}
@@ -47,7 +47,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("italic"),
 					},
 				)}
@@ -61,7 +61,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 sm:flex border size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("strike"),
 					},
 				)}
@@ -75,7 +75,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("code"),
 					},
 				)}
@@ -91,7 +91,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 md:flex border size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("heading", { level: 1 }),
 					},
 				)}
@@ -106,7 +106,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 md:flex border size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("heading", { level: 2 }),
 					},
 				)}
@@ -121,7 +121,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 md:flex border size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("heading", { level: 3 }),
 					},
 				)}
@@ -136,7 +136,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 md:flex border size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("heading", { level: 4 }),
 					},
 				)}
@@ -150,7 +150,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("bulletList"),
 					},
 				)}
@@ -163,7 +163,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component hidden border-mauve-5 dark:border-mauve-7 sm:flex border size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("orderedList"),
 					},
 				)}
@@ -176,7 +176,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 hidden sm:flex size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("codeBlock"),
 					},
 				)}
@@ -190,7 +190,7 @@ export const UpperMenu = () => {
 				className={cn(
 					"bg-component border border-mauve-5 dark:border-mauve-7 hidden sm:flex size-9 p-2 hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black",
 					{
-						"bg-crimson-3 text-crimson-9 hover:bg-crimson-4 hover:text-crimson-11 border-crimson-9":
+						"bg-brand-3 text-brand-9 hover:bg-brand-4 hover:text-brand-11 border-brand-9":
 							editor?.isActive("horizontal"),
 					},
 				)}

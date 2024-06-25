@@ -292,7 +292,7 @@ const DeliveryOptions = () => {
 					>
 						<div className="flex w-full items-center justify-between">
 							<p className="">Delivery option {index + 1}</p>
-							<Icons.CircleCheck className="size-6 text-white fill-crimson-9 opacity-0 transition group-data-[checked]:opacity-100" />
+							<Icons.CircleCheck className="size-6 text-white fill-brand-9 opacity-0 transition group-data-[checked]:opacity-100" />
 						</div>
 					</ToggleGroupItem>
 				))}

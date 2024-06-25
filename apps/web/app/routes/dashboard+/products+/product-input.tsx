@@ -162,7 +162,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative table min-h-screen pb-20 max-w-6xl w-full gap-2 xl:gap-2 xl:flex min-w-[15rem] px-4 md:px-10">
+				<main className="relative table min-h-screen pb-20 max-w-6xl w-full gap-4 xl:flex min-w-[15rem] px-4 md:px-10">
 					<AlertDialogComponent
 						open={isOpen}
 						setIsOpen={setIsOpen}
@@ -243,7 +243,7 @@ export function ProductInput({
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
 							<DeleteOrPublish setIsOpen1={setIsOpen1} />
 						</section>
-						<section className="flex flex-col gap-2 order-2 w-full">
+						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
 								status={product?.status}
 								updateProduct={updateProduct}

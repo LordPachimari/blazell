@@ -140,7 +140,7 @@ export function GlobalSearchCombobox() {
 				className="flex lg:hidden rounded-full hover:bg-mauve-a-2 p-2"
 				onClick={() => open()}
 			>
-				<Icons.MagnifyingGlassIcon className="text-mauve-11 hover:text-crimson-9 size-6" />
+				<Icons.MagnifyingGlassIcon className="text-mauve-11 hover:text-brand-9 size-6" />
 			</button>
 			<Transition appear show={isOpen}>
 				<Dialog
