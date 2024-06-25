@@ -62,8 +62,8 @@ function Pricing({
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className={cn("min-h-[6rem] my-2 p-0", className)}>
-			<CardTitle className="p-4 border-b flex gap-2 items-center">
+		<Card className={cn("min-h-[6rem] my-4 p-0", className)}>
+			<CardTitle className="p-4 border-b border-mauve-5 dark:border-mauve-7 flex gap-2 items-center">
 				Pricing
 				{isPublished && (
 					<TooltipProvider>
@@ -86,7 +86,7 @@ function Pricing({
 			<CardContent className="flex flex-col gap-2 p-4">
 				{prices.length === 0 && (
 					<div className="w-full h-full flex justify-center items-center">
-						<Icons.BadgeDollarSign className="text-crimson-9" />
+						<Icons.BadgeDollarSign className="text-brand-9" />
 					</div>
 				)}
 				{prices.map((price) => (

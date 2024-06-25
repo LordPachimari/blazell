@@ -123,8 +123,8 @@ const Sidebar = () => {
 										<Icon
 											className={cn(
 												`/${mainPath}` === item.href
-													? "text-crimson-9"
-													: "text-mauve-11 group-hover/link:text-crimson-9",
+													? "text-brand-9"
+													: "text-mauve-11 group-hover/link:text-brand-9",
 											)}
 											size={20}
 											strokeWidth={strokeWidth}
@@ -132,9 +132,9 @@ const Sidebar = () => {
 									</div>
 									<span
 										className={cn(
-											"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-crimson-9 transition-opacity duration-300 ease-in-out lg:group-hover:opacity-100",
+											"w-[350px] text-mauve-11 font-light opacity-0 group-hover/link:text-brand-9 transition-opacity duration-300 ease-in-out lg:group-hover:opacity-100",
 
-											`/${mainPath}` === item.href && "text-crimson-9",
+											`/${mainPath}` === item.href && "text-brand-9",
 											mode === "open" ? "opacity-100" : "opacity-0",
 										)}
 									>
@@ -202,8 +202,8 @@ const MobileSidebar = () => {
 									<Icon
 										className={cn(
 											`/${mainPath}` === item.href
-												? "text-crimson-9"
-												: "text-mauve-11 group-hover/link:text-crimson-9",
+												? "text-brand-9"
+												: "text-mauve-11 group-hover/link:text-brand-9",
 										)}
 										size={20}
 										strokeWidth={strokeWidth}

@@ -23,7 +23,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({
 		<span className={cn(className)}>
 			{parts.map((part, index) =>
 				regex.test(part) ? (
-					<span key={index} className="bg-crimson-3 text-crimson-9">
+					<span key={index} className="bg-brand-3 text-brand-9">
 						{part}
 					</span>
 				) : (

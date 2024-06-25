@@ -54,7 +54,7 @@ export function Media({
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className={cn("overflow-hidden my-2 p-0", className)}>
+		<Card className={cn("overflow-hidden my-4 p-0", className)}>
 			<CardHeader className="pb-4 p-4">
 				<CardTitle>Media</CardTitle>
 			</CardHeader>

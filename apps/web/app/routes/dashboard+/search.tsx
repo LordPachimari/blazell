@@ -138,9 +138,9 @@ export function DashboardSearchCombobox() {
 				<div className="flex gap-3">
 					<Icons.MagnifyingGlassIcon
 						aria-hidden="true"
-						className="size-5 text-mauve-11 group-hover:text-crimson-9"
+						className="size-5 text-mauve-11 group-hover:text-brand-9"
 					/>
-					<span className="text-mauve-11 group-hover:text-crimson-9 font-light">
+					<span className="text-mauve-11 group-hover:text-brand-9 font-light">
 						Search
 					</span>
 				</div>
@@ -151,7 +151,7 @@ export function DashboardSearchCombobox() {
 							<Kbd
 								title={isMacOs() ? "Command" : "Control"}
 								className={cn(
-									"group-hover:text-crimson-9 text-nowrap text-mauve-11 flex flex-nowrap border-mauve-5 dark:border-mauve-7   p-[3px]",
+									"group-hover:text-brand-9 text-nowrap text-mauve-11 flex flex-nowrap border-mauve-5 dark:border-mauve-7   p-[3px]",
 									{ "p-[1px]": !isMacOs() },
 								)}
 							>

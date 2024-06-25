@@ -80,16 +80,16 @@ function OrdersTable({
 			{dashboardRep?.online && (
 				<div className="w-full flex items-center gap-2">
 					<Ping />
-					<p className="text-crimson-9 text-sm font-medium">real time</p>
+					<p className="text-brand-9 text-sm font-medium">real time</p>
 				</div>
 			)}
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] bg-component border border-mauve-5 dark:border-mauve-7   rounded-2xl relative"
+				className="h-[calc(100vh-400px)] shadow bg-component border border-mauve-5 dark:border-mauve-7 rounded-lg relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader className="bg-mauve-a-2">
+						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {

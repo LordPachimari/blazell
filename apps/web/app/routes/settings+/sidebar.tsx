@@ -38,7 +38,7 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 								)}
 							>
 								{item.title === "Orders" && (
-									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-crimson-9">
+									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-brand-9">
 										1
 									</div>
 								)}
@@ -46,8 +46,8 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 									<Icon
 										className={cn(
 											pathname === item.href
-												? "text-crimson-9"
-												: "text-mauve-11 group-hover:text-crimson-9",
+												? "text-brand-9"
+												: "text-mauve-11 group-hover:text-brand-9",
 										)}
 										size={20}
 										strokeWidth={strokeWidth}
@@ -58,8 +58,8 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 										"relative text-mauve-11 font-light",
 
 										pathname === item.href
-											? "text-crimson-9"
-											: "text-mauve-11 group-hover:text-crimson-9",
+											? "text-brand-9"
+											: "text-mauve-11 group-hover:text-brand-9",
 									)}
 								>
 									{item.title}

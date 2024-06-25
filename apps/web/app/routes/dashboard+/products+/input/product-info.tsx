@@ -34,7 +34,7 @@ export function ProductInfo({
 		[updateVariant, defaultVariantID],
 	);
 	return (
-		<Card className="mb-2 p-0">
+		<Card className="mb-4 p-0">
 			<CardContent className="rounded-lg w-full p-4">
 				<TextAreaAutosize
 					placeholder="Untitled"

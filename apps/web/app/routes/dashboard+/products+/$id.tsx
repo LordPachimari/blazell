@@ -28,7 +28,7 @@ function ProductRoute() {
 				<div className="w-full relative flex items-center ">
 					<button
 						type="button"
-						className="flex gap-1 items-center text-crimson-9 absolute z-20 left-0 cursor-pointer"
+						className="flex gap-1 items-center text-brand-9 absolute z-20 left-0 cursor-pointer"
 						onClick={() => navigate("/dashboard/products")}
 					>
 						<Icons.Left size={20} className="hidden lg:block" />
@@ -78,7 +78,7 @@ function PreviewTab({
 							"text-black dark:text-white",
 							tabsTriggerVariants({ variant: "outline" }),
 							{
-								"border-b-2 font-bold border-crimson-9 text-crimson-9":
+								"border-b-2 font-bold border-brand-9 text-brand-9":
 									view === "preview",
 							},
 						)}
@@ -94,7 +94,7 @@ function PreviewTab({
 							"text-black dark:text-white",
 							tabsTriggerVariants({ variant: "outline" }),
 							{
-								"border-b-2 font-bold border-crimson-9 text-crimson-9":
+								"border-b-2 font-bold border-brand-9 text-brand-9":
 									view === "input",
 							},
 						)}

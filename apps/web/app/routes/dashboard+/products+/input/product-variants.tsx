@@ -92,8 +92,8 @@ export function Variants({
 	);
 
 	return (
-		<Card className="my-2 p-0">
-			<CardHeader className="p-4 border-b">
+		<Card className="my-4 p-0">
+			<CardHeader className="p-4 border-b border-mauve-5 dark:border-mauve-7">
 				<CardTitle>
 					<span className="flex w-full justify-between">
 						Variant<p className="text-sm text-mauve-9">{"(optional)"}</p>

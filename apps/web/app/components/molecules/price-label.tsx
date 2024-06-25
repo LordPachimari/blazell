@@ -24,7 +24,7 @@ const PriceLabel = ({
 			)}
 		>
 			<Price
-				className=" text-sm md:text-lg font-freeman flex-none text-crimson-9 rounded-xl  p-2"
+				className=" text-sm md:text-lg font-freeman flex-none text-brand-9 rounded-xl  p-2"
 				amount={amount}
 				currencyCode={currencyCode}
 				currencyCodeClassName="hidden @[275px]/label:inline"

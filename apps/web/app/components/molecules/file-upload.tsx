@@ -180,7 +180,7 @@ export function FileUpload(props: FileUploaderProps) {
 								{...getRootProps()}
 								className={cn(
 									"group relative grid h-[10rem] w-full cursor-pointer place-items-center border-y border-mauve-5 dark:border-mauve-7  px-5 py-2.5 text-center transition hover:bg-mauve-2",
-									"ring-offset-background focus-visible:outline outline-none focus:border-crimson-7 focus-visible:ring-2 outline-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+									"ring-offset-background focus-visible:outline outline-none focus:border-brand-7 focus-visible:ring-2 outline-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 									isDragActive && "border-mauve-3",
 									isDisabled && "pointer-events-none opacity-60",
 									className,
