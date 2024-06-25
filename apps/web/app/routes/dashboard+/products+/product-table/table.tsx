@@ -79,7 +79,7 @@ function ProductsTable({
 			/>
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border border-mauve-5 dark:border-mauve-7   rounded-2xl relative overflow-x-scroll"
+				className="h-[calc(100vh-327px)] bg-component border border-mauve-5 dark:border-mauve-7 rounded-lg relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>

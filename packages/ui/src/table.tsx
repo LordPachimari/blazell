@@ -8,7 +8,7 @@ const Table = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<table
 		ref={ref}
-		className={cn("w-full caption-bottom text-sm rounded-2x", className)}
+		className={cn("w-full caption-bottom text-sm rounded-lg", className)}
 		{...props}
 	/>
 ));
@@ -33,7 +33,7 @@ const TableBody = React.forwardRef<
 	HTMLTableSectionElement,
 	React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-	<tbody ref={ref} className={cn("rounded-2xl", className)} {...props} />
+	<tbody ref={ref} className={cn("rounded-lg", className)} {...props} />
 ));
 TableBody.displayName = "TableBody";
 
