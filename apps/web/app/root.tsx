@@ -46,6 +46,7 @@ import {
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
+
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking

@@ -109,7 +109,6 @@ export function GlobalSearchCombobox() {
 			};
 		}
 	}, [searchWorker]);
-	console.log("searchResults", searchResults);
 
 	return (
 		<>

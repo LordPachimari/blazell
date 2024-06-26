@@ -247,16 +247,23 @@ export default {
 					"75%": { transform: "translateX(5px)" },
 					"100%": { transform: "translateX(0)" },
 				},
-				slidein: {
-					from: {
+
+				"fade-up": {
+					"0%": {
 						opacity: "0",
-						transform: "translateY(-10px)",
+						transform: "translateY(10px)",
 					},
-					to: {
+					"75%": {
+						opacity: "0.6",
+					},
+					"100%": {
 						opacity: "1",
 						transform: "translateY(0)",
 					},
 				},
+			},
+			backgroundImage: {
+				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -266,6 +273,7 @@ export default {
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
 				shake: "shake 0.5s linear infinite",
 				slidein: "slidein 1s ease 300ms",
+				"fade-up": "fade-up 0.5s ease-out",
 			},
 			boxShadow: {
 				border: "0px 0px 0px 1px #E5E7EB",
