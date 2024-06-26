@@ -98,3 +98,7 @@ export class ImageUploadError extends Data.TaggedError("ImageUploadError")<{
 export class ClientMutatorError extends Data.TaggedError("ClientMutatorError")<{
 	readonly message: string;
 }> {}
+
+export class LiveInputError extends Data.TaggedError("LiveInputError")<{
+	readonly message: string;
+}> {}

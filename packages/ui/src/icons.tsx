@@ -37,6 +37,7 @@ import {
 	type LucideProps,
 	Bookmark,
 	ShoppingCart,
+	Hammer,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -78,6 +79,7 @@ export const Icons = {
 	ShoppingCart,
 	MagnifyingGlassIcon: MagnifyingGlassIcon,
 	Notification: Bell,
+	Auction: Hammer,
 	GitHub: (props: LucideProps) => (
 		<svg viewBox="0 0 438.549 438.549" {...props}>
 			<title>Github</title>

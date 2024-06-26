@@ -40,6 +40,11 @@ const items: DashboardSidebarItem[] = [
 		href: "/dashboard/customers",
 		icon: "Customer",
 	},
+	{
+		title: "Auction",
+		href: "/dashboard/auction",
+		icon: "Auction",
+	},
 ];
 interface DashboardSidebarProps {
 	children: React.ReactNode;

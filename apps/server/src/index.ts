@@ -21,6 +21,7 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
+import auctions from "./routes/auctions";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -177,4 +178,5 @@ app.route("/carts", carts);
 app.route("/variants", variants);
 app.route("/stores", stores);
 app.route("/products", products);
+app.route("/auctions", auctions);
 export default app;
