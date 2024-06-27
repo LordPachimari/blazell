@@ -10,7 +10,7 @@ const tabsListVariants = cva("inline-flex ", {
 		variant: {
 			default:
 				"items-center justify-center h-10 rounded-md bg-muted p-1 text-muted-foreground",
-			outline: "gap-3 border-b border-mauve-5 dark:border-mauve-7  ",
+			outline: "gap-3 border-b border-border  ",
 			// Add more variants here
 		},
 	},
@@ -19,7 +19,7 @@ const tabsListVariants = cva("inline-flex ", {
 	},
 });
 export const tabsTriggerVariants = cva(
-	"inline-flex items-center justify-center",
+	"inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
 	{
 		variants: {
 			variant: {

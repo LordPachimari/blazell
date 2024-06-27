@@ -32,7 +32,10 @@ export function ErrorBoundary() {
 								{location.pathname}
 							</pre>
 						</div>
-						<Link to="/" className="text-body-md underline">
+						<Link
+							to="/"
+							className="text-body-md underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
+						>
 							<Icons.Left name="arrow-left">Back to home</Icons.Left>
 						</Link>
 					</div>

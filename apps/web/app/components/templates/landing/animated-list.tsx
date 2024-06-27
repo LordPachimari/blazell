@@ -31,8 +31,8 @@ export const List = React.memo(
 		return (
 			<div className={`flex flex-col items-center gap-4 ${className}`}>
 				<AnimatePresence>
-					{itemsToShow.map((item, index) => (
-						<AnimatedListItem key={`${(item as ReactElement).key}-${index}`}>
+					{itemsToShow.map((item) => (
+						<AnimatedListItem key={(item as ReactElement).key}>
 							{item}
 						</AnimatedListItem>
 					))}
@@ -139,7 +139,7 @@ function AnimatedList({ className }: { className?: string }) {
 	return (
 		<div
 			className={cn(
-				"relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg border border-mauve-5 dark:border-mauve-7 bg-background p-6 shadow-lg",
+				"relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg border border-border bg-background p-6 shadow-lg",
 				className,
 			)}
 		>

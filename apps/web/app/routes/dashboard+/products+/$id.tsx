@@ -1,7 +1,7 @@
 import { cn } from "@blazell/ui";
 import { Icons } from "@blazell/ui/icons";
 import { Tabs, TabsList, tabsTriggerVariants } from "@blazell/ui/tabs";
-import { useNavigate, useParams } from "@remix-run/react";
+import { Link, useParams } from "@remix-run/react";
 import { useState } from "react";
 import { useDashboardStore } from "~/zustand/store";
 import { ProductInput } from "./product-input";
@@ -9,7 +9,6 @@ import { ProductPreview } from "./product-preview";
 
 function ProductRoute() {
 	const params = useParams();
-	const navigate = useNavigate();
 	const variantMap = useDashboardStore((state) => state.variantMap);
 	const productMap = useDashboardStore((state) => state.productMap);
 	const product = productMap.get(params.id!);
@@ -24,17 +23,17 @@ function ProductRoute() {
 
 	return (
 		<>
-			<nav className="w-full h-12  bg-component border-b border-mauve-5 dark:border-mauve-7 backdrop-blur-sm fixed px-2 z-10">
+			<nav className="w-full h-12  bg-component border-b border-border backdrop-blur-sm fixed px-2 z-10">
 				<div className="w-full relative flex items-center ">
-					<button
+					<Link
 						type="button"
-						className="flex gap-1 items-center text-brand-9 absolute z-20 left-0 cursor-pointer"
-						onClick={() => navigate("/dashboard/products")}
+						className="flex gap-1 items-center text-brand-9 absolute z-20 left-0 cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-lg"
+						to="/dashboard/products"
 					>
 						<Icons.Left size={20} className="hidden lg:block" />
 						<Icons.ArrowLeft size={20} className="lg:hidden" />
 						<p className="hidden lg:block">Back</p>
-					</button>
+					</Link>
 					<PreviewTab view={view} setView={setView} />
 				</div>
 			</nav>

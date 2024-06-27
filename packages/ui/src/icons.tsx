@@ -53,6 +53,7 @@ import {
 	Quote,
 	BadgeDollarSign,
 	Youtube,
+	Check,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -110,6 +111,7 @@ export const Icons = {
 	Quote,
 	Horizontal: Minus,
 	BadgeDollarSign,
+	Check,
 	Youtube,
 	UPC: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" {...props}>

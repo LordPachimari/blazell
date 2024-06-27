@@ -111,7 +111,17 @@ export default function Page() {
 					replace: true,
 				});
 			}}
-			onKeyDown={() => console.log("key down")}
+			onKeyDown={(e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					e.stopPropagation();
+					navigate("/marketplace", {
+						preventScrollReset: true,
+						unstable_viewTransition: true,
+						replace: true,
+					});
+				}
+			}}
 		>
 			<main className="flex w-full justify-center relative">
 				{isInitialized && !product ? (

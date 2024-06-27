@@ -2,7 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import type { PublishedVariant } from "@blazell/validators";
 import type { Variant } from "@blazell/validators/client";
 import Price from "~/components/molecules/price";
-import { SafeMdxRenderer } from "safe-mdx";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface GeneralInfoProps {
 	defaultVariant: Variant | PublishedVariant | undefined | null;
@@ -24,10 +25,9 @@ function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
 				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-				<SafeMdxRenderer
-					code={defaultVariant?.description ?? ""}
-					components={{}}
-				/>
+				<Markdown remarkPlugins={[remarkGfm]}>
+					{defaultVariant?.description}
+				</Markdown>
 			</div>
 
 			<Price

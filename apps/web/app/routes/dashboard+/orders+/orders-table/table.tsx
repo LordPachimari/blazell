@@ -2,9 +2,9 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
 import React, { useMemo } from "react";
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Button } from "@blazell/ui/button";
 import { Ping } from "@blazell/ui/ping";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import {
 	Table,
 	TableBody,
@@ -14,14 +14,13 @@ import {
 	TableRow,
 } from "@blazell/ui/table";
 import type { Order } from "@blazell/validators/client";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
+import type { DebouncedFunc } from "~/types/debounce";
 import { useReplicache } from "~/zustand/replicache";
 import { filterableColumns, getOrdersColumns } from "./columns";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { ScrollArea } from "@blazell/ui/scroll-area";
-import type { DebouncedFunc } from "~/types/debounce";
 
 interface OrdersTableProps {
 	orders: Order[];
@@ -45,7 +44,6 @@ function OrdersTable({
 		columns,
 		data: orders,
 	});
-	const [parent] = useAutoAnimate({ duration: 100 });
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 
 	const { rows } = table.getRowModel();
@@ -60,7 +58,7 @@ function OrdersTable({
 	});
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 max-w-7xl w-full">
 			{toolbar && (
 				<DataTableToolbar
 					viewOptions={false}
@@ -85,7 +83,7 @@ function OrdersTable({
 			)}
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] shadow bg-component border border-mauve-5 dark:border-mauve-7 rounded-lg relative"
+				className="h-[calc(100vh-400px)] shadow bg-component border border-border rounded-lg relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
@@ -107,7 +105,7 @@ function OrdersTable({
 								</TableRow>
 							))}
 						</TableHeader>
-						<TableBody ref={parent}>
+						<TableBody>
 							{rows.length ? (
 								virtualizer.getVirtualItems().map((virtualRow, index) => {
 									const row = rows[virtualRow.index] as Row<Order>;

@@ -54,7 +54,7 @@ function CustomersTable({
 	});
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 max-w-7xl w-full">
 			<DataTableToolbar
 				viewOptions={false}
 				table={table}
@@ -69,7 +69,7 @@ function CustomersTable({
 
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] shadow bg-component border rounded-lg border-mauve-5 dark:border-mauve-7   relative"
+				className="h-[calc(100vh-327px)] shadow bg-component border rounded-lg border-border   relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>

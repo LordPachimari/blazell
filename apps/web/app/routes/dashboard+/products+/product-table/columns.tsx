@@ -56,7 +56,7 @@ export function getProductsColumns({
 				const variantMap = useDashboardStore((state) => state.variantMap);
 				const defaultVariant = variantMap.get(row.original.defaultVariantID);
 				return (
-					<div className="flex w-[50px] h-[50px] justify-center items-center border border-mauve-5 dark:border-mauve-7   rounded-md">
+					<div className="flex w-[50px] h-[50px] justify-center items-center border border-border   rounded-md">
 						{isPending && row.getIsSelected() ? (
 							<LoadingSpinner className="text-mauve-11" />
 						) : !defaultVariant?.thumbnail ? (

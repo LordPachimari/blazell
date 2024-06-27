@@ -5,11 +5,11 @@ export const noSidebarPaths = new Set([
 	"/",
 	"/sign-in",
 	"/sign-up",
-	"/create-user",
+	"/onboarding",
 ]);
 
 export const noHeaderPaths = (pathname: string) => {
-	const paths = ["/dashboard"];
+	const paths = ["/dashboard", "/onboarding"];
 	return paths.some((path) => pathname.startsWith(path));
 };
 

@@ -31,7 +31,7 @@ export function RowActions({
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "ghost" }),
-					"rounded-full",
+					"rounded-lg p-0",
 				)}
 			>
 				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />

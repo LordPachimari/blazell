@@ -15,14 +15,10 @@ function Features() {
 				<AnimatedToggleContent />
 			</section>
 			<section className="w-full flex flex-col items-center">
-				<FadeUp delay={0.1}>
-					<h2 className="w-full text-center text-4xl text-black dark:text-white font-freeman py-20 lg:text-5xl lg:tracking-tight">
-						What can you sell on Blazell?
-					</h2>
-				</FadeUp>
-				<FadeUp delay={0.2} distance={80}>
-					<ProductTypeCards />
-				</FadeUp>
+				<h2 className="w-full text-center text-4xl text-black dark:text-white font-freeman py-20 lg:text-5xl lg:tracking-tight">
+					What can you sell on Blazell?
+				</h2>
+				<ProductTypeCards />
 			</section>
 			<section className="w-full flex  flex-col gap-10 items-center">
 				<FadeUp delay={0.1}>

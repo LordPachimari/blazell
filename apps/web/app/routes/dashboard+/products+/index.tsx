@@ -23,12 +23,14 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="px-4 md:px-10 w-full">
-			<PageHeader
-				title="Products"
-				className="justify-center md:justify-start"
-			/>
-			<Products products={products} storeID={store?.id} />
+		<main className="p-4 md:py-6 md:px-10 w-full flex justify-center">
+			<div className="max-w-7xl w-full">
+				<PageHeader
+					title="Products"
+					className="justify-center md:justify-start"
+				/>
+				<Products products={products} storeID={store?.id} />
+			</div>
 		</main>
 	);
 }

@@ -24,7 +24,7 @@ export function getVariantColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => (
-				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-mauve-5 dark:border-mauve-7  ">
+				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-border  ">
 					{!row.original.images?.[0] ? (
 						<ImagePlaceholder />
 					) : row.original.images?.[0]?.uploaded ? (

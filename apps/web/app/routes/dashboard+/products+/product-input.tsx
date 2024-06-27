@@ -202,7 +202,10 @@ export function ProductInput({
 									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
-								<DeleteOrPublish setIsOpen1={setIsOpen1} />
+								<DeleteOrPublish
+									setIsOpen1={setIsOpen1}
+									onPublish={onPublish}
+								/>
 							</div>
 						</section>
 						<section className="w-full table gap-0" ref={parent}>
@@ -241,7 +244,7 @@ export function ProductInput({
 
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} />
+							<DeleteOrPublish setIsOpen1={setIsOpen1} onPublish={onPublish} />
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
@@ -260,8 +263,10 @@ export function ProductInput({
 
 function DeleteOrPublish({
 	setIsOpen1,
+	onPublish,
 }: {
 	setIsOpen1: (value: boolean) => void;
+	onPublish: () => void;
 }) {
 	return (
 		<>
@@ -272,11 +277,28 @@ function DeleteOrPublish({
 				onClick={async () => {
 					setIsOpen1(true);
 				}}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						setIsOpen1(true);
+					}
+				}}
 			>
 				Delete
 			</Button>
 
-			<Button size="md" type="submit">
+			<Button
+				size="md"
+				onClick={onPublish}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						onPublish();
+					}
+				}}
+			>
 				Publish
 			</Button>
 		</>

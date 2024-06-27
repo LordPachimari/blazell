@@ -82,6 +82,13 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				variant={"ghost"}
 				type="button"
 				onClick={createOption}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						createOption();
+					}
+				}}
 			>
 				<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
 				Add option
@@ -104,7 +111,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 						/>
 						<button
 							type="button"
-							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-5 dark:border-mauve-7   flex justify-center items-center"
+							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-border   flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,

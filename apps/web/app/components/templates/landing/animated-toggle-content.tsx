@@ -1,17 +1,15 @@
-import { useState } from "react";
-import FadeRight from "~/components/molecules/fade-right";
-import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
-import FadeLeft from "~/components/molecules/fade-left";
+import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
 import { Card, CardContent } from "@blazell/ui/card";
-import Image from "~/components/molecules/image";
+import { Icons } from "@blazell/ui/icons";
 import { Ping } from "@blazell/ui/ping";
 import { Skeleton } from "@blazell/ui/skeleton";
-import { AnimatedList } from "./animated-list";
-import { Button } from "@blazell/ui/button";
-import { Icons } from "@blazell/ui/icons";
-import { OrbitingPayment, OrbitingShipping } from "./orbiting-circle";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import { useState } from "react";
+import Image from "~/components/molecules/image";
 import { AnimatedBeamDemo } from "./animated-beam";
-import { cn } from "@blazell/ui";
+import { AnimatedList } from "./animated-list";
+import { OrbitingPayment, OrbitingShipping } from "./orbiting-circle";
 
 type Feature = {
 	title: string;
@@ -175,7 +173,7 @@ const AnimatedToggleContent = () => {
 
 	return (
 		<div className="flex w-full h-full flex-col gap-20 lg:flex-row">
-			<FadeRight distance={30} className="flex w-full lg:w-5/12 items-center">
+			<div className="flex w-full lg:w-5/12 items-center">
 				<div className="w-full flex flex-col gap-4 sm:max-w-4xl">
 					<p className="bg-gradient-to-b text-lg text-transparent text-start sm:text-center lg:text-start from-brand-6 to-brand-11 bg-clip-text ">
 						New generational e-commerce platform
@@ -206,8 +204,8 @@ const AnimatedToggleContent = () => {
 						))}
 					</ToggleGroup>
 				</div>
-			</FadeRight>
-			<FadeLeft distance={30} className="w-full lg:w-7/12">
+			</div>
+			<div className="w-full lg:w-7/12">
 				<div className="relative w-full h-full flex items-center">
 					<RealTime
 						className={cn("hidden lg:absolute", { grid: page === "0" })}
@@ -222,7 +220,7 @@ const AnimatedToggleContent = () => {
 						className={cn("hidden lg:absolute", { flex: page === "3" })}
 					/>
 				</div>
-			</FadeLeft>
+			</div>
 		</div>
 	);
 };

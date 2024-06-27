@@ -11,6 +11,7 @@ import {
 import { Link, useLocation } from "@remix-run/react";
 import { useWindowSize } from "~/hooks/use-window-size";
 import { useDashboardState } from "~/zustand/state";
+import { useDashboardStore } from "~/zustand/store";
 import { DashboardSearchCombobox } from "./search";
 
 export type DashboardSidebarItem = {
@@ -21,7 +22,7 @@ export type DashboardSidebarItem = {
 
 const items: DashboardSidebarItem[] = [
 	{
-		title: "Stores",
+		title: "Store",
 		href: "/dashboard/store",
 
 		icon: "Store",
@@ -52,7 +53,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"hidden md:flex flex-col px-1 w-44 opacity-0 shadow-sm md:opacity-100 m-1 md:m-0 bg-component fixed top-0 rounded-none h-full border-r border-mauve-5 md:w-40  overflow-hidden md:border-mauve-5 dark:border-mauve-7 transition-all duration-200 ease-in-out z-20 ",
+					"hidden md:flex flex-col px-1 w-44 opacity-0 shadow-sm md:opacity-100 m-1 md:m-0 bg-component fixed top-0 rounded-none h-full border-r border-mauve-5 md:w-40  overflow-hidden md:border-border transition-all duration-200 ease-in-out z-20 ",
 				)}
 			>
 				<StoreInfo />
@@ -67,7 +68,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 								prefetch="viewport"
 								key={item.title}
 								className={cn(
-									"group relative rounded-2xl flex h-10 w-full items-center gap-3 px-2 cursor-pointer hover:bg-mauve-a-2",
+									"group relative rounded-2xl flex h-10 w-full items-center gap-3 px-2 cursor-pointer hover:bg-mauve-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
 								)}
 							>
 								{item.title === "Orders" && (
@@ -180,16 +181,23 @@ export const DashboardSidebarMobile = () => {
 	);
 };
 const StoreInfo = () => {
+	const stores = useDashboardStore((state) => state.stores);
+	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
+	const activeStore = stores.find((store) => store.id === activeStoreID);
 	return (
 		<section className="w-full flex items-center flex-col py-4">
-			<Select>
-				<SelectTrigger className="h-10">
+			<Select value={activeStore?.name ?? ""}>
+				<SelectTrigger className="h-11">
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent side="top">
-					{[100, 200, 300].map((pageSize) => (
-						<SelectItem className="h-10" key={pageSize} value={`${pageSize}`}>
-							{pageSize}
+					{stores.map((store) => (
+						<SelectItem
+							className="h-10"
+							key={store.name}
+							value={`${store.name}`}
+						>
+							{store.name}
 						</SelectItem>
 					))}
 				</SelectContent>

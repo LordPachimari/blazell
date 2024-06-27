@@ -18,7 +18,7 @@
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
 
-    --border: 240 5.9% 90%;
+    --border: #e3dfe6;;
     --input: 240 5.9% 90%;
 
     --primary: 240 5.9% 10%;
@@ -33,7 +33,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --ring: #e93d82;
+    --ring: #FF007B;
 
     --radius: 0.5rem;
 
@@ -173,7 +173,7 @@
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
+    --border: #d0cdd7;
     --input: 240 3.7% 15.9%;
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
     --input-shadow:#e93d82;
@@ -190,15 +190,15 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
 
-    --ring:#873356 ;
+    --ring:#FF007B ;
   --component: rgba(35, 34, 37, 0.5);
     --box-shadow-border: 0 0 0 calc(1px / var(--scale-x, 1))
       rgba(248, 248, 248, 0.05);
     --box-shadow-common: 0 1px calc(3px / var(--scale-x, 1)) 0
       rgba(255, 253, 253, 0.15);
     --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
-    --focused-outline-color: #1a001e;
-    --focused-outline-color: #430245;
+    --focused-outline-color: #FF007B;
+    --focused-outline-color: #FF007B;
 
         --red-1: #191111;
         --red-2: #201314;
@@ -314,12 +314,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  .pachi-field-error {
-    @apply border-rose-500 bg-red-100 hover:bg-red-200
-  }
-  .pachi-field-neutral {
-    @apply border-zinc-200 dark:border-zinc-600;
-  }
+
 }
 @layer components {
   .zoom-image [data-rmiz-modal-overlay="visible"] {

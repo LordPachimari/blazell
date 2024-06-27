@@ -77,7 +77,7 @@ function Header() {
 					</DropdownMenu>
 				) : (
 					<Link
-						to={!fakeAuthID ? "/create-user" : "/dashboard"}
+						to={!fakeAuthID ? "/onboarding" : "/dashboard"}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 						className={cn(buttonVariants(), "rounded-lg")}

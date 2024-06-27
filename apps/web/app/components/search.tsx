@@ -127,7 +127,7 @@ export function GlobalSearchCombobox() {
 					{() => (
 						<Kbd
 							title={isMacOs() ? "Command" : "Control"}
-							className=" text-mauve-11 border-mauve-5 dark:border-mauve-7  "
+							className=" text-mauve-11 border-border  "
 						>
 							{isMacOs() ? "⌘" : "Ctrl"} K
 						</Kbd>
@@ -165,7 +165,7 @@ export function GlobalSearchCombobox() {
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus
-											className="outline-none h-10 border-b bg-component border-mauve-5 dark:border-mauve-7   p-4"
+											className="outline-none h-10 border-b bg-component border-border   p-4"
 											placeholder="Global search"
 											value={query}
 											onChange={(e) => setQuery(e.target.value)}

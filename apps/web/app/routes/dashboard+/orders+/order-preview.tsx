@@ -36,7 +36,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 			className="hidden lg:block overflow-hidden w-[24rem] p-0 sticky top-10"
 			x-chunk="dashboard-05-chunk-4"
 		>
-			<CardHeader className="flex border-b border-mauve-5 dark:border-mauve-7   p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
+			<CardHeader className="flex border-b border-border   p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
 				<div className="flex flex-col">
 					<CardTitle className="flex items-center text-sm">
 						{`Order ${orderID}`}
@@ -156,7 +156,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 					Manage
 				</Link>
 			</CardContent>
-			<CardFooter className="flex p-6 flex-row items-center border-t border-mauve-5 dark:border-mauve-7   bg-mauve-a-2 h-[3rem]">
+			<CardFooter className="flex p-6 flex-row items-center border-t border-border   bg-mauve-a-2 h-[3rem]">
 				<div className="text-xs text-mauve-11">
 					Updated <time dateTime="2023-11-23">{order?.updatedAt}</time>
 				</div>
@@ -182,7 +182,7 @@ export const OrderPreviewMobile = ({
 			onOpenChange={setOpened}
 		>
 			<DialogContent>
-				<CardHeader className="flex border-b border-mauve-5 dark:border-mauve-7   p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
+				<CardHeader className="flex border-b border-border   p-6 h-[5rem] flex-row justify-between items-center bg-mauve-a-2">
 					<div className="flex flex-col">
 						<CardTitle className="flex items-center text-sm">
 							{`Order ${orderID}`}
@@ -302,7 +302,7 @@ export const OrderPreviewMobile = ({
 						Manage
 					</Link>
 				</CardContent>
-				<CardFooter className="flex p-6 flex-row items-center border-t border-mauve-5 dark:border-mauve-7   bg-mauve-a-2 h-[3rem]">
+				<CardFooter className="flex p-6 flex-row items-center border-t border-border   bg-mauve-a-2 h-[3rem]">
 					<div className="text-xs text-mauve-11">
 						Updated <time dateTime="2023-11-23">{order?.updatedAt}</time>
 					</div>

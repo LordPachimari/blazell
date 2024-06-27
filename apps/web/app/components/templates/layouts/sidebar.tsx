@@ -43,7 +43,7 @@ const items: SidebarItem[] = [
 	},
 ];
 
-const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/create-user"]);
+const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/onboarding"]);
 
 const Sidebar = () => {
 	const fetcher = useFetcher<typeof action>();
@@ -75,7 +75,7 @@ const Sidebar = () => {
 					},
 				)}
 			>
-				<div className="h-full w-full flex flex-col justify-between rounded-xl bg-component border border-mauve-5 dark:border-mauve-7   backdrop-blur-sm lg:backdrop-blur-md">
+				<div className="h-full w-full flex flex-col justify-between rounded-xl bg-component border border-border   backdrop-blur-sm lg:backdrop-blur-md">
 					<div
 						className={cn(
 							"w-full flex justify-center pt-2 group-hover:justify-end group-hover:pr-2",
@@ -87,7 +87,7 @@ const Sidebar = () => {
 						<Button
 							size={"icon"}
 							variant={"ghost"}
-							className="text-mauve-11 text-lg rounded-full"
+							className="text-mauve-11 text-sm rounded-full"
 							type="submit"
 							onClick={() =>
 								fetcher.submit(
@@ -99,7 +99,7 @@ const Sidebar = () => {
 								)
 							}
 						>
-							s
+							S
 						</Button>
 					</div>
 					<div />
@@ -112,7 +112,7 @@ const Sidebar = () => {
 									to={item.href}
 									key={item.title}
 									className={cn(
-										"group/link flex h-10 w-full items-center gap-3 rounded-2xl px-2 cursor-pointer hover:bg-mauve-a-2 ",
+										"group/link flex h-10 w-full items-center gap-3 rounded-2xl px-2 cursor-pointer hover:bg-mauve-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
 									)}
 									prefetch="viewport"
 								>
@@ -161,7 +161,7 @@ const MobileSidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"fixed lg:hidden bottom-1 h-12 group ml-[3px] w-[calc(100%-6px)] rounded-xl bg-mauve-a-1 dark:bg-component justify-between flex flex-col z-40 overflow-hidden border border-mauve-5 dark:border-mauve-7 backdrop-blur-sm",
+					"fixed lg:hidden bottom-1 h-12 group ml-[3px] w-[calc(100%-6px)] rounded-xl bg-mauve-a-1 dark:bg-component justify-between flex flex-col z-40 overflow-hidden border border-border backdrop-blur-sm",
 					{
 						hidden: noSidebarPaths.has(location.pathname),
 					},

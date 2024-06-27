@@ -157,7 +157,7 @@ function VariantOptions({
 			{options.map((option) => {
 				return (
 					<div className="flex items-center  gap-2" key={option.id}>
-						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-mauve-5 dark:border-mauve-7   justify-center">
+						<span className="flex h-10 min-w-[4rem] items-center font-semibold bg-component border rounded-lg border-border   justify-center">
 							{option.name}
 						</span>
 						:

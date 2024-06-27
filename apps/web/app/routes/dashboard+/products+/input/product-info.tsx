@@ -40,6 +40,7 @@ export function ProductInfo({
 					placeholder="Untitled"
 					className="w-full prose max-w-none rounded-lg bg-transparent dark:text-white text-2xl outline-none font-bold"
 					maxRows={2}
+					autoFocus
 					onChange={async (e) => {
 						defaultVariantID &&
 							(await onVariantInputChange({

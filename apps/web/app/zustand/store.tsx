@@ -191,17 +191,18 @@ const DashboardStoreProvider = ({
 }: { children: React.ReactNode }) => {
 	const [store] = React.useState(createDashboardStore);
 	const state = store.getState();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		store.setState((state) => ({
 			...state,
 			searchWorker: new Worker(
 				new URL("../worker/search.ts", import.meta.url),
-				{ type: "module" },
+				{ type: "module", name: "dashboard_search" },
 			),
 		}));
 
 		return () => state.terminateSearchWorker();
-	}, [store, state]);
+	}, []);
 
 	return (
 		<DashboardStoreContext.Provider value={store}>
@@ -450,6 +451,7 @@ const GlobalSearchContext = React.createContext<ReturnType<
 const GlobalSearchProvider = ({ children }: { children: React.ReactNode }) => {
 	const [store] = React.useState(createGlobalSearch);
 	const state = store.getState();
+
 	const setGlobalSearchWorker = useMarketplaceStore(
 		(state) => state.setGlobalSearchWorker,
 	);
@@ -458,8 +460,9 @@ const GlobalSearchProvider = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
 		const newWorker = new Worker(
 			new URL("../worker/search.ts", import.meta.url),
-			{ type: "module" },
+			{ type: "module", name: "global_search" },
 		);
+
 		store.setState((state) => ({
 			...state,
 			globalSearchWorker: newWorker,
@@ -467,7 +470,7 @@ const GlobalSearchProvider = ({ children }: { children: React.ReactNode }) => {
 		setGlobalSearchWorker(newWorker);
 
 		return () => state.terminateSearchWorker();
-	}, [store, state]);
+	}, []);
 
 	return (
 		<GlobalSearchContext.Provider value={store}>
@@ -490,15 +493,15 @@ const useGlobalSearch = <_, U>(
 
 export {
 	DashboardStoreProvider,
+	GlobalSearchProvider,
 	GlobalStoreProvider,
 	MarketplaceStoreProvider,
-	GlobalSearchProvider,
 	createDashboardStore,
+	createGlobalSearch,
 	createGlobalStore,
 	createMarketplaceStore,
-	createGlobalSearch,
 	useDashboardStore,
+	useGlobalSearch,
 	useGlobalStore,
 	useMarketplaceStore,
-	useGlobalSearch,
 };

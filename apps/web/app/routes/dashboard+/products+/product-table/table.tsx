@@ -61,7 +61,7 @@ function ProductsTable({
 	});
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 w-full">
 			<DataTableToolbar
 				table={table}
 				filterableColumns={filterableColumns}
@@ -79,7 +79,7 @@ function ProductsTable({
 			/>
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] shadow bg-component border border-mauve-5 dark:border-mauve-7 rounded-lg relative overflow-x-scroll"
+				className="h-[calc(100vh-327px)] shadow bg-component border border-border rounded-lg relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>

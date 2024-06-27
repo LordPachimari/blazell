@@ -56,7 +56,7 @@ const ProductOverview = ({
 			>
 				<ScrollArea
 					className={cn(
-						"border-t lg:border-t-0 lg:border-mauve-5 dark:border-mauve-7   lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
+						"border-t lg:border-t-0 lg:border-border   lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
 					)}
 				>
 					<div className="p-4 h-full w-full">

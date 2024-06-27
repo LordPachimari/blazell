@@ -34,6 +34,7 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
+								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 								...(user?.id && {
 									"x-user-id": user.id,
 								}),

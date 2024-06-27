@@ -12,19 +12,21 @@ import {
 } from "@blazell/ui/dialog-vaul";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type { Price } from "@blazell/validators/client";
+import { Icons } from "@blazell/ui/icons";
 
 function Currencies({
-	children,
+	opened,
+	setOpened,
 	id,
 	createPrices,
 	prices,
 }: {
-	children: React.ReactNode;
+	opened: boolean;
+	setOpened: (value: boolean) => void;
 	id: string | undefined;
 	prices: (Price | InsertPrice)[];
 	createPrices: (props: CreatePrices) => Promise<void>;
 }) {
-	const [opened, setOpened] = useState(false);
 	const setDialogOpened = (value: boolean) => {
 		if (!value) {
 			setCurrencyCodes(Array.from(existingPrices));
@@ -42,7 +44,25 @@ function Currencies({
 	}, [prices]);
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setDialogOpened}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogTrigger asChild>
+				<Button
+					size="md"
+					variant="ghost"
+					type="button"
+					className="text-mauve-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
+					onClick={() => setOpened(true)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							e.stopPropagation();
+							setOpened(true);
+						}
+					}}
+				>
+					<Icons.Plus className="h-3.5 w-3.5 mr-2" />
+					Add Price
+				</Button>
+			</DialogTrigger>
 			<DialogContent>
 				<DialogTitle className="p-4">Currencies</DialogTitle>
 

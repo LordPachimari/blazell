@@ -11,7 +11,7 @@ export const loader: LoaderFunction = async (args) => {
 	const cookieHeader = args.request.headers.get("Cookie");
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
 	if (!userContextCookie.fakeAuthID) {
-		return redirect("/create-user");
+		return redirect("/onboarding");
 	}
 	// const { getToken, userId } = await getAuth(args);
 	// if (!userId) return redirect("/sign-in");
@@ -24,7 +24,7 @@ export const loader: LoaderFunction = async (args) => {
 		},
 	}).then((res) => res.json() as Promise<User | undefined>);
 	if (!user) {
-		return redirect("/create-user");
+		return redirect("/onboarding");
 	}
 	return json(user);
 };

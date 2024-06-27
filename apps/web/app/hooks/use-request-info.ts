@@ -26,7 +26,7 @@ export function useOptimisticUserContextMode() {
 	const fetchers = useFetchers();
 	const userContext = fetchers.find(
 		(f) =>
-			f.formAction === "/create-user" || f.formAction === "/action/set-cart-id",
+			f.formAction === "/onboarding" || f.formAction === "/action/set-cart-id",
 	);
 
 	if (userContext?.formData) {

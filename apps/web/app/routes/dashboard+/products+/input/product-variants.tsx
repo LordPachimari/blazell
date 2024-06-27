@@ -93,7 +93,7 @@ export function Variants({
 
 	return (
 		<Card className="my-4 p-0">
-			<CardHeader className="p-4 border-b border-mauve-5 dark:border-mauve-7">
+			<CardHeader className="p-4 border-b border-border">
 				<CardTitle>
 					<span className="flex w-full justify-between">
 						Variant<p className="text-sm text-mauve-9">{"(optional)"}</p>
@@ -122,6 +122,13 @@ export function Variants({
 					type="button"
 					className="mt-2 text-mauve-11 rounded-none border-b-0 rounded-b-lg border-r-0 border-l-0"
 					onClick={generateVariants}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							e.stopPropagation();
+							generateVariants();
+						}
+					}}
 					disabled={!product?.options?.length}
 				>
 					<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />

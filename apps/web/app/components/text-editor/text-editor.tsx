@@ -51,7 +51,7 @@ const TextEditor = ({
 				<EditorContent
 					extensions={extensions}
 					{...(content && { initialContent: content })}
-					className="relative w-full pb-4 px-4 py-16 min-h-[150px] border border-t-0 border-mauve-5 dark:border-mauve-7 rounded-b-lg rounded-t-lg"
+					className="relative w-full pb-4 px-4 py-16 min-h-[150px] border border-t-0 border-border rounded-b-lg rounded-t-lg"
 					editorProps={{
 						handleDOMEvents: {
 							keydown: (_view, event) => handleCommandNavigation(event),

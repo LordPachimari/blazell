@@ -33,13 +33,13 @@ export function DataTableToolbar<TData>({
 
 	return (
 		<div className="flex items-center justify-between">
-			<div className="flex flex-1 items-center space-x-2">
+			<div className="flex space-x-2">
 				<Input
 					placeholder="Search..."
 					onChange={(event) => {
 						onSearch?.(event.target.value);
 					}}
-					className="h-10 w-[150px] md:w-[350px] rounded-xl"
+					className="h-10 w-[150px] md:w-[350px] rounded-lg"
 				/>
 
 				{filterableColumns?.map(
@@ -66,8 +66,10 @@ export function DataTableToolbar<TData>({
 					</Button>
 				)}
 			</div>
-			<div className="px-2 w-fit">{toolbarButton}</div>
-			{viewOptions && <DataTableViewOptions table={table} />}
+			<div className="flex gap-2">
+				<div className="w-fit">{toolbarButton}</div>
+				{viewOptions && <DataTableViewOptions table={table} />}
+			</div>
 		</div>
 	);
 }

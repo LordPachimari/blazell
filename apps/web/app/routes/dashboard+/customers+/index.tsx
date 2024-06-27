@@ -71,30 +71,32 @@ export default function CustomersPage() {
 		}
 	}, [searchWorker]);
 	return (
-		<main className="w-full p-4 md:p-10 justify-center flex flex-col lg:flex-row gap-6">
-			<section className="w-full">
-				<div className="flex flex-col pb-4">
-					<PageHeader
-						title="Customers"
-						className="justify-center md:justify-start"
-					/>
-					<div className="flex gap-4">
-						<Stat description="This month" number={200} />
-					</div>
-				</div>
-				<div className="flex w-full gap-4 flex-col lg:flex-row">
-					<div className="w-full lg:w-8/12">
-						<CustomersTable
-							customers={searchResults ?? customers ?? []}
-							createCustomer={createCustomer}
-							onSearch={onSearch}
+		<main className="w-full p-4 md:px-10 md:py-6 flex justify-center">
+			<div className="justify-center flex flex-col lg:flex-row gap-6 w-full max-w-7xl">
+				<section className="w-full ">
+					<div className="flex flex-col pb-4">
+						<PageHeader
+							title="Customers"
+							className="justify-center md:justify-start"
 						/>
+						<div className="flex gap-4">
+							<Stat description="This month" number={200} />
+						</div>
 					</div>
-					<div className="w-full lg:w-4/12 lg:block hidden relative">
-						<CustomersInfo />
+					<div className="flex w-full gap-6 flex-col lg:flex-row">
+						<div className="w-full lg:w-8/12">
+							<CustomersTable
+								customers={searchResults ?? customers ?? []}
+								createCustomer={createCustomer}
+								onSearch={onSearch}
+							/>
+						</div>
+						<div className="w-full lg:w-4/12 lg:block hidden relative">
+							<CustomersInfo />
+						</div>
 					</div>
-				</div>
-			</section>
+				</section>
+			</div>
 		</main>
 	);
 }
@@ -104,7 +106,7 @@ function Stat({
 	number,
 }: { description: string; number: number }) {
 	return (
-		<Card className="shadow-none">
+		<Card>
 			<CardHeader className="pb-2">
 				<CardDescription>{description}</CardDescription>
 				<CardTitle className="text-4xl">+{number}</CardTitle>
@@ -122,14 +124,14 @@ function CustomersInfo() {
 	const customers = useDashboardStore((state) => state.customers);
 	const isInitialized = useDashboardStore((state) => state.isInitialized);
 	return (
-		<Card className="min-w-[24rem] sticky top-10 shadow-none">
-			<CardHeader className="pb-4">
-				<CardTitle>New customers</CardTitle>
+		<Card className="w-full max-w-sm min-w-[320px] sticky top-10 shadow-none p-0">
+			<CardHeader className="p-4 border-b border-border">
+				<CardTitle className="font-freeman">New customers</CardTitle>
 			</CardHeader>
-			<CardContent className="flex flex-col gap-2 min-h-[40vh]">
+			<CardContent className="flex flex-col gap-2 min-h-[40vh] p-4">
 				{!isInitialized &&
 					Array.from({ length: 5 }).map((_, i) => (
-						<div className="flex items-center gap-4" key={i}>
+						<div className="flex items-center gap-2" key={i}>
 							<Skeleton className="hidden h-9 w-9 rounded-full sm:flex" />
 							<div className="grid gap-1">
 								<Skeleton className="w-[150px] h-[10px]" />
@@ -139,7 +141,7 @@ function CustomersInfo() {
 						</div>
 					))}
 				{customers.map((customer) => (
-					<div className="flex items-center gap-4" key={customer.id}>
+					<div className="flex items-center gap-2" key={customer.id}>
 						<Avatar className="hidden h-9 w-9 sm:flex">
 							<AvatarImage src="" alt="Avatar" />
 							<AvatarFallback>OM</AvatarFallback>

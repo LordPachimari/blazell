@@ -51,7 +51,7 @@ export function AnimatedBeamDemo() {
 					</Circle>
 					<div
 						ref={div4Ref}
-						className="p-2 text bg-component backdrop-blur-md  rounded-xl z-10 border border-mauve-5 dark:border-mauve-7 "
+						className="p-2 text bg-component backdrop-blur-md  rounded-xl z-10 border border-border "
 					>
 						<span className="bg-gradient-to-b from-brand-9 to-brand-11 text-transparent font-black text-lg bg-clip-text">
 							Blazell

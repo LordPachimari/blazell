@@ -32,8 +32,28 @@ export function AlertDialogComponent({
 					<AlertDialogDescription>{description}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={onContinue} type="submit">
+					<AlertDialogCancel
+						onKeyDown={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							if (e.key === "Enter" || e.key === " ") {
+								setIsOpen(false);
+							}
+						}}
+					>
+						Cancel
+					</AlertDialogCancel>
+					<AlertDialogAction
+						onClick={onContinue}
+						onKeyDown={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							if (e.key === "Enter" || e.key === " ") {
+								onContinue?.();
+							}
+						}}
+						type="submit"
+					>
 						Continue
 					</AlertDialogAction>
 				</AlertDialogFooter>

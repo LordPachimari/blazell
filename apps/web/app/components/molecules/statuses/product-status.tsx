@@ -19,7 +19,7 @@ export function ProductStatus({ status }: { status: Product["status"] }) {
 	) : (
 		<Badge
 			variant={"outline"}
-			className="bg-mauve-3 border-mauve-5 dark:border-mauve-7 text-mauve-9 font-bold"
+			className="bg-mauve-3 border-border text-mauve-9 font-bold"
 		>
 			Draft
 		</Badge>

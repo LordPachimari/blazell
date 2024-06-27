@@ -9,8 +9,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from ".";
 
 const inputBaseStyles = cn(
-	"bg-component hover:bg-mauve-a-1 shadow-sm border-mauve-5 dark:border-mauve-7  shadow-buttons-neutral placeholder-mauve-9 text-ui-fg-base transition-fg relative w-full appearance-none rounded-lg shadow border outline-none",
-	"focus:border-brand-8 focus:dark:border-brand-9 focus:shadow-brand-5 focus:shadow",
+	"bg-component hover:bg-mauve-1 border-border placeholder-mauve-9 text-ui-fg-base shadow-sm transition-fg relative w-full appearance-none rounded-lg border outline-none",
+	"focus-visible:border-brand-8 focus-visible:dark:border-brand-9 focus-visible:shadow-brand-5 focus-visible:shadow",
 	"disabled:text-mauve-6 disabled:!bg-mauve-4 disabled:placeholder-mauve-6 disabled:cursor-not-allowed disabled:!shadow-none",
 	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-brand-10 invalid:!border-brand-10 invalid:focus:!shadow-brand-10",
 );

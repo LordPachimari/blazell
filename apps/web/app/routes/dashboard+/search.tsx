@@ -131,7 +131,7 @@ export function DashboardSearchCombobox() {
 			<button
 				type="button"
 				className={cn(
-					"group relative rounded-2xl h-10 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-mauve-a-2",
+					"group relative rounded-2xl h-10 mb-2 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-mauve-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
 				)}
 				onClick={() => open()}
 			>
@@ -261,7 +261,6 @@ export function DashboardSearchCombobox() {
 																return (
 																	<CommandItem
 																		key={order.id}
-																		className="h-9"
 																		value={order.id}
 																		onSelect={() =>
 																			onSelect(() =>
