@@ -20,7 +20,7 @@ import {
 	Transition,
 	TransitionChild,
 } from "@headlessui/react";
-import { useNavigate } from "@remix-run/react";
+import { useLocation, useNavigate } from "@remix-run/react";
 import { isString } from "remeda";
 import { ClientOnly } from "remix-utils/client-only";
 import { HighlightedText } from "~/components/molecules/highlighted-text";
@@ -44,6 +44,9 @@ export function GlobalSearchCombobox() {
 	const [loading, __] = React.useState(false);
 	const [_, startTransition] = React.useTransition();
 	const [isOpen, setIsOpen] = React.useState(false);
+	const location = useLocation();
+	const splitPath = location.pathname.split("/");
+	const mainPath = splitPath[1];
 
 	function open() {
 		setIsOpen(true);
@@ -56,14 +59,18 @@ export function GlobalSearchCombobox() {
 
 	React.useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+			if (
+				e.key === "k" &&
+				(e.metaKey || e.ctrlKey) &&
+				mainPath !== "dashboard"
+			) {
 				e.preventDefault();
 				setIsOpen((open) => !open);
 			}
 		};
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, []);
+	}, [mainPath]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onSelect = React.useCallback((callback: () => unknown) => {

@@ -67,7 +67,7 @@ interface Item {
 	time: string;
 }
 
-let notifications = [
+const notifications = [
 	{
 		name: "Payment received",
 		description: "Magic UI",
@@ -98,8 +98,6 @@ let notifications = [
 		color: "#1E86FF",
 	},
 ];
-
-notifications = Array.from({ length: 10 }, () => notifications).flat();
 
 const Notification = ({ name, icon, color, time }: Item) => {
 	return (

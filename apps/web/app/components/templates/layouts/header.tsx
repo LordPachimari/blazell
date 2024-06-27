@@ -14,7 +14,6 @@ import Image from "~/components/molecules/image";
 import { Logo } from "~/components/molecules/logo";
 import { GlobalSearchCombobox } from "~/components/search";
 import { useRequestInfo } from "~/hooks/use-request-info";
-import { useWindowSize } from "~/hooks/use-window-size";
 import { useGlobalStore } from "~/zustand/store";
 import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
@@ -24,7 +23,6 @@ function Header() {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
 	const { cartID, fakeAuthID } = userContext;
-	const windowSize = useWindowSize();
 
 	return (
 		<Navbar>
@@ -38,7 +36,7 @@ function Header() {
 
 			{/* Right corner */}
 			<div className="hidden gap-2 lg:flex items-center ">
-				{windowSize.width > 1024 && <GlobalSearchCombobox />}
+				<GlobalSearchCombobox />
 				<Notifications />
 				<ThemeToggle />
 				<CartSheet cartID={cartID ?? null} />
