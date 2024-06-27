@@ -30,13 +30,12 @@ import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplac
 import { prefs, userContext } from "./sessions.server";
 import stylesheet from "./tailwind.css?url";
 import { getDomainUrl } from "./utils/helpers";
-//@ts-ignore
 import sonnerStyles from "./sonner.css?url";
-//@ts-ignore
 import { AppEnvSchema, type AppEnv } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
+import tiptap from "./tiptap.css?url";
 import {
 	GlobalSearchProvider,
 	GlobalStoreProvider,
@@ -46,6 +45,7 @@ import {
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
+
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -53,6 +53,7 @@ export const links: LinksFunction = () => {
 		{ rel: "stylesheet", href: stylesheet },
 		{ rel: "stylesheet", href: sonnerStyles },
 		{ rel: "stylesheet", href: vaulStyles },
+		{ rel: "stylesheet", href: tiptap },
 	].filter(Boolean);
 };
 export type RootLoaderData = {
@@ -187,7 +188,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative font-body dark:bg-mauve-1 bg-mauve-a-2 min-w-[280px]">
+			<body className="relative font-body bg-background min-w-[280px]">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<script

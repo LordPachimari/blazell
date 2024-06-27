@@ -117,19 +117,19 @@ export default {
 					11: "var(--slate-a11)",
 					12: "var(--slate-a12)",
 				},
-				crimson: {
-					1: "var(--crimson-1)",
-					2: "var(--crimson-2)",
-					3: "var(--crimson-3)",
-					4: "var(--crimson-4)",
-					5: "var(--crimson-5)",
-					6: "var(--crimson-6)",
-					7: "var(--crimson-7)",
-					8: "var(--crimson-8)",
-					9: "var(--crimson-9)",
-					10: "var(--crimson-10)",
-					11: "var(--crimson-11)",
-					12: "var(--crimson-12)",
+				brand: {
+					1: "var(--brand-1)",
+					2: "var(--brand-2)",
+					3: "var(--brand-3)",
+					4: "var(--brand-4)",
+					5: "var(--brand-5)",
+					6: "var(--brand-6)",
+					7: "var(--brand-7)",
+					8: "var(--brand-8)",
+					9: "var(--brand-9)",
+					10: "var(--brand-10)",
+					11: "var(--brand-11)",
+					12: "var(--brand-12)",
 				},
 				jade: {
 					1: "var(--jade-1)",
@@ -247,16 +247,40 @@ export default {
 					"75%": { transform: "translateX(5px)" },
 					"100%": { transform: "translateX(0)" },
 				},
-				slidein: {
-					from: {
+				"notification-shake": {
+					"0%": { transform: "translateX(0)" },
+					"25%": { transform: "translateX(3px)" },
+					"50%": { transform: "translateX(-3px)" },
+					"75%": { transform: "translateX(3px)" },
+					"100%": { transform: "translateX(0)" },
+				},
+
+				"fade-up": {
+					"0%": {
 						opacity: "0",
-						transform: "translateY(-10px)",
+						transform: "translateY(10px)",
 					},
-					to: {
+					"75%": {
+						opacity: "0.6",
+					},
+					"100%": {
 						opacity: "1",
 						transform: "translateY(0)",
 					},
 				},
+				orbit: {
+					"0%": {
+						transform:
+							"rotate(0deg) translateY(calc(var(--radius) * 1px)) rotate(0deg)",
+					},
+					"100%": {
+						transform:
+							"rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg)",
+					},
+				},
+			},
+			backgroundImage: {
+				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -265,7 +289,10 @@ export default {
 				blink: "blink 1.4s both infinite",
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
 				shake: "shake 0.5s linear infinite",
+				"notification-shake": "notification-shake 0.5s linear infinite",
 				slidein: "slidein 1s ease 300ms",
+				"fade-up": "fade-up 0.5s ease-out",
+				orbit: "orbit calc(var(--duration)*1s) linear infinite",
 			},
 			boxShadow: {
 				border: "0px 0px 0px 1px #E5E7EB",

@@ -27,16 +27,6 @@ export const UpdateProductSchema = z.object({
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;
 
-export const AssignOptionValueToVariantSchema = z.object({
-	optionValueID: z.string(),
-	variantID: z.string(),
-	prevOptionValueID: z.string().optional(),
-	productID: z.string(),
-});
-export type AssignOptionValueToVariant = z.infer<
-	typeof AssignOptionValueToVariantSchema
->;
-
 export const ProductDuplicateSchema = z.object({
 	originalProductID: z.string(),
 	newDefaultVariantID: z.string(),

@@ -1,25 +1,115 @@
-import { Link } from "@remix-run/react";
-
 export default function Footer() {
 	return (
-		<footer className="text-sm border-t border-mauve-7 bottom-0 w-full bg-component">
-			<div className="p-6 text-sm">
-				<div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-1 px-4 md:flex-row md:gap-0 md:px-4 xl:px-0">
-					<Link to="/" className="flex gap-2 items-center">
-						<h1 className="text-xl text-mauve-11 font-freeman">Blazell</h1>
+		<footer className="bg-component w-full border-t border-mauve-5 dark:border-mauve-7">
+			<div className="max-w-screen-xl p-4 py-6 mx-auto lg:py-16 md:p-8 lg:p-10">
+				<div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+					<div>
+						<h3 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+							Company
+						</h3>
+						<ul className="text-gray-500 dark:text-gray-400">
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									About
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Careers
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Brand Center
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Blog
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h3 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+							Help Center
+						</h3>
+						<ul className="text-gray-500 dark:text-gray-400">
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Contact Us
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h3 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+							Legal
+						</h3>
+						<ul className="text-gray-500 dark:text-gray-400">
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Privacy Policy
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Licensing
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Terms
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h3 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+							Community
+						</h3>
+						<ul className="text-gray-500 dark:text-gray-400">
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Discord
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Twitter
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Instagram
+								</a>
+							</li>
+							<li className="mb-4">
+								<a href="/" className="hover:underline">
+									Tiktok
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
 
-						<p className="text-mauve-11">© 2024</p>
-					</Link>
-					<hr className="mx-4 hidden h-4 w-[1px] md:inline-block" />
-					<p className="md:ml-auto">
-						Crafted by{" "}
+				<hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+				<div className="text-center">
+					<span className="block text-sm text-center text-gray-500 dark:text-gray-400">
+						© 2024 Blazell™. All Rights Reserved. Built by
 						<a
-							href="https://github.com/LordPachimari"
-							className="text-black font-semibold dark:text-white"
+							href="https://github.com/LordPachi"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-brand-9 pl-1 font-bold"
 						>
 							LordPachi
 						</a>
-					</p>
+						.
+					</span>
+					<ul className="flex justify-center mt-5 space-x-5">
+						{/* SVG icons here for social media links */}
+					</ul>
 				</div>
 			</div>
 		</footer>

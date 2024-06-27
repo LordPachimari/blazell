@@ -75,7 +75,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 	const [parent] = useAutoAnimate({ duration: 100 });
 
 	return (
-		<section className="w-full my-4">
+		<section className="w-full">
 			<Button
 				size="md"
 				className="text-mauve-11"
@@ -104,7 +104,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 						/>
 						<button
 							type="button"
-							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
+							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-5 dark:border-mauve-7   flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,

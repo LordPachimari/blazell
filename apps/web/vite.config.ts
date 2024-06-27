@@ -9,7 +9,7 @@ import MillionLint from "@million/lint";
 // import { remixDevTools } from "remix-development-tools";
 export default defineConfig({
 	ssr: {
-		noExternal: ["react-easy-crop", "tslib"],
+		noExternal: ["react-easy-crop", "tslib", "react-tweet"],
 	},
 	plugins: [
 		MillionLint.vite(),

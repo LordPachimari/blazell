@@ -23,8 +23,11 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="p-4 md:p-10 w-full">
-			<PageHeader title="Products" />
+		<main className="px-4 md:px-10 w-full">
+			<PageHeader
+				title="Products"
+				className="justify-center md:justify-start"
+			/>
 			<Products products={products} storeID={store?.id} />
 		</main>
 	);

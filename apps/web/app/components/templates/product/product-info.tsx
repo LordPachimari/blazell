@@ -23,7 +23,7 @@ function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
 	return (
 		<section className="flex flex-col ">
 			<div className="w-[200px] flex gap-2">
-				<Avatar className="h-16 w-16">
+				<Avatar className="h-16 w-16 ">
 					<AvatarImage src="https://github.com/shadcn.png" />
 					<AvatarFallback>N</AvatarFallback>
 				</Avatar>

@@ -6,13 +6,13 @@ import {
 } from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "./";
+import { cn } from ".";
 
 const inputBaseStyles = cn(
-	"bg-component hover:bg-mauve-a-1 shadow-sm border-mauve-7 shadow-buttons-neutral placeholder-mauve-9 text-ui-fg-base transition-fg relative w-full appearance-none rounded-xl border outline-none",
-	"focus:border-crimson-8 focus:shadow-crimson-5 focus:shadow-sm",
+	"bg-component hover:bg-mauve-a-1 shadow-sm border-mauve-5 dark:border-mauve-7  shadow-buttons-neutral placeholder-mauve-9 text-ui-fg-base transition-fg relative w-full appearance-none rounded-lg shadow border outline-none",
+	"focus:border-brand-8 focus:dark:border-brand-9 focus:shadow-brand-5 focus:shadow",
 	"disabled:text-mauve-6 disabled:!bg-mauve-4 disabled:placeholder-mauve-6 disabled:cursor-not-allowed disabled:!shadow-none",
-	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-crimson-10 invalid:!border-crimson-10 invalid:focus:!shadow-crimson-10",
+	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-brand-10 invalid:!border-brand-10 invalid:focus:!shadow-brand-10",
 );
 
 export const inputVariants = cva(

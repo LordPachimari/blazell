@@ -16,7 +16,7 @@ interface VariantTableProps {
 	variants: Variant[];
 	setVariantID: (variant: string | null) => void;
 
-	deleteVariant: (id: string) => Promise<void>;
+	deleteVariant: (keys: string[]) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 export default function VariantTable({

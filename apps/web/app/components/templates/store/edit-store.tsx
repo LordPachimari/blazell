@@ -296,7 +296,7 @@ export function EditStore({ store }: { store: Store }) {
 			</Button>
 			<DialogContent className="md:w-[600px] bg-mauve-2 p-0 gap-0">
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<span className="flex w-full justify-center p-4 border-mauve-7">
+					<span className="flex w-full justify-center p-4 border-mauve-5 dark:border-mauve-7  ">
 						<div>
 							{view !== "default" && (
 								<Button
@@ -381,7 +381,7 @@ export function EditStore({ store }: { store: Store }) {
 								onChange={onStoreImageChange}
 							/>
 							<Avatar
-								className="border-mauve-7 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
+								className="border-mauve-5 dark:border-mauve-7   z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
 								onClick={storeInputClick}
 								onKeyDown={storeInputClick}
 							>
@@ -395,7 +395,7 @@ export function EditStore({ store }: { store: Store }) {
 							</Avatar>
 							<div
 								className={cn(
-									"w-full h-[160px] bg-mauve-5 relative border-y border-mauve-7 flex justify-center items-center overflow-hidden",
+									"w-full h-[160px] bg-mauve-5 relative border-y border-mauve-5 dark:border-mauve-7   flex justify-center items-center overflow-hidden",
 								)}
 							>
 								{headerCrop && headerCroppedArea && headerSrc && (

@@ -74,7 +74,10 @@ export default function CustomersPage() {
 		<main className="w-full p-4 md:p-10 justify-center flex flex-col lg:flex-row gap-6">
 			<section className="w-full">
 				<div className="flex flex-col pb-4">
-					<PageHeader title="Customers" />
+					<PageHeader
+						title="Customers"
+						className="justify-center md:justify-start"
+					/>
 					<div className="flex gap-4">
 						<Stat description="This month" number={200} />
 					</div>

@@ -20,7 +20,7 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 		<div className="w-full h-full flex relative inset-0">
 			<nav
 				className={cn(
-					"hidden md:flex flex-col px-1 w-44 opacity-0 md:opacity-100 m-1 md:m-0 justify-between bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r lg:border-t-0 lg:border-l-0 lg:border-b-0 border-mauve-7 md:w-40  overflow-hidden md:border-r md:border-mauve-7  transition-all duration-200 ease-in-out z-20 ",
+					"hidden md:flex flex-col px-1 w-44 opacity-0 md:opacity-100 m-1 md:m-0 justify-between bg-component fixed h-[calc(100vh-75px)] rounded-lg md:rounded-none border md:h-full lg:border-r lg:border-t-0 lg:border-l-0 lg:border-b-0 border-mauve-5 dark:border-mauve-7   md:w-40  overflow-hidden md:border-r md:border-mauve-5 dark:border-mauve-7    transition-all duration-200 ease-in-out z-20 ",
 				)}
 			>
 				<div>d</div>
@@ -38,7 +38,7 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 								)}
 							>
 								{item.title === "Orders" && (
-									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-crimson-9">
+									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-brand-9">
 										1
 									</div>
 								)}
@@ -46,8 +46,8 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 									<Icon
 										className={cn(
 											pathname === item.href
-												? "text-crimson-9"
-												: "text-mauve-11 group-hover:text-crimson-9",
+												? "text-brand-9"
+												: "text-mauve-11 group-hover:text-brand-9",
 										)}
 										size={20}
 										strokeWidth={strokeWidth}
@@ -58,8 +58,8 @@ const SettingsSidebar = ({ children }: { children: React.ReactNode }) => {
 										"relative text-mauve-11 font-light",
 
 										pathname === item.href
-											? "text-crimson-9"
-											: "text-mauve-11 group-hover:text-crimson-9",
+											? "text-brand-9"
+											: "text-mauve-11 group-hover:text-brand-9",
 									)}
 								>
 									{item.title}

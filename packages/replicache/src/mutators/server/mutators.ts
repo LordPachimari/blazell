@@ -29,10 +29,10 @@ import {
 } from "./product-option";
 import { createPrices, deletePrices, updatePrice } from "./price";
 import {
-	createVariant,
 	deleteVariant,
 	duplicateVariant,
 	updateVariant,
+	generateVariants,
 } from "./variant";
 import { deleteImage, updateImagesOrder, uploadImages } from "./image";
 import { createCart } from "./carts";
@@ -42,7 +42,7 @@ const DashboardMutators = {
 	assignOptionValueToVariant,
 	createProductOption,
 	createPrices,
-	createVariant,
+	generateVariants,
 	deleteProduct,
 	publishProduct,
 	deleteProductOption,
@@ -101,7 +101,7 @@ export const affectedSpaces: AffectedSpaces = {
 	createPrices: {
 		dashboard: ["store"],
 	},
-	createVariant: {
+	generateVariants: {
 		dashboard: ["store"],
 	},
 	deleteProduct: {

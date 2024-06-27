@@ -184,7 +184,7 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 		<div className="flex h-screen w-screen px-2 items-center justify-center bg-brand-0 dark:bg-mauve-a4">
 			<ShineBorder
 				color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-				className="w-full sm:w-[500px] border border-mauve-7 p-0 "
+				className="w-full sm:w-[500px] border border-mauve-5 dark:border-mauve-7   p-0 "
 				borderRadius={20}
 			>
 				<div className="w-full h-full bg-component p-6 rounded-3xl">

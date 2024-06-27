@@ -8,7 +8,7 @@ const Table = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<table
 		ref={ref}
-		className={cn("w-full caption-bottom text-sm rounded-2x", className)}
+		className={cn("w-full caption-bottom text-sm rounded-lg", className)}
 		{...props}
 	/>
 ));
@@ -20,7 +20,10 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<thead
 		ref={ref}
-		className={cn("[&_tr]:border-b border-mauve-7", className)}
+		className={cn(
+			"[&_tr]:border-b border-mauve-5 dark:border-mauve-7  ",
+			className,
+		)}
 		{...props}
 	/>
 ));
@@ -30,7 +33,7 @@ const TableBody = React.forwardRef<
 	HTMLTableSectionElement,
 	React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-	<tbody ref={ref} className={cn("rounded-2xl", className)} {...props} />
+	<tbody ref={ref} className={cn("rounded-lg", className)} {...props} />
 ));
 TableBody.displayName = "TableBody";
 
@@ -53,7 +56,7 @@ const TableRow = React.forwardRef<
 	<tr
 		ref={ref}
 		className={cn(
-			"border-b border-mauve-7 transition-colors hover:bg-muted/50 data-[state=selected]:bg-mauve-a-2",
+			"border-b border-mauve-5 dark:border-mauve-7  transition-colors hover:bg-muted/50 data-[state=selected]:bg-mauve-a-2",
 			className,
 		)}
 		{...props}

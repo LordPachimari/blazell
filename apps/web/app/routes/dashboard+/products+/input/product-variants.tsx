@@ -9,8 +9,7 @@ import {
 } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { generateID } from "@blazell/utils";
-import type { InsertVariant } from "@blazell/validators";
-import type { ProductOption, Variant } from "@blazell/validators/client";
+import type { Product, Variant } from "@blazell/validators/client";
 import { useCallback, useState } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
@@ -18,15 +17,15 @@ import { ProductOptions } from "./product-options";
 import ProductVariant from "./product-variant";
 
 interface ProductVariantsProps {
-	options: ProductOption[] | undefined;
 	productID: string;
+	product: Product | undefined;
 	variants: Variant[];
 	defaultVariant: Variant | null | undefined;
 	isPublished: boolean;
 }
 export function Variants({
-	options,
 	productID,
+	product,
 	variants,
 	defaultVariant,
 	isPublished,
@@ -45,28 +44,31 @@ export function Variants({
 
 	const [isOpen, setIsOpen] = useState(false);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const createVariant = useCallback(async () => {
-		if (!productID) return;
-		const newVariant: InsertVariant = {
-			id: generateID({ prefix: "variant" }),
+	const generateVariants = useCallback(async () => {
+		if (!product) return;
+		await dashboardRep?.mutate.generateVariants({
 			productID,
-			quantity: 1,
-		};
-		await dashboardRep?.mutate.createVariant({
-			variant: newVariant,
-			...(defaultVariant?.prices && { prices: defaultVariant.prices }),
+			newVariantIDs: Array.from({
+				length: (product?.options?.length ?? 0) * 10,
+			}).map(() => generateID({ prefix: "variant" })),
+			newPricesIDs: Array.from({
+				length: (defaultVariant?.prices ?? []).length ?? 1,
+			}).map(() => generateID({ prefix: "price" })),
+			...(defaultVariant?.prices && {
+				prices: defaultVariant.prices.map((p) => ({
+					...p,
+					id: generateID({ prefix: "price" }),
+					variantID: "whatever",
+				})),
+			}),
 		});
-
-		setVariantID(newVariant.id);
-		setIsOpen(true);
-	}, [dashboardRep, productID, defaultVariant]);
+	}, [dashboardRep, productID, product, defaultVariant]);
 
 	const deleteVariant = useCallback(
-		async (id: string) => {
+		async (keys: string[]) => {
 			if (dashboardRep) {
 				await dashboardRep.mutate.deleteVariant({
-					id: id,
+					keys,
 				});
 			}
 		},
@@ -90,8 +92,8 @@ export function Variants({
 	);
 
 	return (
-		<Card className="my-4">
-			<CardHeader>
+		<Card className="my-4 p-0">
+			<CardHeader className="p-4 border-b border-mauve-5 dark:border-mauve-7">
 				<CardTitle>
 					<span className="flex w-full justify-between">
 						Variant<p className="text-sm text-mauve-9">{"(optional)"}</p>
@@ -101,10 +103,11 @@ export function Variants({
 					Create variants of your products based on size, colors etc.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="pb-4">
-				{productID && (
-					<ProductOptions options={options} productID={productID} />
-				)}
+			<CardContent className="p-4">
+				<ProductOptions
+					options={product?.options ?? []}
+					productID={productID}
+				/>
 				<VariantTable
 					setVariantID={setVariantID}
 					variants={variants ?? []}
@@ -117,16 +120,16 @@ export function Variants({
 					size="md"
 					variant="ghost"
 					type="button"
-					className="mt-2 text-mauve-11"
-					onClick={createVariant}
-					disabled={options?.length === 0}
+					className="mt-2 text-mauve-11 rounded-none border-b-0 rounded-b-lg border-r-0 border-l-0"
+					onClick={generateVariants}
+					disabled={!product?.options?.length}
 				>
 					<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
-					Add Variant
+					Generate variants
 				</Button>
 				<ProductVariant
 					isOpen={isOpen}
-					options={options ?? []}
+					options={product?.options ?? []}
 					variantID={variantID}
 					setIsOpen={setIsOpen}
 					productID={productID}

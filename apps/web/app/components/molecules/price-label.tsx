@@ -15,7 +15,7 @@ const PriceLabel = ({
 	return (
 		<div
 			className={cn(
-				"flex items-center aspect-square rounded-xl border border-mauve-7 bg-component backdrop-blur-sm",
+				"flex items-center aspect-square rounded-xl border border-mauve-5 dark:border-mauve-7   bg-component backdrop-blur-sm",
 				className,
 				{
 					"min-h-12": size === "md",
@@ -24,7 +24,7 @@ const PriceLabel = ({
 			)}
 		>
 			<Price
-				className=" text-sm md:text-lg font-freeman flex-none text-crimson-9 rounded-xl  p-2"
+				className=" text-sm md:text-lg font-freeman flex-none text-brand-9 rounded-xl  p-2"
 				amount={amount}
 				currencyCode={currencyCode}
 				currencyCodeClassName="hidden @[275px]/label:inline"

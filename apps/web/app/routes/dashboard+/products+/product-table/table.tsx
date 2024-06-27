@@ -79,11 +79,11 @@ function ProductsTable({
 			/>
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border border-mauve-7 rounded-2xl relative overflow-x-scroll"
+				className="h-[calc(100vh-327px)] shadow bg-component border border-mauve-5 dark:border-mauve-7 rounded-lg relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader className="w-full bg-mauve-2 sticky top-0 z-20 ">
+						<TableHeader className="w-full sticky top-0 z-20 ">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -150,7 +150,7 @@ function ProductsTable({
 												size="md"
 												onClick={createProduct}
 												type="button"
-												className="my-4"
+												className="my-2"
 											>
 												<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
 												New Product

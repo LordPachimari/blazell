@@ -131,28 +131,35 @@ export function DashboardSearchCombobox() {
 			<button
 				type="button"
 				className={cn(
-					"group relative rounded-md h-10 flex w-full justify-between items-center gap-3 px-2 cursor-pointer hover:bg-mauve-a-2",
+					"group relative rounded-2xl h-10 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-mauve-a-2",
 				)}
 				onClick={() => open()}
 			>
-				<Icons.MagnifyingGlassIcon
-					aria-hidden="true"
-					className="size-5 text-mauve-11 group-hover:text-crimson-9"
-				/>
-				<span className="text-mauve-11 group-hover:text-crimson-9 font-light">
-					Search
-				</span>
+				<div className="flex gap-3">
+					<Icons.MagnifyingGlassIcon
+						aria-hidden="true"
+						className="size-5 text-mauve-11 group-hover:text-brand-9"
+					/>
+					<span className="text-mauve-11 group-hover:text-brand-9 font-light">
+						Search
+					</span>
+				</div>
 				<span className="sr-only">Search products</span>
-				<ClientOnly>
-					{() => (
-						<Kbd
-							title={isMacOs() ? "Command" : "Control"}
-							className="group-hover:text-crimson-9 text-mauve-11 border-mauve-7"
-						>
-							{isMacOs() ? "⌘" : "Ctrl"} K
-						</Kbd>
-					)}
-				</ClientOnly>
+				<div className="w-full flex flex-nowrap justify-end">
+					<ClientOnly>
+						{() => (
+							<Kbd
+								title={isMacOs() ? "Command" : "Control"}
+								className={cn(
+									"group-hover:text-brand-9 text-nowrap text-mauve-11 flex flex-nowrap border-mauve-5 dark:border-mauve-7   p-[3px]",
+									{ "p-[1px]": !isMacOs() },
+								)}
+							>
+								{isMacOs() ? "⌘ K" : "Ctrl K"}
+							</Kbd>
+						)}
+					</ClientOnly>
+				</div>
 			</button>
 
 			<Transition appear show={isOpen}>
@@ -179,7 +186,7 @@ export function DashboardSearchCombobox() {
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus
-											className="outline-none h-10 border-b bg-component border-mauve-7 p-4"
+											className="outline-none h-10 border-b bg-component border-mauve-5 dark:border-mauve-7   p-4"
 											placeholder="Search in dashboard.."
 											value={query}
 											onChange={(e) => setQuery(e.target.value)}

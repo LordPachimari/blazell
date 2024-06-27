@@ -24,7 +24,7 @@ function Header() {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
 	const { cartID, fakeAuthID } = userContext;
-	const windowSize = useWindowSize(100);
+	const windowSize = useWindowSize();
 
 	return (
 		<Navbar>

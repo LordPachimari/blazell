@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: #fff;
+    --background: #faf9fb;
     --foreground: 240 10% 3.9%;
 
     --muted: 240 4.8% 95.9%;
@@ -65,18 +65,19 @@
         --red-11: #ce2c31;
         --red-12: #641723;
 
-        --crimson-1: #fffcfd;
-        --crimson-2: #fef7f9;
-        --crimson-3: #ffe9f0;
-        --crimson-4: #fedce7;
-        --crimson-5: #facedd;
-        --crimson-6: #f3bed1;
-        --crimson-7: #eaacc3;
-        --crimson-8: #e093b2;
-        --crimson-9: #e93d82;
-        --crimson-10: #df3478;
-        --crimson-11: #cb1d63;
-        --crimson-12: #621639;
+        --brand-1: #FFFCFD;
+        --brand-2: #FFF6F8;
+        --brand-3: #FFE8ED;
+        --brand-4: #FFD9E2;
+        --brand-5: #FFCAD6;
+        --brand-6: #FDBAC9;
+        --brand-7: #F5A6B9;
+        --brand-8: #ED8CA5;
+        --brand-9: #FF007B;
+        --brand-10: #EF006F;
+        --brand-11: #D50061;
+        --brand-12: #6B0030;
+ 
 
       --mauve-1: #fdfcfd;
       --mauve-2: #faf9fb;
@@ -160,7 +161,7 @@
   }
 
   .dark {
-    --background: #212225;
+    --background: #111111;
     --foreground: 0 0% 98%;
 
     --muted: 240 3.7% 15.9%;
@@ -212,18 +213,18 @@
         --red-11: #ff9592;
         --red-12: #ffd1d9;
 
-        --crimson-1: #191114;
-        --crimson-2: #201318;
-        --crimson-3: #381525;
-        --crimson-4: #4d122f;
-        --crimson-5: #5c1839;
-        --crimson-6: #6d2545;
-        --crimson-7: #873356;
-        --crimson-8: #b0436e;
-        --crimson-9: #e93d82;
-        --crimson-10: #ee518a;
-        --crimson-11: #ff92ad;
-        --crimson-12: #fdd3e8;
+        --brand-1: #180E10;
+        --brand-2: #221216;
+        --brand-3: #3D101F;
+        --brand-4: #550225;
+        --brand-5: #66072E;
+        --brand-6: #77173B;
+        --brand-7: #92264C;
+        --brand-8: #BE3063;
+        --brand-9: #FF007B;
+        --brand-10: #F0006F;
+        --brand-11: #FF89AC;
+        --brand-12: #FFD0DC;
 
         --mauve-1: #121113;
         --mauve-2: #1a191b;
@@ -335,3 +336,4 @@
     @apply px-4;
   }
 }
+
