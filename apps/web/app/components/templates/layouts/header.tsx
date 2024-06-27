@@ -9,7 +9,7 @@ import {
 } from "@blazell/ui/dropdown-menu";
 import { Icons } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import Image from "~/components/molecules/image";
 import { Logo } from "~/components/molecules/logo";
 import { GlobalSearchCombobox } from "~/components/search";
@@ -23,6 +23,9 @@ function Header() {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
 	const { cartID, fakeAuthID } = userContext;
+	const location = useLocation();
+	const isRootPage = location.pathname === "/";
+	if (isRootPage) return null;
 
 	return (
 		<Navbar>
