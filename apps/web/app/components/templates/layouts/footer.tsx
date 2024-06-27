@@ -101,7 +101,7 @@ export default function Footer() {
 							href="https://github.com/LordPachi"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="bg-brand-9 pl-1 font-bold"
+							className="text-brand-9 pl-1 font-bold"
 						>
 							LordPachi
 						</a>

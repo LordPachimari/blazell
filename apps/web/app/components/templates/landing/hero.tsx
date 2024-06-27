@@ -20,7 +20,7 @@ function Hero() {
 		};
 	}, []);
 	return (
-		<section className="flex h-screen w-full flex-col items-center justify-center px-4 pt-10 md:pt-8 md:px-20 lg:flex-row lg:pt-16">
+		<section className="flex h-screen w-full flex-col items-center justify-center px-6 pt-10 md:pt-8 md:px-20 lg:flex-row lg:pt-16">
 			<div className="flex flex-col gap-4 w-full items-center">
 				<h1
 					style={{ animationDelay: "0.20s", animationFillMode: "both" }}

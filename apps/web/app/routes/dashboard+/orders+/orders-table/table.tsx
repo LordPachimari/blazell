@@ -80,7 +80,7 @@ function OrdersTable({
 			{dashboardRep?.online && (
 				<div className="w-full flex items-center gap-2">
 					<Ping />
-					<p className="text-brand-9 text-sm font-medium">real time</p>
+					<p className="text-brand-9 text-sm font-bold">Real time</p>
 				</div>
 			)}
 			<ScrollArea

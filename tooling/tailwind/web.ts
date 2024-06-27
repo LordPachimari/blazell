@@ -247,6 +247,13 @@ export default {
 					"75%": { transform: "translateX(5px)" },
 					"100%": { transform: "translateX(0)" },
 				},
+				"notification-shake": {
+					"0%": { transform: "translateX(0)" },
+					"25%": { transform: "translateX(3px)" },
+					"50%": { transform: "translateX(-3px)" },
+					"75%": { transform: "translateX(3px)" },
+					"100%": { transform: "translateX(0)" },
+				},
 
 				"fade-up": {
 					"0%": {
@@ -261,6 +268,16 @@ export default {
 						transform: "translateY(0)",
 					},
 				},
+				orbit: {
+					"0%": {
+						transform:
+							"rotate(0deg) translateY(calc(var(--radius) * 1px)) rotate(0deg)",
+					},
+					"100%": {
+						transform:
+							"rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg)",
+					},
+				},
 			},
 			backgroundImage: {
 				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -272,8 +289,10 @@ export default {
 				blink: "blink 1.4s both infinite",
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",
 				shake: "shake 0.5s linear infinite",
+				"notification-shake": "notification-shake 0.5s linear infinite",
 				slidein: "slidein 1s ease 300ms",
 				"fade-up": "fade-up 0.5s ease-out",
+				orbit: "orbit calc(var(--duration)*1s) linear infinite",
 			},
 			boxShadow: {
 				border: "0px 0px 0px 1px #E5E7EB",

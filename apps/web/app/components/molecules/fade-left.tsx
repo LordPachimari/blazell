@@ -3,7 +3,7 @@ import { useRef, useEffect } from "react";
 import { motion, useAnimation, inView } from "framer-motion";
 import { cn } from "@blazell/ui";
 
-interface FadeUpProps {
+interface FadeLeftProps {
 	children: React.ReactNode;
 	delay?: number;
 	duration?: number;
@@ -11,7 +11,7 @@ interface FadeUpProps {
 	className?: string;
 }
 
-const FadeUp: React.FC<FadeUpProps> = ({
+const FadeLeft: React.FC<FadeLeftProps> = ({
 	children,
 	delay = 0,
 	duration = 0.5,
@@ -26,7 +26,7 @@ const FadeUp: React.FC<FadeUpProps> = ({
 		if (element) {
 			const cleanup = inView(element, (isInView) => {
 				if (isInView) {
-					controls.start({ opacity: 1, y: 0 });
+					controls.start({ opacity: 1, x: 0 });
 				}
 			});
 			return cleanup;
@@ -36,7 +36,7 @@ const FadeUp: React.FC<FadeUpProps> = ({
 	return (
 		<motion.div
 			ref={ref}
-			initial={{ opacity: 0, y: distance }}
+			initial={{ opacity: 0, x: distance }}
 			animate={controls}
 			transition={{ duration, delay, ease: "easeOut" }}
 			className={cn("w-full", className)}
@@ -46,4 +46,4 @@ const FadeUp: React.FC<FadeUpProps> = ({
 	);
 };
 
-export default FadeUp;
+export default FadeLeft;
