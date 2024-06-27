@@ -1,12 +1,18 @@
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
-import type { Product } from "@blazell/validators/client";
-import { useCallback, useTransition } from "react";
+import type { Product, Variant } from "@blazell/validators/client";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { PageHeader } from "~/components/page-header";
 import { useReplicache } from "~/zustand/replicache";
 import { useDashboardStore } from "~/zustand/store";
 import { ProductsTable } from "./product-table/table";
 import { useNavigate } from "@remix-run/react";
+import debounce from "lodash.debounce";
+import { isString } from "remeda";
+import type {
+	SearchWorkerRequest,
+	SearchWorkerResponse,
+} from "~/worker/search";
 
 function ProductsPage() {
 	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
@@ -17,9 +23,14 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="p-4 md:p-10 w-full">
-			<PageHeader title="Products" />
-			<Products products={products} storeID={store?.id} />
+		<main className="p-4 md:py-6 md:px-10 w-full flex justify-center">
+			<div className="max-w-7xl w-full">
+				<PageHeader
+					title="Products"
+					className="justify-center md:justify-start"
+				/>
+				<Products products={products} storeID={store?.id} />
+			</div>
 		</main>
 	);
 }
@@ -34,6 +45,10 @@ function Products({
 	storeID: string | undefined;
 }) {
 	const navigate = useNavigate();
+	const searchWorker = useDashboardStore((state) => state.searchWorker);
+	const [searchResults, setSearchResults] = useState<Product[] | undefined>(
+		undefined,
+	);
 	const [isPending, startTransition] = useTransition();
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -95,13 +110,47 @@ function Products({
 		[dashboardRep],
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onSearch = useCallback(
+		debounce((value: string) => {
+			if (value === "") {
+				setSearchResults(undefined);
+				return;
+			}
+			searchWorker?.postMessage({
+				type: "PRODUCT_SEARCH",
+				payload: {
+					query: value,
+				},
+			} satisfies SearchWorkerRequest);
+		}, 300),
+		[searchWorker],
+	);
+	useEffect(() => {
+		if (searchWorker) {
+			searchWorker.onmessage = (event: MessageEvent) => {
+				const { type, payload } = event.data as SearchWorkerResponse;
+				if (isString(type) && type === "PRODUCT_SEARCH") {
+					startTransition(() => {
+						const variants = payload.filter((p) =>
+							p.id.startsWith("variant"),
+						) as Variant[];
+						const productIDs = new Set(variants.map((v) => v.productID));
+						setSearchResults(products.filter((p) => productIDs.has(p.id)));
+					});
+				}
+			};
+		}
+	}, [searchWorker, products]);
+
 	return (
 		<ProductsTable
-			products={products}
+			products={searchResults ?? products}
 			createProduct={createProduct}
 			deleteProduct={deleteProduct}
 			duplicateProduct={duplicateProduct}
 			isPending={isPending}
+			onSearch={onSearch}
 		/>
 	);
 }

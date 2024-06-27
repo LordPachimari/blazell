@@ -27,7 +27,7 @@ export function CategoryDropdown() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild className="w-full">
-				<Button variant="outline" className="text-mauve-11" type="button">
+				<Button variant="outline" className="rounded-lg" type="button">
 					Select category
 				</Button>
 			</DropdownMenuTrigger>

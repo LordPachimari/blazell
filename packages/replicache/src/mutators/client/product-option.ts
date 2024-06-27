@@ -1,17 +1,11 @@
 import type {
-	AssignOptionValueToVariant,
 	CreateProductOption,
 	DeleteProductOption,
 	UpdateProductOption,
 } from "@blazell/validators";
-import type {
-	Product,
-	ProductOptionValue,
-	Variant,
-} from "@blazell/validators/client";
+import type { Product } from "@blazell/validators/client";
 import type { WriteTransaction } from "replicache";
 import { productNotFound } from "./product";
-import { variantNotFound } from "./variant";
 
 async function createProductOption(
 	tx: WriteTransaction,
@@ -73,52 +67,4 @@ async function deleteProductOption(
 	});
 }
 
-/* ->VARIANT<- option values must have the shape of {optionValue: Client.ProductOptionValue}
-due to drizzle's many to many relationship setup */
-async function assignOptionValueToVariant(
-	tx: WriteTransaction,
-	input: AssignOptionValueToVariant,
-) {
-	const { optionValueID, prevOptionValueID, variantID, productID } = input;
-
-	const product = await tx.get<Product>(productID);
-
-	const variant = await tx.get<Variant>(variantID);
-
-	if (!product) {
-		return productNotFound(input.productID);
-	}
-	if (!variant) {
-		return variantNotFound(variantID);
-	}
-	let productOptionValue: ProductOptionValue | undefined;
-
-	for (const option of product.options || []) {
-		productOptionValue = option.optionValues?.find(
-			(value) => value.id === optionValueID,
-		);
-		if (productOptionValue) break;
-	}
-
-	const newOptionValues: { optionValue: ProductOptionValue }[] = [];
-	for (const value of variant.optionValues ?? []) {
-		if (value.optionValue.id !== prevOptionValueID) {
-			newOptionValues.push({ optionValue: value.optionValue });
-		}
-	}
-	if (productOptionValue)
-		newOptionValues.push({ optionValue: productOptionValue });
-
-	if (productOptionValue)
-		await tx.set(variant.id, {
-			...variant,
-			optionValues: newOptionValues,
-		});
-}
-
-export {
-	assignOptionValueToVariant,
-	createProductOption,
-	deleteProductOption,
-	updateProductOption,
-};
+export { createProductOption, deleteProductOption, updateProductOption };

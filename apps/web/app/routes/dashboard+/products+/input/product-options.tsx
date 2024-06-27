@@ -49,7 +49,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				productID,
 				updates: { name },
 			});
-		}, 800),
+		}, 300),
 		[dashboardRep],
 	);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -68,20 +68,27 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 				productID,
 				newOptionValues,
 			});
-		}, 800),
+		}, 300),
 		[dashboardRep, options],
 	);
 
 	const [parent] = useAutoAnimate({ duration: 100 });
 
 	return (
-		<section className="w-full my-4">
+		<section className="w-full">
 			<Button
 				size="md"
 				className="text-mauve-11"
 				variant={"ghost"}
 				type="button"
 				onClick={createOption}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						createOption();
+					}
+				}}
 			>
 				<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
 				Add option
@@ -104,7 +111,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 						/>
 						<button
 							type="button"
-							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-mauve-7 flex justify-center items-center"
+							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-border   flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,
@@ -112,7 +119,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 								})
 							}
 						>
-							<Icons.Close className="text-ruby-9" size={20} />
+							<Icons.Close className="text-red-9" size={20} />
 						</button>
 					</li>
 				))}

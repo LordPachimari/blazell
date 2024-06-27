@@ -2,7 +2,12 @@ import type { Image as ImageType } from "@blazell/validators";
 import { cn } from "@blazell/ui";
 import { Avatar } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@blazell/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "@blazell/ui/dialog";
 import { Icons } from "@blazell/ui/icons";
 import { Input, inputVariants } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
@@ -10,7 +15,6 @@ import { LoadingSpinner } from "@blazell/ui/loading";
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { Store } from "@blazell/validators/client";
-import { useAuth } from "@clerk/remix";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as base64 from "base64-arraybuffer";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -87,7 +91,6 @@ export function EditStore({ store }: { store: Store }) {
 			}),
 		),
 	});
-	const { getToken } = useAuth();
 	const onSubmit = async (data: { name: string; description: string }) => {
 		setIsLoading(true);
 		if (data.name !== store.name) {
@@ -102,11 +105,9 @@ export function EditStore({ store }: { store: Store }) {
 				return;
 			}
 
-			const token = await getToken();
 			await fetch(`${window.ENV.WORKER_URL}/stores/update-store/${store.id}`, {
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 					...(requestInfo.userContext.fakeAuthID && {
 						"x-fake-auth-id": requestInfo.userContext.fakeAuthID,
@@ -291,12 +292,14 @@ export function EditStore({ store }: { store: Store }) {
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<Button variant="ghost" className="mt-2" onClick={() => setIsOpen(true)}>
-				Edit store
-			</Button>
+			<DialogTrigger asChild>
+				<Button variant="ghost" className="mt-2">
+					Edit store
+				</Button>
+			</DialogTrigger>
 			<DialogContent className="md:w-[600px] bg-mauve-2 p-0 gap-0">
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<span className="flex w-full justify-center p-4 border-mauve-7">
+					<span className="flex w-full justify-center p-4 border-border  ">
 						<div>
 							{view !== "default" && (
 								<Button
@@ -381,9 +384,15 @@ export function EditStore({ store }: { store: Store }) {
 								onChange={onStoreImageChange}
 							/>
 							<Avatar
-								className="border-mauve-7 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
+								className="border-border bg-mauve-3 hover:brightness-90 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
 								onClick={storeInputClick}
-								onKeyDown={storeInputClick}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										e.stopPropagation();
+										storeInputClick();
+									}
+								}}
 							>
 								<Image
 									src={storeSrc}
@@ -395,7 +404,7 @@ export function EditStore({ store }: { store: Store }) {
 							</Avatar>
 							<div
 								className={cn(
-									"w-full h-[160px] bg-mauve-5 relative border-y border-mauve-7 flex justify-center items-center overflow-hidden",
+									"w-full h-[160px] bg-mauve-5 relative border-y border-border   flex justify-center items-center overflow-hidden",
 								)}
 							>
 								{headerCrop && headerCroppedArea && headerSrc && (
@@ -415,9 +424,15 @@ export function EditStore({ store }: { store: Store }) {
 									onChange={onHeaderImageChange}
 								/>
 								<Avatar
-									className="h-16 w-16 cursor-pointer absolute border-none bg-mauve-a-3 hover:bg-mauve-a-6"
+									className="h-16 w-16 cursor-pointer absolute border-border bg-mauve-3 hover:brightness-90"
 									onClick={headerInputClick}
-									onKeyDown={headerInputClick}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" || e.key === " ") {
+											e.preventDefault();
+											e.stopPropagation();
+											headerInputClick();
+										}
+									}}
 								>
 									<ImagePlaceholder />
 								</Avatar>
@@ -446,6 +461,7 @@ export function EditStore({ store }: { store: Store }) {
 								<TextareaAutosize
 									className={cn("", inputVariants())}
 									maxRows={10}
+									autoFocus
 									{...register("description")}
 								/>
 							</span>

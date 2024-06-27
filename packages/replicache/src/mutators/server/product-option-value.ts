@@ -1,4 +1,6 @@
+import { schema } from "@blazell/db";
 import { Database } from "@blazell/shared";
+import { generateID } from "@blazell/utils";
 import {
 	AssignOptionValueToVariantSchema,
 	DeleteProductOptionValueSchema,
@@ -6,9 +8,11 @@ import {
 	NotFound,
 	UpdateProductOptionValuesSchema,
 } from "@blazell/validators";
+import type { ProductOptionValue } from "@blazell/validators/server";
+import { eq } from "drizzle-orm";
 import { Effect } from "effect";
-import { zod } from "../../util/zod";
 import { TableMutator } from "../../context/table-mutator";
+import { zod } from "../../util/zod";
 
 const updateProductOptionValues = zod(
 	UpdateProductOptionValuesSchema,
@@ -36,18 +40,47 @@ const updateProductOptionValues = zod(
 					new NotFound({ message: "Option not found" }),
 				);
 			}
+			const oldOptionValuesSet = new Set(
+				option.optionValues?.map((val) => val.value) ?? [],
+			);
+			const newOptionValuesSet = new Set(
+				newOptionValues.map((val) => val.value),
+			);
 
-			const oldValuesKeys = option.optionValues?.map((value) => value.id) ?? [];
+			const optionValuesToCreate: ProductOptionValue[] = [];
+			const optionValueIDsToDelete: string[] = [];
+
+			yield* Effect.forEach(newOptionValues, (val) =>
+				Effect.sync(() => {
+					if (!oldOptionValuesSet.has(val.value)) {
+						optionValuesToCreate.push({
+							id: generateID({ prefix: "p_op_val" }),
+							optionID,
+							value: val.value,
+							version: 0,
+						});
+					}
+				}),
+			);
+			yield* Effect.forEach(option.optionValues ?? [], (val) =>
+				Effect.sync(() => {
+					if (!newOptionValuesSet.has(val.value)) {
+						optionValueIDsToDelete.push(val.id);
+					}
+				}),
+			);
 
 			const setOptionValues = tableMutator.set(
-				newOptionValues,
+				optionValuesToCreate,
 				"productOptionValues",
 			);
 
 			const updateProduct = tableMutator.update(productID, {}, "products");
 			const effects = [setOptionValues, updateProduct];
-			oldValuesKeys.length > 0 &&
-				effects.push(tableMutator.delete(oldValuesKeys, "productOptionValues"));
+			optionValueIDsToDelete.length > 0 &&
+				effects.push(
+					tableMutator.delete(optionValueIDsToDelete, "productOptionValues"),
+				);
 
 			return yield* Effect.all(effects, {
 				concurrency: 3,
@@ -78,28 +111,37 @@ const assignOptionValueToVariant = zod(
 	(input) =>
 		Effect.gen(function* () {
 			const tableMutator = yield* TableMutator;
+			const { manager } = yield* Database;
 			const { optionValueID, variantID, prevOptionValueID } = input;
+			if (prevOptionValueID)
+				yield* Effect.tryPromise(() =>
+					manager
+						.delete(schema.productOptionValuesToVariants)
+						.where(
+							eq(
+								schema.productOptionValuesToVariants.optionValueID,
+								prevOptionValueID,
+							),
+						),
+				).pipe(
+					Effect.catchTags({
+						UnknownException: (error) =>
+							new NeonDatabaseError({ message: error.message }),
+					}),
+				);
 
 			const setRelationship = tableMutator.set(
-				{ optionValueID, variantID, id: optionValueID },
+				{ optionValueID, variantID, id: "whatever" },
 				"productOptionValuesToVariants",
 			);
 			const updateVariant = tableMutator.update(variantID, {}, "variants");
 			const effects = [setRelationship, updateVariant];
 
-			if (prevOptionValueID)
-				effects.push(
-					tableMutator.delete(
-						prevOptionValueID,
-						"productOptionValuesToVariants",
-					),
-				);
-
-			return yield* Effect.all(effects, { concurrency: 3 });
+			return yield* Effect.all(effects, { concurrency: 2 });
 		}),
 );
 export {
-	updateProductOptionValues,
-	deleteProductOptionValue,
 	assignOptionValueToVariant,
+	deleteProductOptionValue,
+	updateProductOptionValues,
 };

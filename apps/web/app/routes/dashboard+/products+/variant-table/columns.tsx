@@ -14,7 +14,7 @@ export function getVariantColumns({
 	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
-	deleteVariant: (id: string) => Promise<void>;
+	deleteVariant: (keys: string[]) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
 	return [
@@ -24,7 +24,7 @@ export function getVariantColumns({
 				<DataTableColumnHeader column={column} title="Thumbnail" />
 			),
 			cell: ({ row }) => (
-				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-mauve-7">
+				<div className="flex w-[50px] h-[50px]  items-center rounded-md border border-border  ">
 					{!row.original.images?.[0] ? (
 						<ImagePlaceholder />
 					) : row.original.images?.[0]?.uploaded ? (

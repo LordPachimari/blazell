@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: #fff;
+    --background: #faf9fb;
     --foreground: 240 10% 3.9%;
 
     --muted: 240 4.8% 95.9%;
@@ -18,7 +18,7 @@
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
 
-    --border: 240 5.9% 90%;
+    --border: #e3dfe6;;
     --input: 240 5.9% 90%;
 
     --primary: 240 5.9% 10%;
@@ -33,12 +33,12 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --ring: #e93d82;
+    --ring: #FF007B;
 
     --radius: 0.5rem;
 
 
-    --component: rgba(255, 255, 255, 0.5);
+    --component: rgb(255, 255, 255);
     --navbar: #f9f9fb;
 
     --border-color: #efefef;
@@ -52,32 +52,32 @@
     --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
 
+        --red-1: #fffcfc;
+        --red-2: #fff7f7;
+        --red-3: #feebec;
+        --red-4: #ffdbdc;
+        --red-5: #ffcdce;
+        --red-6: #fdbdbe;
+        --red-7: #f4a9aa;
+        --red-8: #eb8e90;
+        --red-9: #e5484d;
+        --red-10: #dc3e42;
+        --red-11: #ce2c31;
+        --red-12: #641723;
 
-      --ruby-1: #fffcfd;
-      --ruby-2: #fff7f8;
-      --ruby-3: #feeaed;
-      --ruby-4: #ffdce1;
-      --ruby-5: #ffced6;
-      --ruby-6: #f8bfc8;
-      --ruby-7: #efacb8;
-      --ruby-8: #e592a3;
-      --ruby-9: #e54666;
-      --ruby-10: #dc3b5d;
-      --ruby-11: #ca244d;
-      --ruby-12: #64172b;
-
-        --crimson-1: #fffcfd;
-        --crimson-2: #fef7f9;
-        --crimson-3: #ffe9f0;
-        --crimson-4: #fedce7;
-        --crimson-5: #facedd;
-        --crimson-6: #f3bed1;
-        --crimson-7: #eaacc3;
-        --crimson-8: #e093b2;
-        --crimson-9: #e93d82;
-        --crimson-10: #df3478;
-        --crimson-11: #cb1d63;
-        --crimson-12: #621639;
+        --brand-1: #FFFCFD;
+        --brand-2: #FFF6F8;
+        --brand-3: #FFE8ED;
+        --brand-4: #FFD9E2;
+        --brand-5: #FFCAD6;
+        --brand-6: #FDBAC9;
+        --brand-7: #F5A6B9;
+        --brand-8: #ED8CA5;
+        --brand-9: #FF007B;
+        --brand-10: #EF006F;
+        --brand-11: #D50061;
+        --brand-12: #6B0030;
+ 
 
       --mauve-1: #fdfcfd;
       --mauve-2: #faf9fb;
@@ -161,7 +161,7 @@
   }
 
   .dark {
-    --background: #212225;
+    --background: #111111;
     --foreground: 0 0% 98%;
 
     --muted: 240 3.7% 15.9%;
@@ -173,7 +173,7 @@
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
+    --border: #d0cdd7;
     --input: 240 3.7% 15.9%;
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
     --input-shadow:#e93d82;
@@ -190,41 +190,41 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
 
-    --ring:#873356 ;
+    --ring:#FF007B ;
   --component: rgba(35, 34, 37, 0.5);
     --box-shadow-border: 0 0 0 calc(1px / var(--scale-x, 1))
       rgba(248, 248, 248, 0.05);
     --box-shadow-common: 0 1px calc(3px / var(--scale-x, 1)) 0
       rgba(255, 253, 253, 0.15);
     --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
-    --focused-outline-color: #1a001e;
-    --focused-outline-color: #430245;
+    --focused-outline-color: #FF007B;
+    --focused-outline-color: #FF007B;
 
-      --ruby-1: #191113;
-      --ruby-2: #1e1517;
-      --ruby-3: #3a141e;
-      --ruby-4: #4e1325;
-      --ruby-5: #5e1a2e;
-      --ruby-6: #6f2539;
-      --ruby-7: #883447;
-      --ruby-8: #b3445a;
-      --ruby-9: #e54666;
-      --ruby-10: #ec5a72;
-      --ruby-11: #ff949d;
-      --ruby-12: #fed2e1;
+        --red-1: #191111;
+        --red-2: #201314;
+        --red-3: #3b1219;
+        --red-4: #500f1c;
+        --red-5: #611623;
+        --red-6: #72232d;
+        --red-7: #8c333a;
+        --red-8: #b54548;
+        --red-9: #e5484d;
+        --red-10: #ec5d5e;
+        --red-11: #ff9592;
+        --red-12: #ffd1d9;
 
-        --crimson-1: #191114;
-        --crimson-2: #201318;
-        --crimson-3: #381525;
-        --crimson-4: #4d122f;
-        --crimson-5: #5c1839;
-        --crimson-6: #6d2545;
-        --crimson-7: #873356;
-        --crimson-8: #b0436e;
-        --crimson-9: #e93d82;
-        --crimson-10: #ee518a;
-        --crimson-11: #ff92ad;
-        --crimson-12: #fdd3e8;
+        --brand-1: #180E10;
+        --brand-2: #221216;
+        --brand-3: #3D101F;
+        --brand-4: #550225;
+        --brand-5: #66072E;
+        --brand-6: #77173B;
+        --brand-7: #92264C;
+        --brand-8: #BE3063;
+        --brand-9: #FF007B;
+        --brand-10: #F0006F;
+        --brand-11: #FF89AC;
+        --brand-12: #FFD0DC;
 
         --mauve-1: #121113;
         --mauve-2: #1a191b;
@@ -314,12 +314,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  .pachi-field-error {
-    @apply border-rose-500 bg-red-100 hover:bg-red-200
-  }
-  .pachi-field-neutral {
-    @apply border-zinc-200 dark:border-zinc-600;
-  }
+
 }
 @layer components {
   .zoom-image [data-rmiz-modal-overlay="visible"] {
@@ -336,3 +331,4 @@
     @apply px-4;
   }
 }
+

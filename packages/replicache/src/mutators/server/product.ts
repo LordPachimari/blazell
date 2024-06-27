@@ -251,7 +251,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				collectionID: product.collectionID,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
-				description: product.description,
 				discountable: product.discountable,
 				defaultVariantID: newDefaultVariantID,
 				metadata: product.metadata,
@@ -284,6 +283,7 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				updatedBy: null,
 				weight: defaultVariant.weight,
 				weightUnit: defaultVariant.weightUnit,
+				description: defaultVariant.description,
 			} satisfies Variant,
 			"variants",
 		);

@@ -1,49 +1,83 @@
-import { generateID } from "@blazell/utils";
-import type { CreatePrices, InsertPrice } from "@blazell/validators";
-import { useMemo, useState } from "react";
 import { Button } from "@blazell/ui/button";
 import { ScrollArea } from "@blazell/ui/scroll-area";
+import { generateID } from "@blazell/utils";
+import type { CreatePrices, InsertPrice } from "@blazell/validators";
+import { useEffect, useState } from "react";
 
-import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
-import type { Price } from "@blazell/validators/client";
 import {
 	DialogContent,
 	DialogRoot,
 	DialogTitle,
 	DialogTrigger,
 } from "@blazell/ui/dialog-vaul";
+import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { Price } from "@blazell/validators/client";
+import { Icons } from "@blazell/ui/icons";
 
 function Currencies({
-	children,
+	opened,
+	setOpened,
 	id,
 	createPrices,
 	prices,
 }: {
-	children: React.ReactNode;
+	opened: boolean;
+	setOpened: (value: boolean) => void;
 	id: string | undefined;
 	prices: (Price | InsertPrice)[];
 	createPrices: (props: CreatePrices) => Promise<void>;
 }) {
-	const existingPrices = useMemo(
-		() => new Set(prices.map((p) => p.currencyCode)),
-		[prices],
-	);
-	const [opened, setDialogOpened] = useState(false);
+	const setDialogOpened = (value: boolean) => {
+		if (!value) {
+			setCurrencyCodes(Array.from(existingPrices));
+		}
+		setOpened(value);
+	};
+	const [existingPrices, setExistingPrices] = useState<string[]>([]);
 	const [currencyCodes, setCurrencyCodes] = useState<string[]>([]);
+	const [newCurrencyCodes, setNewCurrencyCodes] = useState<string[]>([]);
+
+	useEffect(() => {
+		const currencyCodes = prices.map((p) => p.currencyCode);
+		setExistingPrices(currencyCodes);
+		setCurrencyCodes(currencyCodes);
+	}, [prices]);
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setDialogOpened}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogTrigger asChild>
+				<Button
+					size="md"
+					variant="ghost"
+					type="button"
+					className="text-mauve-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
+					onClick={() => setOpened(true)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							e.stopPropagation();
+							setOpened(true);
+						}
+					}}
+				>
+					<Icons.Plus className="h-3.5 w-3.5 mr-2" />
+					Add Price
+				</Button>
+			</DialogTrigger>
 			<DialogContent>
 				<DialogTitle className="p-4">Currencies</DialogTitle>
 
 				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] py-2 ">
 					<ToggleGroup
-						defaultValue={Array.from(existingPrices)}
+						value={currencyCodes}
 						variant="outline"
 						className="flex-wrap"
 						type="multiple"
 						onValueChange={(value) => {
-							setCurrencyCodes(value.filter((v) => !existingPrices.has(v)));
+							setNewCurrencyCodes(
+								value.filter((v) => !existingPrices.includes(v)),
+							);
+							const unique = new Set([...existingPrices, ...value]);
+							setCurrencyCodes(Array.from(unique));
 						}}
 					>
 						{/* {Object.values(currencies).map((c) => ( */}
@@ -59,10 +93,10 @@ function Currencies({
 						type="button"
 						className="w-full"
 						onClick={async () => {
-							if (id && currencyCodes.length > 0) {
+							if (id && newCurrencyCodes.length > 0) {
 								await createPrices({
 									id,
-									prices: currencyCodes.map((code) => ({
+									prices: newCurrencyCodes.map((code) => ({
 										id: generateID({ prefix: "price" }),
 										amount: 0,
 										currencyCode: code,

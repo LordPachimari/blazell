@@ -3,7 +3,7 @@ import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 import { useEffect } from "react";
 import { ProductOverview } from "~/components/templates/product/product-overview";
-import { userContext } from "~/sessions.server";
+import { useRequestInfo } from "~/hooks/use-request-info";
 import { useMarketplaceStore } from "~/zustand/store";
 type LoaderData = {
 	product: Product;
@@ -27,20 +27,18 @@ export const loader: LoaderFunction = async (args) => {
 		});
 	}
 
-	const cookieHeader = args.request.headers.get("Cookie");
-	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-
 	return json(
 		{
 			product,
-			cartID: userContextCookie.cartID,
 		},
 		{ headers: { "Cache-Control": "public, max-age=3600" } },
 	);
 };
 
 export default function Page() {
-	const { product: serverProduct, cartID } = useLoaderData<LoaderData>();
+	const { product: serverProduct } = useLoaderData<LoaderData>();
+	const { userContext } = useRequestInfo();
+	const cartID = userContext.cartID;
 	const navigate = useNavigate();
 	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 
@@ -113,7 +111,17 @@ export default function Page() {
 					replace: true,
 				});
 			}}
-			onKeyDown={() => console.log("key down")}
+			onKeyDown={(e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					e.stopPropagation();
+					navigate("/marketplace", {
+						preventScrollReset: true,
+						unstable_viewTransition: true,
+						replace: true,
+					});
+				}
+			}}
 		>
 			<main className="flex w-full justify-center relative">
 				{isInitialized && !product ? (

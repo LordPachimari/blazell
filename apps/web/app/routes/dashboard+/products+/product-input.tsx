@@ -8,7 +8,6 @@ import {
 
 import { Badge } from "@blazell/ui/badge";
 import { Button } from "@blazell/ui/button";
-import { Icons } from "@blazell/ui/icons";
 import { toast } from "@blazell/ui/toast";
 import type { Product, Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +26,9 @@ import { Pricing } from "./input/product-pricing";
 import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
+import { cn } from "@blazell/ui";
+import { Ping } from "@blazell/ui/ping";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 export interface ProductInputProps {
 	product: Product | undefined;
 	productID: string;
@@ -138,22 +140,16 @@ export function ProductInput({
 		await dashboardRep?.mutate.publishProduct({ id: productID });
 		toast.success("Product published!");
 	}, [dashboardRep, productID]);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const onProductInputChange = useCallback(
-		debounce(async (updates: UpdateProduct["updates"]) => {
-			methods.clearErrors();
-			await updateProduct(updates);
-		}, 800),
-		[updateProduct],
-	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const onVariantInputChange = useCallback(
 		debounce(async (props: UpdateVariant) => {
+			methods.clearErrors();
 			await updateVariant({ id: props.id, updates: props.updates });
-		}, 800),
+		}, 300),
 		[updateVariant],
 	);
+	const [parent] = useAutoAnimate({ duration: 200 });
 
 	return (
 		<FormProvider {...methods}>
@@ -166,17 +162,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative table min-h-screen max-w-7xl w-full py-12  px-4 md:px-10 gap-4 xl:gap-6 xl:flex min-w-[15rem]">
-					<Button
-						variant="ghost"
-						type="button"
-						href="/dashboard/products"
-						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
-						onClick={() => navigate("/dashboard/products")}
-					>
-						<Icons.Left size={20} className="text-black dark:text-white" />
-						Back to products
-					</Button>
+				<main className="relative table min-h-screen pb-20 max-w-6xl w-full gap-4 xl:flex min-w-[15rem] px-4 md:px-10">
 					<AlertDialogComponent
 						open={isOpen}
 						setIsOpen={setIsOpen}
@@ -197,24 +183,38 @@ export function ProductInput({
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">
 						<section className="flex items-center justify-between h-16">
 							<Badge
-								variant="outline"
-								className="text-sm text-mauve-11 sm:ml-0 h-8"
+								variant="default"
+								className={cn(
+									"text-sm bg-jade-3 flex gap-2 text-jade-9 border-jade-5 sm:ml-0 h-8",
+									{
+										"bg-red-3 text-red-9 border-red-5":
+											(defaultVariant?.quantity ?? 0) <= 0,
+									},
+								)}
 							>
-								{(product?.defaultVariant.quantity ?? 0) > 0
+								<Ping
+									className={cn("bg-jade-9", {
+										"bg-red-9": (defaultVariant?.quantity ?? 0) <= 0,
+									})}
+								/>
+								{(defaultVariant?.quantity ?? 0) > 0
 									? "In stock"
 									: "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
-								<DeleteOrPublish setIsOpen1={setIsOpen1} />
+								<DeleteOrPublish
+									setIsOpen1={setIsOpen1}
+									onPublish={onPublish}
+								/>
 							</div>
 						</section>
-						<section className="w-full table gap-0">
+						<section className="w-full table gap-0" ref={parent}>
 							<ProductInfo
-								description={product?.description}
-								onProductInputChange={onProductInputChange}
+								description={defaultVariant?.description}
 								title={defaultVariant?.title}
 								defaultVariantID={defaultVariant?.id}
 								onVariantInputChange={onVariantInputChange}
+								updateVariant={updateVariant}
 							/>
 							<Media
 								images={defaultVariant?.images ?? []}
@@ -226,23 +226,25 @@ export function ProductInput({
 								prices={defaultVariant?.prices ?? []}
 							/>
 							<Variants
-								options={product?.options}
 								productID={productID}
+								product={product}
 								variants={variants}
 								defaultVariant={defaultVariant}
 								isPublished={product?.status === "published"}
 							/>
-							<Stock
-								variant={defaultVariant}
-								updateVariant={updateVariant}
-								onVariantInputChange={onVariantInputChange}
-							/>
+							{variants.length === 0 && (
+								<Stock
+									variant={defaultVariant}
+									updateVariant={updateVariant}
+									onVariantInputChange={onVariantInputChange}
+								/>
+							)}
 						</section>
 					</div>
 
 					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
 						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} />
+							<DeleteOrPublish setIsOpen1={setIsOpen1} onPublish={onPublish} />
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
@@ -261,8 +263,10 @@ export function ProductInput({
 
 function DeleteOrPublish({
 	setIsOpen1,
+	onPublish,
 }: {
 	setIsOpen1: (value: boolean) => void;
+	onPublish: () => void;
 }) {
 	return (
 		<>
@@ -273,11 +277,28 @@ function DeleteOrPublish({
 				onClick={async () => {
 					setIsOpen1(true);
 				}}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						setIsOpen1(true);
+					}
+				}}
 			>
 				Delete
 			</Button>
 
-			<Button size="md" type="submit">
+			<Button
+				size="md"
+				onClick={onPublish}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						onPublish();
+					}
+				}}
+			>
 				Publish
 			</Button>
 		</>

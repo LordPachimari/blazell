@@ -19,7 +19,6 @@ const ProductUpdatesSchema = InsertProductSchema.pick({
 	collectionID: true,
 	discountable: true,
 	status: true,
-	description: true,
 });
 
 export const UpdateProductSchema = z.object({
@@ -27,16 +26,6 @@ export const UpdateProductSchema = z.object({
 	id: z.string(),
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;
-
-export const AssignOptionValueToVariantSchema = z.object({
-	optionValueID: z.string(),
-	variantID: z.string(),
-	prevOptionValueID: z.string().optional(),
-	productID: z.string(),
-});
-export type AssignOptionValueToVariant = z.infer<
-	typeof AssignOptionValueToVariantSchema
->;
 
 export const ProductDuplicateSchema = z.object({
 	originalProductID: z.string(),

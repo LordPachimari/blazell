@@ -2,9 +2,9 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
 import React, { useMemo } from "react";
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Button } from "@blazell/ui/button";
 import { Ping } from "@blazell/ui/ping";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import {
 	Table,
 	TableBody,
@@ -14,13 +14,13 @@ import {
 	TableRow,
 } from "@blazell/ui/table";
 import type { Order } from "@blazell/validators/client";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
+import type { DebouncedFunc } from "~/types/debounce";
 import { useReplicache } from "~/zustand/replicache";
 import { filterableColumns, getOrdersColumns } from "./columns";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { ScrollArea } from "@blazell/ui/scroll-area";
 
 interface OrdersTableProps {
 	orders: Order[];
@@ -28,6 +28,7 @@ interface OrdersTableProps {
 	setOrderID?: (id: string | undefined) => void;
 	orderID?: string | undefined;
 	toolbar?: boolean;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function OrdersTable({
@@ -36,13 +37,13 @@ function OrdersTable({
 	setOrderID,
 	orderID,
 	toolbar = true,
+	onSearch,
 }: Readonly<OrdersTableProps>) {
 	const columns = useMemo<ColumnDef<Order>[]>(() => getOrdersColumns(), []);
 	const table = useDataTable({
 		columns,
 		data: orders,
 	});
-	const [parent] = useAutoAnimate({ duration: 100 });
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 
 	const { rows } = table.getRowModel();
@@ -57,7 +58,7 @@ function OrdersTable({
 	});
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 max-w-7xl w-full">
 			{toolbar && (
 				<DataTableToolbar
 					viewOptions={false}
@@ -71,21 +72,22 @@ function OrdersTable({
 							</Button>
 						),
 					})}
+					{...(onSearch && { onSearch })}
 				/>
 			)}
 			{dashboardRep?.online && (
 				<div className="w-full flex items-center gap-2">
 					<Ping />
-					<p className="text-crimson-9 text-sm font-medium">real time</p>
+					<p className="text-brand-9 text-sm font-bold">Real time</p>
 				</div>
 			)}
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] bg-component border border-mauve-7 rounded-2xl relative"
+				className="h-[calc(100vh-400px)] shadow bg-component border border-border rounded-lg relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader className="bg-mauve-a-2">
+						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -103,7 +105,7 @@ function OrdersTable({
 								</TableRow>
 							))}
 						</TableHeader>
-						<TableBody ref={parent}>
+						<TableBody>
 							{rows.length ? (
 								virtualizer.getVirtualItems().map((virtualRow, index) => {
 									const row = rows[virtualRow.index] as Row<Order>;
@@ -133,7 +135,7 @@ function OrdersTable({
 									);
 								})
 							) : (
-								<TableRow className="border-none hover:bg-component">
+								<TableRow className="border-none h-full hover:bg-transparent">
 									<TableCell
 										colSpan={columns.length}
 										className="h-24 text-center"

@@ -1,10 +1,16 @@
 import type {
+	AssignOptionValueToVariant,
 	DeleteProductOptionValue,
 	UpdateProductOptionValues,
 } from "@blazell/validators";
-import type { Product } from "@blazell/validators/client";
+import type {
+	Product,
+	ProductOptionValue,
+	Variant,
+} from "@blazell/validators/client";
 import type { WriteTransaction } from "replicache";
 import { productNotFound } from "./product";
+import { variantNotFound } from "./variant";
 
 async function updateProductOptionValues(
 	tx: WriteTransaction,
@@ -12,10 +18,16 @@ async function updateProductOptionValues(
 ) {
 	const { optionID, newOptionValues, productID } = input;
 
-	const product = await tx.get<Product>(productID);
+	const product = (await tx.get(productID)) as Product | undefined;
 
 	if (!product) {
 		return productNotFound(productID);
+	}
+	const valueToOptionValue = new Map<string, ProductOptionValue>();
+	for (const optionValue of product.options?.find(
+		(option) => option.id === optionID,
+	)?.optionValues ?? []) {
+		valueToOptionValue.set(optionValue.value, optionValue);
 	}
 
 	await tx.set(productID, {
@@ -24,7 +36,12 @@ async function updateProductOptionValues(
 			option.id === optionID
 				? {
 						...option,
-						optionValues: newOptionValues,
+						optionValues: newOptionValues.map((value) => {
+							const existingValue = valueToOptionValue.get(value.value);
+							if (existingValue) return existingValue;
+
+							return value;
+						}),
 					}
 				: option,
 		),
@@ -57,4 +74,51 @@ async function deleteProductOptionValue(
 		),
 	});
 }
-export { deleteProductOptionValue, updateProductOptionValues };
+
+/* ->VARIANT<- option values must have the shape of {optionValue: Client.ProductOptionValue}
+due to drizzle's many to many relationship setup */
+async function assignOptionValueToVariant(
+	tx: WriteTransaction,
+	input: AssignOptionValueToVariant,
+) {
+	const { optionValueID, prevOptionValueID, variantID, productID } = input;
+
+	const product = (await tx.get(productID)) as Product | undefined;
+
+	const variant = (await tx.get(variantID)) as Variant | undefined;
+
+	if (!product) {
+		return productNotFound(input.productID);
+	}
+	if (!variant) {
+		return variantNotFound(variantID);
+	}
+	let productOptionValue: ProductOptionValue | undefined;
+
+	for (const option of product.options || []) {
+		productOptionValue = option.optionValues?.find(
+			(value) => value.id === optionValueID,
+		);
+		if (productOptionValue) break;
+	}
+
+	const newOptionValues: { optionValue: ProductOptionValue }[] = [];
+	for (const value of variant.optionValues ?? []) {
+		if (value.optionValue.id !== prevOptionValueID) {
+			newOptionValues.push({ optionValue: value.optionValue });
+		}
+	}
+	if (productOptionValue)
+		newOptionValues.push({ optionValue: productOptionValue });
+
+	if (productOptionValue)
+		await tx.set(variant.id, {
+			...variant,
+			optionValues: newOptionValues,
+		});
+}
+export {
+	deleteProductOptionValue,
+	updateProductOptionValues,
+	assignOptionValueToVariant,
+};

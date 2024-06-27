@@ -34,6 +34,7 @@ export const SPACE_RECORD = {
 		"cart" as const,
 		"orders" as const,
 		"errors" as const,
+		"notifications" as const,
 	],
 	dashboard: ["store" as const],
 	marketplace: ["products" as const],

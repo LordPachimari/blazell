@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/remix";
 import usePartySocket from "partysocket/react";
 import { useRequestInfo } from "~/hooks/use-request-info";
 
@@ -9,8 +8,7 @@ function PartykitProvider() {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID } = userContext;
-	const { getToken } = useAuth();
+	const { cartID, fakeAuthID, user } = userContext;
 
 	usePartySocket({
 		// usePartySocket takes the same arguments as PartySocket.
@@ -28,7 +26,6 @@ function PartykitProvider() {
 			if (globalRep) {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/global?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -37,7 +34,10 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
+								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
+								...(user?.id && {
+									"x-user-id": user.id,
+								}),
 								...(cartID && { "x-cart-id": cartID }),
 							},
 							body: JSON.stringify(req),
@@ -79,7 +79,6 @@ function PartykitProvider() {
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/dashboard?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -88,7 +87,6 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
 								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 							},
 							body: JSON.stringify(req),
@@ -129,7 +127,6 @@ function PartykitProvider() {
 			if (marketplaceRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/marketplace?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -138,7 +135,6 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
 							},
 							body: JSON.stringify(req),
 						},

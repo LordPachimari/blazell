@@ -1,11 +1,9 @@
 import { cn } from "@blazell/ui";
-import { Button } from "@blazell/ui/button";
-import { Icons } from "@blazell/ui/icons";
 import { Noise } from "@blazell/ui/noise";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@blazell/ui/tabs";
 import type { Product, Store as StoreType } from "@blazell/validators/client";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
 import { ProductCard } from "../product/product-card";
@@ -20,21 +18,11 @@ export function Store({
 	isInitialized: boolean;
 	products: Product[];
 }) {
-	const navigate = useNavigate();
 	return (
-		<div className="relative">
-			<Button
-				variant="ghost"
-				className="fixed text-black dark:text-white hover:bg-mauve-a-3 top-4 left-30  z-20"
-				onClick={() => navigate("/dashboard/select-stores")}
-			>
-				<Icons.Left size={20} className="text-black dark:text-white" />
-				Select stores
-			</Button>
-
+		<div className="relative max-w-7xl w-full">
 			<div
 				className={cn(
-					"max-h-[210px] md:min-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-mauve-7",
+					"max-h-[210px] md:min-h-[210px] h-fit w-full overflow-hidden rounded-2xl p-0 relative grid grid-cols-1 border border-border  ",
 				)}
 			>
 				{!isInitialized && <Skeleton className="w-full h-[210px]" />}
@@ -59,7 +47,7 @@ export function Store({
 						/>
 					)
 				) : (
-					<div className="h-[210px] w-full bg-crimson-7 ">
+					<div className="h-[210px] w-full bg-brand-7 ">
 						<Noise />
 					</div>
 				)}
@@ -112,6 +100,7 @@ const ProductSection = ({
 						key={product.id}
 						to={`/dashboard/products/${product.id}`}
 						prefetch="viewport"
+						className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
 					>
 						<ProductCard product={product} key={product.id} />
 					</Link>

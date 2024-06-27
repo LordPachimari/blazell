@@ -88,9 +88,9 @@ const duplicate = (tx: WriteTransaction, duplicate: ProductDuplicate) =>
 			newProductID,
 			originalProductID,
 		} = duplicate;
-		const product = yield* Effect.tryPromise(() =>
-			tx.get<Product>(originalProductID),
-		);
+		const product = (yield* Effect.tryPromise(() =>
+			tx.get(originalProductID),
+		)) as Product | undefined;
 
 		if (!product) {
 			return yield* Effect.fail(

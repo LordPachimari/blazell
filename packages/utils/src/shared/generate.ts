@@ -19,6 +19,7 @@ const prefixes = [
 	"space",
 	"line_item",
 	"order",
+	"notification",
 ] as const;
 
 export type Prefix = (typeof prefixes)[number];

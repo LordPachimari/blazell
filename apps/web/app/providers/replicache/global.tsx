@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { GlobalMutators } from "@blazell/replicache";
 import { useRequestInfo } from "~/hooks/use-request-info";
@@ -13,9 +12,7 @@ export function GlobalReplicacheProvider({
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID } = userContext;
-
-	const { getToken } = useAuth();
+	const { cartID, fakeAuthID, user } = userContext;
 
 	useEffect(() => {
 		if (globalRep) {
@@ -23,20 +20,19 @@ export function GlobalReplicacheProvider({
 		}
 
 		const r = new Replicache({
-			name: "user",
+			name: "global",
 			licenseKey: window.ENV.REPLICACHE_KEY,
 			mutators: GlobalMutators,
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/global`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(cartID && { "x-cart-id": cartID }),
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
+						...(user?.id && { "x-user-id": user.id }),
 					},
 					body: JSON.stringify(req),
 					credentials: "include",
@@ -51,12 +47,10 @@ export function GlobalReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/global`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
@@ -71,7 +65,7 @@ export function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID]);
+	}, [globalRep, setGlobalRep, cartID, fakeAuthID, user]);
 
 	return <>{children}</>;
 }

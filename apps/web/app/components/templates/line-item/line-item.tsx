@@ -1,6 +1,5 @@
 import { Card } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
-import { Separator } from "@blazell/ui/separator";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { toast } from "@blazell/ui/toast";
 import { getLineItemPriceAmount } from "@blazell/utils";
@@ -48,7 +47,7 @@ export const LineItem = ({
 				</Card>
 				<div className="flex gap-2 w-full justify-between">
 					<div className="w-full flex flex-col justify-between">
-						<h2 className="line-clamp-1 text-sm text-balance font-bold">
+						<h2 className="line-clamp-1 text-base text-start font-bold">
 							{lineItem.title}
 						</h2>
 						<div>
@@ -69,7 +68,7 @@ export const LineItem = ({
 								<>
 									<button
 										type="button"
-										className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+										className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-border   rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 										disabled={lineItem.quantity === 0}
 										onClick={async () => {
 											if (lineItem.quantity === 1)
@@ -84,7 +83,7 @@ export const LineItem = ({
 									</p>
 									<button
 										type="button"
-										className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+										className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-border   rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 										onClick={async () =>
 											await updateItem?.(lineItem.id, lineItem.quantity + 1)
 										}
@@ -96,11 +95,15 @@ export const LineItem = ({
 						</div>
 					</div>
 					<div className="flex flex-col items-end justify-between">
-						<Price amount={amount} currencyCode={currencyCode} />
+						<Price
+							amount={amount}
+							currencyCode={currencyCode}
+							className="font-bold"
+						/>
 						{!readonly && (
 							<button
 								type="button"
-								className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
+								className="w-8 text-red-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-border   hover:bg-mauve-3 hover:text-red-10"
 								onClick={async () => await deleteItem?.(lineItem.id)}
 							>
 								<Icons.Trash size={12} />
@@ -109,7 +112,6 @@ export const LineItem = ({
 					</div>
 				</div>
 			</li>
-			<Separator className="my-2" />
 		</>
 	);
 };
@@ -129,14 +131,14 @@ export const LineItemSkeleton = () => {
 					<div className="flex items-center">
 						<button
 							type="button"
-							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-border   rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 						>
 							<Icons.Minus size={10} />
 						</button>
 						<Skeleton className="w-[15px] h-[15px] mx-2" />
 						<button
 							type="button"
-							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-mauve-7 rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
+							className="w-6 h-6 border flex items-center justify-center bg-mauve-a-1 dark:bg-mauve-5 border-border   rounded-lg hover:bg-mauve-3 hover:text-mauve-11"
 						>
 							<Icons.Plus size={10} />
 						</button>
@@ -146,7 +148,7 @@ export const LineItemSkeleton = () => {
 					<Skeleton className="w-[50px] h-[10px]" />
 					<button
 						type="button"
-						className="w-8 text-ruby-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-mauve-7 hover:bg-mauve-3 hover:text-ruby-10"
+						className="w-8 text-red-9 h-8 border rounded-full flex items-center justify-center bg-mauve-1 dark:bg-mauve-5 border-border   hover:bg-mauve-3 hover:text-red-10"
 					>
 						<Icons.Trash size={12} />
 					</button>

@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import type { GetRowsWTableName } from "../types";
 import { Database } from "@blazell/shared";
@@ -11,7 +11,7 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 		if (!authID) return [];
 		const { manager } = yield* Database;
 
-		return yield* pipe(
+		const ordersCVD = yield* pipe(
 			Effect.tryPromise(() =>
 				manager.query.users.findFirst({
 					where: (users, { eq }) => eq(users.authID, authID),
@@ -30,6 +30,36 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 					fullRows
 						? manager.query.orders.findMany({
 								where: (orders, { eq }) => eq(orders.email, email),
+								with: {
+									shippingAddress: true,
+									billingAddress: true,
+									store: {
+										columns: {
+											id: true,
+											storeImage: true,
+											name: true,
+										},
+									},
+									items: {
+										with: {
+											variant: {
+												with: {
+													optionValues: {
+														with: {
+															optionValue: {
+																with: {
+																	option: true,
+																},
+															},
+														},
+													},
+													prices: true,
+												},
+											},
+											product: true,
+										},
+									},
+								},
 							})
 						: manager.query.orders.findMany({
 								columns: {
@@ -37,6 +67,14 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 									version: true,
 								},
 								where: (orders, { eq }) => eq(orders.email, email),
+								with: {
+									items: {
+										columns: {
+											id: true,
+											version: true,
+										},
+									},
+								},
 							}),
 				),
 			),
@@ -52,5 +90,7 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 				NotFound: () => Effect.succeed([]),
 			}),
 		);
+		yield* Console.log("ORDERS CVD", JSON.stringify(ordersCVD));
+		return ordersCVD;
 	});
 };

@@ -8,7 +8,7 @@ export function UserNotCreated() {
 				It looks like you haven't created a user yet. Please create a user first
 				or refresh the page.
 			</p>
-			<Button href="/create-user">Create user</Button>
+			<Button href="/onboarding">Create user</Button>
 		</section>
 	);
 }

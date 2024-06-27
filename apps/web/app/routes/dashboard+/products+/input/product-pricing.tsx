@@ -1,4 +1,4 @@
-import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
 import { Card, CardContent, CardFooter, CardTitle } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
@@ -16,7 +16,7 @@ import type {
 } from "@blazell/validators";
 import type { Price } from "@blazell/validators/client";
 import debounce from "lodash.debounce";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
 
@@ -24,8 +24,15 @@ interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
 	variantID: string | undefined;
 	isPublished: boolean;
+	className?: string;
 }
-function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
+function Pricing({
+	prices,
+	variantID,
+	isPublished,
+	className,
+}: ProductPricingProps) {
+	const [opened, setOpened] = React.useState(false);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const updatePrice = useCallback(
@@ -55,8 +62,8 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className="min-h-[6rem] my-4">
-			<CardTitle className="pb-4 flex gap-2 items-center">
+		<Card className={cn("min-h-[6rem] my-4 p-0", className)}>
+			<CardTitle className="p-4 border-b border-border flex gap-2 items-center">
 				Pricing
 				{isPublished && (
 					<TooltipProvider>
@@ -76,7 +83,12 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 					</TooltipProvider>
 				)}
 			</CardTitle>
-			<CardContent className="flex flex-col gap-2 pb-4">
+			<CardContent className="flex flex-col gap-2 p-4">
+				{prices.length === 0 && (
+					<div className="w-full h-full flex justify-center items-center">
+						<Icons.BadgeDollarSign className="text-mauve-9" />
+					</div>
+				)}
 				{prices.map((price) => (
 					<div
 						className="flex gap-2 w-full items-center"
@@ -105,30 +117,34 @@ function Pricing({ prices, variantID, isPublished }: ProductPricingProps) {
 									}));
 							}}
 						/>
-						<Button
-							size="icon"
-							variant={"ghost"}
-							className="rounded-full"
-							onClick={async () => await deletePrices(price.id)}
-						>
-							<Icons.Close className="text-ruby-9" />
-						</Button>
+						<div className="aspect-square h-7 w-7">
+							<button
+								type="button"
+								className="rounded-full aspect-square bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-border   flex justify-center items-center"
+								onClick={async () => await deletePrices(price.id)}
+								onKeyDown={async (e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										e.stopPropagation();
+										await deletePrices(price.id);
+									}
+								}}
+							>
+								<Icons.Close className="text-red-9" size={20} />
+							</button>
+						</div>
 					</div>
 				))}
 			</CardContent>
 
 			<CardFooter className="justify-center">
-				<Currencies createPrices={createPrices} prices={prices} id={variantID}>
-					<Button
-						size="md"
-						variant="ghost"
-						type="button"
-						className="mt-2 text-mauve-11"
-					>
-						<Icons.Plus className="h-3.5 w-3.5 mr-2" />
-						Add Price
-					</Button>
-				</Currencies>
+				<Currencies
+					createPrices={createPrices}
+					prices={prices}
+					id={variantID}
+					opened={opened}
+					setOpened={setOpened}
+				/>
 			</CardFooter>
 		</Card>
 	);

@@ -1,34 +1,19 @@
-import { cn } from "@blazell/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
-import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
-import type {
-	Product,
-	PublishedProduct,
-	Variant,
-} from "@blazell/validators/client";
-import { useState } from "react";
+import type { Variant } from "@blazell/validators/client";
 import Price from "~/components/molecules/price";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface GeneralInfoProps {
 	defaultVariant: Variant | PublishedVariant | undefined | null;
-	product: Product | PublishedProduct | undefined;
 }
 
-function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
-	const [isTruncated, setIsTruncated] = useState(true);
-
-	const handleToggle = () => {
-		setIsTruncated(!isTruncated);
-	};
-
-	const displayText = isTruncated
-		? truncateString(product?.description ?? "", 200)
-		: product?.description ?? "";
+function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
 	return (
 		<section className="flex flex-col ">
 			<div className="w-[200px] flex gap-2">
-				<Avatar className="h-16 w-16">
+				<Avatar className="h-16 w-16 ">
 					<AvatarImage src="https://github.com/shadcn.png" />
 					<AvatarFallback>N</AvatarFallback>
 				</Avatar>
@@ -40,19 +25,9 @@ function GeneralInfo({ defaultVariant, product }: GeneralInfoProps) {
 				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-				<p>
-					{displayText}
-					<span
-						onClick={handleToggle}
-						onKeyDown={handleToggle}
-						className={cn(
-							"pl-1 underline cursor-pointer bg-transparent transition text-mauve-11",
-							displayText.length < 200 && "hidden",
-						)}
-					>
-						{isTruncated ? "Reveal" : "Hide"}
-					</span>
-				</p>
+				<Markdown remarkPlugins={[remarkGfm]}>
+					{defaultVariant?.description}
+				</Markdown>
 			</div>
 
 			<Price

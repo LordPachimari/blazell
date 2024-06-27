@@ -1,6 +1,6 @@
 import { z } from "zod";
 
 export const DeleteInputSchema = z.object({
-	id: z.string(),
+	keys: z.string().array(),
 });
 export type DeleteInput = z.infer<typeof DeleteInputSchema>;

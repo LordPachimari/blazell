@@ -37,7 +37,9 @@ export type Store = Server.Store & {
 	founder?: Server.User;
 };
 export type Price = Server.Price;
-export type ProductOptionValue = Server.ProductOptionValue;
+export type ProductOptionValue = Server.ProductOptionValue & {
+	option: ProductOption;
+};
 export type User = Server.User;
 export type Customer = Pick<
 	User,
@@ -58,4 +60,7 @@ export type Order = Server.Order & {
 	user?: User;
 	shippingAddress?: Address;
 	billingAddress?: Address;
+	store?: Store;
+	items: LineItem[];
 };
+export type Notification = Server.Notification;

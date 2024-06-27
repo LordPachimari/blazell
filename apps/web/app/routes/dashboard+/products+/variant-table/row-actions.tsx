@@ -15,7 +15,7 @@ interface DataTableRowActionsProps<TData> {
 	row: Row<TData>;
 
 	setVariantID: (id: string | null) => void;
-	deleteVariant: (id: string) => Promise<void>;
+	deleteVariant: (keys: string[]) => Promise<void>;
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }
 
@@ -37,7 +37,7 @@ export function RowActions({
 				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
 				<span className="sr-only">Open menu</span>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-[160px]">
+			<DropdownMenuContent align="center" className="w-[160px]">
 				<DropdownMenuItem
 					onClick={() => {
 						setVariantID(row.original.id);
@@ -54,10 +54,10 @@ export function RowActions({
 					Duplicate
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="text-ruby-9"
+					className="text-red-9"
 					onClick={async (e) => {
 						e.stopPropagation();
-						await deleteVariant(row.original.id);
+						await deleteVariant([row.original.id]);
 					}}
 				>
 					Delete

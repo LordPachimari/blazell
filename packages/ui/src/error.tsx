@@ -5,7 +5,7 @@ export const FieldErrorMessage = ({
 }: { message: string | undefined }) => {
 	return (
 		<div className={cn("hidden", { hidden: !message })}>
-			<p className="text-ruby-9">{message}</p>
+			<p className="text-red-9">{message}</p>
 		</div>
 	);
 };

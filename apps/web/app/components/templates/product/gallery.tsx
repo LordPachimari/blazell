@@ -58,7 +58,7 @@ function MobileGallery({ images }: GalleryProps) {
 						))}
 						{images.length === 0 && (
 							<CarouselItem className="aspect-square">
-								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
+								<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-border   height-full cursor-pointer aspect-square">
 									<CardContent className="p-0 flex h-full justify-center items-center">
 										<ImagePlaceholder size={30} />
 									</CardContent>
@@ -105,7 +105,7 @@ const DesktopGallery = ({ images }: GalleryProps) => {
 				);
 			})}
 			{images.length === 0 && (
-				<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-mauve-7 height-full cursor-pointer aspect-square">
+				<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-border   height-full cursor-pointer aspect-square">
 					<CardContent className="p-0 flex h-full justify-center items-center">
 						<ImagePlaceholder size={30} />
 					</CardContent>

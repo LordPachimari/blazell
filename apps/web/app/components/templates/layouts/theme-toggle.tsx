@@ -58,8 +58,6 @@ export function ThemeToggle() {
 			{
 				method: "POST",
 				action: "/action/set-theme",
-				navigate: false,
-				fetcherKey: "theme-fetcher",
 			},
 		);
 	}, []);
@@ -67,14 +65,14 @@ export function ThemeToggle() {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				className={cn(
-					buttonVariants({ size: "icon", variant: "ghost" }),
+					buttonVariants({ size: "icon", variant: "outline" }),
 					"rounded-full",
 				)}
 			>
 				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>
 				<span className="sr-only">Toggle theme</span>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent align="center">
 				<DropdownMenuItem
 					className="flex gap-2"
 					onClick={() => onClick("light")}

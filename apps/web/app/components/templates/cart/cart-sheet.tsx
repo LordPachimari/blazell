@@ -25,6 +25,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 	const items = useGlobalStore((state) =>
 		state.lineItems.filter((item) => item.cartID === cartID),
 	);
+	console.log("items", items, cart);
 
 	const [parent] = useAutoAnimate({ duration: 200 });
 
@@ -46,7 +47,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
 			<DialogTrigger asChild>
-				<Button variant={"ghost"} size={"icon"} className="rounded-full">
+				<Button variant={"outline"} size={"icon"} className="rounded-full">
 					<Icons.ShoppingCart
 						size={20}
 						strokeWidth={strokeWidth}
@@ -55,7 +56,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
-				<DialogTitle className="p-4 border-b border-mauve-7">Cart</DialogTitle>
+				<DialogTitle className="p-4 border-b border-border  ">Cart</DialogTitle>
 				<ScrollArea className="h-[75vh] px-4 pt-2">
 					<ul className="flex flex-col gap-2" ref={parent}>
 						{!isInitialized &&
@@ -87,7 +88,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 					<Link
 						to="/checkout"
 						prefetch="viewport"
-						className={cn(buttonVariants(), "w-full")}
+						className={cn(buttonVariants(), "w-full ")}
 					>
 						Checkout
 					</Link>

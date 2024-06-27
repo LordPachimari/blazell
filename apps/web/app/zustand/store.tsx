@@ -2,6 +2,7 @@ import type {
 	Cart,
 	Customer,
 	LineItem,
+	Notification,
 	Order,
 	Product,
 	PublishedProduct,
@@ -10,9 +11,10 @@ import type {
 	User,
 	Variant,
 } from "@blazell/validators/client";
-import React from "react";
+import React, { useEffect } from "react";
 import type { ExperimentalDiff, ReadonlyJSONValue } from "replicache";
 import { createStore, useStore } from "zustand";
+import type { SearchWorkerRequest } from "~/worker/search";
 type Entity = ReadonlyJSONValue & { id: string };
 type ExtractState<S> = S extends {
 	getState: () => infer T;
@@ -22,19 +24,40 @@ type ExtractState<S> = S extends {
 function commonDiffReducer({
 	diff,
 	map,
+	searchWorker,
 }: {
 	diff: ExperimentalDiff;
 	map: Map<string, Entity>;
+	searchWorker?: Worker | undefined;
 }) {
 	const newMap = new Map(map);
 	function add(key: string, newValue: Entity) {
 		newMap.set(key, newValue);
+		searchWorker?.postMessage({
+			type: "ADD",
+			payload: {
+				document: newValue,
+			},
+		} satisfies SearchWorkerRequest);
 	}
 	function del(key: string) {
 		newMap.delete(key);
+
+		searchWorker?.postMessage({
+			type: "DELETE",
+			payload: {
+				key,
+			},
+		} satisfies SearchWorkerRequest);
 	}
 	function change(key: string, newValue: Entity) {
 		newMap.set(key, newValue);
+		searchWorker?.postMessage({
+			type: "UPDATE",
+			payload: {
+				document: newValue,
+			},
+		} satisfies SearchWorkerRequest);
 	}
 	for (const diffOp of diff) {
 		switch (diffOp.op) {
@@ -56,6 +79,7 @@ function commonDiffReducer({
 }
 
 interface DashboardStore {
+	searchWorker: Worker | undefined;
 	isInitialized: boolean;
 	activeStoreID: string | null;
 	products: Product[];
@@ -63,38 +87,37 @@ interface DashboardStore {
 	orders: Order[];
 	customers: Customer[];
 	variants: Variant[];
-	lineItems: LineItem[];
 	productMap: Map<string, Product>;
 	storeMap: Map<string, Store>;
 	orderMap: Map<string, Order>;
 	customerMap: Map<string, Customer>;
 	variantMap: Map<string, Variant>;
-	lineItemMap: Map<string, LineItem>;
+	terminateSearchWorker(): void;
 	setActiveStoreID(newValue: string | null): void;
 	setIsInitialized(newValue: boolean): void;
 	diffProducts(diff: ExperimentalDiff): void;
 	diffOrders(diff: ExperimentalDiff): void;
 	diffCustomers(diff: ExperimentalDiff): void;
 	diffVariants(diff: ExperimentalDiff): void;
-	diffLineItems(diff: ExperimentalDiff): void;
 	diffStores(diff: ExperimentalDiff): void;
 }
 const createDashboardStore = () =>
 	createStore<DashboardStore>((set, get) => ({
+		searchWorker: undefined,
 		isInitialized: false,
 		activeStoreID: null,
 		stores: [],
 		products: [],
+		notifications: [],
 		orders: [],
 		customers: [],
 		variants: [],
-		lineItems: [],
 		productMap: new Map(),
 		storeMap: new Map(),
 		orderMap: new Map(),
 		customerMap: new Map(),
 		variantMap: new Map(),
-		lineItemMap: new Map(),
+		notificationMap: new Map(),
 		setActiveStoreID(newValue: string | null) {
 			set({ activeStoreID: newValue });
 		},
@@ -111,44 +134,37 @@ const createDashboardStore = () =>
 				productMap: newMap as Map<string, Product>,
 			});
 		},
-		diffOrders: (diff: ExperimentalDiff) => {
+		diffOrders(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().orderMap,
+				searchWorker: get().searchWorker,
 			});
 			set({
 				orders: newEntities as Order[],
 				orderMap: newMap as Map<string, Order>,
 			});
 		},
-		diffCustomers: (diff: ExperimentalDiff) => {
+		diffCustomers(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().customerMap,
+				searchWorker: get().searchWorker,
 			});
 			set({
 				customers: newEntities as Customer[],
 				customerMap: newMap as Map<string, Customer>,
 			});
 		},
-		diffVariants: (diff: ExperimentalDiff) => {
+		diffVariants(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().variantMap,
+				searchWorker: get().searchWorker,
 			});
 			set({
 				variants: newEntities as Variant[],
 				variantMap: newMap as Map<string, Variant>,
-			});
-		},
-		diffLineItems: (diff: ExperimentalDiff) => {
-			const { newEntities, newMap } = commonDiffReducer({
-				diff,
-				map: get().lineItemMap,
-			});
-			set({
-				lineItems: newEntities as LineItem[],
-				lineItemMap: newMap as Map<string, LineItem>,
 			});
 		},
 		diffStores(diff: ExperimentalDiff) {
@@ -161,6 +177,10 @@ const createDashboardStore = () =>
 				storeMap: newMap as Map<string, Store>,
 			});
 		},
+		terminateSearchWorker() {
+			get().searchWorker?.terminate();
+			set({ searchWorker: undefined });
+		},
 	}));
 
 const DashboardStoreContext = React.createContext<ReturnType<
@@ -170,6 +190,19 @@ const DashboardStoreProvider = ({
 	children,
 }: { children: React.ReactNode }) => {
 	const [store] = React.useState(createDashboardStore);
+	const state = store.getState();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		store.setState((state) => ({
+			...state,
+			searchWorker: new Worker(
+				new URL("../worker/search.ts", import.meta.url),
+				{ type: "module", name: "dashboard_search" },
+			),
+		}));
+
+		return () => state.terminateSearchWorker();
+	}, []);
 
 	return (
 		<DashboardStoreContext.Provider value={store}>
@@ -191,6 +224,7 @@ const useDashboardStore = <_, U>(
 };
 
 interface MarketplaceStore {
+	globalSearchWorker: Worker | undefined;
 	isInitialized: boolean;
 	products: PublishedProduct[];
 	stores: Store[];
@@ -202,9 +236,11 @@ interface MarketplaceStore {
 	diffProducts(diff: ExperimentalDiff): void;
 	diffVariants(diff: ExperimentalDiff): void;
 	diffStores(diff: ExperimentalDiff): void;
+	setGlobalSearchWorker(newValue: Worker): void;
 }
 const createMarketplaceStore = () =>
 	createStore<MarketplaceStore>((set, get) => ({
+		globalSearchWorker: undefined,
 		isInitialized: false,
 		activeStoreID: null,
 		stores: [],
@@ -227,10 +263,11 @@ const createMarketplaceStore = () =>
 				productMap: newMap as Map<string, PublishedProduct>,
 			});
 		},
-		diffVariants: (diff: ExperimentalDiff) => {
+		diffVariants(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().variantMap,
+				searchWorker: get().globalSearchWorker,
 			});
 			set({
 				variants: newEntities as PublishedVariant[],
@@ -241,11 +278,15 @@ const createMarketplaceStore = () =>
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().storeMap,
+				searchWorker: get().globalSearchWorker,
 			});
 			set({
 				stores: newEntities as Store[],
 				storeMap: newMap as Map<string, Store>,
 			});
+		},
+		setGlobalSearchWorker(newValue: Worker) {
+			set({ globalSearchWorker: newValue });
 		},
 	}));
 
@@ -281,16 +322,19 @@ interface GlobalStore {
 	users: User[];
 	orders: Order[];
 	carts: Cart[];
+	notifications: Notification[];
 	lineItems: LineItem[];
 	userMap: Map<string, User>;
 	cartMap: Map<string, Cart>;
 	orderMap: Map<string, Order>;
 	lineItemMap: Map<string, LineItem>;
+	notificationMap: Map<string, Notification>;
 	setIsInitialized(newValue: boolean): void;
 	diffUsers(diff: ExperimentalDiff): void;
 	diffCarts(diff: ExperimentalDiff): void;
 	diffOrders(diff: ExperimentalDiff): void;
 	diffLineItems(diff: ExperimentalDiff): void;
+	diffNotifications(diff: ExperimentalDiff): void;
 }
 const createGlobalStore = () =>
 	createStore<GlobalStore>((set, get) => ({
@@ -298,17 +342,19 @@ const createGlobalStore = () =>
 		carts: [],
 		users: [],
 		orders: [],
+		notifications: [],
 
 		lineItems: [],
 		userMap: new Map(),
 		cartMap: new Map(),
 		orderMap: new Map(),
 		lineItemMap: new Map(),
+		notificationMap: new Map(),
 
 		setIsInitialized(newValue: boolean) {
 			set({ isInitialized: newValue });
 		},
-		diffCarts: (diff: ExperimentalDiff) => {
+		diffCarts(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().cartMap,
@@ -318,7 +364,7 @@ const createGlobalStore = () =>
 				cartMap: newMap as Map<string, Cart>,
 			});
 		},
-		diffUsers: (diff: ExperimentalDiff) => {
+		diffUsers(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().userMap,
@@ -328,7 +374,7 @@ const createGlobalStore = () =>
 				userMap: newMap as Map<string, User>,
 			});
 		},
-		diffOrders: (diff: ExperimentalDiff) => {
+		diffOrders(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().orderMap,
@@ -338,7 +384,7 @@ const createGlobalStore = () =>
 				orderMap: newMap as Map<string, Order>,
 			});
 		},
-		diffLineItems: (diff: ExperimentalDiff) => {
+		diffLineItems(diff: ExperimentalDiff) {
 			const { newEntities, newMap } = commonDiffReducer({
 				diff,
 				map: get().lineItemMap,
@@ -346,6 +392,17 @@ const createGlobalStore = () =>
 			set({
 				lineItems: newEntities as LineItem[],
 				lineItemMap: newMap as Map<string, LineItem>,
+			});
+		},
+
+		diffNotifications(diff: ExperimentalDiff) {
+			const { newEntities, newMap } = commonDiffReducer({
+				diff,
+				map: get().notificationMap,
+			});
+			set({
+				notifications: newEntities as Notification[],
+				notificationMap: newMap as Map<string, Notification>,
 			});
 		},
 	}));
@@ -375,14 +432,76 @@ const useGlobalStore = <_, U>(
 	return useStore(store, selector);
 };
 
+interface GlobalSearch {
+	globalSearchWorker: Worker | undefined;
+	terminateSearchWorker(): void;
+}
+const createGlobalSearch = () =>
+	createStore<GlobalSearch>((set, get) => ({
+		globalSearchWorker: undefined,
+		terminateSearchWorker() {
+			get().globalSearchWorker?.terminate();
+			set({ globalSearchWorker: undefined });
+		},
+	}));
+
+const GlobalSearchContext = React.createContext<ReturnType<
+	typeof createGlobalSearch
+> | null>(null);
+const GlobalSearchProvider = ({ children }: { children: React.ReactNode }) => {
+	const [store] = React.useState(createGlobalSearch);
+	const state = store.getState();
+
+	const setGlobalSearchWorker = useMarketplaceStore(
+		(state) => state.setGlobalSearchWorker,
+	);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		const newWorker = new Worker(
+			new URL("../worker/search.ts", import.meta.url),
+			{ type: "module", name: "global_search" },
+		);
+
+		store.setState((state) => ({
+			...state,
+			globalSearchWorker: newWorker,
+		}));
+		setGlobalSearchWorker(newWorker);
+
+		return () => state.terminateSearchWorker();
+	}, []);
+
+	return (
+		<GlobalSearchContext.Provider value={store}>
+			{children}
+		</GlobalSearchContext.Provider>
+	);
+};
+
+const useGlobalSearch = <_, U>(
+	selector: (
+		state: ExtractState<ReturnType<typeof createGlobalSearch> | null>,
+	) => U,
+) => {
+	const store = React.useContext(GlobalSearchContext);
+	if (!store) {
+		throw new Error("Missing GlobalSearchProvider");
+	}
+	return useStore(store, selector);
+};
+
 export {
 	DashboardStoreProvider,
+	GlobalSearchProvider,
 	GlobalStoreProvider,
 	MarketplaceStoreProvider,
 	createDashboardStore,
+	createGlobalSearch,
 	createGlobalStore,
 	createMarketplaceStore,
 	useDashboardStore,
+	useGlobalSearch,
 	useGlobalStore,
 	useMarketplaceStore,
 };

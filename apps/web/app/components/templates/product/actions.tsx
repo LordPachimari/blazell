@@ -62,7 +62,7 @@ const Actions = ({
 			if (!cartID) {
 				fetcher.submit(
 					{ cartID: newCartID },
-					{ method: "POST", action: "/action/set-cart-id", navigate: false },
+					{ method: "POST", action: "/action/set-cart-id" },
 				);
 			}
 
@@ -91,7 +91,7 @@ const Actions = ({
 	);
 
 	return (
-		<div className="w-full py-6 pt-4 flex gap-4 items-center border-b border-mauve-7">
+		<div className="w-full py-6 pt-4 flex gap-4 items-center border-b border-border  ">
 			<SaveToBookmarks />
 			<Button
 				className="max-w-[30rem] w-full rounded-lg"

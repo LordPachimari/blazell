@@ -58,9 +58,11 @@ export function DataTableFacetedFilter<TData, TValue>({
 								{selectedValues.size > 2 ? (
 									<Badge
 										variant="secondary"
-										className="rounded-2xl px-1 h-10 font-normal"
+										className="h-8 text-nowrap bg-brand-3 rounded-md px-1 border-brand-9"
 									>
-										{selectedValues.size} selected
+										<p className="text-brand-9">
+											{selectedValues.size} selected
+										</p>
 									</Badge>
 								) : (
 									options
@@ -69,9 +71,9 @@ export function DataTableFacetedFilter<TData, TValue>({
 											<Badge
 												variant="secondary"
 												key={option.value}
-												className="rounded-sm px-1 font-normal"
+												className="bg-brand-3 text-nowrap rounded-md px-1 font-normal border-brand-9"
 											>
-												{option.label}
+												<p className="text-brand-9">{option.label}</p>
 											</Badge>
 										))
 								)}
@@ -107,7 +109,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 											className={cn(
 												"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
 												isSelected
-													? "bg-primary text-primary-foreground"
+													? "bg-brand-9 text-primary-foreground border-brand-10"
 													: "opacity-50 [&_svg]:invisible",
 											)}
 										>

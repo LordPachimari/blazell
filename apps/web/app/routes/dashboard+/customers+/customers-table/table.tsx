@@ -19,15 +19,18 @@ import type { Customer } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import type { DebouncedFunc } from "~/types/debounce";
 
 interface CustomersTableProps {
 	customers: Customer[];
 	createCustomer: () => Promise<void>;
+	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function CustomersTable({
 	customers,
 	createCustomer,
+	onSearch,
 }: Readonly<CustomersTableProps>) {
 	const columns = useMemo<ColumnDef<Customer>[]>(
 		() => getCustomersColumns(),
@@ -51,7 +54,7 @@ function CustomersTable({
 	});
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 max-w-7xl w-full">
 			<DataTableToolbar
 				viewOptions={false}
 				table={table}
@@ -61,15 +64,16 @@ function CustomersTable({
 						Create customer
 					</Button>
 				}
+				{...(onSearch && { onSearch })}
 			/>
 
 			<ScrollArea
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] bg-component border rounded-2xl border-mauve-7 relative"
+				className="h-[calc(100vh-327px)] shadow bg-component border rounded-lg border-border   relative"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader className="bg-mauve-a-2">
+						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -117,7 +121,7 @@ function CustomersTable({
 									);
 								})
 							) : (
-								<TableRow className="border-none hover:bg-component">
+								<TableRow className="border-none hover:bg-transparent">
 									<TableCell
 										colSpan={columns.length}
 										className="h-24 text-center"

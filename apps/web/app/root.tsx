@@ -3,7 +3,6 @@ import {
 	json,
 	type LinksFunction,
 	type LoaderFunction,
-	type TypedResponse,
 } from "@remix-run/cloudflare";
 import {
 	Links,
@@ -16,8 +15,6 @@ import {
 //@ts-ignore
 import type { Theme } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
-import { ClerkApp } from "@clerk/remix";
-import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
@@ -30,15 +27,22 @@ import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplac
 import { prefs, userContext } from "./sessions.server";
 import stylesheet from "./tailwind.css?url";
 import { getDomainUrl } from "./utils/helpers";
-//@ts-ignore
 import sonnerStyles from "./sonner.css?url";
-//@ts-ignore
 import { AppEnvSchema, type AppEnv } from "load-context";
 import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
-import { GlobalStoreProvider } from "./zustand/store";
-import { GlobalStoreMutator } from "./zustand/store-mutator";
+import tiptap from "./tiptap.css?url";
+import {
+	GlobalSearchProvider,
+	GlobalStoreProvider,
+	MarketplaceStoreProvider,
+} from "./zustand/store";
+import {
+	GlobalStoreMutator,
+	MarketplaceStoreMutator,
+} from "./zustand/store-mutator";
+
 export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
@@ -46,10 +50,11 @@ export const links: LinksFunction = () => {
 		{ rel: "stylesheet", href: stylesheet },
 		{ rel: "stylesheet", href: sonnerStyles },
 		{ rel: "stylesheet", href: vaulStyles },
+		{ rel: "stylesheet", href: tiptap },
 	].filter(Boolean);
 };
 export type RootLoaderData = {
-	ENV: Omit<AppEnv, "CLERK_PUBLISHABLE_KEY" | "CLERK_SECRET_KEY">;
+	ENV: AppEnv;
 	requestInfo: {
 		hints: ReturnType<typeof getHints>;
 		origin: string;
@@ -67,50 +72,52 @@ export type RootLoaderData = {
 	};
 };
 
-export const loader: LoaderFunction = (args) => {
-	return rootAuthLoader(
-		args,
-		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
-			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
-				context.cloudflare.env,
-			);
-			const cookieHeader = request.headers.get("Cookie");
-			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
-			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-			const { getToken, userId } = await getAuth(args);
-			const token = await getToken();
-			const user = await fetch(`${WORKER_URL}/users`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}).then((res) => res.json() as Promise<User | undefined>);
-			return json(
-				{
-					ENV: {
-						REPLICACHE_KEY,
-						WORKER_URL,
-						PARTYKIT_HOST,
-					},
-					requestInfo: {
-						hints: getHints(request),
-						origin: getDomainUrl(request),
-						path: new URL(request.url).pathname,
-						userPrefs: {
-							theme: prefsCookie.theme,
-							sidebarState: prefsCookie.sidebarState,
-						},
-						userContext: {
-							...(user && { user }),
-							authID: userId,
-							cartID: userContextCookie.cartID,
-							fakeAuthID: userContextCookie.fakeAuthID,
-						},
-					},
-				},
-				// { headers: { "Cache-Control": "private, max-age=1800" } },
-			);
+export const loader: LoaderFunction = async (args) => {
+	const { context, request } = args;
+
+	const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
+		context.cloudflare.env,
+	);
+	const cookieHeader = request.headers.get("Cookie");
+	const prefsCookie = (await prefs.parse(cookieHeader)) || {};
+	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
+	// const token = await getToken();
+	// const user = await fetch(`${WORKER_URL}/users`, {
+	// 	method: "GET",
+	// 	headers: {
+	// 		Authorization: `Bearer ${token}`,
+	// 	},
+	// }).then((res) => res.json() as Promise<User | undefined>);
+	const user = await fetch(
+		`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
+		{
+			method: "GET",
 		},
+	).then((res) => res.json() as Promise<User | undefined>);
+	return json(
+		{
+			ENV: {
+				REPLICACHE_KEY,
+				WORKER_URL,
+				PARTYKIT_HOST,
+			},
+			requestInfo: {
+				hints: getHints(request),
+				origin: getDomainUrl(request),
+				path: new URL(request.url).pathname,
+				userPrefs: {
+					theme: prefsCookie.theme,
+					sidebarState: prefsCookie.sidebarState,
+				},
+				userContext: {
+					...(user && { user }),
+					// authID: userId,
+					cartID: userContextCookie.cartID,
+					fakeAuthID: userContextCookie.fakeAuthID,
+				},
+			},
+		},
+		// { headers: { "Cache-Control": "private, max-age=1800" } },
 	);
 };
 
@@ -125,13 +132,19 @@ function App() {
 				<GlobalReplicacheProvider>
 					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
-							<GlobalStoreMutator>
-								<Sidebar />
-								<MobileSidebar />
-								<Header />
-								<Outlet />
-								<Toaster />
-							</GlobalStoreMutator>
+							<MarketplaceStoreProvider>
+								<GlobalSearchProvider>
+									<GlobalStoreMutator>
+										<MarketplaceStoreMutator>
+											<Sidebar />
+											<MobileSidebar />
+											<Header />
+											<Outlet />
+											<Toaster />
+										</MarketplaceStoreMutator>
+									</GlobalStoreMutator>
+								</GlobalSearchProvider>
+							</MarketplaceStoreProvider>
 						</GlobalStoreProvider>
 						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>
 					</DashboardReplicacheProvider>
@@ -141,7 +154,7 @@ function App() {
 	);
 }
 
-export default ClerkApp(App);
+export default App;
 
 function Document({
 	children,
@@ -168,7 +181,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative font-body dark:bg-mauve-1 bg-mauve-a-2 min-w-[280px]">
+			<body className="relative font-body bg-background min-w-[280px]">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<script

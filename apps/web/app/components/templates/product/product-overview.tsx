@@ -56,11 +56,11 @@ const ProductOverview = ({
 			>
 				<ScrollArea
 					className={cn(
-						"border-t lg:border-t-0 lg:border-mauve-7 lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
+						"border-t lg:border-t-0 lg:border-border   lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
 					)}
 				>
 					<div className="p-4 h-full w-full">
-						<GeneralInfo defaultVariant={defaultVariant} product={product} />
+						<GeneralInfo defaultVariant={defaultVariant} />
 						<Actions
 							{...(cartID && { cartID })}
 							product={product}
@@ -292,7 +292,7 @@ const DeliveryOptions = () => {
 					>
 						<div className="flex w-full items-center justify-between">
 							<p className="">Delivery option {index + 1}</p>
-							<Icons.CircleCheck className="size-6 text-white fill-crimson-9 opacity-0 transition group-data-[checked]:opacity-100" />
+							<Icons.CircleCheck className="size-6 text-white fill-brand-9 opacity-0 transition group-data-[checked]:opacity-100" />
 						</div>
 					</ToggleGroupItem>
 				))}

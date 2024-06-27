@@ -5,13 +5,16 @@ import { LargeFirstTile } from "~/components/dnd-kit/Sortable/large-first-tile";
 import { FileUpload } from "~/components/molecules/file-upload";
 import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import { useReplicache } from "~/zustand/replicache";
+import { cn } from "@blazell/ui";
 
 export function Media({
 	images,
 	variantID,
+	className,
 }: Readonly<{
 	images: Image[] | undefined;
 	variantID: string | undefined;
+	className?: string;
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const uploadImages = useCallback(
@@ -51,8 +54,8 @@ export function Media({
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className="overflow-hidden my-4">
-			<CardHeader className="pb-4">
+		<Card className={cn("overflow-hidden my-4 p-0", className)}>
+			<CardHeader className="pb-4 p-4">
 				<CardTitle>Media</CardTitle>
 			</CardHeader>
 			<CardContent>
@@ -64,7 +67,7 @@ export function Media({
 				/>
 				<DndContext>
 					{images && images.length > 0 && (
-						<div className="py-2">
+						<div className="p-2">
 							<div className="gap-y-2x small flex flex-col">
 								<LargeFirstTile
 									items={images}

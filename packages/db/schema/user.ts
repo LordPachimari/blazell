@@ -11,6 +11,7 @@ import {
 
 import { addresses } from "./address";
 import { stores } from "./store";
+import type { Image } from "../types";
 
 export const users = pgTable(
 	"users",
@@ -19,6 +20,7 @@ export const users = pgTable(
 		authID: varchar("auth_id"),
 
 		username: varchar("username"),
+		avatar: json("avatar").$type<Image>(),
 		fullName: varchar("full_name"),
 		patronymic: varchar("patronymic"),
 		email: varchar("email").notNull(),
