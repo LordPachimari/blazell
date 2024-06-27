@@ -64,7 +64,7 @@ const ProductCard = ({
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"group border min-h-36 min-w-36 hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-border   h-fit rounded-lg transition-all duration-200 ease-in-out",
+				"group border min-h-20 min-w-20 hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-border   h-fit rounded-lg transition-all duration-200 ease-in-out",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
@@ -81,7 +81,7 @@ const ProductCard = ({
 					quality={100}
 				/>
 			) : (
-				<div className="aspect-square min-h-36 bg-component max-w-full rounded-lg hover:brightness-50">
+				<div className="aspect-square min-h-20 bg-component max-w-full rounded-lg hover:brightness-50">
 					<ImagePlaceholder />
 				</div>
 			)}

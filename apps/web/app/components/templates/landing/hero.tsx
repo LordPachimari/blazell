@@ -49,6 +49,7 @@ function Hero() {
 							"h-14 animate-fade-up",
 						)}
 						to="/marketplace"
+						prefetch="intent"
 						style={{ animationDelay: "0.40s", animationFillMode: "both" }}
 					>
 						Enter marketplace

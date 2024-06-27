@@ -161,7 +161,7 @@ const MobileSidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"fixed lg:hidden bottom-1 h-12 group ml-[3px] w-[calc(100%-6px)] rounded-xl bg-mauve-a-1 dark:bg-component justify-between flex flex-col z-40 overflow-hidden border border-border backdrop-blur-sm",
+					"fixed lg:hidden bottom-1 h-12 group ml-[3px] w-[calc(100%-6px)] rounded-xl bg-component justify-between flex flex-col z-40 overflow-hidden border border-border backdrop-blur-sm",
 					{
 						hidden: noSidebarPaths.has(location.pathname),
 					},
