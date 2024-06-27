@@ -31,8 +31,8 @@ export const List = React.memo(
 		return (
 			<div className={`flex flex-col items-center gap-4 ${className}`}>
 				<AnimatePresence>
-					{itemsToShow.map((item) => (
-						<AnimatedListItem key={(item as ReactElement).key}>
+					{itemsToShow.map((item, index) => (
+						<AnimatedListItem key={`${(item as ReactElement).key}-${index}`}>
 							{item}
 						</AnimatedListItem>
 					))}

@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { GlobalMutators } from "@blazell/replicache";
 import { useRequestInfo } from "~/hooks/use-request-info";
@@ -15,8 +14,6 @@ export function GlobalReplicacheProvider({
 	const { userContext } = useRequestInfo();
 	const { cartID, fakeAuthID, user } = userContext;
 
-	const { getToken } = useAuth();
-
 	useEffect(() => {
 		if (globalRep) {
 			return;
@@ -29,12 +26,10 @@ export function GlobalReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/global`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(cartID && { "x-cart-id": cartID }),
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 						...(user?.id && { "x-user-id": user.id }),
@@ -52,12 +47,10 @@ export function GlobalReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/global`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
@@ -72,7 +65,7 @@ export function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, getToken, cartID, fakeAuthID, user]);
+	}, [globalRep, setGlobalRep, cartID, fakeAuthID, user]);
 
 	return <>{children}</>;
 }

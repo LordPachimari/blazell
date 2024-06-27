@@ -58,8 +58,6 @@ export function ThemeToggle() {
 			{
 				method: "POST",
 				action: "/action/set-theme",
-				navigate: false,
-				fetcherKey: "theme-fetcher",
 			},
 		);
 	}, []);

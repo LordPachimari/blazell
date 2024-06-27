@@ -3,7 +3,6 @@ import {
 	json,
 	type LinksFunction,
 	type LoaderFunction,
-	type TypedResponse,
 } from "@remix-run/cloudflare";
 import {
 	Links,
@@ -16,8 +15,6 @@ import {
 //@ts-ignore
 import type { Theme } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
-import { ClerkApp } from "@clerk/remix";
-import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
@@ -75,56 +72,52 @@ export type RootLoaderData = {
 	};
 };
 
-export const loader: LoaderFunction = (args) => {
-	return rootAuthLoader(
-		args,
-		async ({ request, context }): Promise<TypedResponse<RootLoaderData>> => {
-			const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
-				context.cloudflare.env,
-			);
-			const cookieHeader = request.headers.get("Cookie");
-			const prefsCookie = (await prefs.parse(cookieHeader)) || {};
-			const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-			const { userId } = await getAuth(args);
-			// const token = await getToken();
-			// const user = await fetch(`${WORKER_URL}/users`, {
-			// 	method: "GET",
-			// 	headers: {
-			// 		Authorization: `Bearer ${token}`,
-			// 	},
-			// }).then((res) => res.json() as Promise<User | undefined>);
-			const user = await fetch(
-				`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
-				{
-					method: "GET",
-				},
-			).then((res) => res.json() as Promise<User | undefined>);
-			return json(
-				{
-					ENV: {
-						REPLICACHE_KEY,
-						WORKER_URL,
-						PARTYKIT_HOST,
-					},
-					requestInfo: {
-						hints: getHints(request),
-						origin: getDomainUrl(request),
-						path: new URL(request.url).pathname,
-						userPrefs: {
-							theme: prefsCookie.theme,
-							sidebarState: prefsCookie.sidebarState,
-						},
-						userContext: {
-							...(user && { user }),
-							authID: userId,
-							cartID: userContextCookie.cartID,
-							fakeAuthID: userContextCookie.fakeAuthID,
-						},
-					},
-				},
-				// { headers: { "Cache-Control": "private, max-age=1800" } },
-			);
+export const loader: LoaderFunction = async (args) => {
+	const { context, request } = args;
+
+	const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
+		context.cloudflare.env,
+	);
+	const cookieHeader = request.headers.get("Cookie");
+	const prefsCookie = (await prefs.parse(cookieHeader)) || {};
+	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
+	// const token = await getToken();
+	// const user = await fetch(`${WORKER_URL}/users`, {
+	// 	method: "GET",
+	// 	headers: {
+	// 		Authorization: `Bearer ${token}`,
+	// 	},
+	// }).then((res) => res.json() as Promise<User | undefined>);
+	const user = await fetch(
+		`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
+		{
+			method: "GET",
 		},
+	).then((res) => res.json() as Promise<User | undefined>);
+	return json(
+		{
+			ENV: {
+				REPLICACHE_KEY,
+				WORKER_URL,
+				PARTYKIT_HOST,
+			},
+			requestInfo: {
+				hints: getHints(request),
+				origin: getDomainUrl(request),
+				path: new URL(request.url).pathname,
+				userPrefs: {
+					theme: prefsCookie.theme,
+					sidebarState: prefsCookie.sidebarState,
+				},
+				userContext: {
+					...(user && { user }),
+					// authID: userId,
+					cartID: userContextCookie.cartID,
+					fakeAuthID: userContextCookie.fakeAuthID,
+				},
+			},
+		},
+		// { headers: { "Cache-Control": "private, max-age=1800" } },
 	);
 };
 
@@ -161,7 +154,7 @@ function App() {
 	);
 }
 
-export default ClerkApp(App);
+export default App;
 
 function Document({
 	children,

@@ -10,7 +10,6 @@ import { LoadingSpinner } from "@blazell/ui/loading";
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { Store } from "@blazell/validators/client";
-import { useAuth } from "@clerk/remix";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as base64 from "base64-arraybuffer";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -87,7 +86,6 @@ export function EditStore({ store }: { store: Store }) {
 			}),
 		),
 	});
-	const { getToken } = useAuth();
 	const onSubmit = async (data: { name: string; description: string }) => {
 		setIsLoading(true);
 		if (data.name !== store.name) {
@@ -102,11 +100,9 @@ export function EditStore({ store }: { store: Store }) {
 				return;
 			}
 
-			const token = await getToken();
 			await fetch(`${window.ENV.WORKER_URL}/stores/update-store/${store.id}`, {
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 					...(requestInfo.userContext.fakeAuthID && {
 						"x-fake-auth-id": requestInfo.userContext.fakeAuthID,

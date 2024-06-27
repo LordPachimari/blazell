@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
 
-import { useAuth } from "@clerk/remix";
 import { useReplicache } from "~/zustand/replicache";
 import { DashboardMutators } from "@blazell/replicache";
 
@@ -12,7 +11,6 @@ function MarketplaceReplicacheProvider({
 }>) {
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const setMarketplaceRep = useReplicache((state) => state.setMarketplaceRep);
-	const { getToken } = useAuth();
 
 	useEffect(() => {
 		if (marketplaceRep) {
@@ -26,14 +24,12 @@ function MarketplaceReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/pull/marketplace`,
 					{
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
 						},
 						body: JSON.stringify(req),
 						credentials: "include",
@@ -49,14 +45,12 @@ function MarketplaceReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const token = await getToken();
 				const result = await fetch(
 					`${window.ENV.WORKER_URL}/push/marketplace`,
 					{
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
 						},
 						body: JSON.stringify(req),
 					},
@@ -71,7 +65,7 @@ function MarketplaceReplicacheProvider({
 			},
 		});
 		setMarketplaceRep(r);
-	}, [marketplaceRep, setMarketplaceRep, getToken]);
+	}, [marketplaceRep, setMarketplaceRep]);
 	return <>{children}</>;
 }
 

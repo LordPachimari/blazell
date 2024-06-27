@@ -62,7 +62,7 @@ const Actions = ({
 			if (!cartID) {
 				fetcher.submit(
 					{ cartID: newCartID },
-					{ method: "POST", action: "/action/set-cart-id", navigate: false },
+					{ method: "POST", action: "/action/set-cart-id" },
 				);
 			}
 

@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/remix";
 import usePartySocket from "partysocket/react";
 import { useRequestInfo } from "~/hooks/use-request-info";
 
@@ -10,7 +9,6 @@ function PartykitProvider() {
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { userContext } = useRequestInfo();
 	const { cartID, fakeAuthID, user } = userContext;
-	const { getToken } = useAuth();
 
 	usePartySocket({
 		// usePartySocket takes the same arguments as PartySocket.
@@ -28,7 +26,6 @@ function PartykitProvider() {
 			if (globalRep) {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/global?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -37,7 +34,6 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
 								...(user?.id && {
 									"x-user-id": user.id,
 								}),
@@ -82,7 +78,6 @@ function PartykitProvider() {
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/dashboard?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -91,7 +86,6 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
 								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 							},
 							body: JSON.stringify(req),
@@ -132,7 +126,6 @@ function PartykitProvider() {
 			if (marketplaceRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
-					const token = await getToken();
 					const result = await fetch(
 						`${window.ENV.WORKER_URL}/pull/marketplace?${subspaces
 							.map((val) => `subspaces=${val}`)
@@ -141,7 +134,6 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`,
 							},
 							body: JSON.stringify(req),
 						},

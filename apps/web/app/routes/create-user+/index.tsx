@@ -1,13 +1,11 @@
 import type { User } from "@blazell/validators/client";
-import { useUser } from "@clerk/remix";
-// import { getAuth } from "@clerk/remix/ssr.server";
 import {
 	json,
 	redirect,
 	type ActionFunctionArgs,
 	type LoaderFunction,
 } from "@remix-run/cloudflare";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { useMemo, useState } from "react";
 
@@ -33,7 +31,6 @@ import {
 import { parseWithZod } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FieldErrorMessage } from "~/components/field-error";
@@ -93,13 +90,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Page() {
 	const data = useLoaderData<LoaderData>();
-	const { user } = useUser();
-	return (
-		<CreateUserPage
-			authID={data.authID}
-			email={user?.emailAddresses[0]?.emailAddress}
-		/>
-	);
+	return <CreateUserPage authID={data.authID} email={undefined} />;
 }
 
 interface CreateUserFormState {
@@ -150,10 +141,8 @@ function CreateUserPage({ email, authID }: CreateUserPageProps) {
 			},
 			{
 				method: "POST",
-				navigate: false,
 				preventScrollReset: true,
 				action: "/create-user",
-				fetcherKey: "create-user",
 			},
 		);
 		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {

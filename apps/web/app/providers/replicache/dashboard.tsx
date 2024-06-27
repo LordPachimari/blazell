@@ -1,5 +1,4 @@
 import { DashboardMutators } from "@blazell/replicache";
-import { useAuth } from "@clerk/remix";
 import { useEffect } from "react";
 import { Replicache } from "replicache";
 import { useRequestInfo } from "~/hooks/use-request-info";
@@ -12,7 +11,6 @@ function DashboardReplicacheProvider({
 }>) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const setDashboardRep = useReplicache((state) => state.setDashboardRep);
-	const { getToken } = useAuth();
 	const { userContext } = useRequestInfo();
 	const { fakeAuthID } = userContext;
 
@@ -29,12 +27,10 @@ function DashboardReplicacheProvider({
 
 			//@ts-ignore
 			puller: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/pull/dashboard`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
@@ -50,12 +46,10 @@ function DashboardReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const token = await getToken();
 				const result = await fetch(`${window.ENV.WORKER_URL}/push/dashboard`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
 						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
@@ -70,7 +64,7 @@ function DashboardReplicacheProvider({
 			},
 		});
 		setDashboardRep(r);
-	}, [dashboardRep, setDashboardRep, getToken, fakeAuthID]);
+	}, [dashboardRep, setDashboardRep, fakeAuthID]);
 	return <>{children}</>;
 }
 

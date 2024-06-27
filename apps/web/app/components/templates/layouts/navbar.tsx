@@ -2,21 +2,18 @@ import { cn } from "@blazell/ui";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import { noHeaderPaths, noSidebarPaths } from "~/constants";
 import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
-import { useWindowSize } from "~/hooks/use-window-size";
 import type { RootLoaderData } from "~/root";
 
 function Navbar(props: { children: React.ReactNode }) {
 	const isScrolled = useIsWindowScrolled();
 	const location = useLocation();
 	const { requestInfo } = useLoaderData<RootLoaderData>();
-	const windowSize = useWindowSize();
 	if (noHeaderPaths(location.pathname)) return null;
-	if (windowSize.width < 1024) return null;
 	return (
 		<header
 			{...props}
 			className={cn(
-				"group bg-transparent border-b backdrop-blur-sm lg:backdrop-blur-md fixed px-20 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  lg:flex items-center justify-between lg:border lg:border-mauve-t lg:dark:border-mauve-7 py-2 transition-all duration-300 hover:border lg:bg-component",
+				"hidden lg:block group bg-transparent border-b backdrop-blur-sm lg:backdrop-blur-md fixed px-20 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  lg:flex items-center justify-between lg:border lg:border-mauve-t lg:dark:border-mauve-7 py-2 transition-all duration-300 hover:border lg:bg-component",
 				requestInfo.userPrefs.sidebarState === "open" &&
 					!noSidebarPaths.has(location.pathname) &&
 					isScrolled &&

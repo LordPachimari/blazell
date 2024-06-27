@@ -1,25 +1,14 @@
-import { cn } from "@blazell/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
-import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
 import type { Variant } from "@blazell/validators/client";
-import { useState } from "react";
 import Price from "~/components/molecules/price";
+import { SafeMdxRenderer } from "safe-mdx";
 
 interface GeneralInfoProps {
 	defaultVariant: Variant | PublishedVariant | undefined | null;
 }
 
 function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
-	const [isTruncated, setIsTruncated] = useState(true);
-
-	const handleToggle = () => {
-		setIsTruncated(!isTruncated);
-	};
-
-	const displayText = isTruncated
-		? truncateString(defaultVariant?.description ?? "", 200)
-		: defaultVariant?.description ?? "";
 	return (
 		<section className="flex flex-col ">
 			<div className="w-[200px] flex gap-2">
@@ -35,19 +24,10 @@ function GeneralInfo({ defaultVariant }: GeneralInfoProps) {
 				<h1 className="font-medium text-xl">{`${
 					defaultVariant?.title ?? "Untitled"
 				}`}</h1>
-				<p>
-					{displayText}
-					<span
-						onClick={handleToggle}
-						onKeyDown={handleToggle}
-						className={cn(
-							"pl-1 underline cursor-pointer bg-transparent transition text-mauve-11",
-							displayText.length < 200 && "hidden",
-						)}
-					>
-						{isTruncated ? "Reveal" : "Hide"}
-					</span>
-				</p>
+				<SafeMdxRenderer
+					code={defaultVariant?.description ?? ""}
+					components={{}}
+				/>
 			</div>
 
 			<Price

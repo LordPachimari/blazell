@@ -55,8 +55,6 @@ const Sidebar = () => {
 			{
 				method: "post",
 				action: "/action/set-sidebar",
-				navigate: false,
-				fetcherKey: "sidebar-fetcher",
 			},
 		);
 	});
@@ -97,8 +95,6 @@ const Sidebar = () => {
 									{
 										method: "post",
 										action: "/action/set-sidebar",
-										navigate: false,
-										fetcherKey: "sidebar-fetcher",
 									},
 								)
 							}
