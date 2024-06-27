@@ -11,7 +11,6 @@ export const notificationsCVD: GetRowsWTableName = ({ fullRows = false }) => {
 		const userID = headers.get("x-user-id");
 		const globalID = headers.get("x-global-id");
 		const id = userID ?? globalID;
-		console.log("notification id<----", id);
 		if (!id) return [];
 		const { manager } = yield* Database;
 

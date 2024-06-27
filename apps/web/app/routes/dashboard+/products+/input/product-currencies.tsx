@@ -10,9 +10,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@blazell/ui/dialog-vaul";
+import { Icons } from "@blazell/ui/icons";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type { Price } from "@blazell/validators/client";
-import { Icons } from "@blazell/ui/icons";
 
 function Currencies({
 	opened,

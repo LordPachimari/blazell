@@ -22,8 +22,8 @@ function ProductRoute() {
 	const defaultVariant = variantMap.get(product.defaultVariantID);
 
 	return (
-		<>
-			<nav className="w-full h-12  bg-component border-b border-border backdrop-blur-sm fixed px-2 z-10">
+		<main className="relative w-full h-full">
+			<nav className="w-full h-12  bg-component border-b border-border fixed top-0 backdrop-blur-sm px-2 z-10">
 				<div className="w-full relative flex items-center ">
 					<Link
 						type="button"
@@ -49,7 +49,7 @@ function ProductRoute() {
 					<ProductPreview product={product} />
 				)}
 			</section>
-		</>
+		</main>
 	);
 }
 

@@ -182,7 +182,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative font-body bg-background min-w-[280px]">
+			<body className="font-body bg-background min-w-[280px]">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<script

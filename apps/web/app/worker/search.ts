@@ -51,8 +51,6 @@ const fuse = new Fuse<Document>([], {
 });
 self.onmessage = (event: MessageEvent<SearchWorkerRequest>) => {
 	const { type, payload } = event.data;
-	console.log("type", type);
-	console.log("payload", payload);
 
 	if (type === "ADD") {
 		fuse.add(payload.document);

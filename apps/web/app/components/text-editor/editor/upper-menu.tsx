@@ -7,7 +7,6 @@ export const UpperMenu = () => {
 	if (!editor) {
 		return null;
 	}
-	console.log("editor", editor);
 	const commonClass =
 		"bg-component border border-border hidden sm:flex size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2";
 	return (

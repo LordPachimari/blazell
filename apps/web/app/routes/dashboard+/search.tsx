@@ -124,7 +124,6 @@ export function DashboardSearchCombobox() {
 			};
 		}
 	}, [searchWorker]);
-	console.log("searchResults", searchResults);
 
 	return (
 		<>

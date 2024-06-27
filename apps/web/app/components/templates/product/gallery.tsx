@@ -11,7 +11,6 @@ import {
 import type { Image as ImageType } from "@blazell/validators";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { useIsWindowScrolled } from "~/hooks/use-is-window-scrolled";
 import { toImageURL } from "~/utils/helpers";
 
 interface GalleryProps {
@@ -19,13 +18,10 @@ interface GalleryProps {
 }
 
 function MobileGallery({ images }: GalleryProps) {
-	const isScrolled = useIsWindowScrolled();
-	console.log("isScrolled", isScrolled);
 	return (
 		<div
 			className={cn(
 				"sticky top-0 lg:hidden h-full transition-all flex flex-col items-center w-full gap-4",
-				// isScrolled && "brightness-50 lg:brightness-100",
 			)}
 		>
 			<div className="flex flex-col justify-center items-center w-full gap-4 lg:p-4 h-full">
