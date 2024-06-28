@@ -107,6 +107,7 @@ const getOldSpaceRecord = ({
 					new NeonDatabaseError({ message: error.message }),
 			}),
 		);
+		if (result.length === 0) return undefined;
 		return result;
 	});
 };
