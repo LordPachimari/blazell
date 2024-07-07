@@ -7,18 +7,19 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { Progress } from "@blazell/ui/progress";
-import { useCallback, useEffect, useState, useTransition } from "react";
-import { PageHeader } from "~/components/page-header";
-import { OrderPreview, OrderPreviewMobile } from "./order-preview";
-import { OrdersTable } from "./orders-table/table";
-import { useDashboardStore } from "~/zustand/store";
-import debounce from "lodash.debounce";
 import type { Order } from "@blazell/validators/client";
+import debounce from "lodash.debounce";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { isString } from "remeda";
+import { ClientOnly } from "remix-utils/client-only";
+import { PageHeader } from "~/components/page-header";
 import type {
 	SearchWorkerRequest,
 	SearchWorkerResponse,
 } from "~/worker/search";
-import { isString } from "remeda";
+import { useDashboardStore } from "~/zustand/store";
+import { OrderPreview, OrderPreviewMobile } from "./order-preview";
+import { OrdersTable } from "./orders-table/table";
 
 export default function Orders() {
 	const orders = useDashboardStore((state) => state.orders);
@@ -27,6 +28,7 @@ export default function Orders() {
 	);
 	const searchWorker = useDashboardStore((state) => state.searchWorker);
 	const [_, startTransition] = useTransition();
+
 	const createOrder = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
 		// });
@@ -102,11 +104,15 @@ export default function Orders() {
 					{orderID ? (
 						<>
 							<OrderPreview orderID={orderID} />
-							<OrderPreviewMobile
-								orderID={orderID}
-								opened={opened}
-								setOpened={setOpened}
-							/>
+							<ClientOnly>
+								{() => (
+									<OrderPreviewMobile
+										orderID={orderID}
+										opened={opened}
+										setOpened={setOpened}
+									/>
+								)}
+							</ClientOnly>
 						</>
 					) : (
 						<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-component shadow-inner hover:bg-mauve-2  border-border   rounded-2xl">
