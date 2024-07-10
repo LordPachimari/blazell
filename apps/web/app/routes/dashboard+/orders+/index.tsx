@@ -104,15 +104,15 @@ export default function Orders() {
 					{orderID ? (
 						<>
 							<OrderPreview orderID={orderID} />
-							{/* <ClientOnly>
-								{() => ( */}
-							<OrderPreviewMobile
-								orderID={orderID}
-								opened={opened}
-								setOpened={setOpened}
-							/>
-							{/* )}
-							</ClientOnly> */}
+							<ClientOnly>
+								{() => (
+									<OrderPreviewMobile
+										orderID={orderID}
+										opened={opened}
+										setOpened={setOpened}
+									/>
+								)}
+							</ClientOnly>
 						</>
 					) : (
 						<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-component shadow-inner hover:bg-mauve-2  border-border   rounded-2xl">
