@@ -34,11 +34,11 @@ function Header() {
 			<div />
 			<Logo
 				to="/"
-				className="absolute lg:left-1/2 left-1/2 flex -translate-x-1/2"
+				className="absolute left-20 lg:left-40 xl:left-1/2 flex -translate-x-1/2"
 			/>
 
 			{/* Right corner */}
-			<div className="hidden gap-2 lg:flex items-center ">
+			<div className="gap-2 flex items-center ">
 				<GlobalSearchCombobox />
 				<Notifications />
 				<ThemeToggle />
@@ -81,7 +81,7 @@ function Header() {
 						to={!fakeAuthID ? "/onboarding" : "/dashboard"}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
-						className={cn(buttonVariants(), "rounded-lg")}
+						className={cn(buttonVariants(), "rounded-lg hidden lg:flex")}
 					>
 						Dashboard
 					</Link>

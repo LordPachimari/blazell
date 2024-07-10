@@ -2,18 +2,12 @@ import { cn } from "@blazell/ui";
 import { Skeleton } from "@blazell/ui/skeleton";
 import type { PublishedProduct } from "@blazell/validators/client";
 import { Link } from "@remix-run/react";
-import type { Replicache } from "replicache";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import Price from "~/components/molecules/price";
 import { useMarketplaceStore } from "~/zustand/store";
 
-interface ProductsProps {
-	marketplaceRep: Replicache | null;
-	category: string;
-}
-
-const Products = ({ marketplaceRep }: ProductsProps) => {
+const Products = () => {
 	const products = useMarketplaceStore((state) => state.products);
 	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 
@@ -21,7 +15,7 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 		return (
 			<section className="flex flex-col w-full gap-2">
 				<div className="w-full h-screen grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
-					{Array.from({ length: 24 }).map((_, i) => (
+					{Array.from({ length: 16 }).map((_, i) => (
 						<Skeleton
 							key={i}
 							className={cn(
@@ -39,11 +33,7 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 		<section className="flex flex-col gap-2">
 			<div className="grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
 				{products.map((product) => (
-					<ProductCard
-						key={product.id}
-						product={product}
-						rep={marketplaceRep}
-					/>
+					<ProductCard key={product.id} product={product} />
 				))}
 			</div>
 		</section>
@@ -51,14 +41,7 @@ const Products = ({ marketplaceRep }: ProductsProps) => {
 };
 export { Products };
 
-const ProductCard = ({
-	product,
-	rep,
-}: { product: PublishedProduct; rep: Replicache | null }) => {
-	const variantMap = useMarketplaceStore((state) => state.variantMap);
-	const defaultVariant = variantMap.get(product.defaultVariantID);
-	if (!defaultVariant) return null;
-	if (!rep) return null;
+const ProductCard = ({ product }: { product: PublishedProduct }) => {
 	return (
 		<Link
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
@@ -102,8 +85,8 @@ const ProductCard = ({
 			<span className="absolute top-2 right-2 text-brand-9 font-freeman flex gap-2 text-sm md:text-base border border-brand-9 backdrop-blur-md rounded-xl p-1">
 				<Price
 					className="text-xs md:text-sm font-freeman flex-none text-brand-9 rounded-xl"
-					amount={defaultVariant.prices[0]!.amount}
-					currencyCode={defaultVariant.prices[0]!.currencyCode}
+					amount={product.defaultVariant.prices[0]!.amount}
+					currencyCode={product.defaultVariant.prices[0]!.currencyCode}
 					currencyCodeClassName="hidden @[275px]/label:inline"
 				/>
 			</span>

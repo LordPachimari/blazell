@@ -66,7 +66,7 @@ export function ThemeToggle() {
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "outline" }),
-					"rounded-full",
+					"rounded-full hidden lg:flex",
 				)}
 			>
 				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>

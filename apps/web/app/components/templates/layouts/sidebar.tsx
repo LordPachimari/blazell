@@ -211,7 +211,7 @@ const MobileSidebar = () => {
 					})}
 
 					<div className={cn("flex justify-center")}>
-						{windowSize.width < 1024 && !noHeaderPaths(location.pathname) && (
+						{windowSize.width < 640 && !noHeaderPaths(location.pathname) && (
 							<GlobalSearchCombobox />
 						)}
 					</div>
