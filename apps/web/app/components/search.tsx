@@ -118,7 +118,7 @@ export function GlobalSearchCombobox() {
 	}, [searchWorker]);
 
 	return (
-		<>
+		<div>
 			<Button
 				variant={"outline"}
 				className={cn("hidden group relative lg:flex gap-1 px-2")}
@@ -247,6 +247,6 @@ export function GlobalSearchCombobox() {
 					</div>
 				</Dialog>
 			</Transition>
-		</>
+		</div>
 	);
 }

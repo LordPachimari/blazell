@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
 	return (
 		<main className="flex flex-col items-center">
-			<div className="absolute left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
+			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<div
 				style={{ animationDelay: "0.10s", animationFillMode: "both" }}
 				className="bg-component shadow border border-border px-2 hover:bg-mauve-2 cursor-pointer animate-fade-up text-sm font-medium text-mauve-11 flex justify-center items-center p-1 gap-2 rounded-2xl h-8 absolute top-[50px] lg:top-[200px]"

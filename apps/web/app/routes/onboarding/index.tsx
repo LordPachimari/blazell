@@ -73,7 +73,7 @@ export default function Page() {
 	const step = search.get("step");
 	return (
 		<main className="w-screen h-screen bg-background">
-			<div className="absolute left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
+			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<AnimatePresence mode="wait">
 				{!step && <Intro key="intro" />}
 				{step === "create" && <CreateUser authID={null} email={undefined} />}
