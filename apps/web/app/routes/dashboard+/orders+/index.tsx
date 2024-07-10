@@ -20,6 +20,7 @@ import type {
 import { useDashboardStore } from "~/zustand/store";
 import { OrderPreview, OrderPreviewMobile } from "./order-preview";
 import { OrdersTable } from "./orders-table/table";
+import { useWindowSize } from "~/hooks/use-window-size";
 
 export default function Orders() {
 	const orders = useDashboardStore((state) => state.orders);
@@ -28,6 +29,8 @@ export default function Orders() {
 	);
 	const searchWorker = useDashboardStore((state) => state.searchWorker);
 	const [_, startTransition] = useTransition();
+
+	const windowSize = useWindowSize(100);
 
 	const createOrder = useCallback(async () => {
 		// await dashboardRep?.mutate.createOrder({
@@ -105,13 +108,15 @@ export default function Orders() {
 						<>
 							<OrderPreview orderID={orderID} />
 							<ClientOnly>
-								{() => (
-									<OrderPreviewMobile
-										orderID={orderID}
-										opened={opened}
-										setOpened={setOpened}
-									/>
-								)}
+								{() =>
+									windowSize.width < 1024 && (
+										<OrderPreviewMobile
+											orderID={orderID}
+											opened={opened}
+											setOpened={setOpened}
+										/>
+									)
+								}
 							</ClientOnly>
 						</>
 					) : (

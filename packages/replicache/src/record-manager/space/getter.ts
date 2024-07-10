@@ -50,7 +50,11 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									optionValues: true,
 								},
 							},
-							defaultVariant: true,
+							defaultVariant: {
+								with: {
+									prices: true,
+								},
+							},
 						},
 					}),
 				),
