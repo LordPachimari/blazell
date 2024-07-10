@@ -178,7 +178,7 @@ export const OrderPreviewMobile = ({
 	return (
 		<DialogRoot
 			direction={windowSize.width < 640 ? "bottom" : "right"}
-			open={windowSize.width < 1024 && opened}
+			open={opened}
 			onOpenChange={setOpened}
 		>
 			<DialogContent>
