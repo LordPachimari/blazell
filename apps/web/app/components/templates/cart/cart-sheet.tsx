@@ -49,11 +49,11 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 					<Icons.ShoppingCart
 						size={20}
 						strokeWidth={strokeWidth}
-						className="text-mauve-11"
+						className="text-slate-11"
 					/>
 				</Button>
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="sm:w-[350px]">
 				<DialogTitle className="p-4 border-b border-border  ">Cart</DialogTitle>
 				<ScrollArea className="h-[75vh] px-4 pt-2">
 					<ul className="flex flex-col gap-2" ref={parent}>
@@ -62,7 +62,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 								<LineItemSkeleton key={i} />
 							))}
 						{items.length === 0 && (
-							<p className="text-mauve-11 mt-40 dark:text-white text-center">
+							<p className="text-slate-11 mt-40 dark:text-white text-center">
 								Cart is empty
 							</p>
 						)}
@@ -78,7 +78,7 @@ export const CartSheet = ({ cartID }: { cartID: string | null }) => {
 					</ul>
 				</ScrollArea>
 				<Total
-					className="mt-auto px-4 pb-2 border-t border-t-mauve-7"
+					className="mt-auto px-4 pb-2 border-t border-t-slate-7"
 					cartOrOrder={cart}
 					lineItems={items}
 				/>

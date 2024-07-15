@@ -12,7 +12,7 @@ export const CustomerInfo = ({
 	const { register, formState, clearErrors } = useFormContext<CheckoutForm>();
 	return (
 		<section>
-			<h1 className="text-xl text-mauve-10 my-2">Customer information</h1>
+			<h1 className="text-xl text-slate-10 my-2">Customer information</h1>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 				<div>
 					<Input

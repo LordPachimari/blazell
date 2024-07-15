@@ -28,7 +28,7 @@ const OrderRoute = () => {
 					<Button
 						variant="ghost"
 						href="/dashboard/orders"
-						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
+						className="fixed text-slate-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/orders")}
 					>
 						<Icons.Left size={20} className="text-black dark:text-white" />
@@ -74,14 +74,14 @@ const CustomerInfo = ({ order }: { order: Order | undefined | null }) => {
 							<p className="font-semibold">email:</p>
 							<a
 								href="mailto:"
-								className="text-mauve-10 text-ellipsis overflow-hidden"
+								className="text-slate-10 text-ellipsis overflow-hidden"
 							>
 								{order?.email}
 							</a>
 						</span>
 						<span className="flex justify-between">
 							<p className="font-semibold">phone:</p>
-							<a href="tel:" className="text-mauve-10">
+							<a href="tel:" className="text-slate-10">
 								{order?.phone}
 							</a>
 						</span>
@@ -116,7 +116,7 @@ const CustomerNote = () => {
 				<h1>Customer Note</h1>
 			</CardHeader>
 			<CardContent>
-				<p className="text-mauve-11 text-sm">Customer did not leave a note.</p>
+				<p className="text-slate-11 text-sm">Customer did not leave a note.</p>
 			</CardContent>
 		</Card>
 	);
@@ -132,7 +132,7 @@ const OrderInfo = ({ order }: { order: Order | undefined }) => {
 					<h1 className="font-bold text-xl text-ellipsis overflow-hidden">{`Order: ${order?.id}`}</h1>
 					<OrderStatus status={order?.status ?? "pending"} />
 				</span>
-				<p className="text-sm text-mauve-10">{order?.createdAt}</p>
+				<p className="text-sm text-slate-10">{order?.createdAt}</p>
 			</CardHeader>
 			<CardContent>
 				<ul className="flex flex-col gap-2">
@@ -142,7 +142,7 @@ const OrderInfo = ({ order }: { order: Order | undefined }) => {
 							<LineItemSkeleton key={i} />
 						))}
 					{items.length === 0 && (
-						<p className="text-mauve-11 text-center">Order is empty</p>
+						<p className="text-slate-11 text-center">Order is empty</p>
 					)}
 					{items.map((item) => (
 						<LineItem

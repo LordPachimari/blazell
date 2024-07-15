@@ -81,7 +81,7 @@ export default function Orders() {
 		}
 	}, [searchWorker]);
 	return (
-		<main className="w-full p-4 md:px-10 md:py-6 flex justify-center ">
+		<main className="w-full p-4 md:py-6 flex justify-center ">
 			<div className="justify-center flex flex-col w-full lg:flex-row gap-6 max-w-7xl">
 				<section className="w-full xl:w-8/12">
 					<div className="flex flex-col pb-4">
@@ -120,8 +120,8 @@ export default function Orders() {
 							</ClientOnly>
 						</>
 					) : (
-						<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-component shadow-inner hover:bg-mauve-2  border-border   rounded-2xl">
-							<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
+						<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-component shadow-inner hover:bg-slate-2  border-border   rounded-lg">
+							<h1 className="font-bold text-xl text-slate-8">Order preview</h1>
 						</div>
 					)}
 				</section>

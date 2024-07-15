@@ -8,6 +8,8 @@ import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
 import type { DataTableSearchableColumn, Option } from "~/types/table";
 import type { DebouncedFunc } from "~/types/debounce";
+import { cn } from "@blazell/ui";
+import { Icons } from "@blazell/ui/icons";
 
 export interface DataTableFilterableColumn<TData>
 	extends DataTableSearchableColumn<TData> {
@@ -20,6 +22,7 @@ interface DataTableToolbarProps<TData> {
 	toolbarButton?: React.ReactNode;
 	viewOptions?: boolean;
 	onSearch?: DebouncedFunc<(value: string) => void>;
+	className?: string;
 }
 
 export function DataTableToolbar<TData>({
@@ -28,43 +31,35 @@ export function DataTableToolbar<TData>({
 	toolbarButton,
 	viewOptions = true,
 	onSearch,
+	className,
 }: Readonly<DataTableToolbarProps<TData>>) {
-	const isFiltered = table.getState().columnFilters.length > 0;
-
 	return (
-		<div className="flex items-center justify-between">
-			<div className="flex space-x-2">
+		<div className={cn("flex items-center justify-between", className)}>
+			<div className="flex gap-2">
 				<Input
-					placeholder="Search..."
+					placeholder="Search"
 					onChange={(event) => {
 						onSearch?.(event.target.value);
 					}}
-					className="h-10 w-[150px] md:w-[350px] rounded-lg"
+					type="search"
+					size="small"
+					className="h-9 rounded-lg"
 				/>
-
-				{filterableColumns?.map(
-					(column) =>
-						// biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
-						table.getColumn(String(column.id)) && (
-							<DataTableFacetedFilter
-								key={String(column.id)}
-								column={table.getColumn(String(column.id))}
-								title={column.title}
-								options={column.options}
-							/>
-						),
-				)}
-				{isFiltered && (
-					<Button
-						variant="ghost"
-						type="button"
-						onClick={() => table.resetColumnFilters()}
-						className="h-8 px-2 lg:px-3"
-					>
-						Reset
-						<Cross2Icon className="ml-2 h-4 w-4" />
-					</Button>
-				)}
+				<div className="flex flex-wrap">
+					{filterableColumns?.map(
+						(column) =>
+							// biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
+							table.getColumn(String(column.id)) && (
+								<DataTableFacetedFilter
+									key={String(column.id)}
+									column={table.getColumn(String(column.id))}
+									title={column.title}
+									options={column.options}
+									table={table}
+								/>
+							),
+					)}
+				</div>
 			</div>
 			<div className="flex gap-2">
 				<div className="w-fit">{toolbarButton}</div>

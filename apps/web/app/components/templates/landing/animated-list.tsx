@@ -103,7 +103,7 @@ const Notification = ({ name, icon, color, time }: Item) => {
 	return (
 		<figure
 			className={cn(
-				"relative mx-auto min-h-fit w-full max-w-[400px] transform cursor-pointer overflow-hidden rounded-2xl p-4",
+				"relative mx-auto min-h-fit w-full max-w-[400px] transform cursor-pointer overflow-hidden rounded-lg p-4",
 				// animation styles
 				"transition-all duration-200 ease-in-out hover:scale-[103%]",
 				// light styles
@@ -114,7 +114,7 @@ const Notification = ({ name, icon, color, time }: Item) => {
 		>
 			<div className="flex flex-row items-center gap-3">
 				<div
-					className="flex h-10 w-10 items-center justify-center rounded-2xl"
+					className="flex h-10 w-10 items-center justify-center rounded-lg"
 					style={{
 						backgroundColor: color,
 					}}

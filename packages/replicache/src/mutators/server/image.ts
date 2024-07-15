@@ -129,13 +129,11 @@ const uploadImages = zod(UploadImagesSchema, (input) =>
 
 const deleteImage = zod(DeleteImageSchema, (input) => {
 	return Effect.gen(function* () {
-		const { imageID, entityID, url } = input;
+		const { keys, entityID, urls } = input;
 
 		const tableMutator = yield* TableMutator;
 		const { manager } = yield* Database;
 		const { env } = yield* Cloudflare;
-		const splitted = url.split("/");
-		const cloudflareID = splitted[splitted.length - 2];
 
 		let entity: Variant | undefined = undefined;
 		const isVariant = entityID.startsWith("variant");
@@ -161,38 +159,45 @@ const deleteImage = zod(DeleteImageSchema, (input) => {
 		yield* tableMutator.update(
 			entityID,
 			{
-				images: entity.images?.filter((image) => image.id !== imageID) ?? [],
+				images:
+					entity.images?.filter((image) => !keys.includes(image.id)) ?? [],
 			},
 			"variants",
 		);
+		yield* Effect.forEach(urls, (url) =>
+			Effect.gen(function* () {
+				const splitted = url.split("/");
+				const cloudflareID = splitted[splitted.length - 2];
 
-		if (cloudflareID)
-			yield* Http.request
-				.del(
-					`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${imageID}`,
-				)
-				.pipe(
-					Http.request.setHeaders({
-						Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-					}),
-					Http.client.fetch,
-					Effect.retry({ times: 3 }),
-					Effect.scoped,
-					Effect.catchTags({
-						RequestError: (e) =>
-							Effect.gen(function* () {
-								yield* Console.error("Error deleting image", e.message);
-
-								return yield* Effect.succeed({});
+				if (cloudflareID)
+					yield* Http.request
+						.del(
+							`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
+						)
+						.pipe(
+							Http.request.setHeaders({
+								Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
 							}),
-						ResponseError: (e) =>
-							Effect.gen(function* () {
-								yield* Console.error("Error deleting image", e.message);
+							Http.client.fetch,
+							Effect.retry({ times: 3 }),
+							Effect.scoped,
+							Effect.catchTags({
+								RequestError: (e) =>
+									Effect.gen(function* () {
+										yield* Console.error("Error deleting image", e.message);
 
-								return yield* Effect.succeed({});
+										return yield* Effect.succeed({});
+									}),
+								ResponseError: (e) =>
+									Effect.gen(function* () {
+										yield* Console.error("Error deleting image", e.message);
+
+										return yield* Effect.succeed({});
+									}),
 							}),
-					}),
-				);
+						);
+			}),
+		);
 	});
 });
 

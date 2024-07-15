@@ -1,4 +1,4 @@
-import { Clock, Effect, Layer } from "effect";
+import { Clock, Console, Effect, Layer } from "effect";
 
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { Database, type Cloudflare } from "@blazell/shared";
@@ -257,6 +257,7 @@ const processMutation = ({
 					}),
 				ImageUploadError: (error) =>
 					Effect.gen(function* () {
+						yield* Console.log("Error uploading image", error);
 						yield* createClientError({
 							title: "Failed to upload image",
 							message: error.message,

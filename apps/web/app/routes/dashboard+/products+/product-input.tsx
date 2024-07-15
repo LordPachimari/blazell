@@ -29,10 +29,12 @@ import { Variants } from "./input/product-variants";
 import { cn } from "@blazell/ui";
 import { Ping } from "@blazell/ui/ping";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { ProductOptions } from "./input/product-options";
 export interface ProductInputProps {
 	product: Product | undefined;
 	productID: string;
-	defaultVariant: Variant | undefined | null;
+	defaultVariant: Variant | undefined;
+	setView: (value: "preview" | "input") => void;
 }
 
 const ProductFormSchema = ProductSchema.partial().and(
@@ -44,6 +46,7 @@ export function ProductInput({
 	productID,
 	product,
 	defaultVariant,
+	setView,
 }: ProductInputProps) {
 	const variants = useDashboardStore((state) =>
 		state.variants.filter(
@@ -62,7 +65,7 @@ export function ProductInput({
 	const onPublish = useCallback(() => {
 		/* check prices */
 		if (!defaultVariant?.prices || defaultVariant.prices.length === 0) {
-			toast.error("Please add a price to the product");
+			toast.error("Please add price to the product");
 			return;
 		}
 		if (defaultVariant.quantity <= 0) {
@@ -96,7 +99,7 @@ export function ProductInput({
 		const v2 = variants.find((variant) => (variant.prices ?? []).length === 0);
 		if (v2) {
 			toast.error(
-				`Please add a price to the product variant "${
+				`Please add price to the product variant "${
 					v2.title ?? v2.optionValues?.[0]?.optionValue.value ?? ""
 				}"`,
 			);
@@ -162,7 +165,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative table min-h-screen pb-20 max-w-6xl w-full gap-4 xl:flex min-w-[15rem] px-4 md:px-10">
+				<main className="relative table min-h-screen pb-20 max-w-7xl w-full gap-3 lg:flex min-w-[15rem] px-3">
 					<AlertDialogComponent
 						open={isOpen}
 						setIsOpen={setIsOpen}
@@ -180,7 +183,7 @@ export function ProductInput({
 							await deleteProduct();
 						}}
 					/>
-					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[55rem]">
+					<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[50rem]">
 						<section className="flex items-center justify-between h-16">
 							<Badge
 								variant="default"
@@ -201,8 +204,9 @@ export function ProductInput({
 									? "In stock"
 									: "Out of stock"}
 							</Badge>
-							<div className="flex items-center gap-2 md:ml-auto xl:hidden">
+							<div className="flex items-center gap-1 md:ml-auto lg:hidden">
 								<DeleteOrPublish
+									setView={setView}
 									setIsOpen1={setIsOpen1}
 									onPublish={onPublish}
 								/>
@@ -210,9 +214,8 @@ export function ProductInput({
 						</section>
 						<section className="w-full table gap-0" ref={parent}>
 							<ProductInfo
-								description={defaultVariant?.description}
-								title={defaultVariant?.title}
-								defaultVariantID={defaultVariant?.id}
+								defaultVariant={defaultVariant}
+								product={product}
 								onVariantInputChange={onVariantInputChange}
 								updateVariant={updateVariant}
 							/>
@@ -224,6 +227,10 @@ export function ProductInput({
 								isPublished={product?.status === "published"}
 								variantID={defaultVariant?.id}
 								prices={defaultVariant?.prices ?? []}
+							/>
+							<ProductOptions
+								options={product?.options ?? []}
+								productID={productID}
 							/>
 							<Variants
 								productID={productID}
@@ -242,9 +249,13 @@ export function ProductInput({
 						</section>
 					</div>
 
-					<div className="w-full flex flex-col lg:min-w-[44rem] xl:min-w-[18rem] xl:max-w-[20rem]">
-						<section className="hidden xl:flex items-center order-1 justify-end gap-4 h-16">
-							<DeleteOrPublish setIsOpen1={setIsOpen1} onPublish={onPublish} />
+					<div className="w-full flex flex-col lg:max-w-[25rem]">
+						<section className="hidden lg:flex items-center order-1 justify-end gap-1 h-16">
+							<DeleteOrPublish
+								setView={setView}
+								setIsOpen1={setIsOpen1}
+								onPublish={onPublish}
+							/>
 						</section>
 						<section className="flex flex-col gap-4 order-2 w-full">
 							<ProductStatus
@@ -264,9 +275,11 @@ export function ProductInput({
 function DeleteOrPublish({
 	setIsOpen1,
 	onPublish,
+	setView,
 }: {
 	setIsOpen1: (value: boolean) => void;
 	onPublish: () => void;
+	setView: (value: "preview" | "input") => void;
 }) {
 	return (
 		<>
@@ -274,6 +287,24 @@ function DeleteOrPublish({
 				variant="outline"
 				type="button"
 				size="md"
+				onClick={async () => {
+					setView("preview");
+				}}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						e.stopPropagation();
+						setView("preview");
+					}
+				}}
+			>
+				Preview
+			</Button>
+			<Button
+				variant="outline"
+				type="button"
+				size="md"
+				className="text-red-9 hover:text-red-10 hover:border-red-7"
 				onClick={async () => {
 					setIsOpen1(true);
 				}}

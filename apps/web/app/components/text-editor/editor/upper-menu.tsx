@@ -8,9 +8,9 @@ export const UpperMenu = () => {
 		return null;
 	}
 	const commonClass =
-		"bg-component border border-border hidden sm:flex size-9 p-2 justify-center items-center hover:bg-mauve-2 cursor-pointer rounded-lg text-mauve-11 hover:text-mauve-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2";
+		"bg-component border border-border hidden sm:flex size-9 p-2 justify-center items-center hover:bg-slate-2 cursor-pointer rounded-lg text-slate-11 hover:text-slate-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  ";
 	return (
-		<div className="border-t border-border w-full top-0 left-0 border-b bg-mauve-a-2 px-4 py-2 rounded-t-lg flex gap-2 mb-4 absolute">
+		<div className="border-t border-border w-full top-0 left-0 border-b bg-slate-a-2 px-4 py-2 rounded-t-lg flex gap-2 mb-4 absolute">
 			<button
 				type="button"
 				onClick={() => editor?.chain().focus().undo().run()}

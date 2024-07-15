@@ -10,6 +10,7 @@ import {
 import type { Variant } from "@blazell/validators/client";
 import { cn } from "@blazell/ui";
 import { buttonVariants } from "@blazell/ui/button";
+import { Icons } from "@blazell/ui/icons";
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>;
@@ -34,16 +35,17 @@ export function RowActions({
 					"rounded-full",
 				)}
 			>
-				<DotsHorizontalIcon className="h-4 w-4 text-mauve-11" />
+				<DotsHorizontalIcon className="h-4 w-4 text-slate-11" />
 				<span className="sr-only">Open menu</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="center" className="w-[160px]">
 				<DropdownMenuItem
+					className="flex gap-2"
 					onClick={() => {
 						setVariantID(row.original.id);
 					}}
 				>
-					Edit
+					<Icons.Edit size={14} /> Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={async (e) => {
@@ -51,7 +53,7 @@ export function RowActions({
 						await duplicateVariant([row.original.id]);
 					}}
 				>
-					Duplicate
+					Copy
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="text-red-9"

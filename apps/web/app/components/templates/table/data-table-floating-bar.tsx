@@ -12,6 +12,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@blazell/ui/tooltip";
+import { Kbd } from "@blazell/ui/kbd";
 
 interface DataTableFloatingBarProps<TData extends { id: string }> {
 	table: Table<TData>;
@@ -24,8 +25,6 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 	onDelete,
 	onDuplicate,
 }: DataTableFloatingBarProps<TData>) {
-	const rows = table.getFilteredSelectedRowModel().rows;
-
 	// Clear selection on Escape key press
 	React.useEffect(() => {
 		function handleKeyDown(event: KeyboardEvent) {
@@ -39,7 +38,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 	}, [table]);
 
 	return (
-		<div className="fixed inset-x-0 bottom-10 rounded-2xl z-30 mx-auto w-fit px-4">
+		<div className="fixed inset-x-0 bottom-10 rounded-lg z-30 mx-auto w-fit px-4">
 			<TooltipProvider>
 				<div className="w-full overflow-x-auto">
 					<Card className="mx-auto flex w-fit items-center gap-2 p-2 shadow-2xl">
@@ -48,9 +47,9 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 								<TooltipTrigger asChild>
 									<Button
 										variant="ghost"
-										size="icon"
-										className="rounded-full"
+										className="flex gap-3"
 										onClick={() => {
+											const rows = table.getFilteredSelectedRowModel().rows;
 											if (rows.length > 20)
 												return toast.error(
 													"You can only duplicate 20 products at a time.",
@@ -60,24 +59,26 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 										}}
 									>
 										<Icons.Copy
-											className="text-mauve-11"
+											className="text-slate-11"
 											aria-hidden="true"
 											size={15}
 										/>
+										<Kbd>C</Kbd>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>Duplicate</p>
+									<p>Copy</p>
 								</TooltipContent>
 							</Tooltip>
 							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
-									<Button variant="ghost" size="icon" className="rounded-full">
+									<Button variant="ghost" className="flex gap-3">
 										<DownloadIcon
-											className="text-mauve-11"
+											className="text-slate-11"
 											aria-hidden="true"
 											fontSize={15}
 										/>
+										<Kbd>E</Kbd>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
@@ -88,9 +89,9 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 								<TooltipTrigger asChild>
 									<Button
 										variant="ghost"
-										size="icon"
-										className="rounded-full"
+										className="flex gap-3"
 										onClick={() => {
+											const rows = table.getFilteredSelectedRowModel().rows;
 											onDelete(rows.map((row) => row.original.id));
 											table.toggleAllRowsSelected(false);
 										}}
@@ -100,6 +101,7 @@ export function DataTableFloatingBar<TData extends { id: string }>({
 											aria-hidden="true"
 											className="text-red-9"
 										/>
+										<Kbd>D</Kbd>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>

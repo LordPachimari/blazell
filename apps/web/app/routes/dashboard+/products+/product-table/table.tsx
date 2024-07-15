@@ -1,6 +1,11 @@
 import { PlusIcon } from "@radix-ui/react-icons";
-import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
-import React, { useMemo } from "react";
+import {
+	flexRender,
+	type ColumnDef,
+	type Row,
+	type RowData,
+} from "@tanstack/react-table";
+import React, { useMemo, type KeyboardEvent } from "react";
 
 import { Button } from "@blazell/ui/button";
 import { Icons } from "@blazell/ui/icons";
@@ -20,14 +25,15 @@ import { DataTableToolbar } from "~/components/templates/table/data-table-toolba
 import { useDataTable } from "~/components/templates/table/use-data-table";
 import { filterableColumns, getProductsColumns } from "./columns";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ScrollArea } from "@blazell/ui/scroll-area";
 import { cn } from "@blazell/ui";
 import type { DebouncedFunc } from "~/types/debounce";
+import { Separator } from "@blazell/ui/separator";
+import { useHotkeys } from "react-hotkeys-hook";
 interface ProductsTableProps {
 	products: Product[];
 	createProduct: () => Promise<void>;
 	deleteProduct: (keys: string[]) => void;
-	duplicateProduct: (keys: string[]) => void;
+	copyProduct: (keys: string[]) => void;
 	isPending?: boolean;
 	onSearch?: DebouncedFunc<(value: string) => void>;
 }
@@ -36,14 +42,25 @@ function ProductsTable({
 	products,
 	createProduct,
 	deleteProduct,
-	duplicateProduct,
+	copyProduct,
 	isPending = false,
 	onSearch,
 }: Readonly<ProductsTableProps>) {
 	const columns = useMemo<ColumnDef<Product>[]>(
-		() => getProductsColumns({ deleteProduct, duplicateProduct, isPending }),
-		[deleteProduct, duplicateProduct, isPending],
+		() => getProductsColumns({ deleteProduct, copyProduct, isPending }),
+		[deleteProduct, copyProduct, isPending],
 	);
+	useHotkeys(["D"], () => {
+		const rows = table.getFilteredSelectedRowModel().rows;
+		console.log("rows", rows);
+		deleteProduct(rows.map((r) => r.original.id));
+		table.toggleAllPageRowsSelected(false);
+	});
+	useHotkeys(["C"], () => {
+		const rows = table.getFilteredSelectedRowModel().rows;
+		copyProduct(rows.map((r) => r.original.id));
+		table.toggleAllPageRowsSelected(false);
+	});
 	const navigate = useNavigate();
 	const table = useDataTable({
 		columns,
@@ -59,31 +76,42 @@ function ProductsTable({
 		estimateSize: () => 34,
 		overscan: 20,
 	});
+	const handleKeyDown = (
+		e: KeyboardEvent<HTMLTableRowElement>,
+		row: Row<Product>,
+	) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			navigate(`/dashboard/products/${row.original.id}`);
+		}
+		if (e.key === " ") {
+			console.log("space");
+			e.preventDefault();
+			e.stopPropagation();
+			row.toggleSelected(!row.getIsSelected());
+		}
+	};
 
 	return (
-		<div className="space-y-4 w-full">
+		<div className="w-full">
 			<DataTableToolbar
+				className="p-4 border-b border-border"
 				table={table}
 				filterableColumns={filterableColumns}
 				toolbarButton={
 					<Button size="md" onClick={createProduct} type="button">
-						<Icons.Plus
-							className="mr-1 font-bold "
-							size={15}
-							aria-hidden="true"
-						/>
-						New Product
+						Create
 					</Button>
 				}
 				{...(onSearch && { onSearch })}
 			/>
-			<ScrollArea
+			<div
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] shadow bg-component border border-border rounded-lg relative overflow-x-scroll"
+				className="h-[calc(63vh)] lg:h-[calc(66vh)] relative overflow-x-scroll"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader className="w-full sticky top-0 z-20 ">
+						<TableHeader className="w-full z-20 sticky top-0 bg-component">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -100,6 +128,8 @@ function ProductsTable({
 									})}
 								</TableRow>
 							))}
+
+							<Separator className="absolute top-10 bg-border" />
 						</TableHeader>
 						<TableBody>
 							{rows.length ? (
@@ -109,6 +139,7 @@ function ProductsTable({
 										<TableRow
 											key={row.id}
 											data-state={row.getIsSelected() && "selected"}
+											tabIndex={0}
 											style={{
 												height: `${virtualRow.size}px`,
 												transform: `translateY(${
@@ -121,6 +152,7 @@ function ProductsTable({
 											onClick={() =>
 												navigate(`/dashboard/products/${row.original.id}`)
 											}
+											onKeyDown={(e) => handleKeyDown(e, row)}
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>
@@ -162,13 +194,16 @@ function ProductsTable({
 						</TableBody>
 					</Table>
 				</div>
-			</ScrollArea>
-			<DataTablePagination table={table} />
+			</div>
+			<DataTablePagination
+				table={table}
+				className="p-4 border-t border-border"
+			/>
 			{table.getFilteredSelectedRowModel().rows.length > 0 && (
 				<DataTableFloatingBar
 					table={table}
 					onDelete={deleteProduct}
-					onDuplicate={duplicateProduct}
+					onDuplicate={copyProduct}
 				/>
 			)}
 		</div>

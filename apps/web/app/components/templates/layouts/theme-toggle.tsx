@@ -23,7 +23,7 @@ export function ThemeToggle() {
 	const modeLabel = {
 		light: (
 			<Icons.Sun
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 rotate-0 scale-100 text-slate-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -32,7 +32,7 @@ export function ThemeToggle() {
 		),
 		dark: (
 			<Icons.Moon
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 rotate-0 scale-100 text-slate-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -41,7 +41,7 @@ export function ThemeToggle() {
 		),
 		system: (
 			<Icons.Laptop
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 rotate-0 scale-100 text-slate-11  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>

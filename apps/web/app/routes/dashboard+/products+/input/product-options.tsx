@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import debounce from "lodash.debounce";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 import type {
 	DeleteProductOption,
@@ -11,21 +11,133 @@ import type {
 import { useEffect, useState } from "react";
 
 import { Input } from "@blazell/ui/input";
-import TagInput from "~/components/molecules/tag-input";
 
-import { Button } from "@blazell/ui/button";
+import { Button, buttonVariants } from "@blazell/ui/button";
 import { generateID } from "@blazell/utils";
 import type { ProductOption } from "@blazell/validators/client";
 import type { DebouncedFunc } from "~/types/debounce";
 import { useReplicache } from "~/zustand/replicache";
 import { Icons } from "@blazell/ui/icons";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@blazell/ui/card";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@blazell/ui/dropdown-menu";
+import { cn } from "@blazell/ui";
+import {
+	DialogRoot,
+	DialogContent,
+	DialogTitle,
+} from "@blazell/ui/dialog-vaul";
+import { Label } from "@blazell/ui/label";
+import { TagInput } from "@blazell/ui/tag-input";
+import { Badge } from "@blazell/ui/badge";
 
 interface CreateOptionProps {
 	productID: string;
-	options: ProductOption[] | undefined;
+	options: ProductOption[];
+}
+export function ProductOptions({ productID, options }: CreateOptionProps) {
+	const [opened, setOpened] = React.useState(false);
+	const [values, setValues] = React.useState<string[]>([]);
+	return (
+		<>
+			<Card className="my-3 p-0">
+				<CardHeader className="p-4 border-b border-border flex justify-between flex-row items-center">
+					<CardTitle className="items-center justify-center flex gap-1">
+						Options{" "}
+						<span className="text-slate-9 font-thin text-sm">
+							{"(Optional)"}
+						</span>
+					</CardTitle>
+					<div className="flex gap-2 items-start m-0">
+						<DropdownMenu>
+							<DropdownMenuTrigger
+								className={cn(
+									buttonVariants({ size: "icon", variant: "ghost" }),
+									"rounded-lg h-8 w-8 p-0 m-0 border-transparent hover:border-border hover:bg-slate-3",
+								)}
+							>
+								<Icons.Dots className="h-4 w-4 text-slate-11" />
+								<span className="sr-only">Open menu</span>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="center" className="w-[160px]">
+								<DropdownMenuItem
+									className="flex gap-2"
+									onClick={() => setOpened(true)}
+								>
+									<Icons.Plus size={14} /> Create
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				</CardHeader>
+				<CardContent className="rounded-lg w-full">
+					<div className="flex py-4 border-border p-4">
+						{options.length === 0 && (
+							<div className="w-full h-20 text-sm text-slate-11 flex justify-center items-center">
+								Create options to add variants for this product.
+							</div>
+						)}
+						{options.map((option) => (
+							<div key={option.id}>
+								<p className="w-full text-sm text-slate-11">{option.name}</p>
+								<div className="w-full">
+									{(option.optionValues ?? []).map((value) => (
+										<Badge
+											key={value.id}
+											className="h-6 bg-brand-3 border-brand-7 border text-brand-9 font-thin text-xs pr-0"
+										>
+											{value.value}
+										</Badge>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</CardContent>
+			</Card>
+			<DialogRoot direction="right" open={opened} onOpenChange={setOpened}>
+				<DialogContent className="sm:w-[500px]">
+					<DialogTitle className="p-4 border-b border-border font-bold text-xl">
+						Create option
+					</DialogTitle>
+					<section className="p-4 flex flex-col gap-4">
+						<div className="flex flex-col gap-2">
+							<Label className="pl-[1px]">Name</Label>
+							<Input className="bg-slate-1" placeholder="Color, size..." />
+						</div>
+
+						<div className="flex flex-col gap-2">
+							<Label className="pl-[1px]">Values</Label>
+							<TagInput
+								className="bg-slate-1"
+								value={values}
+								onChange={(value) => setValues(value)}
+							/>
+						</div>
+					</section>
+					<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
+						<div className="flex gap-2">
+							<Button variant={"outline"}>Cancel</Button>
+							<Button>Save</Button>
+						</div>
+					</div>
+				</DialogContent>
+			</DialogRoot>
+		</>
+	);
 }
 
-export function ProductOptions({ productID, options }: CreateOptionProps) {
+export function _ProductOptions({ productID, options }: CreateOptionProps) {
 	const { dashboardRep } = useReplicache();
 	const createOption = useCallback(async () => {
 		const id = generateID({ prefix: "p_option" });
@@ -78,7 +190,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 		<section className="w-full">
 			<Button
 				size="md"
-				className="text-mauve-11"
+				className="text-slate-11"
 				variant={"ghost"}
 				type="button"
 				onClick={createOption}
@@ -111,7 +223,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 						/>
 						<button
 							type="button"
-							className="rounded-full bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-border   flex justify-center items-center"
+							className="rounded-full bg-slate-2 h-7 w-7 border hover:bg-slate-3 border-border   flex justify-center items-center"
 							onClick={async () =>
 								await deleteOption({
 									optionID: option.id,
@@ -138,7 +250,7 @@ interface OptionProps {
 	>;
 }
 
-export default function Option({
+export function Option({
 	option,
 	onOptionNameChange,
 	onOptionValuesChange,
@@ -161,7 +273,7 @@ export default function Option({
 				}}
 			/>
 			<TagInput
-				values={values}
+				value={values}
 				onChange={async (values) => {
 					setValues(values as string[]);
 					await onOptionValuesChange(option.id, values as string[]);

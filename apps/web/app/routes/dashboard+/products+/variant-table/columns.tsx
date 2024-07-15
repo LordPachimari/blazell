@@ -7,6 +7,7 @@ import { DataTableColumnHeader } from "~/components/templates/table/data-table-c
 import type { DataTableFilterableColumn } from "~/types/table";
 import { toImageURL } from "~/utils/helpers";
 import { RowActions } from "./row-actions";
+import { Checkbox } from "@blazell/ui/checkbox";
 
 export function getVariantColumns({
 	setVariantID,
@@ -18,6 +19,31 @@ export function getVariantColumns({
 	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
 	return [
+		{
+			id: "select",
+			header: ({ table }) => (
+				<Checkbox
+					checked={table.getIsAllPageRowsSelected()}
+					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+					aria-label="Select all"
+					className="translate-y-[2px]"
+				/>
+			),
+			cell: ({ row }) => (
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value) => row.toggleSelected(!!value)}
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+					aria-label="Select row"
+					className="translate-y-[2px]"
+					tabIndex={-1}
+				/>
+			),
+			enableSorting: false,
+			enableHiding: false,
+		},
 		{
 			accessorKey: "thumbnail",
 			header: ({ column }) => (

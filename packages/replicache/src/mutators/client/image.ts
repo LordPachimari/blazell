@@ -59,7 +59,7 @@ async function uploadImages(tx: WriteTransaction, input: UploadImages) {
 }
 
 async function deleteImage(tx: WriteTransaction, input: DeleteImage) {
-	const { imageID, entityID } = input;
+	const { keys, entityID } = input;
 
 	const entity = (await tx.get(entityID)) as Variant | undefined;
 
@@ -69,7 +69,7 @@ async function deleteImage(tx: WriteTransaction, input: DeleteImage) {
 
 	await tx.set(entityID, {
 		...entity,
-		images: entity.images?.filter((image) => image.id !== imageID),
+		images: entity.images?.filter((image) => !keys.includes(image.id)),
 	});
 }
 export { deleteImage, updateImagesOrder, uploadImages };

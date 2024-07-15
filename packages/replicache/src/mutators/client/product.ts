@@ -60,7 +60,7 @@ async function publishProduct(tx: WriteTransaction, input: { id: string }) {
 		status: "published",
 	});
 }
-async function duplicateProduct(tx: WriteTransaction, input: DuplicateProduct) {
+async function copyProduct(tx: WriteTransaction, input: DuplicateProduct) {
 	const { duplicates } = input;
 	await Effect.runPromise(
 		Effect.forEach(duplicates, (_duplicate) => duplicate(tx, _duplicate), {
@@ -227,7 +227,7 @@ const duplicate = (tx: WriteTransaction, duplicate: ProductDuplicate) =>
 export {
 	createProduct,
 	deleteProduct,
-	duplicateProduct,
+	copyProduct,
 	publishProduct,
 	updateProduct,
 };

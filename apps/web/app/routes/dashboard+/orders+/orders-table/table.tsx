@@ -81,9 +81,10 @@ function OrdersTable({
 					<p className="text-brand-9 text-sm font-bold">Real time</p>
 				</div>
 			)}
-			<ScrollArea
+
+			<div
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] shadow bg-component border border-border rounded-lg relative"
+				className="h-[calc(60vh)] lg:h-[calc(68vh)] relative overflow-x-scroll bg-component border border-border rounded-lg"
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
@@ -154,7 +155,7 @@ function OrdersTable({
 						</TableBody>
 					</Table>
 				</div>
-			</ScrollArea>
+			</div>
 			<DataTablePagination table={table} />
 		</div>
 	);

@@ -49,7 +49,7 @@ function Currencies({
 					size="md"
 					variant="ghost"
 					type="button"
-					className="text-mauve-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
+					className="text-slate-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
 					onClick={() => setOpened(true)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter" || e.key === " ") {

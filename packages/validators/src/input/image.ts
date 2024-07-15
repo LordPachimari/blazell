@@ -14,8 +14,8 @@ export const UploadImagesSchema = z.object({
 export type UploadImages = z.infer<typeof UploadImagesSchema>;
 
 export const DeleteImageSchema = z.object({
-	url: z.string(),
-	imageID: z.string(),
+	urls: z.array(z.string()),
+	keys: z.array(z.string()),
 	entityID: z.string(),
 });
 export type DeleteImage = z.infer<typeof DeleteImageSchema>;

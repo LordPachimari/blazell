@@ -179,10 +179,11 @@ export function FileUpload(props: FileUploaderProps) {
 							<div
 								{...getRootProps()}
 								className={cn(
-									"group relative grid h-[10rem] w-full cursor-pointer place-items-center border-y border-border  px-5 py-2.5 text-center transition hover:bg-mauve-a-2",
-									"ring-offset-background focus-visible:outline outline-none focus:border-ring focus:border focus:rounded-lg  focus-visible:ring-2 outline-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-									isDragActive && "border-mauve-3",
+									"group relative grid h-[10rem] w-full cursor-pointer place-items-center border-t border-border  px-5 py-2.5 text-center transition hover:bg-slate-2",
+									"ring-offset-background focus-visible:outline outline-none focus:border-ring focus:border focus:rounded-lg  focus-visible:ring-1 outline-2 focus-visible:ring-ring  ",
+									isDragActive && "border-slate-3",
 									isDisabled && "pointer-events-none opacity-60",
+									{ "border-b": files ? files.length > 0 : false },
 									className,
 								)}
 								{...dropzoneProps}

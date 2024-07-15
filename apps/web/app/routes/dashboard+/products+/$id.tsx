@@ -38,15 +38,16 @@ function ProductRoute() {
 				</div>
 			</nav>
 
-			<section className="w-full mt-12 relative flex justify-center ">
+			<section className="w-full relative flex justify-center ">
 				{view === "input" ? (
 					<ProductInput
+						setView={setView}
 						productID={params.id!}
 						product={product}
 						defaultVariant={defaultVariant}
 					/>
 				) : (
-					<ProductPreview product={product} />
+					<ProductPreview product={product} setView={setView} />
 				)}
 			</section>
 		</main>

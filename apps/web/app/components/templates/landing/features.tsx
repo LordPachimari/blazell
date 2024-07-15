@@ -27,7 +27,7 @@ function Features() {
 					</h2>
 				</FadeUp>
 				<FadeUp delay={0.1}>
-					<p className="text-center text-lg text-mauve-11">
+					<p className="text-center text-lg text-slate-11">
 						With our <span className="font-bold">PRO</span> plan, you can
 						customize your store appearance. You can even create your own
 						domain!

@@ -62,8 +62,8 @@ function Pricing({
 		[dashboardRep, variantID],
 	);
 	return (
-		<Card className={cn("min-h-[6rem] my-4 p-0", className)}>
-			<CardTitle className="p-4 border-b border-border flex gap-2 items-center">
+		<Card className={cn("min-h-[6rem] my-3 p-0", className)}>
+			<CardTitle className="p-4 border-b border-border flex gap-2 items-center rounded-t-lg">
 				Pricing
 				{isPublished && (
 					<TooltipProvider>
@@ -86,7 +86,7 @@ function Pricing({
 			<CardContent className="flex flex-col gap-2 p-4">
 				{prices.length === 0 && (
 					<div className="w-full h-full flex justify-center items-center">
-						<Icons.BadgeDollarSign className="text-mauve-9" />
+						<Icons.BadgeDollarSign className="text-slate-9" />
 					</div>
 				)}
 				{prices.map((price) => (
@@ -120,7 +120,7 @@ function Pricing({
 						<div className="aspect-square h-7 w-7">
 							<button
 								type="button"
-								className="rounded-full aspect-square bg-mauve-2 h-7 w-7 border hover:bg-mauve-3 border-border   flex justify-center items-center"
+								className="rounded-full aspect-square bg-slate-2 h-7 w-7 border hover:bg-slate-3 border-border   flex justify-center items-center"
 								onClick={async () => await deletePrices(price.id)}
 								onKeyDown={async (e) => {
 									if (e.key === "Enter" || e.key === " ") {

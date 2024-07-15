@@ -37,7 +37,7 @@ const Stock = ({
 	}, [variant]);
 
 	return (
-		<Card className={cn("my-2 p-0", className)}>
+		<Card className={cn("my-3 p-0", className)}>
 			<CardHeader className="p-4 border-b border-border">
 				<CardTitle>Stock</CardTitle>
 			</CardHeader>
@@ -77,7 +77,7 @@ const Stock = ({
 									updates: { allowBackorder: value },
 								}))
 							}
-							className="group size-6 rounded-md border border-mauve-7 bg-white/10 p-1 ring-1 ring-white/15 ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+							className="group size-6 rounded-md border bg-component p-1 ring-1 ring-border ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
 							<Icons.Check className="hidden size-4 text-brand-9 group-data-[checked]:block" />
 						</Checkbox>
@@ -87,7 +87,7 @@ const Stock = ({
 						<Checkbox
 							checked={hasCode}
 							onChange={(value) => setHasCode(value)}
-							className="group size-6 rounded-md border border-mauve-7 bg-white/10 p-1 ring-1 ring-white/15 ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+							className="group size-6 rounded-md border bg-component p-1 ring-1 ring-border ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
 							<Icons.Check className="hidden size-4 text-brand-9 group-data-[checked]:block" />
 						</Checkbox>
@@ -95,8 +95,8 @@ const Stock = ({
 					</span>
 					<div ref={parent}>
 						{hasCode && (
-							<div className="flex justify-between gap-3 w-full">
-								<span className="w-full">
+							<div className="flex justify-between pt-2 gap-3 w-full">
+								<span className="w-full flex flex-col gap-3">
 									<Label>SKU</Label>
 									<Input
 										defaultValue={variant?.sku ?? ""}
@@ -111,7 +111,7 @@ const Stock = ({
 										}
 									/>
 								</span>
-								<span className="w-full">
+								<span className="w-full flex flex-col gap-3">
 									<Label>Barcode</Label>
 									<Input
 										defaultValue={variant?.barcode ?? ""}

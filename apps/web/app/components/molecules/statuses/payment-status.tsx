@@ -11,7 +11,7 @@ export function PaymentStatus({ status }: { status: Order["paymentStatus"] }) {
 	) : (
 		<Badge
 			variant={"outline"}
-			className="bg-mauve-3 border-mauve-9 text-mauve-9 font-medium "
+			className="bg-slate-3 border-slate-9 text-slate-9 font-medium "
 		>
 			refunded
 		</Badge>

@@ -15,11 +15,11 @@ import { RowActions } from "./row-actions";
 
 export function getProductsColumns({
 	deleteProduct,
-	duplicateProduct,
+	copyProduct,
 	isPending = false,
 }: {
 	deleteProduct: (keys: string[]) => void;
-	duplicateProduct: (keys: string[]) => void;
+	copyProduct: (keys: string[]) => void;
 	isPending?: boolean;
 }): ColumnDef<Product, unknown>[] {
 	return [
@@ -42,6 +42,7 @@ export function getProductsColumns({
 					}}
 					aria-label="Select row"
 					className="translate-y-[2px]"
+					tabIndex={-1}
 				/>
 			),
 			enableSorting: false,
@@ -58,7 +59,7 @@ export function getProductsColumns({
 				return (
 					<div className="flex w-[50px] h-[50px] justify-center items-center border border-border   rounded-md">
 						{isPending && row.getIsSelected() ? (
-							<LoadingSpinner className="text-mauve-11" />
+							<LoadingSpinner className="text-slate-11" />
 						) : !defaultVariant?.thumbnail ? (
 							<ImagePlaceholder />
 						) : defaultVariant?.thumbnail?.uploaded ? (
@@ -165,7 +166,7 @@ export function getProductsColumns({
 				<RowActions
 					row={row}
 					deleteProduct={deleteProduct}
-					duplicateProduct={duplicateProduct}
+					copyProduct={copyProduct}
 				/>
 			),
 		},

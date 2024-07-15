@@ -22,7 +22,7 @@ export default function CustomerRoute() {
 					<Button
 						variant="ghost"
 						href={"/dashboard/customers"}
-						className="fixed text-mauve-11 dark:text-white top-4 left-30  z-20"
+						className="fixed text-slate-11 dark:text-white top-4 left-30  z-20"
 						onClick={() => navigate("/dashboard/customers")}
 					>
 						<Icons.Left size={20} className="text-black dark:text-white" />
@@ -68,13 +68,13 @@ const CustomerInfo = ({
 					<address className="grid gap-0.5 not-italic ">
 						<span className="flex justify-between ">
 							<p className="font-semibold">email:</p>
-							<a href="mailto:" className="text-mauve-10">
+							<a href="mailto:" className="text-slate-10">
 								{customer?.email}
 							</a>
 						</span>
 						<span className="flex justify-between">
 							<p className="font-semibold">phone:</p>
-							<a href="tel:" className="text-mauve-10">
+							<a href="tel:" className="text-slate-10">
 								{customer?.phone}
 							</a>
 						</span>

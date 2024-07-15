@@ -126,15 +126,15 @@ export function GlobalSearchCombobox() {
 			>
 				<Icons.MagnifyingGlassIcon
 					aria-hidden="true"
-					className="size-5 text-mauve-11 "
+					className="size-5 text-slate-11 "
 				/>
-				<span className="text-mauve-11  font-light">Search</span>
+				<span className="text-slate-11  font-light">Search</span>
 				<span className="sr-only">Search...</span>
 				<ClientOnly>
 					{() => (
 						<Kbd
 							title={isMacOs() ? "Command" : "Control"}
-							className=" text-mauve-11 border-border  "
+							className=" text-slate-11 border-border  "
 						>
 							{isMacOs() ? "⌘" : "Ctrl"} K
 						</Kbd>
@@ -143,10 +143,10 @@ export function GlobalSearchCombobox() {
 			</Button>
 			<button
 				type="button"
-				className="flex lg:hidden rounded-full hover:bg-mauve-a-2 p-2"
+				className="flex lg:hidden rounded-full hover:bg-slate-a-2 p-2"
 				onClick={() => open()}
 			>
-				<Icons.MagnifyingGlassIcon className="text-mauve-11 hover:text-brand-9 size-6" />
+				<Icons.MagnifyingGlassIcon className="text-slate-11 hover:text-brand-9 size-6" />
 			</button>
 			<Transition appear show={isOpen}>
 				<Dialog
@@ -168,7 +168,7 @@ export function GlobalSearchCombobox() {
 								leaveFrom="opacity-100 transform-[scale(100%)]"
 								leaveTo="opacity-0 transform-[scale(95%)]"
 							>
-								<DialogPanel className="w-full md:w-[600px] rounded-xl backdrop-blur-2xl">
+								<DialogPanel className="w-full md:w-[600px] rounded-lg backdrop-blur-2xl">
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus
@@ -180,7 +180,7 @@ export function GlobalSearchCombobox() {
 										<CommandList>
 											<CommandEmpty
 												className={cn(
-													loading ? "hidden" : "py-6 text-center text-mauve-11",
+													loading ? "hidden" : "py-6 text-center text-slate-11",
 												)}
 											>
 												Nothing found.

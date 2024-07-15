@@ -11,7 +11,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
 	const [open, setOpen] = React.useState(false);
 	return (
 		<Card
-			className="w-full cursor-pointer     border border-border   bg-component rounded-xl p-4"
+			className="w-full cursor-pointer     border border-border   bg-component rounded-lg p-4"
 			onClick={() => {
 				if (items.length === 1) return;
 				setOpen((prev) => !prev);

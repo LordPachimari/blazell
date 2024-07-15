@@ -21,7 +21,7 @@ export const ShippingAddressInfo = () => {
 
 	return (
 		<section ref={parent}>
-			<h1 className="text-xl text-mauve-10 my-2">Shipping address</h1>
+			<h1 className="text-xl text-slate-10 my-2">Shipping address</h1>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div>
 					<Input

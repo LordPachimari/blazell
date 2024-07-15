@@ -139,7 +139,7 @@ const publishProduct = zod(z.object({ id: z.string() }), (input) =>
 		return yield* Effect.all(effects, { concurrency: "unbounded" });
 	}),
 );
-const duplicateProduct = zod(DuplicateProductSchema, (input) =>
+const copyProduct = zod(DuplicateProductSchema, (input) =>
 	Effect.gen(function* () {
 		const { duplicates } = input;
 		yield* Effect.forEach(duplicates, (_duplicate) => duplicate(_duplicate), {
@@ -348,7 +348,7 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 export {
 	createProduct,
 	deleteProduct,
-	duplicateProduct,
+	copyProduct,
 	publishProduct,
 	updateProduct,
 };

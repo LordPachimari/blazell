@@ -36,7 +36,7 @@ function MobileGallery({ images }: GalleryProps) {
 									<img
 										alt={name}
 										className={cn(
-											"md:rounded-xl w-max max-w-full select-none object-contain object-center",
+											"md:rounded-lg w-max max-w-full select-none object-contain object-center",
 										)}
 										src={toImageURL(base64, fileType)}
 									/>
@@ -44,7 +44,7 @@ function MobileGallery({ images }: GalleryProps) {
 									<Image
 										src={url}
 										className={cn(
-											"lg:rounded-2xl w-max max-w-full select-none object-contain object-center",
+											"lg:rounded-lg w-max max-w-full select-none object-contain object-center",
 										)}
 										quality={100}
 										fit="contain"

@@ -117,7 +117,7 @@ export function EditStore({ store }: { store: Store }) {
 			});
 		}
 		saveStoreUpdates({ description: data.description });
-		toast.success("Store updated successfully");
+		toast.success("Store updated successfully.");
 		setIsLoading(false);
 		setIsOpen(false);
 	};
@@ -297,7 +297,7 @@ export function EditStore({ store }: { store: Store }) {
 					Edit store
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="md:w-[600px] bg-mauve-2 p-0 gap-0">
+			<DialogContent className="md:w-[600px] bg-slate-2 p-0 gap-0">
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<span className="flex w-full justify-center p-4 border-border  ">
 						<div>
@@ -316,7 +316,7 @@ export function EditStore({ store }: { store: Store }) {
 									storeSrc &&
 									!storeSrc.startsWith("http") && (
 										<Button
-											className="text-mauve-11"
+											className="text-slate-11"
 											variant="ghost"
 											onClick={() => setView("cropStoreImage")}
 										>
@@ -328,7 +328,7 @@ export function EditStore({ store }: { store: Store }) {
 									headerSrc &&
 									!headerSrc.startsWith("http") && (
 										<Button
-											className="text-mauve-11"
+											className="text-slate-11"
 											variant="ghost"
 											onClick={() => setView("cropHeaderImage")}
 										>
@@ -343,7 +343,7 @@ export function EditStore({ store }: { store: Store }) {
 							type="button"
 							variant={"ghost"}
 							size="icon"
-							className="text-mauve-11 absolute top-3 right-3"
+							className="text-slate-11 absolute top-3 right-3"
 							onClick={() => setIsOpen(false)}
 						>
 							<Icons.Close />
@@ -384,7 +384,7 @@ export function EditStore({ store }: { store: Store }) {
 								onChange={onStoreImageChange}
 							/>
 							<Avatar
-								className="border-border bg-mauve-3 hover:brightness-90 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
+								className="border-border bg-slate-3 hover:brightness-90 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
 								onClick={storeInputClick}
 								onKeyDown={(e) => {
 									if (e.key === "Enter" || e.key === " ") {
@@ -404,7 +404,7 @@ export function EditStore({ store }: { store: Store }) {
 							</Avatar>
 							<div
 								className={cn(
-									"w-full h-[160px] bg-mauve-5 relative border-y border-border   flex justify-center items-center overflow-hidden",
+									"w-full h-[160px] bg-slate-5 relative border-y border-border   flex justify-center items-center overflow-hidden",
 								)}
 							>
 								{headerCrop && headerCroppedArea && headerSrc && (
@@ -424,7 +424,7 @@ export function EditStore({ store }: { store: Store }) {
 									onChange={onHeaderImageChange}
 								/>
 								<Avatar
-									className="h-16 w-16 cursor-pointer absolute border-border bg-mauve-3 hover:brightness-90"
+									className="h-16 w-16 cursor-pointer absolute border-border bg-slate-3 hover:brightness-90"
 									onClick={headerInputClick}
 									onKeyDown={(e) => {
 										if (e.key === "Enter" || e.key === " ") {
@@ -438,12 +438,12 @@ export function EditStore({ store }: { store: Store }) {
 								</Avatar>
 								{headerSrc && (
 									<Button
-										className="rounded-full absolute top-2 right-2 bg-mauve-a-3 hover:bg-mauve-a-6 border-none"
+										className="rounded-full absolute top-2 right-2 bg-slate-a-3 hover:bg-slate-a-6 border-none"
 										size={"icon"}
 										variant={"ghost"}
 										onClick={deleteStoreImage}
 									>
-										<Icons.Close className="text-mauve-11" />
+										<Icons.Close className="text-slate-11" />
 									</Button>
 								)}
 							</div>
@@ -452,12 +452,12 @@ export function EditStore({ store }: { store: Store }) {
 					{view === "default" && (
 						<div className="p-4 flex flex-col gap-2">
 							<span>
-								<Label className="text-mauve-11 py-2">Name</Label>
+								<Label className="text-slate-11 py-2">Name</Label>
 								<Input className="w-full md:w-40" {...register("name")} />
 								<FieldErrorMessage message={errors.name?.message} />
 							</span>
 							<span>
-								<Label className="text-mauve-11 py-2">Description</Label>
+								<Label className="text-slate-11 py-2">Description</Label>
 								<TextareaAutosize
 									className={cn("", inputVariants())}
 									maxRows={10}

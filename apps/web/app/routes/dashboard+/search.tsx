@@ -130,16 +130,16 @@ export function DashboardSearchCombobox() {
 			<button
 				type="button"
 				className={cn(
-					"group relative rounded-2xl h-10 mb-2 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-mauve-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
+					"group relative rounded-lg h-10 mb-2 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-slate-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  ",
 				)}
 				onClick={() => open()}
 			>
 				<div className="flex gap-3">
 					<Icons.MagnifyingGlassIcon
 						aria-hidden="true"
-						className="size-5 text-mauve-11 group-hover:text-brand-9"
+						className="size-5 text-slate-11 group-hover:text-brand-9"
 					/>
-					<span className="text-mauve-11 group-hover:text-brand-9 font-light">
+					<span className="text-slate-11 group-hover:text-brand-9 font-light">
 						Search
 					</span>
 				</div>
@@ -150,7 +150,7 @@ export function DashboardSearchCombobox() {
 							<Kbd
 								title={isMacOs() ? "Command" : "Control"}
 								className={cn(
-									"group-hover:text-brand-9 text-nowrap text-mauve-11 flex flex-nowrap border-mauve-5 dark:border-mauve-7   p-[3px]",
+									"group-hover:text-brand-9 text-nowrap text-slate-11 flex flex-nowrap border-slate-5 dark:border-slate-7   p-[3px]",
 									{ "p-[1px]": !isMacOs() },
 								)}
 							>
@@ -181,11 +181,11 @@ export function DashboardSearchCombobox() {
 								leaveFrom="opacity-100 transform-[scale(100%)]"
 								leaveTo="opacity-0 transform-[scale(95%)]"
 							>
-								<DialogPanel className="w-full md:w-[600px] rounded-xl backdrop-blur-2xl">
+								<DialogPanel className="w-full md:w-[600px] rounded-lg backdrop-blur-2xl">
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus
-											className="outline-none h-10 border-b bg-component border-mauve-5 dark:border-mauve-7   p-4"
+											className="outline-none h-10 border-b bg-component border-slate-5 dark:border-slate-7   p-4"
 											placeholder="Search in dashboard.."
 											value={query}
 											onChange={(e) => setQuery(e.target.value)}
@@ -193,7 +193,7 @@ export function DashboardSearchCombobox() {
 										<CommandList>
 											<CommandEmpty
 												className={cn(
-													loading ? "hidden" : "py-6 text-center text-mauve-11",
+													loading ? "hidden" : "py-6 text-center text-slate-11",
 												)}
 											>
 												Nothing found.

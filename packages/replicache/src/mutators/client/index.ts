@@ -6,7 +6,7 @@ import {
 	deleteProduct,
 	updateProduct,
 	publishProduct,
-	duplicateProduct,
+	copyProduct,
 } from "./product";
 import {
 	createStore,
@@ -49,7 +49,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	updateProduct,
 	deleteProduct,
 	publishProduct,
-	duplicateProduct,
+	copyProduct,
 	createProductOption,
 	updateProductOption,
 	deleteProductOption,
