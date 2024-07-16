@@ -246,6 +246,9 @@ importers:
       '@headlessui/react':
         specifier: ^2.0.4
         version: 2.0.4(react-dom@18.3.1)(react@18.3.1)
+      '@hookform/resolvers':
+        specifier: ^3.3.4
+        version: 3.4.0(react-hook-form@7.51.4)
       '@lexical/react':
         specifier: ^0.16.0
         version: 0.16.0(react-dom@18.3.1)(react@18.3.1)(yjs@13.6.18)
