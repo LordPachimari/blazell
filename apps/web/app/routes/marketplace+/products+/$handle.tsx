@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async (args) => {
 		{
 			product,
 		},
-		{ headers: { "Cache-Control": "public, max-age=3600" } },
+		{ headers: { "Cache-Control": "public, max-age=31536000" } },
 	);
 };
 
