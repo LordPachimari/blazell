@@ -11,6 +11,9 @@ export default defineConfig({
 	ssr: {
 		noExternal: ["react-easy-crop", "tslib"],
 	},
+	optimizeDeps: {
+		exclude: ["chunk-72Y4K62D.js"],
+	},
 	plugins: [
 		// MillionLint.vite(),
 		remixDevTools(),

@@ -31,7 +31,12 @@ export const variants = pgTable(
 			})
 			.notNull(),
 		sku: varchar("sku"),
+		material: varchar("material"),
+		height: integer("height"),
+		width: integer("width"),
+		length: integer("length"),
 		weight: integer("weight"),
+		originCountry: varchar("origin_country"),
 		weightUnit: text("weight_unit", { enum: weightUnits }),
 		allowBackorder: boolean("allow_backorder").default(false),
 		thumbnail: json("thumbnail").$type<Image>(),

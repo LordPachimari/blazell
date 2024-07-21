@@ -4,7 +4,6 @@ import React, { useMemo } from "react";
 
 import { Button } from "@blazell/ui/button";
 import { Ping } from "@blazell/ui/ping";
-import { ScrollArea } from "@blazell/ui/scroll-area";
 import {
 	Table,
 	TableBody,
@@ -141,7 +140,7 @@ function OrdersTable({
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										<div className="flex flex-col items-center gap-1 py-4 text-center">
+										<div className="flex w-full h-full flex-col items-center gap-1 py-4 text-center">
 											<h3 className="text-2xl font-bold font-freeman tracking-tight">
 												You have no orders
 											</h3>

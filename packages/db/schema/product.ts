@@ -23,13 +23,11 @@ export const products = pgTable(
 	"products",
 	{
 		id: varchar("id").notNull().primaryKey(),
-
 		defaultVariantID: varchar("default_variant_id").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		collectionID: varchar("collection_pk").references(() => collections.id),
 		score: integer("score").default(0),
 		discountable: boolean("discountable").notNull().default(false),
-		originCountry: varchar("origin_country"),
 		status: text("status", {
 			enum: productStatus,
 		})

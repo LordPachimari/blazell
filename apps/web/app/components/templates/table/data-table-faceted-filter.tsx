@@ -1,9 +1,10 @@
-import type * as React from "react";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import { CheckIcon } from "@radix-ui/react-icons";
 import type { Column, Table } from "@tanstack/react-table";
+import type * as React from "react";
 
+import { cn } from "@blazell/ui";
 import { Badge } from "@blazell/ui/badge";
-import { Button, buttonVariants } from "@blazell/ui/button";
+import { Button } from "@blazell/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -13,10 +14,8 @@ import {
 	CommandList,
 	CommandSeparator,
 } from "@blazell/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@blazell/ui/popover";
-import { Separator } from "@blazell/ui/separator";
-import { cn } from "@blazell/ui";
 import { Icons } from "@blazell/ui/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@blazell/ui/popover";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
 	column: Column<TData, TValue> | undefined;

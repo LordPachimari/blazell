@@ -205,6 +205,11 @@ const duplicate = zod(VariantDuplicateSchema, (input) =>
 				updatedBy: null,
 				weight: variant.weight,
 				weightUnit: variant.weightUnit,
+				height: variant.height,
+				length: variant.length,
+				material: variant.material,
+				originCountry: variant.originCountry,
+				width: variant.width,
 			} satisfies Variant,
 			"variants",
 		);

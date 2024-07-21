@@ -1,14 +1,14 @@
 import type { User } from "@blazell/validators/client";
 // import { getAuth } from "@clerk/remix/ssr.server";
+import { Button } from "@blazell/ui/button";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
+import { userContext } from "~/sessions.server";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
-import { userContext } from "~/sessions.server";
-import { Icons, strokeWidth } from "@blazell/ui/icons";
-import { Button } from "@blazell/ui/button";
+import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 
 import {
 	Breadcrumb,
@@ -59,8 +59,6 @@ export default function DashboardLayout() {
 	);
 }
 const DashboardNav = () => {
-	const location = useLocation();
-	const paths = location.pathname.split("/");
 	return (
 		<div className="h-14 flex items-center p-3 w-full fixed top-0 border-b bg-background border-border z-20">
 			<Button variant={"ghost"} size="icon" className="hidden lg:flex">

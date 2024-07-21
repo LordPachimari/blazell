@@ -89,10 +89,10 @@ const Input = React.forwardRef<
 			{icon && (
 				<div
 					className={cn(
-						"absolute bottom-0 left-0 flex items-center justify-center text-ui-fg-muted border-r ",
+						"absolute inset-0 flex items-center justify-center text-ui-fg-muted border-r ",
 						{
 							"h-10 w-10": size === "base",
-							"h-9 w-9": size === "small",
+							"h-8 w-8": size === "small",
 						},
 					)}
 					role="img"

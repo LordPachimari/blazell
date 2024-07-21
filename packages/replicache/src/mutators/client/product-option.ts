@@ -11,7 +11,7 @@ async function createProductOption(
 	tx: WriteTransaction,
 	input: CreateProductOption,
 ) {
-	const { option } = input;
+	const { option, optionValues } = input;
 
 	const product = await tx.get<Product>(option.productID);
 
@@ -22,7 +22,7 @@ async function createProductOption(
 
 	await tx.set(product.id, {
 		...product,
-		options: [...productOptions, option],
+		options: [...productOptions, { ...option, optionValues }],
 	});
 }
 

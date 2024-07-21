@@ -1,4 +1,3 @@
-import { Button } from "@blazell/ui/button";
 import type { Product } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
 import { ProductOverview } from "~/components/templates/product/product-overview";

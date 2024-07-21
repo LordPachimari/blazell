@@ -88,12 +88,11 @@ export const loader: LoaderFunction = async (args) => {
 	// 		Authorization: `Bearer ${token}`,
 	// 	},
 	// }).then((res) => res.json() as Promise<User | undefined>);
-	const user = await fetch(
-		`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
-		{
-			method: "GET",
-		},
-	).then((res) => res.json() as Promise<User | undefined>);
+	const user = userContextCookie.fakeAuthID
+		? await fetch(`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`, {
+				method: "GET",
+			}).then((res) => res.json() as Promise<User | undefined>)
+		: undefined;
 	return json(
 		{
 			ENV: {

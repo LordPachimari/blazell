@@ -1,14 +1,10 @@
 import { PlusIcon } from "@radix-ui/react-icons";
-import {
-	flexRender,
-	type ColumnDef,
-	type Row,
-	type RowData,
-} from "@tanstack/react-table";
+import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
 import React, { useMemo, type KeyboardEvent } from "react";
 
+import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
-import { Icons } from "@blazell/ui/icons";
+import { Separator } from "@blazell/ui/separator";
 import {
 	Table,
 	TableBody,
@@ -19,16 +15,14 @@ import {
 } from "@blazell/ui/table";
 import type { Product } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useHotkeys } from "react-hotkeys-hook";
 import { DataTableFloatingBar } from "~/components/templates/table/data-table-floating-bar";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
 import { useDataTable } from "~/components/templates/table/use-data-table";
-import { filterableColumns, getProductsColumns } from "./columns";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { cn } from "@blazell/ui";
 import type { DebouncedFunc } from "~/types/debounce";
-import { Separator } from "@blazell/ui/separator";
-import { useHotkeys } from "react-hotkeys-hook";
+import { filterableColumns, getProductsColumns } from "./columns";
 interface ProductsTableProps {
 	products: Product[];
 	createProduct: () => Promise<void>;
@@ -171,7 +165,7 @@ function ProductsTable({
 										colSpan={columns.length}
 										className="h-full text-center"
 									>
-										<div className="flex flex-col items-center gap-1 py-4 text-center">
+										<div className="flex w-full h-full flex-col items-center gap-1 py-4 text-center">
 											<h3 className="text-2xl font-bold font-freeman tracking-tight">
 												You have no products
 											</h3>

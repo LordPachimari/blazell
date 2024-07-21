@@ -126,7 +126,7 @@ function CustomersTable({
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										<div className="flex flex-col items-center gap-1 py-4 text-center">
+										<div className="flex w-full h-full flex-col items-center gap-1 py-4 text-center">
 											<h3 className="text-2xl font-bold font-freeman tracking-tight">
 												You have no customers
 											</h3>

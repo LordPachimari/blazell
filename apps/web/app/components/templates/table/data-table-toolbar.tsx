@@ -1,15 +1,12 @@
-import { Cross2Icon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 
-import { Button } from "@blazell/ui/button";
 import { Input } from "@blazell/ui/input";
 
+import { cn } from "@blazell/ui";
+import type { DebouncedFunc } from "~/types/debounce";
+import type { DataTableSearchableColumn, Option } from "~/types/table";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
-import type { DataTableSearchableColumn, Option } from "~/types/table";
-import type { DebouncedFunc } from "~/types/debounce";
-import { cn } from "@blazell/ui";
-import { Icons } from "@blazell/ui/icons";
 
 export interface DataTableFilterableColumn<TData>
 	extends DataTableSearchableColumn<TData> {

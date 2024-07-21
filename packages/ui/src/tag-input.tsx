@@ -74,7 +74,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 			<div
 				className={cn(
 					inputBaseStyles,
-					"h-10 px-2 gap-1 flex items-center",
+					"h-10 px-2 gap-1 flex items-center overflow-x-auto",
 					// caveat: :has() variant requires tailwind v3.4 or above: https://tailwindcss.com/blog/tailwindcss-v3-4#new-has-variant
 					className,
 					{ "border-brand-9": isFocused },

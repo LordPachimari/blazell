@@ -1,35 +1,32 @@
 import {
 	ProductSchema,
 	PublishedVariantSchema,
-	type PublishedVariant,
 	type UpdateProduct,
 	type UpdateVariant,
 } from "@blazell/validators";
 
+import { cn } from "@blazell/ui";
 import { Badge } from "@blazell/ui/badge";
 import { Button } from "@blazell/ui/button";
+import { Ping } from "@blazell/ui/ping";
 import { toast } from "@blazell/ui/toast";
 import type { Product, Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@remix-run/react";
-import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AlertDialogComponent } from "~/components/molecules/alert";
 import { useReplicache } from "~/zustand/replicache";
 import { useDashboardStore } from "~/zustand/store";
-import { ProductCategory } from "./input/product-category";
+import { Attributes } from "./input/product-attributes";
 import { ProductInfo } from "./input/product-info";
 import { Media } from "./input/product-media";
+import { ProductOptions } from "./input/product-options";
+import { Organize } from "./input/product-organize";
 import { Pricing } from "./input/product-pricing";
-import { ProductStatus } from "./input/product-status";
 import Stock from "./input/product-stock";
 import { Variants } from "./input/product-variants";
-import { cn } from "@blazell/ui";
-import { Ping } from "@blazell/ui/ping";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { ProductOptions } from "./input/product-options";
 export interface ProductInputProps {
 	product: Product | undefined;
 	productID: string;
@@ -55,8 +52,25 @@ export function ProductInput({
 	);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpen1, setIsOpen1] = useState(false);
-	const methods = useForm<PublishedVariant>({
+	const methods = useForm<ProductForm>({
 		resolver: zodResolver(ProductFormSchema),
+		defaultValues: {
+			id: product?.id,
+			title: defaultVariant?.title,
+			allowBackorder: defaultVariant?.allowBackorder,
+			barcode: defaultVariant?.barcode,
+			weight: defaultVariant?.weight,
+			width: defaultVariant?.width,
+			height: defaultVariant?.height,
+			length: defaultVariant?.length,
+			material: defaultVariant?.material,
+			originCountry: defaultVariant?.originCountry,
+			quantity: defaultVariant?.quantity,
+			status: product?.status,
+			description: defaultVariant?.description,
+			handle: defaultVariant?.handle,
+			sku: defaultVariant?.sku,
+		},
 	});
 	console.log("errors", methods.formState.errors);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
@@ -144,28 +158,17 @@ export function ProductInput({
 		toast.success("Product published!");
 	}, [dashboardRep, productID]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const onVariantInputChange = useCallback(
-		debounce(async (props: UpdateVariant) => {
-			methods.clearErrors();
-			await updateVariant({ id: props.id, updates: props.updates });
-		}, 300),
-		[updateVariant],
-	);
-	const [parent] = useAutoAnimate({ duration: 200 });
-
 	return (
 		<FormProvider {...methods}>
 			<form
 				className="w-full flex justify-center"
-				onSubmit={methods.handleSubmit(onPublish)}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
 					}
 				}}
 			>
-				<main className="relative table min-h-screen pb-20 max-w-7xl w-full gap-3 lg:flex min-w-[15rem] px-3">
+				<main className="relative flex flex-col min-h-screen pb-20 max-w-7xl w-full gap-3 lg:flex lg:flex-row min-w-[15rem] px-3">
 					<AlertDialogComponent
 						open={isOpen}
 						setIsOpen={setIsOpen}
@@ -212,21 +215,16 @@ export function ProductInput({
 								/>
 							</div>
 						</section>
-						<section className="w-full table gap-0" ref={parent}>
+						<section className="w-full flex flex-col gap-3">
 							<ProductInfo
+								updateProduct={updateProduct}
 								defaultVariant={defaultVariant}
 								product={product}
-								onVariantInputChange={onVariantInputChange}
 								updateVariant={updateVariant}
 							/>
 							<Media
 								images={defaultVariant?.images ?? []}
 								variantID={defaultVariant?.id}
-							/>
-							<Pricing
-								isPublished={product?.status === "published"}
-								variantID={defaultVariant?.id}
-								prices={defaultVariant?.prices ?? []}
 							/>
 							<ProductOptions
 								options={product?.options ?? []}
@@ -240,11 +238,7 @@ export function ProductInput({
 								isPublished={product?.status === "published"}
 							/>
 							{variants.length === 0 && (
-								<Stock
-									variant={defaultVariant}
-									updateVariant={updateVariant}
-									onVariantInputChange={onVariantInputChange}
-								/>
+								<Stock variant={defaultVariant} updateVariant={updateVariant} />
 							)}
 						</section>
 					</div>
@@ -257,13 +251,14 @@ export function ProductInput({
 								onPublish={onPublish}
 							/>
 						</section>
-						<section className="flex flex-col gap-4 order-2 w-full">
-							<ProductStatus
-								status={product?.status}
-								updateProduct={updateProduct}
-								onPublish={onPublish}
+						<section className="flex flex-col gap-3 order-2 w-full">
+							<Pricing
+								isPublished={product?.status === "published"}
+								variantID={defaultVariant?.id}
+								prices={defaultVariant?.prices ?? []}
 							/>
-							<ProductCategory />
+							<Organize product={product} />
+							<Attributes variant={defaultVariant} />
 						</section>
 					</div>
 				</main>
@@ -321,7 +316,11 @@ function DeleteOrPublish({
 
 			<Button
 				size="md"
-				onClick={onPublish}
+				onClick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					onPublish();
+				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
 						e.preventDefault();

@@ -254,7 +254,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				discountable: product.discountable,
 				defaultVariantID: newDefaultVariantID,
 				metadata: product.metadata,
-				originCountry: product.originCountry,
 				score: 0,
 				status: "draft",
 				storeID: product.storeID,
@@ -284,6 +283,11 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				weight: defaultVariant.weight,
 				weightUnit: defaultVariant.weightUnit,
 				description: defaultVariant.description,
+				height: defaultVariant.height,
+				length: defaultVariant.length,
+				material: defaultVariant.material,
+				originCountry: defaultVariant.originCountry,
+				width: defaultVariant.width,
 			} satisfies Variant,
 			"variants",
 		);
@@ -346,9 +350,9 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 );
 
 export {
+	copyProduct,
 	createProduct,
 	deleteProduct,
-	copyProduct,
 	publishProduct,
 	updateProduct,
 };

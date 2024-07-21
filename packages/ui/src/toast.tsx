@@ -14,14 +14,7 @@ const toast = {
 	error(message: string) {
 		return sonnerToast.error(message, {
 			icon: <Icons.CircleError className="text-red-9" />,
-			duration: 5000,
-			dismissible: true,
-			closeButton: true,
-			cancelButtonStyle: {},
-			actionButtonStyle: {
-				backgroundColor: "var(--slate-a-7)",
-			},
-
+			duration: 2000,
 			className: "bg-component text-black dark:text-white border-border border",
 		});
 	},

@@ -20,7 +20,6 @@ import {
 	TooltipTrigger,
 } from "@blazell/ui/tooltip";
 import { Icons } from "@blazell/ui/icons";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
 
 export function Media({
 	images,
@@ -89,8 +88,8 @@ export function Media({
 					selectedImages={selectedImages}
 				/>
 			)}
-			<Card className={cn("overflow-hidden my-3 p-0", className)}>
-				<CardHeader className="p-4 rounded-t-lg flex justify-center">
+			<Card className={cn("overflow-hidden p-0", className)}>
+				<CardHeader className="p-4 py-6 rounded-t-lg flex justify-center">
 					<CardTitle>Media</CardTitle>
 				</CardHeader>
 				<CardContent>

@@ -3,30 +3,21 @@ import { useEffect, useState } from "react";
 
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 
+import { cn } from "@blazell/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import type { Variant } from "@blazell/validators/client";
-import type { DebouncedFunc } from "~/types/debounce";
-import { cn } from "@blazell/ui";
 import { Checkbox } from "@headlessui/react";
-import { Icons } from "@blazell/ui/icons";
 
 interface StockProps {
 	variant: Variant | InsertVariant | undefined | null;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
-	onVariantInputChange: DebouncedFunc<
-		(updates: UpdateVariant) => Promise<void>
-	>;
 	className?: string;
 }
 
-const Stock = ({
-	variant,
-	updateVariant,
-	onVariantInputChange,
-	className,
-}: StockProps) => {
+const Stock = ({ variant, updateVariant, className }: StockProps) => {
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const [hasCode, setHasCode] = useState(false);
 
@@ -37,7 +28,7 @@ const Stock = ({
 	}, [variant]);
 
 	return (
-		<Card className={cn("my-3 p-0", className)}>
+		<Card className={cn("p-0", className)}>
 			<CardHeader className="p-4 border-b border-border">
 				<CardTitle>Stock</CardTitle>
 			</CardHeader>
@@ -47,13 +38,6 @@ const Stock = ({
 					className="my-2 w-20"
 					min={0}
 					defaultValue={variant?.quantity ?? 1}
-					onChange={async (e) => {
-						variant &&
-							(await onVariantInputChange({
-								updates: { quantity: e.currentTarget.valueAsNumber },
-								id: variant.id,
-							}));
-					}}
 				/>
 				<div className="flex flex-col gap-2 pt-2">
 					<span className="flex items-center gap-2">
@@ -98,33 +82,11 @@ const Stock = ({
 							<div className="flex justify-between pt-2 gap-3 w-full">
 								<span className="w-full flex flex-col gap-3">
 									<Label>SKU</Label>
-									<Input
-										defaultValue={variant?.sku ?? ""}
-										onChange={async (e) =>
-											variant &&
-											(await onVariantInputChange({
-												updates: {
-													sku: e.currentTarget.value,
-												},
-												id: variant.id,
-											}))
-										}
-									/>
+									<Input defaultValue={variant?.sku ?? ""} />
 								</span>
 								<span className="w-full flex flex-col gap-3">
 									<Label>Barcode</Label>
-									<Input
-										defaultValue={variant?.barcode ?? ""}
-										onChange={async (e) =>
-											variant &&
-											(await onVariantInputChange({
-												updates: {
-													barcode: e.currentTarget.value,
-												},
-												id: variant.id,
-											}))
-										}
-									/>
+									<Input defaultValue={variant?.barcode ?? ""} />
 								</span>
 							</div>
 						)}
