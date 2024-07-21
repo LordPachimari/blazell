@@ -66,7 +66,7 @@ const Sidebar = () => {
 		<div className="flex">
 			<nav
 				className={cn(
-					"hidden group top-0 h-full dark:bg-mauve-1 justify-between lg:flex flex-col fixed z-40 w-14 overflow-hidden transition-all duration-200 ease-in-out hover:w-44 p-1",
+					"hidden group top-0 h-full justify-between lg:flex flex-col fixed z-40 w-14 overflow-hidden transition-all duration-200 ease-in-out hover:w-44 p-1",
 					{
 						"w-44": mode === "open",
 						"bg-component dark:bg-component":
