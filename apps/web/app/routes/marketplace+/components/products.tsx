@@ -52,10 +52,10 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
 			)}
-			unstable_viewTransition={true}
+			// unstable_viewTransition={true}
 			preventScrollReset={true}
 		>
-			{/* {product.defaultVariant.thumbnail ? (
+			{product.defaultVariant.thumbnail ? (
 				<Image
 					className="h-auto aspect-square max-w-full rounded-lg hover:brightness-50"
 					src={product.defaultVariant?.thumbnail?.url}
@@ -63,11 +63,11 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 					fit="contain"
 					quality={100}
 				/>
-			) : ( */}
-			<div className="aspect-square min-h-20 bg-component max-w-full rounded-lg hover:brightness-50">
-				<ImagePlaceholder />
-			</div>
-			{/* )} */}
+			) : (
+				<div className="aspect-square min-h-20 bg-component max-w-full rounded-lg hover:brightness-50">
+					<ImagePlaceholder />
+				</div>
+			)}
 			<div className="absolute inset-0 bg-gradient-to-b from-transparent via-black-a-7 dark:from-transparent dark:to-black-a-6 to-black-a-11 rounded-lg opacity-0 group-hover:opacity-70 transition duration-450 ease-in-out" />
 			<div className="flex absolute flex-end w-full px-2 bottom-0  rounded-b-lg">
 				<div className="group-hover:opacity-100 rounded-b-lg w-full opacity-0 transition-all duration-200 ease-in-out p-2">
