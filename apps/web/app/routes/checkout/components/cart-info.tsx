@@ -30,7 +30,7 @@ export const CartInfo = ({
 
 	return (
 		<section>
-			<h1 className="text-xl text-mauve-10 my-2">In your Cart</h1>
+			<h1 className="text-xl text-slate-10 my-2">In your Cart</h1>
 			<SelectSeparator className="my-2" />
 			<ul ref={parent} className="flex flex-col gap-2">
 				{items.map((item) => (

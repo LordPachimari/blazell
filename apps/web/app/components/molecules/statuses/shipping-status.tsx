@@ -28,7 +28,7 @@ export function ShippingStatus({
 	) : (
 		<Badge
 			variant={"outline"}
-			className="bg-mauve-3 border-mauve-9 text-mauve-9 font-bold"
+			className="bg-slate-3 border-slate-9 text-slate-9 font-bold"
 		>
 			Cancelled
 		</Badge>

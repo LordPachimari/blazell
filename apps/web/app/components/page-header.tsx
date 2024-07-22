@@ -6,7 +6,7 @@ const PageHeader = ({
 }: { title: string; className?: string }) => {
 	return (
 		<section className={cn("py-4 w-full flex", className)}>
-			<h1 className="font-bold font-freeman text-4xl">{title}</h1>
+			<h1 className="font-freeman text-2xl">{title}</h1>
 		</section>
 	);
 };

@@ -59,7 +59,7 @@ app.post("/create-user", async (c) => {
 
 			return {
 				type: "SUCCESS",
-				message: "User created successfully",
+				message: "User created successfully.",
 				status: 200 as const,
 			};
 		}),

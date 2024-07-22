@@ -139,7 +139,7 @@ const publishProduct = zod(z.object({ id: z.string() }), (input) =>
 		return yield* Effect.all(effects, { concurrency: "unbounded" });
 	}),
 );
-const duplicateProduct = zod(DuplicateProductSchema, (input) =>
+const copyProduct = zod(DuplicateProductSchema, (input) =>
 	Effect.gen(function* () {
 		const { duplicates } = input;
 		yield* Effect.forEach(duplicates, (_duplicate) => duplicate(_duplicate), {
@@ -251,15 +251,14 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				collectionID: product.collectionID,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
-				discountable: product.discountable,
 				defaultVariantID: newDefaultVariantID,
 				metadata: product.metadata,
-				originCountry: product.originCountry,
 				score: 0,
 				status: "draft",
 				storeID: product.storeID,
 				version: 0,
 				updatedBy: null,
+				type: "digital",
 			} satisfies Product,
 			"products",
 		);
@@ -284,6 +283,12 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				weight: defaultVariant.weight,
 				weightUnit: defaultVariant.weightUnit,
 				description: defaultVariant.description,
+				height: defaultVariant.height,
+				length: defaultVariant.length,
+				material: defaultVariant.material,
+				originCountry: defaultVariant.originCountry,
+				width: defaultVariant.width,
+				discountable: defaultVariant.discountable,
 			} satisfies Variant,
 			"variants",
 		);
@@ -346,9 +351,9 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 );
 
 export {
+	copyProduct,
 	createProduct,
 	deleteProduct,
-	duplicateProduct,
 	publishProduct,
 	updateProduct,
 };

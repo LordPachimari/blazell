@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { DotsHorizontalIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -54,11 +54,20 @@ import {
 	BadgeDollarSign,
 	Youtube,
 	Check,
+	Search,
+	PanelRightClose,
+	PanelLeftClose,
+	LogOut,
+	GalleryThumbnails,
+	SquareCheckBig,
+	SquareX,
+	RectangleEllipsis,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 export const strokeWidth = 1.5;
 export const Icons = {
+	Search,
 	Store: Store,
 	Product: PackageOpen,
 	Order: ShoppingBag,
@@ -113,6 +122,14 @@ export const Icons = {
 	BadgeDollarSign,
 	Check,
 	Youtube,
+	PanelRightClose,
+	PanelLeftClose,
+	Dots: DotsHorizontalIcon,
+	Logout: LogOut,
+	Thumbnail: GalleryThumbnails,
+	SquareCheck: SquareCheckBig,
+	Cancel: SquareX,
+	Pending: RectangleEllipsis,
 	UPC: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" {...props}>
 			<g clipPath="url(#a)">

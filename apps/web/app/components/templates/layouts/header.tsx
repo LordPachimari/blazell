@@ -60,19 +60,25 @@ function Header() {
 								/>
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
+						<DropdownMenuContent align="center" className="w-[200px]">
 							<Link to="/dashboard" prefetch="intent">
-								<DropdownMenuItem>Dashboard</DropdownMenuItem>
+								<DropdownMenuItem className="flex gap-2 ">
+									<Icons.Dashboard size={16} /> Dashboard
+								</DropdownMenuItem>
 							</Link>
 							<Link to="/orders" prefetch="intent">
-								<DropdownMenuItem>Orders</DropdownMenuItem>
+								<DropdownMenuItem className="flex gap-2">
+									<Icons.Order size={16} /> Orders
+								</DropdownMenuItem>
 							</Link>
 							<Link to="/settings" prefetch="intent">
-								<DropdownMenuItem>Settings</DropdownMenuItem>
+								<DropdownMenuItem className="flex gap-2 ">
+									<Icons.Settings size={16} /> Settings
+								</DropdownMenuItem>
 							</Link>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem className="focus:text-red-9 font-bold focus:bg-red-2">
-								Logout
+							<DropdownMenuItem className="flex gap-2 focus:text-red-9 focus:bg-red-2">
+								<Icons.Logout size={16} /> Logout
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -97,10 +103,10 @@ function Notifications() {
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "outline" }),
-					"rounded-full",
+					"rounded-lg",
 				)}
 			>
-				<Icons.Notification className="w-5 h-5 text-mauve-11" />
+				<Icons.Notification className="w-5 h-5 text-slate-11" />
 				<span className="sr-only">Notifications</span>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
@@ -111,7 +117,7 @@ function Notifications() {
 					<div className="flex flex-col gap-1 mt-4">
 						<h2 className="font-bold text-center">You're all caught up.</h2>
 
-						<p className="text-mauve-11 text-center text-sm">
+						<p className="text-slate-11 text-center text-sm">
 							No notifications.
 						</p>
 					</div>
@@ -121,7 +127,7 @@ function Notifications() {
 						<DropdownMenuItem key={notification.id} className="h-14 p-4">
 							<div className="flex flex-col gap-2">
 								<p className="font-semibold">{notification.title}</p>
-								<p className="text-mauve-11">{notification.description}</p>
+								<p className="text-slate-11">{notification.description}</p>
 							</div>
 						</DropdownMenuItem>
 					))}

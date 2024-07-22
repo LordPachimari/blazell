@@ -4,7 +4,7 @@ import {
 	deleteProduct,
 	updateProduct,
 	publishProduct,
-	duplicateProduct,
+	copyProduct,
 } from "./product";
 import {
 	createStore,
@@ -51,7 +51,7 @@ const DashboardMutators = {
 	deleteVariant,
 	duplicateVariant,
 	updateProduct,
-	duplicateProduct,
+	copyProduct,
 	updateImagesOrder,
 	updateProductOption,
 	updateProductOptionValues,
@@ -114,7 +114,7 @@ export const affectedSpaces: AffectedSpaces = {
 		marketplace: ["products"],
 		global: ["cart"],
 	},
-	duplicateProduct: {
+	copyProduct: {
 		dashboard: ["store"],
 	},
 	deleteProductOption: {

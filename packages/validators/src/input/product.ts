@@ -17,7 +17,6 @@ export type CreateProduct = z.infer<typeof CreateProductSchema>;
 
 const ProductUpdatesSchema = InsertProductSchema.pick({
 	collectionID: true,
-	discountable: true,
 	status: true,
 });
 

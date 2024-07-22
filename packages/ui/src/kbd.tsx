@@ -7,7 +7,7 @@ const kbdVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "bg-accent text-accent-foreground",
+				default: "bg-slate-3 text-slate-11",
 				outline: "bg-background text-foreground",
 			},
 		},

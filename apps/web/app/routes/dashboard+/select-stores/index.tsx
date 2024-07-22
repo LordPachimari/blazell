@@ -53,14 +53,14 @@ export default function SelectStores() {
 					>
 						<Card className="text-center min-w-[300px] flex flex-col p-2 hover:scale-105 transition-all duration-100 ease-out justify-center items-center shadow-md cursor-pointer hover:shadow-xl aspect-square max-w-[400px]">
 							<CardContent className="p-0 ">
-								<section className="flex h-full w-full  border border-border   overflow-hidden rounded-xl items-center justify-center">
+								<section className="flex h-full w-full  border border-border   overflow-hidden rounded-lg items-center justify-center">
 									{!_store.storeImage ? (
 										<ImagePlaceholder />
 									) : _store.storeImage.uploaded ? (
 										<Image
 											src={_store.storeImage.url}
 											alt={_store.name}
-											className="rounded-xl object-cover"
+											className="rounded-lg object-cover"
 											fit="cover"
 										/>
 									) : (
@@ -70,7 +70,7 @@ export default function SelectStores() {
 												_store.storeImage.fileType,
 											)}
 											alt={_store.name}
-											className="rounded-xl object-cover"
+											className="rounded-lg object-cover"
 										/>
 									)}
 								</section>

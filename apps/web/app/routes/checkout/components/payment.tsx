@@ -7,7 +7,7 @@ export const PaymentInfo = () => {
 	const [selected, setSelected] = useState<string | undefined>(undefined);
 	return (
 		<section>
-			<h1 className="text-xl text-mauve-10 my-2">Payment</h1>
+			<h1 className="text-xl text-slate-10 my-2">Payment</h1>
 			<div className="flex my-2">
 				<RadioGroup
 					value={selected}
@@ -18,12 +18,12 @@ export const PaymentInfo = () => {
 						return (
 							<Radio
 								key={payment}
-								className="group relative flex cursor-pointer rounded-2xl"
+								className="group relative flex cursor-pointer rounded-lg"
 								value={payment}
 							>
 								<div
 									className={cn(
-										"flex items-center border group-data-[checked]:border-brand-3 border-slate-6 p-2 rounded-2xl gap-2",
+										"flex items-center border group-data-[checked]:border-brand-3 border-slate-6 p-2 rounded-lg gap-2",
 										{
 											"group-data-[checked]:border-violet-400":
 												payment === "stripe",

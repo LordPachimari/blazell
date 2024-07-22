@@ -18,12 +18,12 @@ export default function Index() {
 			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<div
 				style={{ animationDelay: "0.10s", animationFillMode: "both" }}
-				className="bg-component shadow border border-border px-2 hover:bg-mauve-2 cursor-pointer animate-fade-up text-sm font-medium text-mauve-11 flex justify-center items-center p-1 gap-2 rounded-2xl h-8 absolute top-[50px] lg:top-[200px]"
+				className="bg-component shadow border border-border px-2 hover:bg-slate-2 cursor-pointer animate-fade-up text-sm font-medium text-slate-11 flex justify-center items-center p-1 gap-2 rounded-lg h-8 absolute top-[10vh]"
 			>
 				<Badge className="bg-brand-5 h-6 border-brand-6 text-brand-9">
 					Beta
 				</Badge>
-				Introducing blazell
+				Under develpoment. Many features and designs are not yet implemented.
 				<Icons.Right className="size-4" />
 			</div>
 			<Hero />

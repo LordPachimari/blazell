@@ -1,19 +1,9 @@
-import { Button } from "@blazell/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@blazell/ui/card";
-import { Icons } from "@blazell/ui/icons";
+import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import { generateID } from "@blazell/utils";
 import type { Product, Variant } from "@blazell/validators/client";
-import { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
-import { ProductOptions } from "./product-options";
 import ProductVariant from "./product-variant";
 
 interface ProductVariantsProps {
@@ -28,23 +18,22 @@ export function Variants({
 	product,
 	variants,
 	defaultVariant,
-	isPublished,
 }: ProductVariantsProps) {
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
-	const [variantID, _setVariantID] = useState<string | null>(null);
+	const [variantID, _setVariantID] = React.useState<string | null>(null);
 
-	const setVariantID = (id: string | null) => {
+	const [isOpen, setIsOpen] = React.useState(false);
+	const setVariantID = useCallback((id: string | null) => {
 		if (id === null) {
 			setIsOpen(false);
 		} else {
 			setIsOpen(true);
 		}
 		_setVariantID(id);
-	};
+	}, []);
+	console.log("isOpen", isOpen);
 
-	const [isOpen, setIsOpen] = useState(false);
-
-	const generateVariants = useCallback(async () => {
+	const generateVariants = React.useCallback(async () => {
 		if (!product) return;
 		await dashboardRep?.mutate.generateVariants({
 			productID,
@@ -64,7 +53,7 @@ export function Variants({
 		});
 	}, [dashboardRep, productID, product, defaultVariant]);
 
-	const deleteVariant = useCallback(
+	const deleteVariant = React.useCallback(
 		async (keys: string[]) => {
 			if (dashboardRep) {
 				await dashboardRep.mutate.deleteVariant({
@@ -74,76 +63,35 @@ export function Variants({
 		},
 		[dashboardRep],
 	);
-	const duplicateVariant = useCallback(
-		async (keys: string[]) => {
-			if (dashboardRep) {
-				await dashboardRep.mutate.duplicateVariant({
-					duplicates: keys.map((id) => ({
-						newPriceIDs: Array.from({ length: 1 }).map(() =>
-							generateID({ prefix: "price" }),
-						),
-						newVariantID: generateID({ prefix: "variant" }),
-						originalVariantID: id,
-					})),
-				});
-			}
-		},
-		[dashboardRep],
-	);
 
 	return (
-		<Card className="my-4 p-0">
-			<CardHeader className="p-4 border-b border-border">
-				<CardTitle>
-					<span className="flex w-full justify-between">
-						Variant<p className="text-sm text-mauve-9">{"(optional)"}</p>
-					</span>
-				</CardTitle>
-				<CardDescription>
-					Create variants of your products based on size, colors etc.
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="p-4">
-				<ProductOptions
-					options={product?.options ?? []}
-					productID={productID}
-				/>
-				<VariantTable
-					setVariantID={setVariantID}
-					variants={variants ?? []}
-					deleteVariant={deleteVariant}
-					duplicateVariant={duplicateVariant}
-				/>
-			</CardContent>
-			<CardFooter className="justify-center">
-				<Button
-					size="md"
-					variant="ghost"
-					type="button"
-					className="mt-2 text-mauve-11 rounded-none border-b-0 rounded-b-lg border-r-0 border-l-0"
-					onClick={generateVariants}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") {
-							e.preventDefault();
-							e.stopPropagation();
-							generateVariants();
-						}
-					}}
-					disabled={!product?.options?.length}
-				>
-					<Icons.PlusCircle className="h-3.5 w-3.5 mr-2" />
-					Generate variants
-				</Button>
-				<ProductVariant
-					isOpen={isOpen}
-					options={product?.options ?? []}
-					variantID={variantID}
-					setIsOpen={setIsOpen}
-					productID={productID}
-					setVariantID={setVariantID}
-					isPublished={isPublished}
-				/>
-			</CardFooter>
-		</Card>
+		<>
+			<ProductVariant
+				isOpen={isOpen}
+				setIsOpen={setIsOpen}
+				product={product}
+				setVariantID={setVariantID}
+				variantID={variantID}
+			/>
+
+			<Card className="p-0">
+				<CardHeader className="p-4 py-6 border-b border-border flex justify-between flex-row">
+					<CardTitle className="items-center flex gap-1">
+						Variants{" "}
+						<span className="text-slate-9 font-thin text-sm">
+							{"(Optional)"}
+						</span>
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<VariantTable
+						setVariantID={setVariantID}
+						variants={variants ?? []}
+						deleteVariant={deleteVariant}
+						generateVariants={generateVariants}
+					/>
+				</CardContent>
+			</Card>
+		</>
 	);
 }

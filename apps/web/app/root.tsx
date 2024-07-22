@@ -17,7 +17,7 @@ import type { Theme } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
-import { Header } from "./components/templates/layouts/header";
+// import { Header } from "./components/templates/layouts/header";
 import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
@@ -88,12 +88,11 @@ export const loader: LoaderFunction = async (args) => {
 	// 		Authorization: `Bearer ${token}`,
 	// 	},
 	// }).then((res) => res.json() as Promise<User | undefined>);
-	const user = await fetch(
-		`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`,
-		{
-			method: "GET",
-		},
-	).then((res) => res.json() as Promise<User | undefined>);
+	const user = userContextCookie.fakeAuthID
+		? await fetch(`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`, {
+				method: "GET",
+			}).then((res) => res.json() as Promise<User | undefined>)
+		: undefined;
 	return json(
 		{
 			ENV: {
@@ -138,7 +137,7 @@ function App() {
 										<MarketplaceStoreMutator>
 											<Sidebar />
 											<MobileSidebar />
-											<Header />
+											{/* <Header /> */}
 											<Outlet />
 											<Toaster />
 										</MarketplaceStoreMutator>

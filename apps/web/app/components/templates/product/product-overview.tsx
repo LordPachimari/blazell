@@ -26,6 +26,7 @@ interface ProductOverviewProps {
 	setVariantIDOrHandle: (prop: string | undefined) => void;
 	cartID?: string | undefined;
 	defaultVariant: Variant | PublishedVariant | undefined;
+	setView?: (value: "preview" | "input") => void;
 }
 
 const ProductOverview = ({
@@ -37,6 +38,7 @@ const ProductOverview = ({
 	selectedVariant,
 	cartID,
 	defaultVariant,
+	setView,
 }: ProductOverviewProps) => {
 	const [isShaking, setIsShaking] = useState(false);
 
@@ -51,7 +53,12 @@ const ProductOverview = ({
 
 			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div
-				className="flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white"
+				className={cn(
+					"flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white",
+					{
+						"top-14": isDashboard,
+					},
+				)}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<ScrollArea
@@ -60,7 +67,10 @@ const ProductOverview = ({
 					)}
 				>
 					<div className="p-4 h-full w-full">
-						<GeneralInfo defaultVariant={defaultVariant} />
+						<GeneralInfo
+							defaultVariant={defaultVariant}
+							{...(setView && { setView })}
+						/>
 						<Actions
 							{...(cartID && { cartID })}
 							product={product}
