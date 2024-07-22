@@ -23,7 +23,7 @@ export default function Index() {
 				<Badge className="bg-brand-5 h-6 border-brand-6 text-brand-9">
 					Beta
 				</Badge>
-				Introducing blazell
+				Under develpoment. Many features and designs are not yet implemented.
 				<Icons.Right className="size-4" />
 			</div>
 			<Hero />
