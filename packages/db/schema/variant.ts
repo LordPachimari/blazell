@@ -32,6 +32,7 @@ export const variants = pgTable(
 			.notNull(),
 		sku: varchar("sku"),
 		material: varchar("material"),
+		discountable: boolean("discountable").notNull().default(false),
 		height: integer("height"),
 		width: integer("width"),
 		length: integer("length"),

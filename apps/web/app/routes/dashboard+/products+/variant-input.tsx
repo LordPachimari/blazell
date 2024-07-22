@@ -11,6 +11,7 @@ import { Media } from "./input/product-media";
 import { Organize } from "./input/product-organize";
 import { Pricing } from "./input/product-pricing";
 import Stock from "./input/product-stock";
+import { VariantInfo } from "./input/variant-info";
 
 interface ProductVariantProps {
 	variant: Variant | undefined;
@@ -47,7 +48,7 @@ const VariantInput = ({
 				}
 			}}
 		>
-			<main className="relative flex flex-col min-h-screen pb-20 max-w-7xl w-full gap-3 lg:flex lg:flex-row min-w-[15rem] px-3">
+			<main className="relative flex flex-col min-h-screen pb-20 max-w-7xl w-full gap-3 min-[1200px]:flex min-[1200px]:flex-row min-w-[15rem] px-3">
 				<div className="w-full flex flex-col lg:min-w-[44rem] xl:max-w-[50rem]">
 					<section className="flex items-center justify-between h-16">
 						<Badge
@@ -69,12 +70,14 @@ const VariantInput = ({
 						</Badge>
 					</section>
 					<section className="w-full flex flex-col gap-3">
+						<VariantInfo variant={variant} updateVariant={updateVariant} />
 						<Media images={variant?.images ?? []} variantID={variant?.id} />
 						<Stock variant={variant} updateVariant={updateVariant} />
 					</section>
 				</div>
 
-				<div className="w-full flex flex-col lg:max-w-[25rem]">
+				<div className="w-full flex flex-col min-[1200px]:max-w-[25rem]">
+					<div className="h-16" />
 					<section className="flex flex-col gap-3 order-2 w-full">
 						<Pricing
 							isPublished={product?.status === "published"}
@@ -82,7 +85,7 @@ const VariantInput = ({
 							prices={variant?.prices ?? []}
 						/>
 						<Organize product={product} />
-						<Attributes variant={variant} />
+						<Attributes variant={variant} updateVariant={updateVariant} />
 					</section>
 				</div>
 			</main>

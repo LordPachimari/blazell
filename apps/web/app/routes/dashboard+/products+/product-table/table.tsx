@@ -141,7 +141,7 @@ function ProductsTable({
 												}px)`,
 											}}
 											className={cn(
-												row.getIsSelected() && isPending && "opacity-55",
+												row.getIsSelected() && isPending && "bg-mauve-2",
 											)}
 											onClick={() =>
 												navigate(`/dashboard/products/${row.original.id}`)

@@ -168,7 +168,7 @@ export function ProductInput({
 					}
 				}}
 			>
-				<main className="relative flex flex-col min-h-screen pb-20 max-w-7xl w-full gap-3 lg:flex lg:flex-row min-w-[15rem] px-3">
+				<main className="relative flex flex-col min-h-screen pb-20 max-w-7xl w-full gap-3 min-[1200px]:flex min-[1200px]:flex-row min-w-[15rem] px-3">
 					<AlertDialogComponent
 						open={isOpen}
 						setIsOpen={setIsOpen}
@@ -243,8 +243,8 @@ export function ProductInput({
 						</section>
 					</div>
 
-					<div className="w-full flex flex-col lg:max-w-[25rem]">
-						<section className="hidden lg:flex items-center order-1 justify-end gap-1 h-16">
+					<div className="w-full flex flex-col min-[1200px]:max-w-[25rem]">
+						<section className="hidden min-[1200px]:flex items-center order-1 justify-end gap-1 h-16">
 							<DeleteOrPublish
 								setView={setView}
 								setIsOpen1={setIsOpen1}
@@ -258,7 +258,10 @@ export function ProductInput({
 								prices={defaultVariant?.prices ?? []}
 							/>
 							<Organize product={product} />
-							<Attributes variant={defaultVariant} />
+							<Attributes
+								variant={defaultVariant}
+								updateVariant={updateVariant}
+							/>
 						</section>
 					</div>
 				</main>

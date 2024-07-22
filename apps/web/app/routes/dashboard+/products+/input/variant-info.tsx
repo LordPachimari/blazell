@@ -14,7 +14,6 @@ import {
 } from "@blazell/ui/dropdown-menu";
 import {
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -25,13 +24,7 @@ import { Input } from "@blazell/ui/input";
 import { Switch } from "@blazell/ui/switch";
 import { Textarea } from "@blazell/ui/textarea";
 import { toast } from "@blazell/ui/toast";
-import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
-import {
-	productStatuses,
-	VariantSchema,
-	type UpdateProduct,
-	type UpdateVariant,
-} from "@blazell/validators";
+import { VariantSchema, type UpdateVariant } from "@blazell/validators";
 import type { Product, Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -44,33 +37,27 @@ const schema = VariantSchema.pick({
 	handle: true,
 }).and(
 	z.object({
-		status: z.enum(["draft", "published", "archived"]),
 		discountable: z.boolean().optional(),
 	}),
 );
 
-type ProductInfo = z.infer<typeof schema>;
-export function ProductInfo({
-	defaultVariant,
-	product,
+type VariantInfo = z.infer<typeof schema>;
+export function VariantInfo({
+	variant,
 	updateVariant,
-	updateProduct,
 }: {
-	defaultVariant: Variant | undefined;
-	product: Product | undefined;
+	variant: Variant | undefined;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
-	updateProduct: (updates: UpdateProduct["updates"]) => Promise<void>;
 }) {
 	const [opened, setOpened] = React.useState(false);
 
-	const methods = useForm<ProductInfo>({
+	const methods = useForm<VariantInfo>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			description: defaultVariant?.description ?? "",
-			discountable: defaultVariant?.discountable ?? false,
-			handle: defaultVariant?.handle ?? "",
-			status: product?.status ?? "draft",
-			title: defaultVariant?.title ?? "",
+			description: variant?.description ?? "",
+			discountable: variant?.discountable ?? false,
+			handle: variant?.handle ?? "",
+			title: variant?.title ?? "",
 		},
 	});
 
@@ -79,53 +66,38 @@ export function ProductInfo({
 		async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 			e.preventDefault();
 			const values = methods.getValues();
-			if (!defaultVariant) return;
-			if (values.status && values.status !== product?.status) {
-				await updateProduct({
-					...(values.status && { status: values.status }),
-				});
-			}
+			console.log("values", values);
+			if (!variant) return;
 			if (
-				(values.description &&
-					values.description !== defaultVariant.description) ||
-				(values.title && values.title !== defaultVariant.title) ||
-				(values.handle && values.handle !== defaultVariant.handle) ||
+				(values.description && values.description !== variant.description) ||
+				(values.title && values.title !== variant.title) ||
+				(values.handle && values.handle !== variant.handle) ||
 				(values.discountable !== undefined &&
-					values.discountable !== defaultVariant.discountable)
+					values.discountable !== variant?.discountable)
 			) {
 				await updateVariant({
-					id: defaultVariant.id,
+					id: variant.id,
 					updates: {
 						...(values.description && {
 							description: values.description,
 						}),
 						...(values.title && { title: values.title }),
 						...(values.handle && { handle: values.handle }),
-						...(values.discountable !== undefined && {
-							discountable: values.discountable,
-						}),
 					},
 				});
 			}
 			toast.success("Product updated.");
 			setOpened(false);
 		},
-		[
-			defaultVariant,
-			product?.status,
-			updateProduct,
-			updateVariant,
-			methods.getValues,
-		],
+		[variant, updateVariant, methods.getValues],
 	);
-	console.log("product", defaultVariant?.handle);
+	console.log("product", variant?.handle);
 	return (
 		<>
 			<Card className="p-0 w-full">
 				<CardHeader className="p-4 border-b flex justify-between rounded-t-lg items-center flex-row border-border">
-					<CardTitle>{defaultVariant?.title ?? "Untitled"}</CardTitle>
+					<CardTitle>{variant?.title ?? "Untitled"}</CardTitle>
 					<div className="flex gap-2 mt-0 no-space-y">
-						<ProductStatus status={product?.status ?? "draft"} />
 						<DropdownMenu>
 							<DropdownMenuTrigger
 								className={cn(
@@ -152,7 +124,7 @@ export function ProductInfo({
 						<p className="w-full text-sm text-slate-11">Description</p>
 
 						<p className="w-full flex justify-center text-sm text-slate-11">
-							{defaultVariant?.description ?? (
+							{variant?.description ?? (
 								<Icons.Minus className="size-4 text-slate-10" />
 							)}
 						</p>
@@ -161,7 +133,7 @@ export function ProductInfo({
 						<p className="w-full text-sm text-slate-11">Handle</p>
 						<p className="w-full flex justify-center text-sm text-slate-11">
 							{"/"}
-							{defaultVariant?.handle ?? (
+							{variant?.handle ?? (
 								<Icons.Minus className="size-4 text-slate-10" />
 							)}
 						</p>
@@ -170,7 +142,7 @@ export function ProductInfo({
 						<p className="w-full text-sm text-slate-11">Discountable</p>
 
 						<p className="w-full flex justify-center text-sm text-slate-11">
-							{defaultVariant?.discountable ? "true" : "false"}
+							{variant?.discountable ? "true" : "false"}
 						</p>
 					</div>
 				</CardContent>
@@ -179,37 +151,9 @@ export function ProductInfo({
 				<DialogContent className="sm:w-[500px]">
 					<FormProvider {...methods}>
 						<DialogTitle className="p-4 border-b border-border font-bold text-xl">
-							Edit product
+							Edit variant
 						</DialogTitle>
 						<section className="p-4 flex flex-col gap-4">
-							<FormField
-								control={methods.control}
-								name="status"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Status</FormLabel>
-										<FormControl>
-											<ToggleGroup
-												type="single"
-												value={field.value ?? "draft"}
-												onValueChange={field.onChange}
-											>
-												{productStatuses.map((status) => (
-													<ToggleGroupItem
-														key={status}
-														value={status}
-														className="text-sm h-9"
-													>
-														{status}
-													</ToggleGroupItem>
-												))}
-											</ToggleGroup>
-										</FormControl>
-										<FormDescription>Change product status.</FormDescription>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 							<FormField
 								control={methods.control}
 								name="title"
@@ -291,9 +235,7 @@ export function ProductInfo({
 						</section>
 
 						<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
-							{" "}
 							<div className="flex gap-2">
-								{" "}
 								<Button variant={"outline"} onClick={() => setOpened(false)}>
 									Cancel
 								</Button>

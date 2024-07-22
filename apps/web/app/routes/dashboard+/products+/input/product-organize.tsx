@@ -1,6 +1,6 @@
 import { cn } from "@blazell/ui";
 import { Badge } from "@blazell/ui/badge";
-import { buttonVariants } from "@blazell/ui/button";
+import { Button, buttonVariants } from "@blazell/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import {
 	DialogContent,
@@ -81,16 +81,25 @@ export function Organize({
 					</CardHeader>
 					<CardContent className="rounded-lg w-full">
 						<div className="flex py-4 border-b border-border p-4">
-							<p className="w-full text-sm text-slate-11">Description</p>
-							<p className="w-full text-sm text-slate-11">Description</p>
+							<p className="w-full text-sm text-slate-11">Type</p>
+							<p className="w-full flex justify-center text-sm text-slate-11">
+								{product?.type ?? (
+									<Icons.Minus className="size-4 text-slate-10" />
+								)}
+							</p>
 						</div>
 						<div className="flex py-4 border-b border-border p-4">
-							<p className="w-full text-sm text-slate-11">Handle</p>
-							<p className="w-full text-sm text-slate-11">Handle</p>
-						</div>
-						<div className="flex py-4 p-4">
-							<p className="w-full text-sm text-slate-11">Discountable</p>
-							<p className="w-full text-sm text-slate-11">Discountable</p>
+							<p className="w-full text-sm text-slate-11">Tags</p>
+							<div className="flex w-full flex-wrap gap-1">
+								{/* {(product.tags ?? []).map((value) => (
+												<Badge
+													key={value.id}
+													className="h-6 bg-brand-3 border-brand-7 border text-brand-9 font-thin text-xs"
+												>
+													{value.value}
+												</Badge>
+											))} */}
+							</div>
 						</div>
 					</CardContent>
 				</Card>
@@ -100,8 +109,8 @@ export function Organize({
 							Edit attributes
 						</DialogTitle>
 						<section className="p-4 flex flex-col gap-4">
-							<div className="flex flex-col gap-2">
-								<Label>Product type</Label>
+							<div className="flex flex-col gap-3">
+								<Label>Type</Label>
 								<Badge className="border-red-7 bg-red-4 text-red-9">
 									Physical
 								</Badge>
@@ -124,6 +133,17 @@ export function Organize({
 								)}
 							/>
 						</section>
+
+						<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
+							{" "}
+							<div className="flex gap-2">
+								{" "}
+								<Button variant={"outline"} onClick={() => setOpened(false)}>
+									Cancel
+								</Button>
+								<Button>Save</Button>
+							</div>
+						</div>
 					</DialogContent>
 				</DialogRoot>
 			</form>

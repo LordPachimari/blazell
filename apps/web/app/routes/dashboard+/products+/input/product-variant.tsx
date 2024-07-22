@@ -53,7 +53,7 @@ export default function ProductVariant({
 					<Icons.Close size={20} strokeWidth={strokeWidth} />
 				</Button>
 				<div className="w-full flex justify-center">
-					<ScrollArea className="h-[85vh]	 w-full sm:w-11/12 px-2 md:px-4 py-2">
+					<ScrollArea className="h-[85vh]	 w-full lg:p-6 py-2">
 						<VariantInput
 							product={product}
 							variant={variant}

@@ -1,5 +1,5 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 
@@ -10,6 +10,7 @@ import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import type { Variant } from "@blazell/validators/client";
 import { Checkbox } from "@headlessui/react";
+import debounce from "lodash.debounce";
 
 interface StockProps {
 	variant: Variant | InsertVariant | undefined | null;
@@ -27,6 +28,29 @@ const Stock = ({ variant, updateVariant, className }: StockProps) => {
 		}
 	}, [variant]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onInputUpdate = React.useCallback(
+		debounce(
+			async ({
+				barcode,
+				quantity,
+				sku,
+			}: { quantity?: number; sku?: string; barcode?: string }) => {
+				variant &&
+					(await updateVariant({
+						id: variant.id,
+						updates: {
+							...(quantity && { quantity }),
+							...(sku && { sku }),
+							...(barcode && { barcode }),
+						},
+					}));
+			},
+			300,
+		),
+		[variant, updateVariant],
+	);
+
 	return (
 		<Card className={cn("p-0", className)}>
 			<CardHeader className="p-4 border-b border-border">
@@ -38,6 +62,9 @@ const Stock = ({ variant, updateVariant, className }: StockProps) => {
 					className="my-2 w-20"
 					min={0}
 					defaultValue={variant?.quantity ?? 1}
+					onChange={async (e) =>
+						await onInputUpdate({ quantity: e.target.valueAsNumber })
+					}
 				/>
 				<div className="flex flex-col gap-2 pt-2">
 					<span className="flex items-center gap-2">
@@ -54,6 +81,9 @@ const Stock = ({ variant, updateVariant, className }: StockProps) => {
 					/> */}
 						<Checkbox
 							defaultChecked={variant?.allowBackorder ?? false}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") e.preventDefault();
+							}}
 							onChange={async (value) =>
 								variant &&
 								(await updateVariant({
@@ -70,6 +100,9 @@ const Stock = ({ variant, updateVariant, className }: StockProps) => {
 					<span className="flex items-center gap-2">
 						<Checkbox
 							checked={hasCode}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") e.preventDefault();
+							}}
 							onChange={(value) => setHasCode(value)}
 							className="group size-6 rounded-md border bg-component p-1 ring-1 ring-border ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
@@ -82,11 +115,21 @@ const Stock = ({ variant, updateVariant, className }: StockProps) => {
 							<div className="flex justify-between pt-2 gap-3 w-full">
 								<span className="w-full flex flex-col gap-3">
 									<Label>SKU</Label>
-									<Input defaultValue={variant?.sku ?? ""} />
+									<Input
+										defaultValue={variant?.sku ?? ""}
+										onChange={async (e) =>
+											await onInputUpdate({ sku: e.target.value })
+										}
+									/>
 								</span>
 								<span className="w-full flex flex-col gap-3">
 									<Label>Barcode</Label>
-									<Input defaultValue={variant?.barcode ?? ""} />
+									<Input
+										defaultValue={variant?.barcode ?? ""}
+										onChange={async (e) =>
+											await onInputUpdate({ barcode: e.target.value })
+										}
+									/>
 								</span>
 							</div>
 						)}

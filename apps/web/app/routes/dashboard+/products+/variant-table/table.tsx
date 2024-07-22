@@ -7,8 +7,8 @@ import {
 	TableRow,
 } from "@blazell/ui/table";
 import type { Variant } from "@blazell/validators/client";
-import { flexRender, type ColumnDef } from "@tanstack/react-table";
-import React, { useMemo } from "react";
+import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
+import React, { useMemo, type KeyboardEvent } from "react";
 import { useDataTable } from "~/components/templates/table/use-data-table";
 import { getVariantColumns } from "./columns";
 import { Separator } from "@blazell/ui/separator";
@@ -18,13 +18,14 @@ import { Button } from "@blazell/ui/button";
 import type { DebouncedFunc } from "~/types/debounce";
 import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
 import { DataTableFloatingBar } from "~/components/templates/table/data-table-floating-bar";
+import { cn } from "@blazell/ui";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface VariantTableProps {
 	variants: Variant[];
 	setVariantID: (variant: string | null) => void;
 	generateVariants: () => void;
 	deleteVariant: (keys: string[]) => Promise<void>;
-	duplicateVariant: (keys: string[]) => Promise<void>;
 	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 export default function VariantTable({
@@ -32,7 +33,6 @@ export default function VariantTable({
 	setVariantID,
 	generateVariants,
 	deleteVariant,
-	duplicateVariant,
 	onSearch,
 }: VariantTableProps) {
 	const columns = useMemo<ColumnDef<Variant>[]>(
@@ -40,9 +40,8 @@ export default function VariantTable({
 			getVariantColumns({
 				setVariantID,
 				deleteVariant,
-				duplicateVariant,
 			}),
-		[setVariantID, deleteVariant, duplicateVariant],
+		[setVariantID, deleteVariant],
 	);
 	const table = useDataTable({
 		columns,
@@ -51,13 +50,33 @@ export default function VariantTable({
 	});
 	const { rows } = table.getRowModel();
 	const parentRef = React.useRef<HTMLDivElement>(null);
-
+	useHotkeys(["D"], () => {
+		const rows = table.getFilteredSelectedRowModel().rows;
+		console.log("rows", rows);
+		deleteVariant(rows.map((r) => r.original.id));
+		table.toggleAllPageRowsSelected(false);
+	});
 	const virtualizer = useVirtualizer({
 		count: rows.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => 34,
 		overscan: 20,
 	});
+	const handleKeyDown = (
+		e: KeyboardEvent<HTMLTableRowElement>,
+		row: Row<Variant>,
+	) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			setVariantID(row.original.id);
+		}
+		if (e.key === " ") {
+			console.log("space");
+			e.preventDefault();
+			e.stopPropagation();
+			row.toggleSelected(!row.getIsSelected());
+		}
+	};
 
 	return (
 		<div className="w-full">
@@ -103,12 +122,25 @@ export default function VariantTable({
 						</TableHeader>
 						<TableBody>
 							{table.getRowModel().rows.length > 0 ? (
-								table.getRowModel().rows.map((row) => {
+								virtualizer.getVirtualItems().map((virtualRow, index) => {
+									const row = rows[virtualRow.index] as Row<Variant>;
 									return (
 										<TableRow
 											key={row.id}
 											data-state={row.getIsSelected() && "selected"}
-											onClick={() => setVariantID(row.original.id)}
+											tabIndex={0}
+											style={{
+												height: `${virtualRow.size}px`,
+												transform: `translateY(${
+													virtualRow.start - index * virtualRow.size
+												}px)`,
+											}}
+											className={cn(row.getIsSelected() && "bg-mauve-2")}
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+											onKeyDown={(e) => handleKeyDown(e, row)}
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>
@@ -141,11 +173,7 @@ export default function VariantTable({
 				pageSizes={[10, 20, 30]}
 			/>
 			{table.getFilteredSelectedRowModel().rows.length > 0 && (
-				<DataTableFloatingBar
-					table={table}
-					onDelete={deleteVariant}
-					onDuplicate={duplicateVariant}
-				/>
+				<DataTableFloatingBar table={table} onDelete={deleteVariant} />
 			)}
 		</div>
 	);

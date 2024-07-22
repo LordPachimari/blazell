@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
 import { generateID } from "@blazell/utils";
 import type { Product, Variant } from "@blazell/validators/client";
-import React from "react";
+import React, { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import VariantTable from "../variant-table/table";
 import ProductVariant from "./product-variant";
@@ -22,16 +22,16 @@ export function Variants({
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const [variantID, _setVariantID] = React.useState<string | null>(null);
 
-	const setVariantID = (id: string | null) => {
+	const [isOpen, setIsOpen] = React.useState(false);
+	const setVariantID = useCallback((id: string | null) => {
 		if (id === null) {
 			setIsOpen(false);
 		} else {
 			setIsOpen(true);
 		}
 		_setVariantID(id);
-	};
-
-	const [isOpen, setIsOpen] = React.useState(false);
+	}, []);
+	console.log("isOpen", isOpen);
 
 	const generateVariants = React.useCallback(async () => {
 		if (!product) return;
@@ -63,22 +63,6 @@ export function Variants({
 		},
 		[dashboardRep],
 	);
-	const duplicateVariant = React.useCallback(
-		async (keys: string[]) => {
-			if (dashboardRep) {
-				await dashboardRep.mutate.duplicateVariant({
-					duplicates: keys.map((id) => ({
-						newPriceIDs: Array.from({ length: 1 }).map(() =>
-							generateID({ prefix: "price" }),
-						),
-						newVariantID: generateID({ prefix: "variant" }),
-						originalVariantID: id,
-					})),
-				});
-			}
-		},
-		[dashboardRep],
-	);
 
 	return (
 		<>
@@ -104,7 +88,6 @@ export function Variants({
 						setVariantID={setVariantID}
 						variants={variants ?? []}
 						deleteVariant={deleteVariant}
-						duplicateVariant={duplicateVariant}
 						generateVariants={generateVariants}
 					/>
 				</CardContent>

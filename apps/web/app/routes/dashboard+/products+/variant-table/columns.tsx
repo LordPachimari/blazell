@@ -12,11 +12,9 @@ import { Checkbox } from "@blazell/ui/checkbox";
 export function getVariantColumns({
 	setVariantID,
 	deleteVariant,
-	duplicateVariant,
 }: {
 	setVariantID: (id: string | null) => void;
 	deleteVariant: (keys: string[]) => Promise<void>;
-	duplicateVariant: (keys: string[]) => Promise<void>;
 }): ColumnDef<Variant, unknown>[] {
 	return [
 		{
@@ -24,6 +22,9 @@ export function getVariantColumns({
 			header: ({ table }) => (
 				<Checkbox
 					checked={table.getIsAllPageRowsSelected()}
+					onChange={(e) => {
+						e.stopPropagation();
+					}}
 					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 					aria-label="Select all"
 					className="translate-y-[2px]"
@@ -106,7 +107,6 @@ export function getVariantColumns({
 					row={row}
 					setVariantID={setVariantID}
 					deleteVariant={deleteVariant}
-					duplicateVariant={duplicateVariant}
 				/>
 			),
 		},

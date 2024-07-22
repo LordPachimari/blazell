@@ -75,7 +75,7 @@ export function RowActions({
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
-					className="flex gap-2"
+					className="flex gap-2 "
 					onClick={async (e) => {
 						e.stopPropagation();
 						deleteProduct([row.original.id]);
