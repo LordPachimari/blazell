@@ -47,7 +47,7 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"group border min-h-20 min-w-20 hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-border   h-fit rounded-lg transition-all duration-200 ease-in-out",
+				// "group border min-h-20 min-w-20 hover:scale-[103%] col-span-1 row-span-1 hover:z-20 cursor-pointer relative border-border   h-fit rounded-lg transition-all duration-200 ease-in-out",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
