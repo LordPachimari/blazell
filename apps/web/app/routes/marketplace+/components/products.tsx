@@ -83,12 +83,12 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 			</div>
 
 			<span className="absolute top-2 right-2 text-brand-9 font-freeman flex gap-2 text-sm md:text-base border border-brand-9 backdrop-blur-md rounded-lg p-1">
-				{/* <Price
+				<Price
 					className="text-xs md:text-sm font-freeman flex-none text-brand-9 rounded-lg"
 					amount={product.defaultVariant.prices[0]!.amount}
 					currencyCode={product.defaultVariant.prices[0]!.currencyCode}
 					currencyCodeClassName="hidden @[275px]/label:inline"
-				/> */}
+				/>
 			</span>
 		</Link>
 	);
