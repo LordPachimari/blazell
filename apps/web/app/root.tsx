@@ -17,7 +17,7 @@ import type { Theme } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
-import { Header } from "./components/templates/layouts/header";
+// import { Header } from "./components/templates/layouts/header";
 import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
