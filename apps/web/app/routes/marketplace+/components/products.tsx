@@ -47,7 +47,7 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"group border min-h-20 min-w-20 col-span-1 row-span-1 relative border-border h-fit rounded-lg",
+				"border min-h-20 min-w-20 col-span-1 row-span-1 relative border-border h-fit rounded-lg",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
