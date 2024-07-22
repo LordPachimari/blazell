@@ -1,10 +1,6 @@
-import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
 import React, { useMemo } from "react";
 
-import { Button } from "@blazell/ui/button";
-import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
-import { useDataTable } from "~/components/templates/table/use-data-table";
 import {
 	Table,
 	TableBody,
@@ -13,23 +9,22 @@ import {
 	TableHeader,
 	TableRow,
 } from "@blazell/ui/table";
-import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
-import { getCustomersColumns } from "./columns";
 import type { Customer } from "@blazell/validators/client";
 import { useNavigate } from "@remix-run/react";
-import { ScrollArea } from "@blazell/ui/scroll-area";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { DataTablePagination } from "~/components/templates/table/data-table-pagination";
+import { DataTableToolbar } from "~/components/templates/table/data-table-toolbar";
+import { useDataTable } from "~/components/templates/table/use-data-table";
 import type { DebouncedFunc } from "~/types/debounce";
+import { getCustomersColumns } from "./columns";
 
 interface CustomersTableProps {
 	customers: Customer[];
-	createCustomer: () => Promise<void>;
 	onSearch?: DebouncedFunc<(value: string) => void>;
 }
 
 function CustomersTable({
 	customers,
-	createCustomer,
 	onSearch,
 }: Readonly<CustomersTableProps>) {
 	const columns = useMemo<ColumnDef<Customer>[]>(
@@ -54,26 +49,21 @@ function CustomersTable({
 	});
 
 	return (
-		<div className="space-y-4 max-w-7xl w-full">
+		<div className="max-w-7xl w-full">
 			<DataTableToolbar
+				className="p-4 pt-0 border-b border-border"
 				viewOptions={false}
 				table={table}
-				toolbarButton={
-					<Button size="md" onClick={createCustomer} type="button">
-						<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
-						Create customer
-					</Button>
-				}
 				{...(onSearch && { onSearch })}
 			/>
 
-			<ScrollArea
+			<div
 				ref={parentRef}
-				className="h-[calc(100vh-327px)] shadow bg-component border rounded-lg border-border   relative"
+				className="h-[calc(60vh)] lg:h-[calc(68vh)] relative overflow-x-scroll "
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader>
+						<TableHeader className="w-full z-20 sticky top-0 bg-component">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -130,18 +120,6 @@ function CustomersTable({
 											<h3 className="text-2xl font-bold font-freeman tracking-tight">
 												You have no customers
 											</h3>
-											<p className="text-sm text-muted-foreground">
-												You can start selling as soon as you add a product.
-											</p>
-											<Button
-												size="md"
-												onClick={createCustomer}
-												type="button"
-												className="my-4"
-											>
-												<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
-												Customer Customer
-											</Button>
 										</div>
 									</TableCell>
 								</TableRow>
@@ -149,8 +127,11 @@ function CustomersTable({
 						</TableBody>
 					</Table>
 				</div>
-			</ScrollArea>
-			<DataTablePagination table={table} />
+			</div>
+			<DataTablePagination
+				table={table}
+				className="p-4 border-t border-border"
+			/>
 		</div>
 	);
 }

@@ -1,9 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
-import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
-import { Icons } from "@blazell/ui/icons";
 import type { Customer } from "@blazell/validators/client";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useParams } from "@remix-run/react";
 import { useDashboardStore } from "~/zustand/store";
 import { OrdersTable } from "../orders+/orders-table/table";
 
@@ -14,27 +12,19 @@ export default function CustomerRoute() {
 	);
 	const customerMap = useDashboardStore((state) => state.customerMap);
 	const customer = customerMap.get(params.id!);
-	const navigate = useNavigate();
 	return (
-		<main className="w-full relative flex p-4 md:p-10 justify-center">
-			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-6">
-				<section className="w-full lg:w-8/12 flex flex-col gap-2 order-1 lg:order-0">
-					<Button
-						variant="ghost"
-						href={"/dashboard/customers"}
-						className="fixed text-slate-11 dark:text-white top-4 left-30  z-20"
-						onClick={() => navigate("/dashboard/customers")}
-					>
-						<Icons.Left size={20} className="text-black dark:text-white" />
-						Back to customers
-					</Button>
-					<h1 className="font-freeman text-lg">
-						Orders made by {customer?.username ?? customer?.fullName}
-					</h1>
+		<main className="w-full relative flex p-3 justify-center">
+			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-3">
+				<section className="w-full lg:w-8/12 flex flex-col gap-3 order-1 lg:order-0">
+					<div className="max-w-7xl w-full bg-component border border-border rounded-lg">
+						<h1 className="font-freeman text-lg p-4 pb-0">
+							Orders made by {customer?.username ?? customer?.fullName}
+						</h1>
 
-					<OrdersTable orders={orders} toolbar={false} />
+						<OrdersTable orders={orders} toolbar={false} />
+					</div>
 				</section>
-				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-4 lg:order-1">
+				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-3 lg:order-1">
 					<CustomerInfo customer={customer} />
 				</section>
 			</div>

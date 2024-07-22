@@ -88,7 +88,7 @@ export function Organize({
 								)}
 							</p>
 						</div>
-						<div className="flex py-4 border-b border-border p-4">
+						<div className="flex py-4 p-4">
 							<p className="w-full text-sm text-slate-11">Tags</p>
 							<div className="flex w-full flex-wrap gap-1">
 								{/* {(product.tags ?? []).map((value) => (

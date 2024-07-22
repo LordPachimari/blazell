@@ -157,6 +157,10 @@ export function ProductInput({
 		await dashboardRep?.mutate.publishProduct({ id: productID });
 		toast.success("Product published!");
 	}, [dashboardRep, productID]);
+	const totalStock = variants.reduce(
+		(acc, curr) => acc + (curr.quantity ?? 0),
+		0,
+	);
 
 	return (
 		<FormProvider {...methods}>
@@ -203,9 +207,7 @@ export function ProductInput({
 										"bg-red-9": (defaultVariant?.quantity ?? 0) <= 0,
 									})}
 								/>
-								{(defaultVariant?.quantity ?? 0) > 0
-									? "In stock"
-									: "Out of stock"}
+								{totalStock > 0 ? "In stock" : "Out of stock"}
 							</Badge>
 							<div className="flex items-center gap-1 md:ml-auto lg:hidden">
 								<DeleteOrPublish

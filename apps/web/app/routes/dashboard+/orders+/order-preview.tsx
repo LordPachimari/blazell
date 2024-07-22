@@ -9,17 +9,10 @@ import {
 	CardTitle,
 } from "@blazell/ui/card";
 import { DialogContent, DialogRoot } from "@blazell/ui/dialog-vaul";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@blazell/ui/dropdown-menu";
-import { Icons } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Separator } from "@blazell/ui/separator";
 import { Link } from "@remix-run/react";
-import { Copy, CreditCard, MoreVertical } from "lucide-react";
+import { Copy, CreditCard } from "lucide-react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 import { Total } from "~/components/templates/cart/total-info";
@@ -34,10 +27,10 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 
 	return (
 		<Card
-			className="hidden lg:block overflow-hidden w-[24rem] p-0 sticky top-10"
+			className="hidden lg:block overflow-hidden w-[25rem] p-0 sticky top-10"
 			x-chunk="dashboard-05-chunk-4"
 		>
-			<CardHeader className="flex border-b border-border   p-6 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
+			<CardHeader className="flex border-b border-border   p-4 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
 				<div className="flex flex-col">
 					<CardTitle className="flex items-center text-sm">
 						{`Order ${orderID}`}
@@ -52,33 +45,17 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 					</CardTitle>
 					<CardDescription>Date: {order?.createdAt}</CardDescription>
 				</div>
-				<div className="flex gap-1">
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button size="icon" variant="outline" className="h-8 w-8">
-								<MoreVertical className="h-3.5 w-3.5" />
-								<span className="sr-only">More</span>
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem className="flex gap-2">
-								<Icons.Edit size={14} /> Edit
-							</DropdownMenuItem>
-							<DropdownMenuItem>Export</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
+
+				<OrderStatus status={order?.status ?? "pending"} size="small" />
 			</CardHeader>
-			<CardContent className="p-6 pt-2 text-sm ">
+			<CardContent className="p-4 pt-2 text-sm ">
 				<div className="grid gap2">
 					<div className="font-semibold flex justify-between py-2">
 						<p>Order status</p>
-						<OrderStatus status={order?.status ?? "pending"} />
 					</div>
 
-					<ScrollArea className="h-[12rem] p-2">
+					<ScrollArea className="h-[8rem] p-2">
 						<ul className="flex flex-col gap-2">
-							<Separator className="my-2" />
 							{items.length === 0 && (
 								<p className="text-slate-11 text-center">Order is empty</p>
 							)}
@@ -95,17 +72,10 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 
 					<Total cartOrOrder={order} lineItems={items} />
 				</div>
+				<Separator className="my-4" />
 				<div className="grid grid-cols-2 gap-4 mt-2">
 					<div className="grid gap-3">
 						<div className="font-semibold">Shipping Information</div>
-						<address className="grid gap-0.5 not-italic text-slate-11">
-							<span>{order?.fullName}</span>
-							<span>{order?.shippingAddress?.address}</span>
-							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
-						</address>
-					</div>
-					<div className="grid auto-rows-max gap-3">
-						<div className="font-semibold">Billing Information</div>
 						<address className="grid gap-0.5 not-italic text-slate-11">
 							<span>{order?.fullName}</span>
 							<span>{order?.shippingAddress?.address}</span>
@@ -159,7 +129,7 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 					Manage
 				</Link>
 			</CardContent>
-			<CardFooter className="flex p-6 flex-row items-center border-t border-border   bg-slate-a-2 h-[3rem]">
+			<CardFooter className="flex p-4 flex-row items-center border-t border-border   bg-slate-a-2 h-[3rem]">
 				<div className="text-xs text-slate-11">
 					Updated <time dateTime="2023-11-23">{order?.updatedAt}</time>
 				</div>
@@ -184,8 +154,8 @@ export const OrderPreviewMobile = ({
 			open={opened}
 			onOpenChange={setOpened}
 		>
-			<DialogContent>
-				<CardHeader className="flex border-b border-border   p-6 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
+			<DialogContent className="w-[25rem]">
+				<CardHeader className="flex border-b border-border p-4 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
 					<div className="flex flex-col">
 						<CardTitle className="flex items-center text-sm">
 							{`Order ${orderID}`}
@@ -200,31 +170,17 @@ export const OrderPreviewMobile = ({
 						</CardTitle>
 						<CardDescription>Date: {order?.createdAt}</CardDescription>
 					</div>
-					<div className="flex gap-1">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button size="icon" variant="outline" className="h-8 w-8">
-									<MoreVertical className="h-3.5 w-3.5" />
-									<span className="sr-only">More</span>
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuItem>Edit</DropdownMenuItem>
-								<DropdownMenuItem>Export</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
+					<OrderStatus status={order?.status ?? "pending"} size="small" />
 				</CardHeader>
-				<CardContent className="p-6 pt-2 text-sm ">
+				<CardContent className="p-4 pt-2 text-sm ">
 					<div className="grid gap2">
 						<div className="font-semibold flex justify-between py-2">
 							<p>Order status</p>
 							<OrderStatus status={order?.status ?? "pending"} />
 						</div>
 
-						<ScrollArea className="h-[12rem] p-2">
+						<ScrollArea className="h-[8rem] p-2">
 							<ul className="flex flex-col gap-2">
-								<Separator className="my-2" />
 								{items.length === 0 && (
 									<p className="text-slate-11 text-center">Order is empty</p>
 								)}
@@ -244,14 +200,6 @@ export const OrderPreviewMobile = ({
 					<div className="grid grid-cols-2 gap-4 mt-2">
 						<div className="grid gap-3">
 							<div className="font-semibold">Shipping Information</div>
-							<address className="grid gap-0.5 not-italic text-slate-11">
-								<span>{order?.fullName}</span>
-								<span>{order?.shippingAddress?.address}</span>
-								<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
-							</address>
-						</div>
-						<div className="grid auto-rows-max gap-3">
-							<div className="font-semibold">Billing Information</div>
 							<address className="grid gap-0.5 not-italic text-slate-11">
 								<span>{order?.fullName}</span>
 								<span>{order?.shippingAddress?.address}</span>
@@ -305,7 +253,7 @@ export const OrderPreviewMobile = ({
 						Manage
 					</Link>
 				</CardContent>
-				<CardFooter className="flex p-6 flex-row items-center border-t border-border   bg-slate-a-2 h-[3rem]">
+				<CardFooter className="flex p-4 flex-row items-center border-t border-border   bg-slate-a-2 h-[3rem]">
 					<div className="text-xs text-slate-11">
 						Updated <time dateTime="2023-11-23">{order?.updatedAt}</time>
 					</div>

@@ -57,7 +57,6 @@ export function Attributes({
 	variant: Variant | undefined;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
 }) {
-	console.log(variant);
 	const [opened, setOpened] = React.useState(false);
 	const countries = React.useMemo(() => Object.entries(ISO_1666), []);
 
@@ -179,7 +178,7 @@ export function Attributes({
 							)}
 						</p>
 					</div>
-					<div className="flex py-4 border-b border-border p-4">
+					<div className="flex py-4 p-4">
 						<p className="w-full text-sm text-slate-11">Origin</p>
 
 						<p className="w-full flex justify-center text-sm text-slate-11">
@@ -211,6 +210,9 @@ export function Attributes({
 												{...field}
 												value={field.value ?? ""}
 												type="number"
+												onChange={(event) =>
+													field.onChange(event.target.valueAsNumber)
+												}
 											/>
 										</FormControl>
 										<FormMessage />
@@ -228,6 +230,9 @@ export function Attributes({
 												{...field}
 												value={field.value ?? ""}
 												type="number"
+												onChange={(event) =>
+													field.onChange(event.target.valueAsNumber)
+												}
 											/>
 										</FormControl>
 										<FormMessage />
@@ -245,6 +250,9 @@ export function Attributes({
 												{...field}
 												value={field.value ?? ""}
 												type="number"
+												onChange={(event) =>
+													field.onChange(event.target.valueAsNumber)
+												}
 											/>
 										</FormControl>
 										<FormMessage />
@@ -262,6 +270,9 @@ export function Attributes({
 												{...field}
 												value={field.value ?? ""}
 												type="number"
+												onChange={(event) =>
+													field.onChange(event.target.valueAsNumber)
+												}
 											/>
 										</FormControl>
 										<FormMessage />

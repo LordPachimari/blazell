@@ -25,12 +25,11 @@ import { Switch } from "@blazell/ui/switch";
 import { Textarea } from "@blazell/ui/textarea";
 import { toast } from "@blazell/ui/toast";
 import { VariantSchema, type UpdateVariant } from "@blazell/validators";
-import type { Product, Variant } from "@blazell/validators/client";
+import type { Variant } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import { ProductStatus } from "~/components/molecules/statuses/product-status";
 const schema = VariantSchema.pick({
 	title: true,
 	description: true,

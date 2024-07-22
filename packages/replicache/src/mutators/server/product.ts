@@ -251,7 +251,6 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				collectionID: product.collectionID,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
-				discountable: product.discountable,
 				defaultVariantID: newDefaultVariantID,
 				metadata: product.metadata,
 				score: 0,
@@ -259,6 +258,7 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				storeID: product.storeID,
 				version: 0,
 				updatedBy: null,
+				type: "digital",
 			} satisfies Product,
 			"products",
 		);
@@ -288,6 +288,7 @@ const duplicate = zod(ProductDuplicateSchema, (input) =>
 				material: defaultVariant.material,
 				originCountry: defaultVariant.originCountry,
 				width: defaultVariant.width,
+				discountable: defaultVariant.discountable,
 			} satisfies Variant,
 			"variants",
 		);

@@ -210,6 +210,7 @@ const duplicate = zod(VariantDuplicateSchema, (input) =>
 				material: variant.material,
 				originCountry: variant.originCountry,
 				width: variant.width,
+				discountable: variant.discountable,
 			} satisfies Variant,
 			"variants",
 		);

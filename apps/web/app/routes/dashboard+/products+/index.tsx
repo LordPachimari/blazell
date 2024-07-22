@@ -61,7 +61,6 @@ function Products({
 					id: productID,
 					createdAt: new Date().toISOString(),
 					status: "draft",
-					discountable: true,
 					storeID,
 					version: 0,
 					defaultVariantID: generateID({ prefix: "variant" }),

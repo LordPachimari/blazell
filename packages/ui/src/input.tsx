@@ -11,7 +11,7 @@ import { cn } from ".";
 const inputBaseStyles = cn(
 	"bg-slate-1 hover:bg-slate-2 border-border border-b-slate-7 placeholder-slate-9 text-ui-fg-base shadow-sm transition-fg relative w-full appearance-none rounded-lg border outline-none",
 	"focus-visible:border-brand-8 focus-visible:dark:border-brand-9 focus-visible:shadow-brand-5 focus-visible:shadow",
-	"disabled:text-slate-6 disabled:!bg-slate-4 disabled:placeholder-slate-6 disabled:cursor-not-allowed disabled:!shadow-none",
+	"disabled:text-slate-8 disabled:!bg-slate-1 disabled:placeholder-slate-8 disabled:cursor-not-allowed disabled:!shadow-none",
 	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-brand-10 invalid:!border-brand-10 invalid:focus:!shadow-brand-10",
 );
 

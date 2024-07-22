@@ -12,7 +12,7 @@ export default defineConfig({
 		noExternal: ["react-easy-crop", "tslib"],
 	},
 	optimizeDeps: {
-		exclude: ["chunk-72Y4K62D.js"],
+		exclude: ["chunk-QTVTVLJO.js"],
 	},
 	plugins: [
 		// MillionLint.vite(),

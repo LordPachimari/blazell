@@ -81,7 +81,6 @@ function Pricing({
 										<Icons.CircleInfo
 											className="text-iris-9"
 											aria-hidden="true"
-											strokeWidth={1.25}
 											size={20}
 										/>
 									</TooltipTrigger>

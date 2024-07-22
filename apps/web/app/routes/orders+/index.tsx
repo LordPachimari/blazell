@@ -8,6 +8,7 @@ export default function Page() {
 				<h1 className="text-center font-bold text-2xl font-freeman py-4">
 					My orders
 				</h1>
+
 				{orders.map((order) => (
 					<OrderComponent key={order.id} order={order} />
 				))}

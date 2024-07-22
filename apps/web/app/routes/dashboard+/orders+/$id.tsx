@@ -1,10 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
-import { Button } from "@blazell/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@blazell/ui/card";
 import { Icons } from "@blazell/ui/icons";
 import { Separator } from "@blazell/ui/separator";
 import type { Order } from "@blazell/validators/client";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useParams } from "@remix-run/react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
 import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 import { ShippingStatus } from "~/components/molecules/statuses/shipping-status";
@@ -19,26 +18,16 @@ const OrderRoute = () => {
 	const params = useParams();
 	const orderMap = useDashboardStore((state) => state.orderMap);
 	const order = orderMap.get(params.id!);
-	const navigate = useNavigate();
 
 	return (
-		<main className="w-full relative flex p-4 md:p-10 justify-center">
-			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6 pt-6">
-				<section className="w-full lg:w-8/12 flex flex-col gap-4 order-1 lg:order-0">
-					<Button
-						variant="ghost"
-						href="/dashboard/orders"
-						className="fixed text-slate-11 dark:text-white top-4 left-30  z-20"
-						onClick={() => navigate("/dashboard/orders")}
-					>
-						<Icons.Left size={20} className="text-black dark:text-white" />
-						Back to orders
-					</Button>
+		<main className="w-full relative flex p-3 justify-center">
+			<div className="w-full max-w-7xl flex flex-col lg:flex-row gap-3">
+				<section className="w-full lg:w-8/12 flex flex-col gap-3 order-1 lg:order-0">
 					<OrderInfo order={order} />
 					<PaymentInfo paymentStatus={order?.paymentStatus ?? "paid"} />
 					<ShippingInfo shippingStatus={order?.shippingStatus ?? "pending"} />
 				</section>
-				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-4 lg:order-1">
+				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-3 lg:order-1">
 					<CustomerInfo order={order} />
 					<CustomerNote />
 				</section>

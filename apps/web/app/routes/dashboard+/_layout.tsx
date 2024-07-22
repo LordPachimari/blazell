@@ -98,7 +98,7 @@ export function DynamicBreadcrumb() {
 						<BreadcrumbItem key={routeTo}>
 							{isLast ? (
 								<BreadcrumbPage className="text-slate-10">
-									<p className="text-ellipsis max-w-[100px] text-nowrap overflow-hidden">
+									<p className="text-ellipsis max-w-[100px] text-brand-9 text-nowrap overflow-hidden">
 										{`${name[0]?.toUpperCase()}${name.substring(1)}`}
 									</p>
 								</BreadcrumbPage>

@@ -193,7 +193,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 							return (
 								<div
 									key={option.id}
-									className="p-4 border-b border-border flex"
+									className="p-4 border-b last:border-b-0 border-border flex"
 								>
 									<p className="w-full text-sm flex items-center text-slate-11 ">{`${option.name?.[0]?.toUpperCase()}${option.name?.substring(
 										1,
