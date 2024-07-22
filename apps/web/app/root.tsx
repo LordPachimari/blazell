@@ -137,7 +137,7 @@ function App() {
 										<MarketplaceStoreMutator>
 											<Sidebar />
 											<MobileSidebar />
-											<Header />
+											{/* <Header /> */}
 											<Outlet />
 											<Toaster />
 										</MarketplaceStoreMutator>
