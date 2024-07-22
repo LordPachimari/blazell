@@ -40,14 +40,13 @@ const Products = () => {
 	);
 };
 export { Products };
-
 const ProductCard = ({ product }: { product: PublishedProduct }) => {
 	return (
 		<Link
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"group border min-h-20 min-w-20 hover:scale-[103%] overflow-hidden col-span-1 row-span-1 hover:z-20 cursor-pointer border-border h-fit rounded-lg transition-all duration-200 ease-in-out",
+				"flex flex-col border min-h-20 min-w-20 col-span-1 row-span-1 cursor-pointer border-border rounded-lg overflow-hidden aspect-square",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
@@ -58,38 +57,35 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 			<div className="relative w-full h-full">
 				{product.defaultVariant.thumbnail ? (
 					<Image
-						className="h-auto aspect-square max-w-full rounded-lg hover:brightness-50"
+						className="w-full h-full object-cover"
 						src={product.defaultVariant?.thumbnail?.url}
 						alt=""
-						fit="contain"
-						quality={100}
+						fit="cover"
+						quality={80}
 					/>
 				) : (
-					<div className="aspect-square min-h-20 bg-component max-w-full rounded-lg hover:brightness-50">
+					<div className="w-full h-full bg-component flex items-center justify-center">
 						<ImagePlaceholder />
 					</div>
 				)}
-				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-black-a-7 dark:from-transparent dark:to-black-a-6 to-black-a-11 rounded-lg opacity-0 group-hover:opacity-70 transition duration-450 ease-in-out" />
-				<div className="absolute inset-x-0 bottom-0 px-2 rounded-b-lg">
-					<div className="group-hover:opacity-100 rounded-b-lg w-full opacity-0 transition-all duration-200 ease-in-out p-2">
-						<h1 className="font-freeman line-clamp-1 group-hover:blur-1px text-white dark:text-black text-ellipsis overflow-hidden">
+				<div className="absolute inset-0 flex flex-col justify-between p-2 bg-gradient-to-b from-transparent to-black/60">
+					<span className="self-end bg-brand-4 dark:bg-gray-800 text-brand-9 font-freeman text-sm md:text-base border border-brand-9 rounded-lg p-1">
+						<Price
+							className="text-xs md:text-sm font-freeman flex-none text-brand-9"
+							amount={product.defaultVariant.prices[0]!.amount}
+							currencyCode={product.defaultVariant.prices[0]!.currencyCode}
+							currencyCodeClassName="hidden @[275px]/label:inline"
+						/>
+					</span>
+					<div>
+						<h1 className="font-freeman text-sm line-clamp-1 text-ellipsis overflow-hidden text-white">
 							{product.defaultVariant.title}
 						</h1>
-						<div className="hidden lg:block ">
-							<p className="overflow-hidden line-clamp-2 text-xs text-slate-2 group-hover:blur-1px font-semibold">
-								{product.defaultVariant.description ?? ""}
-							</p>
-						</div>
+						<p className="text-xs text-gray-200 line-clamp-2 mt-1">
+							{product.defaultVariant.description ?? ""}
+						</p>
 					</div>
 				</div>
-				<span className="absolute top-2 right-2 text-brand-9 font-freeman flex gap-2 text-sm md:text-base border border-brand-9 backdrop-blur-md rounded-lg p-1">
-					<Price
-						className="text-xs md:text-sm font-freeman flex-none text-brand-9 rounded-lg"
-						amount={product.defaultVariant.prices[0]!.amount}
-						currencyCode={product.defaultVariant.prices[0]!.currencyCode}
-						currencyCodeClassName="hidden @[275px]/label:inline"
-					/>
-				</span>
 			</div>
 		</Link>
 	);
