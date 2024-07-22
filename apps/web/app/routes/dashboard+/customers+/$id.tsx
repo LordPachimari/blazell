@@ -35,11 +35,11 @@ const CustomerInfo = ({
 	customer,
 }: { customer: Customer | undefined | null }) => {
 	return (
-		<Card>
-			<CardHeader>
-				<h1 className="font-semibold text-center">Customer Information</h1>
+		<Card className="p-0">
+			<CardHeader className="p-4 border-b border-border">
+				<h1 className="font-semibold">Customer Information</h1>
 			</CardHeader>
-			<CardContent className="py-4 flex justify-center">
+			<CardContent className="p-4 border-b border-border flex justify-center">
 				<div>
 					<Avatar className="h-36 w-38">
 						<AvatarImage src="https://github.com/shadcn.png" />
@@ -54,7 +54,7 @@ const CustomerInfo = ({
 				</div>
 			</CardContent>
 			<CardFooter>
-				<div className="grid">
+				<div className="grid p-4">
 					<address className="grid gap-0.5 not-italic ">
 						<span className="flex justify-between ">
 							<p className="font-semibold">email:</p>

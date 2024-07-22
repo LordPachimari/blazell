@@ -1,7 +1,5 @@
 import type { User } from "@blazell/validators/client";
 // import { getAuth } from "@clerk/remix/ssr.server";
-import { Button } from "@blazell/ui/button";
-import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
@@ -18,6 +16,8 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@blazell/ui/breadcrumb";
+import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
+import { DashboardSearchCombobox } from "./search";
 export const loader: LoaderFunction = async (args) => {
 	const cookieHeader = args.request.headers.get("Cookie");
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
@@ -60,16 +60,17 @@ export default function DashboardLayout() {
 }
 const DashboardNav = () => {
 	return (
-		<div className="h-14 flex items-center p-3 w-full fixed top-0 border-b bg-background border-border z-20">
-			<Button variant={"ghost"} size="icon" className="hidden lg:flex">
-				<Icons.PanelLeftClose
-					strokeWidth={strokeWidth}
-					className="text-slate-11"
-					size={20}
-				/>
-			</Button>
-			<div className="flex">
+		<div className="h-14 flex items-center w-full fixed top-0 border-b bg-background border-border z-20 px-3">
+			<div className="flex items-center flex-1">
 				<DynamicBreadcrumb />
+			</div>
+
+			<div className="flex-1">
+				<DashboardSearchCombobox />
+			</div>
+
+			<div className="flex-1">
+				<ThemeToggle />
 			</div>
 		</div>
 	);

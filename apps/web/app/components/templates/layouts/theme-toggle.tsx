@@ -41,7 +41,7 @@ export function ThemeToggle() {
 		),
 		system: (
 			<Icons.Laptop
-				className="h-5 w-5 rotate-0 scale-100 text-slate-11 group-hover:text-brand-9  transition-all dark:-rotate-90"
+				className="h-5 w-5 scale-100 text-slate-11 group-hover:text-brand-9  transition-all"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -66,7 +66,7 @@ export function ThemeToggle() {
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "outline" }),
-					"rounded-full hidden lg:flex",
+					"rounded-lg hidden lg:flex",
 				)}
 			>
 				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>

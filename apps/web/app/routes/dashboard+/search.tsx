@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@blazell/ui";
+import { Button } from "@blazell/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -21,10 +22,8 @@ import {
 } from "@headlessui/react";
 import { useNavigate } from "@remix-run/react";
 import { isString } from "remeda";
-import { ClientOnly } from "remix-utils/client-only";
 import { HighlightedText } from "~/components/molecules/highlighted-text";
 import { useDebounce } from "~/hooks/use-debounce";
-import { isMacOs } from "~/utils/helpers";
 import type {
 	SearchWorkerRequest,
 	SearchWorkerResponse,
@@ -83,82 +82,85 @@ export function DashboardSearchCombobox() {
 		} satisfies SearchWorkerRequest);
 	}, [debouncedQuery, searchWorker]);
 	React.useEffect(() => {
-		if (searchWorker) {
-			searchWorker.onmessage = (event: MessageEvent) => {
-				const { type, payload } = event.data as SearchWorkerResponse;
-				if (isString(type) && type === "DASHBOARD_SEARCH") {
-					startTransition(() => {
-						const variants: Variant[] = [];
-						const customers: Customer[] = [];
-						const orders: Order[] = [];
+		if (!searchWorker) return;
 
-						const variantIDs = new Set<string>();
-						const customerIDs = new Set<string>();
-						const orderIDs = new Set<string>();
-
-						for (const p of payload) {
-							if (p.id.startsWith("variant")) {
-								if (!variantIDs.has(p.id)) {
-									variants.push(p as Variant);
-									variantIDs.add(p.id);
-								}
-							} else if (p.id.startsWith("user")) {
-								if (!customerIDs.has(p.id)) {
-									customers.push(p as Customer);
-									customerIDs.add(p.id);
-								}
-							} else if (p.id.startsWith("order")) {
-								if (!orderIDs.has(p.id)) {
-									orders.push(p as Order);
-									orderIDs.add(p.id);
-								}
+		const handleMessage = (event: MessageEvent) => {
+			console.log("Message received in React component");
+			const { type, payload } = event.data as SearchWorkerResponse;
+			console.log("type", type);
+			if (isString(type) && type === "DASHBOARD_SEARCH") {
+				startTransition(() => {
+					const variants: Variant[] = [];
+					const customers: Customer[] = [];
+					const orders: Order[] = [];
+					const variantIDs = new Set<string>();
+					const customerIDs = new Set<string>();
+					const orderIDs = new Set<string>();
+					for (const p of payload) {
+						if (p.id.startsWith("variant")) {
+							if (!variantIDs.has(p.id)) {
+								variants.push(p as Variant);
+								variantIDs.add(p.id);
+							}
+						} else if (p.id.startsWith("user")) {
+							if (!customerIDs.has(p.id)) {
+								customers.push(p as Customer);
+								customerIDs.add(p.id);
+							}
+						} else if (p.id.startsWith("order")) {
+							if (!orderIDs.has(p.id)) {
+								orders.push(p as Order);
+								orderIDs.add(p.id);
 							}
 						}
-						setSearchResults({
-							variants,
-							orders,
-							customers,
-						});
+					}
+					setSearchResults({
+						variants,
+						orders,
+						customers,
 					});
-				}
-			};
-		}
+				});
+			}
+		};
+
+		searchWorker.addEventListener("message", handleMessage);
+
+		// Test the worker
+		searchWorker.postMessage({
+			type: "DASHBOARD_SEARCH",
+			payload: { query: "test" },
+		});
+
+		return () => {
+			searchWorker.removeEventListener("message", handleMessage);
+		};
 	}, [searchWorker]);
+	console.log("search results", searchResults);
 
 	return (
 		<>
-			<button
-				type="button"
-				className={cn(
-					"group relative rounded-lg h-10 mb-2 flex w-full items-center gap-2 px-2 cursor-pointer hover:bg-slate-a-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  ",
-				)}
+			<Button
+				variant={"outline"}
+				className={cn("hidden group relative lg:flex gap-1 px-2")}
 				onClick={() => open()}
 			>
-				<div className="flex gap-3">
-					<Icons.MagnifyingGlassIcon
-						aria-hidden="true"
-						className="size-5 text-slate-11 group-hover:text-brand-9"
-					/>
-					<span className="text-slate-11 group-hover:text-brand-9 font-light">
-						Search
-					</span>
-				</div>
-				<span className="sr-only">Search products</span>
-				<div className="w-full flex flex-nowrap justify-end">
-					<ClientOnly>
-						{() => (
-							<Kbd
-								title={isMacOs() ? "Command" : "Control"}
-								className={cn(
-									"group-hover:text-brand-9 text-nowrap text-slate-11 flex flex-nowrap border-slate-5 dark:border-slate-7   p-[3px]",
-									{ "p-[1px]": !isMacOs() },
-								)}
-							>
-								{isMacOs() ? "⌘ K" : "Ctrl K"}
-							</Kbd>
-						)}
-					</ClientOnly>
-				</div>
+				<Icons.MagnifyingGlassIcon
+					aria-hidden="true"
+					className="size-5 text-slate-11 "
+				/>
+				<span className="text-slate-11  font-light px-4">Dashboard search</span>
+				<span className="sr-only">Dashboard search...</span>
+
+				<Kbd title={"Command"} className=" text-slate-11 border-border ">
+					{"⌘"} K
+				</Kbd>
+			</Button>
+			<button
+				type="button"
+				className="flex lg:hidden rounded-full hover:bg-slate-a-2 p-2"
+				onClick={() => open()}
+			>
+				<Icons.MagnifyingGlassIcon className="text-slate-11 hover:text-brand-9 size-6" />
 			</button>
 
 			<Transition appear show={isOpen}>

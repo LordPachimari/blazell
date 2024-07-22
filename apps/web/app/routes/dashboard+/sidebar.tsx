@@ -53,8 +53,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 				)}
 			>
 				<StoreInfo />
-				<DashboardSearchCombobox />
-				<ul className="justify-center items-center flex w-full flex-col gap-2">
+				<ul className="justify-center py-2 items-center flex w-full flex-col gap-2">
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
 
@@ -71,11 +70,11 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 									},
 								)}
 							>
-								{item.title === "Orders" && (
+								{/* {item.title === "Orders" && (
 									<div className="absolute top-0 font-extralight text-white text-sm flex items-center justify-center right-0 w-5 h-5 rounded-full bg-brand-9">
 										1
 									</div>
-								)}
+								)} */}
 								<div className="flex justify-center ">
 									<Icon
 										className={cn(
@@ -188,14 +187,15 @@ const StoreInfo = () => {
 	const stores = useDashboardStore((state) => state.stores);
 	const activeStoreID = useDashboardStore((state) => state.activeStoreID);
 	const activeStore = stores.find((store) => store.id === activeStoreID);
+	console.log("active", activeStore);
 	return (
 		<section className="w-full flex items-center gap-2 h-14 border-b border-border border-dashed p-1">
 			<div className="h-8 w-8 rounded-md border border-brand-7 flex justify-center items-center">
-				{activeStore?.storeImage ? (
+				{activeStore?.storeImage?.croppedImage?.url ? (
 					<Image
 						width={28}
 						height={28}
-						src={activeStore.storeImage.url}
+						src={activeStore.storeImage.croppedImage.url}
 						className="w-7 h-7 rounded-md"
 					/>
 				) : (

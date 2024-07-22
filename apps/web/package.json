@@ -28,7 +28,7 @@
 		"@epic-web/invariant": "^1.0.0",
 		"@formkit/auto-animate": "^0.8.2",
 		"@headlessui/react": "^2.0.4",
-		"@hookform/resolvers": "^3.3.4",
+		"@hookform/resolvers": "^3.4.0",
 		"@lexical/react": "^0.16.0",
 		"@million/lint": "1.0.0-rc.21",
 		"@remix-run/cloudflare": "^2.10.0",

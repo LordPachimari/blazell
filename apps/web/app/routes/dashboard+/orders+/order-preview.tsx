@@ -12,9 +12,8 @@ import { DialogContent, DialogRoot } from "@blazell/ui/dialog-vaul";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Separator } from "@blazell/ui/separator";
 import { Link } from "@remix-run/react";
-import { Copy, CreditCard } from "lucide-react";
+import { Copy } from "lucide-react";
 import { OrderStatus } from "~/components/molecules/statuses/order-status";
-import { PaymentStatus } from "~/components/molecules/statuses/payment-status";
 import { Total } from "~/components/templates/cart/total-info";
 import { LineItem } from "~/components/templates/line-item/line-item";
 import { useWindowSize } from "~/hooks/use-window-size";
@@ -27,13 +26,13 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 
 	return (
 		<Card
-			className="hidden lg:block overflow-hidden w-[25rem] p-0 sticky top-10"
+			className="hidden lg:block overflow-hidden w-[25rem] p-0 sticky top-16"
 			x-chunk="dashboard-05-chunk-4"
 		>
-			<CardHeader className="flex border-b border-border   p-4 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
+			<CardHeader className="flex border-b border-border p-4 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
 				<div className="flex flex-col">
 					<CardTitle className="flex items-center text-sm">
-						{`Order ${orderID}`}
+						{orderID}
 						<Button
 							size="icon"
 							variant="outline"
@@ -106,21 +105,6 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 					</dl>
 				</div>
 				<Separator className="my-4" />
-				<div className="grid gap-3 mb-4">
-					<div className="font-semibold flex items-center justify-between">
-						<p>Payment Information</p>
-						<PaymentStatus status={order?.paymentStatus ?? "paid"} />
-					</div>
-					<dl className="grid gap-3">
-						<div className="flex items-center justify-between">
-							<dt className="flex items-center gap-1 text-slate-11">
-								<CreditCard className="h-4 w-4" />
-								Visa
-							</dt>
-							<dd>**** **** **** 4532</dd>
-						</div>
-					</dl>
-				</div>
 				<Link
 					prefetch="viewport"
 					to={`/dashboard/orders/${orderID}`}
@@ -158,7 +142,7 @@ export const OrderPreviewMobile = ({
 				<CardHeader className="flex border-b border-border p-4 h-[5rem] flex-row justify-between items-center bg-slate-a-2">
 					<div className="flex flex-col">
 						<CardTitle className="flex items-center text-sm">
-							{`Order ${orderID}`}
+							{orderID}
 							<Button
 								size="icon"
 								variant="outline"
@@ -174,12 +158,7 @@ export const OrderPreviewMobile = ({
 				</CardHeader>
 				<CardContent className="p-4 pt-2 text-sm ">
 					<div className="grid gap2">
-						<div className="font-semibold flex justify-between py-2">
-							<p>Order status</p>
-							<OrderStatus status={order?.status ?? "pending"} />
-						</div>
-
-						<ScrollArea className="h-[8rem] p-2">
+						<ScrollArea className="h-[17rem] p-2">
 							<ul className="flex flex-col gap-2">
 								{items.length === 0 && (
 									<p className="text-slate-11 text-center">Order is empty</p>
@@ -230,21 +209,6 @@ export const OrderPreviewMobile = ({
 						</dl>
 					</div>
 					<Separator className="my-4" />
-					<div className="grid gap-3 mb-4">
-						<div className="font-semibold flex items-center justify-between">
-							<p>Payment Information</p>
-							<PaymentStatus status={order?.paymentStatus ?? "paid"} />
-						</div>
-						<dl className="grid gap-3">
-							<div className="flex items-center justify-between">
-								<dt className="flex items-center gap-1 text-slate-11">
-									<CreditCard className="h-4 w-4" />
-									Visa
-								</dt>
-								<dd>**** **** **** 4532</dd>
-							</div>
-						</dl>
-					</div>
 					<Link
 						prefetch="viewport"
 						to={`/dashboard/orders/${orderID}`}

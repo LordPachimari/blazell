@@ -22,10 +22,8 @@ import {
 } from "@headlessui/react";
 import { useLocation, useNavigate } from "@remix-run/react";
 import { isString } from "remeda";
-import { ClientOnly } from "remix-utils/client-only";
 import { HighlightedText } from "~/components/molecules/highlighted-text";
 import { useDebounce } from "~/hooks/use-debounce";
-import { isMacOs } from "~/utils/helpers";
 import type {
 	SearchWorkerRequest,
 	SearchWorkerResponse,
@@ -92,29 +90,34 @@ export function GlobalSearchCombobox() {
 		} satisfies SearchWorkerRequest);
 	}, [debouncedQuery, searchWorker]);
 	React.useEffect(() => {
-		if (searchWorker) {
-			searchWorker.onmessage = (event: MessageEvent) => {
-				const { type, payload } = event.data as SearchWorkerResponse;
-				if (isString(type) && type === "GLOBAL_SEARCH") {
-					startTransition(() => {
-						const variants: Variant[] = [];
+		if (!searchWorker) return;
 
-						const variantIDs = new Set<string>();
-						for (const p of payload) {
-							if (p.id.startsWith("variant")) {
-								if (!variantIDs.has(p.id)) {
-									variants.push(p as Variant);
-									variantIDs.add(p.id);
-								}
+		const handleMessage = (event: MessageEvent) => {
+			const { type, payload } = event.data as SearchWorkerResponse;
+			if (isString(type) && type === "GLOBAL_SEARCH") {
+				startTransition(() => {
+					const variants: Variant[] = [];
+					const variantIDs = new Set<string>();
+					for (const p of payload) {
+						if (p.id.startsWith("variant")) {
+							if (!variantIDs.has(p.id)) {
+								variants.push(p as Variant);
+								variantIDs.add(p.id);
 							}
 						}
-						setSearchResults({
-							variants,
-						});
+					}
+					setSearchResults({
+						variants,
 					});
-				}
-			};
-		}
+				});
+			}
+		};
+
+		searchWorker.addEventListener("message", handleMessage);
+
+		return () => {
+			searchWorker.removeEventListener("message", handleMessage);
+		};
 	}, [searchWorker]);
 
 	return (
@@ -130,16 +133,9 @@ export function GlobalSearchCombobox() {
 				/>
 				<span className="text-slate-11  font-light">Search</span>
 				<span className="sr-only">Search...</span>
-				<ClientOnly>
-					{() => (
-						<Kbd
-							title={isMacOs() ? "Command" : "Control"}
-							className=" text-slate-11 border-border  "
-						>
-							{isMacOs() ? "⌘" : "Ctrl"} K
-						</Kbd>
-					)}
-				</ClientOnly>
+				<Kbd title={"Command"} className=" text-slate-11 border-border ">
+					{"⌘"} K
+				</Kbd>
 			</Button>
 			<button
 				type="button"

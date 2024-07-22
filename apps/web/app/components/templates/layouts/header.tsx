@@ -103,7 +103,7 @@ function Notifications() {
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "outline" }),
-					"rounded-full",
+					"rounded-lg",
 				)}
 			>
 				<Icons.Notification className="w-5 h-5 text-slate-11" />

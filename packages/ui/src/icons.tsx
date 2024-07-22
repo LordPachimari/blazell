@@ -59,6 +59,9 @@ import {
 	PanelLeftClose,
 	LogOut,
 	GalleryThumbnails,
+	SquareCheckBig,
+	SquareX,
+	RectangleEllipsis,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -124,6 +127,9 @@ export const Icons = {
 	Dots: DotsHorizontalIcon,
 	Logout: LogOut,
 	Thumbnail: GalleryThumbnails,
+	SquareCheck: SquareCheckBig,
+	Cancel: SquareX,
+	Pending: RectangleEllipsis,
 	UPC: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" {...props}>
 			<g clipPath="url(#a)">
