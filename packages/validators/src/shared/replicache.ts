@@ -37,15 +37,7 @@ export const SPACE_RECORD = {
 		"notifications" as const,
 	],
 	dashboard: ["store" as const],
-<<<<<<< Updated upstream
 	marketplace: ["stores"],
-=======
-<<<<<<< Updated upstream
-	marketplace: ["products" as const],
-=======
-	marketplace: ["stores" as const],
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 };
 export const SpaceIDSchema = Schema.Literal(
 	"dashboard",
