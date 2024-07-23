@@ -47,7 +47,7 @@ type SearchWorkerRequest = {} & (
 );
 
 const fuse = new Fuse<Document>([], {
-	keys: ["title", "description", "fullName", "email", "username"],
+	keys: ["title", "description", "fullName", "name", "email", "username"],
 });
 self.onmessage = (event: MessageEvent<SearchWorkerRequest>) => {
 	const { type, payload } = event.data;
