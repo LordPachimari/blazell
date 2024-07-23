@@ -35,7 +35,7 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 	return (
 		<Link
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
-			prefetch="intent"
+			prefetch="viewport"
 			className={cn(
 				"flex flex-col border lg:hover:scale-[103%] lg:transition-all lg:ease-in-out lg:duration-200 min-h-28 min-w-28 col-span-1 row-span-1 cursor-pointer border-border rounded-lg overflow-hidden aspect-square",
 				{

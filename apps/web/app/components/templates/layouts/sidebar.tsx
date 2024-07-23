@@ -1,8 +1,8 @@
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import {
-	DialogRoot,
 	DialogContent,
+	DialogRoot,
 	DialogTrigger,
 } from "@blazell/ui/dialog-vaul";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
