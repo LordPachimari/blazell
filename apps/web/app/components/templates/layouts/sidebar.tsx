@@ -220,6 +220,7 @@ export const DialogSidebar = () => {
 								<Link
 									to={item.href}
 									key={item.title}
+									onClick={() => setOpened(false)}
 									className={cn(
 										"group/link flex h-12 lg:h-10 w-full items-center gap-3 rounded-lg px-2 cursor-pointer hover:bg-slate-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-brand-7",
 									)}
