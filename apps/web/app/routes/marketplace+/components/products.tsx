@@ -46,7 +46,7 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 			to={`/marketplace/products/${product.defaultVariant.handle}`}
 			prefetch="intent"
 			className={cn(
-				"flex flex-col border min-h-20 min-w-20 col-span-1 row-span-1 cursor-pointer border-border rounded-lg overflow-hidden aspect-square",
+				"flex flex-col border lg:hover:scale-[103%] lg:transition-all lg:ease-in-out lg:duration-200 min-h-20 min-w-20 col-span-1 row-span-1 cursor-pointer border-border rounded-lg overflow-hidden aspect-square",
 				{
 					"col-span-2 row-span-2": (product.score ?? 0) > 1,
 				},
@@ -68,7 +68,7 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 						<ImagePlaceholder />
 					</div>
 				)}
-				<div className="absolute inset-0 flex flex-col justify-between p-2 bg-gradient-to-b from-transparent to-black/60">
+				<div className="absolute inset-0 flex flex-col justify-between p-2 bg-gradient-to-b from-transparent to-black/30">
 					<span className="self-end bg-brand-4 dark:bg-gray-800 text-brand-9 font-freeman text-sm md:text-base border border-brand-9 rounded-lg p-1">
 						<Price
 							className="text-xs md:text-sm font-freeman flex-none text-brand-9"
@@ -81,7 +81,11 @@ const ProductCard = ({ product }: { product: PublishedProduct }) => {
 						<h1 className="font-freeman text-sm line-clamp-1 text-ellipsis overflow-hidden text-white">
 							{product.defaultVariant.title}
 						</h1>
-						<p className="text-xs text-gray-200 line-clamp-2 mt-1">
+						<p
+							className={cn("text-xs text-gray-200 line-clamp-2 mt-1", {
+								hidden: product.score ?? 0 < 1,
+							})}
+						>
 							{product.defaultVariant.description ?? ""}
 						</p>
 					</div>
