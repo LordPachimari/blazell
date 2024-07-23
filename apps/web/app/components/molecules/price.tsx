@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { cn } from "@blazell/ui";
 
 const Price = ({
@@ -10,17 +11,30 @@ const Price = ({
 	className?: string;
 	currencyCode: string;
 	currencyCodeClassName?: string;
-} & React.ComponentProps<"p">) => (
-	<p suppressHydrationWarning={true} className={className}>
-		{`${new Intl.NumberFormat(undefined, {
-			style: "currency",
-			currency: currencyCode,
-			currencyDisplay: "narrowSymbol",
-		}).format(amount / 100)}`}
-		<span
-			className={cn("ml-1 inline", currencyCodeClassName)}
-		>{`${currencyCode}`}</span>
-	</p>
-);
+} & React.ComponentProps<"p">) => {
+	const formatter = useMemo(
+		() =>
+			new Intl.NumberFormat(undefined, {
+				style: "currency",
+				currency: currencyCode,
+				currencyDisplay: "narrowSymbol",
+			}),
+		[currencyCode],
+	);
 
-export default Price;
+	const formattedAmount = useMemo(
+		() => formatter.format(amount / 100),
+		[formatter, amount],
+	);
+
+	return (
+		<p suppressHydrationWarning={true} className={className}>
+			{formattedAmount}
+			<span className={cn("ml-1 inline", currencyCodeClassName)}>
+				{currencyCode}
+			</span>
+		</p>
+	);
+};
+
+export default React.memo(Price);

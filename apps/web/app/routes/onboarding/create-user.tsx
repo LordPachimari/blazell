@@ -96,7 +96,7 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 			toast.error(result.message);
 			return setIsLoading(false);
 		}
-		toast.success("User created successfully!");
+		toast.success("User created successfully.");
 		navigate("/dashboard/store");
 
 		setIsLoading(false);
@@ -118,7 +118,7 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 				}}
 				initial="hidden"
 				animate="show"
-				className="flex flex-col space-y-4 rounded-xl max-w-lg bg-background/60 p-8"
+				className="flex flex-col space-y-4 rounded-lg max-w-lg bg-background/60 p-8"
 			>
 				<StepHeader
 					title="Create your username"
@@ -186,7 +186,7 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 						<div className="flex w-full justify-center pt-4">
 							<Button
 								type="submit"
-								className="w-full rounded-xl"
+								className="w-full rounded-lg"
 								disabled={isLoading}
 							>
 								Create user

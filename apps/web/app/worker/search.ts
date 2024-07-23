@@ -47,7 +47,7 @@ type SearchWorkerRequest = {} & (
 );
 
 const fuse = new Fuse<Document>([], {
-	keys: ["title", "description", "name", "email", "username"],
+	keys: ["title", "description", "fullName", "name", "email", "username"],
 });
 self.onmessage = (event: MessageEvent<SearchWorkerRequest>) => {
 	const { type, payload } = event.data;
@@ -71,6 +71,7 @@ self.onmessage = (event: MessageEvent<SearchWorkerRequest>) => {
 	) {
 		const results = fuse.search(payload.query);
 		console.log("results", results);
+		console.log("type", type);
 		postMessage({ type, payload: results.map((r) => r.item) });
 	}
 };

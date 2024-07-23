@@ -16,11 +16,13 @@ interface UseDataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	debugTable?: boolean;
+	pageSize?: number;
 }
 export const useDataTable = <TData, TValue>({
 	columns,
 	data,
 	debugTable = false,
+	pageSize = 100,
 }: UseDataTableProps<TData, TValue>) => {
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
@@ -34,7 +36,7 @@ export const useDataTable = <TData, TValue>({
 		data,
 		columns,
 		state: {
-			pagination: { pageSize: 100, pageIndex: 0 },
+			pagination: { pageSize, pageIndex: 0 },
 			sorting,
 			columnVisibility,
 			rowSelection,

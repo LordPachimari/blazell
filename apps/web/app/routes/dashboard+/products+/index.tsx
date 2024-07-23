@@ -23,11 +23,11 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="p-4 md:py-6 md:px-10 w-full flex justify-center">
-			<div className="max-w-7xl w-full">
+		<main className="p-3 w-full flex justify-center pb-16 lg:pb-3">
+			<div className="max-w-7xl w-full bg-component border border-border rounded-lg">
 				<PageHeader
 					title="Products"
-					className="justify-center md:justify-start"
+					className="justify-center border-b border-border md:justify-start p-4"
 				/>
 				<Products products={products} storeID={store?.id} />
 			</div>
@@ -61,7 +61,6 @@ function Products({
 					id: productID,
 					createdAt: new Date().toISOString(),
 					status: "draft",
-					discountable: true,
 					storeID,
 					version: 0,
 					defaultVariantID: generateID({ prefix: "variant" }),
@@ -81,13 +80,13 @@ function Products({
 		},
 		[dashboardRep],
 	);
-	const duplicateProduct = useCallback(
+	const copyProduct = useCallback(
 		async (keys: string[]) => {
 			if (!dashboardRep) return;
 			startTransition(() => {
 				toast.promise(
 					"Product duplicated",
-					dashboardRep.mutate.duplicateProduct({
+					dashboardRep.mutate.copyProduct({
 						duplicates: keys.map((id) => ({
 							originalProductID: id,
 							newDefaultVariantID: generateID({ prefix: "variant" }),
@@ -148,7 +147,7 @@ function Products({
 			products={searchResults ?? products}
 			createProduct={createProduct}
 			deleteProduct={deleteProduct}
-			duplicateProduct={duplicateProduct}
+			copyProduct={copyProduct}
 			isPending={isPending}
 			onSearch={onSearch}
 		/>

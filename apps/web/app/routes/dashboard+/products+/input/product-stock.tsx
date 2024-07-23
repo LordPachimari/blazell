@@ -1,32 +1,24 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import type { InsertVariant, UpdateVariant } from "@blazell/validators";
 
+import { cn } from "@blazell/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@blazell/ui/card";
+import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
 import { Label } from "@blazell/ui/label";
 import type { Variant } from "@blazell/validators/client";
-import type { DebouncedFunc } from "~/types/debounce";
-import { cn } from "@blazell/ui";
 import { Checkbox } from "@headlessui/react";
-import { Icons } from "@blazell/ui/icons";
+import debounce from "lodash.debounce";
 
 interface StockProps {
 	variant: Variant | InsertVariant | undefined | null;
 	updateVariant: (props: UpdateVariant) => Promise<void>;
-	onVariantInputChange: DebouncedFunc<
-		(updates: UpdateVariant) => Promise<void>
-	>;
 	className?: string;
 }
 
-const Stock = ({
-	variant,
-	updateVariant,
-	onVariantInputChange,
-	className,
-}: StockProps) => {
+const Stock = ({ variant, updateVariant, className }: StockProps) => {
 	const [parent] = useAutoAnimate({ duration: 100 });
 	const [hasCode, setHasCode] = useState(false);
 
@@ -36,8 +28,31 @@ const Stock = ({
 		}
 	}, [variant]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const onInputUpdate = React.useCallback(
+		debounce(
+			async ({
+				barcode,
+				quantity,
+				sku,
+			}: { quantity?: number; sku?: string; barcode?: string }) => {
+				variant &&
+					(await updateVariant({
+						id: variant.id,
+						updates: {
+							...(quantity && { quantity }),
+							...(sku && { sku }),
+							...(barcode && { barcode }),
+						},
+					}));
+			},
+			300,
+		),
+		[variant, updateVariant],
+	);
+
 	return (
-		<Card className={cn("my-2 p-0", className)}>
+		<Card className={cn("p-0", className)}>
 			<CardHeader className="p-4 border-b border-border">
 				<CardTitle>Stock</CardTitle>
 			</CardHeader>
@@ -47,13 +62,9 @@ const Stock = ({
 					className="my-2 w-20"
 					min={0}
 					defaultValue={variant?.quantity ?? 1}
-					onChange={async (e) => {
-						variant &&
-							(await onVariantInputChange({
-								updates: { quantity: e.currentTarget.valueAsNumber },
-								id: variant.id,
-							}));
-					}}
+					onChange={async (e) =>
+						await onInputUpdate({ quantity: e.target.valueAsNumber })
+					}
 				/>
 				<div className="flex flex-col gap-2 pt-2">
 					<span className="flex items-center gap-2">
@@ -70,6 +81,9 @@ const Stock = ({
 					/> */}
 						<Checkbox
 							defaultChecked={variant?.allowBackorder ?? false}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") e.preventDefault();
+							}}
 							onChange={async (value) =>
 								variant &&
 								(await updateVariant({
@@ -77,7 +91,7 @@ const Stock = ({
 									updates: { allowBackorder: value },
 								}))
 							}
-							className="group size-6 rounded-md border border-mauve-7 bg-white/10 p-1 ring-1 ring-white/15 ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+							className="group size-6 rounded-md border bg-component p-1 ring-1 ring-border ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
 							<Icons.Check className="hidden size-4 text-brand-9 group-data-[checked]:block" />
 						</Checkbox>
@@ -86,8 +100,11 @@ const Stock = ({
 					<span className="flex items-center gap-2">
 						<Checkbox
 							checked={hasCode}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") e.preventDefault();
+							}}
 							onChange={(value) => setHasCode(value)}
-							className="group size-6 rounded-md border border-mauve-7 bg-white/10 p-1 ring-1 ring-white/15 ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
+							className="group size-6 rounded-md border bg-component p-1 ring-1 ring-border ring-inset data-[checked]:bg-brand-4 data-[checked]:text-brand-9 data-[checked]:border-brand-9 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
 							<Icons.Check className="hidden size-4 text-brand-9 group-data-[checked]:block" />
 						</Checkbox>
@@ -95,34 +112,22 @@ const Stock = ({
 					</span>
 					<div ref={parent}>
 						{hasCode && (
-							<div className="flex justify-between gap-3 w-full">
-								<span className="w-full">
+							<div className="flex justify-between pt-2 gap-3 w-full">
+								<span className="w-full flex flex-col gap-3">
 									<Label>SKU</Label>
 									<Input
 										defaultValue={variant?.sku ?? ""}
 										onChange={async (e) =>
-											variant &&
-											(await onVariantInputChange({
-												updates: {
-													sku: e.currentTarget.value,
-												},
-												id: variant.id,
-											}))
+											await onInputUpdate({ sku: e.target.value })
 										}
 									/>
 								</span>
-								<span className="w-full">
+								<span className="w-full flex flex-col gap-3">
 									<Label>Barcode</Label>
 									<Input
 										defaultValue={variant?.barcode ?? ""}
 										onChange={async (e) =>
-											variant &&
-											(await onVariantInputChange({
-												updates: {
-													barcode: e.currentTarget.value,
-												},
-												id: variant.id,
-											}))
+											await onInputUpdate({ barcode: e.target.value })
 										}
 									/>
 								</span>

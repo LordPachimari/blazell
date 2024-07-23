@@ -36,7 +36,7 @@ function Hero() {
 				</h1>
 				<span
 					style={{ animationDelay: "0.30s", animationFillMode: "both" }}
-					className="animate-fade-up block text-wrap max-w-xl bg-clip-text prose text-lg my-6 font-medium text-mauve-11"
+					className="animate-fade-up block text-wrap max-w-xl bg-clip-text prose text-lg my-6 font-medium text-slate-11"
 				>
 					We provide a e-commerce platform for businesses, creators, and artists
 					for free. Start selling your products and services to a global

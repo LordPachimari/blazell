@@ -15,26 +15,47 @@ import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
 import { EditStore } from "./edit-store";
+import { cn } from "@blazell/ui";
 
 export function StoreInfo({
 	store,
 	productCount,
 	isInitialized,
-}: { store: Store | undefined; productCount: number; isInitialized: boolean }) {
+	size = "base",
+}: {
+	store: Store | undefined;
+	productCount: number;
+	isInitialized: boolean;
+	size?: "small" | "base";
+}) {
 	const [aboutOpen, setAboutOpen] = useState(false);
 	return (
 		<section>
-			<div className="relative flex h-full items-center w-full p-0 pt-8 gap-4 ">
-				<section className="flex h-full  items-center md:w-[230px]">
-					<Avatar className="border-border   bg-mauve-3 border aspect-square w-full h-full max-w-44 max-h-44 min-w-32 min-h-32">
+			<div
+				className={cn(
+					"relative flex h-full items-center w-full p-0 pt-8 gap-4 ",
+					{ "pt-2": size === "small" },
+				)}
+			>
+				<section
+					className={cn("flex h-full items-center md:w-[230px]", {
+						"md:w-[13Z0px]": size === "small",
+					})}
+				>
+					<Avatar
+						className={cn(
+							"border-border   bg-slate-3 border aspect-square w-full h-full max-w-44 max-h-44 min-w-32 min-h-32",
+							{ "max-w-24 max-h-24 min-w-20 min-h-20": size === "small" },
+						)}
+					>
 						{store?.storeImage ? (
 							store?.storeImage?.croppedImage?.uploaded ? (
 								<Image
 									fit="cover"
 									src={store?.storeImage.croppedImage?.url}
 									alt="store"
-									className="rounded-2xl"
-									height={210}
+									className="rounded-lg"
+									height={size === "small" ? 150 : 210}
 								/>
 							) : (
 								<img
@@ -43,7 +64,7 @@ export function StoreInfo({
 										store?.storeImage?.croppedImage?.fileType,
 									)}
 									alt="store"
-									className="rounded-2xl object-cover"
+									className="rounded-lg object-cover"
 								/>
 							)
 						) : (
@@ -58,12 +79,21 @@ export function StoreInfo({
 							<Skeleton className="w-[100px] mt-1 h-[15px]" />
 						</div>
 					) : (
-						<div className="flex flex-col gap-2">
-							<h1 className="line-clamp-2 font-freeman flex-grow text-2xl font-bold leading-none tracking-tight">
+						<div className="flex flex-col">
+							<h1
+								className={cn(
+									"line-clamp-2 font-freeman flex-grow text-2xl font-bold leading-none tracking-tight",
+									{ "text-lg": size === "small" },
+								)}
+							>
 								{store?.name ?? ""}
 							</h1>
 							<span>
-								<h2 className="py-1 text-mauve-11">
+								<h2
+									className={cn("py-1 text-slate-11", {
+										"text-sm": size === "small",
+									})}
+								>
 									@{store?.founder?.username}
 								</h2>
 							</span>
@@ -76,7 +106,7 @@ export function StoreInfo({
 						isInitialized={!!isInitialized}
 					/>
 
-					<div className="pt-2">
+					<div className={cn("pt-4", { "pt-2": size === "small" })}>
 						<div className="flex gap-3 flex-wrap">
 							{!isInitialized ? (
 								<>
@@ -85,11 +115,21 @@ export function StoreInfo({
 								</>
 							) : (
 								<>
-									<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
+									<h2
+										className={cn(
+											"flex gap-[3px] text-slate-11 text-sm md:text-base",
+											{ "md:text-sm": size === "small" },
+										)}
+									>
 										<p className="font-bold text-black dark:text-white">0</p>{" "}
 										following
 									</h2>
-									<h2 className="flex gap-[3px] text-mauve-11 text-sm md:text-base">
+									<h2
+										className={cn(
+											"flex gap-[3px] text-slate-11 text-sm md:text-base",
+											{ "md:text-sm": size === "small" },
+										)}
+									>
 										<p className="font-bold text-black dark:text-white">
 											{productCount}
 										</p>{" "}
@@ -99,10 +139,10 @@ export function StoreInfo({
 							)}
 						</div>
 						{/* <Button className="mt-2">Follow</Button> */}
-						{store && (
+						{store && size === "base" && (
 							<ClientOnly>{() => <EditStore store={store} />}</ClientOnly>
 						)}
-						{!store && (
+						{!store && size === "base" && (
 							<Button variant="ghost" className="mt-2">
 								Edit store
 							</Button>
@@ -128,7 +168,7 @@ const AboutStore = ({
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger>
-				<span className="flex items-center cursor-pointer text-mauve-11">
+				<span className="flex items-center cursor-pointer text-slate-11">
 					{!isInitialized ? (
 						<Skeleton className="w-[300px] h-[10px]" />
 					) : (
@@ -138,18 +178,18 @@ const AboutStore = ({
 					<Icons.Right size={17} strokeWidth={strokeWidth} />
 				</span>
 			</DialogTrigger>
-			<DialogContent className="md:w-[600px] bg-mauve-2">
+			<DialogContent className="md:w-[600px]">
 				<Button
 					type="button"
 					variant={"ghost"}
 					size="icon"
-					className="text-mauve-11 absolute rounded-full top-3 right-3"
+					className="text-slate-11 absolute rounded-full top-3 right-3"
 					onClick={() => setIsOpen(false)}
 				>
 					<Icons.Close />
 				</Button>
 				<DialogTitle>About</DialogTitle>
-				<p className="text-mauve-11">{store?.description}</p>
+				<p className="text-slate-11">{store?.description}</p>
 			</DialogContent>
 		</Dialog>
 	);

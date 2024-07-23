@@ -11,7 +11,7 @@ export default function StoresPage() {
 	);
 
 	return (
-		<section className="w-full p-4 lg:p-10 flex justify-center">
+		<section className="w-full p-3 flex justify-center">
 			<Store store={store} isInitialized={isInitialized} products={products} />
 		</section>
 	);

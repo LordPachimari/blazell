@@ -5,7 +5,7 @@ function ProductContainer(props: React.HtmlHTMLAttributes<HTMLDivElement>) {
 		<aside
 			{...props}
 			className={cn(
-				"bg-white lg:mt-0 dark:bg-mauve-3 w-full lg:bg-transparent col-span-4 lg:col-span-3 lg:border-none p-4 rounded-t-lg z-40",
+				"bg-white lg:mt-0 dark:bg-slate-3 w-full lg:bg-transparent col-span-4 lg:col-span-3 lg:border-none p-4 rounded-t-lg z-40",
 			)}
 		/>
 	);

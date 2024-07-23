@@ -23,7 +23,7 @@ export function ThemeToggle() {
 	const modeLabel = {
 		light: (
 			<Icons.Sun
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 rotate-0 scale-100 text-slate-11 group-hover:text-brand-9  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -32,7 +32,7 @@ export function ThemeToggle() {
 		),
 		dark: (
 			<Icons.Moon
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 rotate-0 scale-100 text-slate-11 group-hover:text-brand-9  transition-all dark:-rotate-90"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -41,7 +41,7 @@ export function ThemeToggle() {
 		),
 		system: (
 			<Icons.Laptop
-				className="h-5 w-5 rotate-0 scale-100 text-mauve-11  transition-all dark:-rotate-90"
+				className="h-5 w-5 scale-100 text-slate-11 group-hover:text-brand-9  transition-all"
 				aria-hidden="true"
 				strokeWidth={strokeWidth}
 			>
@@ -66,7 +66,7 @@ export function ThemeToggle() {
 			<DropdownMenuTrigger
 				className={cn(
 					buttonVariants({ size: "icon", variant: "outline" }),
-					"rounded-full hidden lg:flex",
+					"rounded-lg",
 				)}
 			>
 				<ClientOnly>{() => modeLabel[mode]}</ClientOnly>
@@ -74,21 +74,21 @@ export function ThemeToggle() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="center">
 				<DropdownMenuItem
-					className="flex gap-2"
+					className="flex gap-2 group"
 					onClick={() => onClick("light")}
 				>
 					<ClientOnly>{() => modeLabel.light}</ClientOnly>
 					<span>Light</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="flex gap-2"
+					className="flex gap-2 group"
 					onClick={() => onClick("dark")}
 				>
 					<ClientOnly>{() => modeLabel.dark}</ClientOnly>
 					<span>Dark</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="flex gap-2"
+					className="flex gap-2 group"
 					onClick={() => onClick("system")}
 				>
 					<ClientOnly>{() => modeLabel.system}</ClientOnly>

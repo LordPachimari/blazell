@@ -28,7 +28,7 @@ export const Total = React.forwardRef<
 		: 0;
 	return (
 		<div ref={ref} className={cn("w-full", className)} {...props}>
-			<span className="flex w-full text-mauve-11 justify-between my-2">
+			<span className="flex w-full text-slate-11 justify-between my-2">
 				<p>Subtotal:</p>
 
 				<Price
@@ -37,12 +37,12 @@ export const Total = React.forwardRef<
 				/>
 			</span>
 
-			<span className="flex w-full text-mauve-11 justify-between my-2">
+			<span className="flex w-full text-slate-11 justify-between my-2">
 				<p>Shipping:</p>
 				<p>0</p>
 			</span>
 
-			<span className="flex w-full text-mauve-11 justify-between my-2">
+			<span className="flex w-full text-slate-11 justify-between my-2">
 				<p>Taxes:</p>
 				<p>0</p>
 			</span>

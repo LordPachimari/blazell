@@ -8,11 +8,10 @@ import {
 	DialogContent,
 	DialogRoot,
 	DialogTitle,
-	DialogTrigger,
 } from "@blazell/ui/dialog-vaul";
-import { Icons } from "@blazell/ui/icons";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type { Price } from "@blazell/validators/client";
+import { Input } from "@blazell/ui/input";
 
 function Currencies({
 	opened,
@@ -44,33 +43,15 @@ function Currencies({
 	}, [prices]);
 	return (
 		<DialogRoot direction="right" open={opened} onOpenChange={setDialogOpened}>
-			<DialogTrigger asChild>
-				<Button
-					size="md"
-					variant="ghost"
-					type="button"
-					className="text-mauve-11 rounded-none border-r-0 border-b-0 border-l-0 border-t rounded-b-lg"
-					onClick={() => setOpened(true)}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") {
-							e.preventDefault();
-							e.stopPropagation();
-							setOpened(true);
-						}
-					}}
-				>
-					<Icons.Plus className="h-3.5 w-3.5 mr-2" />
-					Add Price
-				</Button>
-			</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[350px]">
 				<DialogTitle className="p-4">Currencies</DialogTitle>
 
-				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] py-2 ">
+				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] p-2 ">
+					<Input type="search" />
 					<ToggleGroup
 						value={currencyCodes}
 						variant="outline"
-						className="flex-wrap"
+						className="flex-wrap pt-4"
 						type="multiple"
 						onValueChange={(value) => {
 							setNewCurrencyCodes(
@@ -81,8 +62,15 @@ function Currencies({
 						}}
 					>
 						{/* {Object.values(currencies).map((c) => ( */}
-						<ToggleGroupItem value={"AUD"} key={"AUD"} className="rounded-md">
-							{"AUD"}
+						<ToggleGroupItem
+							value={"AUD"}
+							key={"AUD"}
+							className="rounded-md w-full pl-0"
+						>
+							<div className="w-16 border-r h-10 flex justify-center items-center">
+								{"AUD"}
+							</div>
+							<div className="w-full">Australian Dollar</div>
 						</ToggleGroupItem>
 						{/* ))} */}
 					</ToggleGroup>

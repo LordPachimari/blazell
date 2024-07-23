@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-	boolean,
 	index,
 	integer,
 	json,
@@ -17,24 +16,27 @@ import { tags } from "./tag";
 import { variants } from "./variant";
 
 export const productStatus = ["draft", "published", "archived"] as const;
+export const type = ["digital", "physical", "giftcard"] as const;
 // const weightUnits = ["kg", "g", "lb", "oz"] as const;
 
 export const products = pgTable(
 	"products",
 	{
 		id: varchar("id").notNull().primaryKey(),
-
 		defaultVariantID: varchar("default_variant_id").notNull(),
 		metadata: json("metadata").$type<Record<string, string>>(),
 		collectionID: varchar("collection_pk").references(() => collections.id),
 		score: integer("score").default(0),
-		discountable: boolean("discountable").notNull().default(false),
-		originCountry: varchar("origin_country"),
 		status: text("status", {
 			enum: productStatus,
 		})
 			.notNull()
 			.default("draft"),
+		type: text("type", {
+			enum: type,
+		})
+			.notNull()
+			.default("physical"),
 		updatedBy: varchar("updated_by"),
 		storeID: varchar("store_id")
 			.notNull()

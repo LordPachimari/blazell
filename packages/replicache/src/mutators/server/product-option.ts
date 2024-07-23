@@ -11,13 +11,20 @@ const createProductOption = zod(CreateProductOptionSchema, (input) =>
 	Effect.gen(function* () {
 		const tableMutator = yield* TableMutator;
 
-		const { option } = input;
-		const productOptionSet = tableMutator.set(option, "productOptions");
-		const productUpdate = tableMutator.update(option.productID, {}, "products");
+		const { option, optionValues } = input;
 
-		return yield* Effect.all([productOptionSet, productUpdate], {
-			concurrency: 2,
-		});
+		yield* Effect.all(
+			[
+				tableMutator.set(option, "productOptions"),
+				tableMutator.update(option.productID, {}, "products"),
+			],
+			{
+				concurrency: 2,
+			},
+		);
+		if (optionValues) {
+			yield* tableMutator.set(optionValues, "productOptionValues");
+		}
 	}),
 );
 

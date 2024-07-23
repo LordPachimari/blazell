@@ -1,7 +1,8 @@
+import { CheckIcon } from "@radix-ui/react-icons";
+import type { Column, Table } from "@tanstack/react-table";
 import type * as React from "react";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import type { Column } from "@tanstack/react-table";
 
+import { cn } from "@blazell/ui";
 import { Badge } from "@blazell/ui/badge";
 import { Button } from "@blazell/ui/button";
 import {
@@ -13,9 +14,8 @@ import {
 	CommandList,
 	CommandSeparator,
 } from "@blazell/ui/command";
+import { Icons } from "@blazell/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@blazell/ui/popover";
-import { Separator } from "@blazell/ui/separator";
-import { cn } from "@blazell/ui";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
 	column: Column<TData, TValue> | undefined;
@@ -25,60 +25,77 @@ interface DataTableFacetedFilterProps<TData, TValue> {
 		value: string;
 		icon?: React.ComponentType<{ className?: string }>;
 	}[];
+	table: Table<TData>;
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
 	column,
 	title,
 	options,
+	table,
 }: DataTableFacetedFilterProps<TData, TValue>) {
 	const facets = column?.getFacetedUniqueValues();
 	const selectedValues = new Set(column?.getFilterValue() as string[]);
+	const isFiltered = table.getState().columnFilters.length > 0;
 
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button
-					variant="outline"
-					size="md"
-					className="h-10 rounded-xl border-dashed "
+					className={cn("flex flex-row h-9 pl-2 pr-0 ")}
+					variant={"outline"}
+					size={"md"}
 				>
-					<PlusCircledIcon className="mr-2 h-4 w-4" />
-					{title}
-					{selectedValues?.size > 0 && (
-						<>
-							<Separator orientation="vertical" className="mx-2 h-4" />
-							<Badge
-								variant="secondary"
-								className="rounded-sm px-1 font-normal lg:hidden"
-							>
-								{selectedValues.size}
-							</Badge>
-							<div className="hidden space-x-1 lg:flex">
-								{selectedValues.size > 2 ? (
-									<Badge
-										variant="secondary"
-										className="h-8 text-nowrap bg-brand-3 rounded-md px-1 border-brand-9"
-									>
-										<p className="text-brand-9">
-											{selectedValues.size} selected
-										</p>
-									</Badge>
-								) : (
-									options
-										.filter((option) => selectedValues.has(option.value))
-										.map((option) => (
-											<Badge
-												variant="secondary"
-												key={option.value}
-												className="bg-brand-3 text-nowrap rounded-md px-1 font-normal border-brand-9"
-											>
-												<p className="text-brand-9">{option.label}</p>
-											</Badge>
-										))
-								)}
+					<div className="flex items-center">
+						<p className="font-body font-normal text-sm h-9 flex items-center text-slate-11 pr-2">
+							{title}
+						</p>
+						{selectedValues?.size > 0 && (
+							<div className="border-l h-9 flex flex-col justify-center px-1">
+								<Badge
+									variant="secondary"
+									className="bg-brand-3 h-6 text-nowrap rounded-md px-1 lg:hidden font-normal border-brand-9"
+								>
+									<p className="text-brand-9">{selectedValues.size}</p>
+								</Badge>
+								<div className="hidden space-x-1 lg:flex">
+									{selectedValues.size > 2 ? (
+										<Badge
+											variant="secondary"
+											className="h-6 text-nowrap bg-brand-3 rounded-md px-1 border-brand-9"
+										>
+											<p className="text-brand-9">
+												{selectedValues.size} selected
+											</p>
+										</Badge>
+									) : (
+										options
+											.filter((option) => selectedValues.has(option.value))
+											.map((option) => (
+												<Badge
+													variant="secondary"
+													key={option.value}
+													className="bg-brand-3 h-6 text-nowrap hover:bg-brand-3 rounded-md px-1 font-normal border-brand-9"
+												>
+													<p className="text-brand-9">{option.label}</p>
+												</Badge>
+											))
+									)}
+								</div>
 							</div>
-						</>
+						)}
+					</div>
+					{isFiltered && (
+						<button
+							type="button"
+							className="min-w-7 hover:bg-slate-3 rounded-e-lg min-h-9 hover:border hover:border-r-0 border-l border-border flex justify-center items-center text-slate-11"
+							onClick={(e) => {
+								e.stopPropagation();
+								table.resetColumnFilters();
+							}}
+						>
+							<Icons.Close className="min-w-4 max-w-4 min-h-4 max-h-4" />
+						</button>
 					)}
 				</Button>
 			</PopoverTrigger>

@@ -1,10 +1,8 @@
-import { PlusIcon } from "@radix-ui/react-icons";
 import { flexRender, type ColumnDef, type Row } from "@tanstack/react-table";
 import React, { useMemo } from "react";
 
-import { Button } from "@blazell/ui/button";
 import { Ping } from "@blazell/ui/ping";
-import { ScrollArea } from "@blazell/ui/scroll-area";
+import { Separator } from "@blazell/ui/separator";
 import {
 	Table,
 	TableBody,
@@ -24,7 +22,6 @@ import { filterableColumns, getOrdersColumns } from "./columns";
 
 interface OrdersTableProps {
 	orders: Order[];
-	createOrder?: () => Promise<void>;
 	setOrderID?: (id: string | undefined) => void;
 	orderID?: string | undefined;
 	toolbar?: boolean;
@@ -33,7 +30,6 @@ interface OrdersTableProps {
 
 function OrdersTable({
 	orders,
-	createOrder,
 	setOrderID,
 	orderID,
 	toolbar = true,
@@ -58,36 +54,30 @@ function OrdersTable({
 	});
 
 	return (
-		<div className="space-y-4 max-w-7xl w-full">
+		<div className="max-w-7xl w-full">
 			{toolbar && (
 				<DataTableToolbar
+					className="px-4 "
 					viewOptions={false}
 					table={table}
 					filterableColumns={filterableColumns}
-					{...(createOrder && {
-						toolbarButton: (
-							<Button size="md" onClick={createOrder} type="button">
-								<PlusIcon className="mr-1 h-4 w-4" aria-hidden="true" />
-								Custom Order
-							</Button>
-						),
-					})}
 					{...(onSearch && { onSearch })}
 				/>
 			)}
 			{dashboardRep?.online && (
-				<div className="w-full flex items-center gap-2">
+				<div className="w-full px-4 py-2 border-b border-border flex items-center gap-2">
 					<Ping />
 					<p className="text-brand-9 text-sm font-bold">Real time</p>
 				</div>
 			)}
-			<ScrollArea
+
+			<div
 				ref={parentRef}
-				className="h-[calc(100vh-400px)] shadow bg-component border border-border rounded-lg relative"
+				className="h-[calc(60vh)] lg:h-[calc(68vh)] relative overflow-x-scroll "
 			>
 				<div style={{ height: `${virtualizer.getTotalSize()}px` }}>
 					<Table>
-						<TableHeader>
+						<TableHeader className="w-full sticky top-0 bg-component">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
@@ -104,6 +94,8 @@ function OrdersTable({
 									})}
 								</TableRow>
 							))}
+
+							<Separator className="absolute top-10 bg-border" />
 						</TableHeader>
 						<TableBody>
 							{rows.length ? (
@@ -140,7 +132,7 @@ function OrdersTable({
 										colSpan={columns.length}
 										className="h-24 text-center"
 									>
-										<div className="flex flex-col items-center gap-1 py-4 text-center">
+										<div className="flex w-full h-full flex-col items-center gap-1 py-4 text-center">
 											<h3 className="text-2xl font-bold font-freeman tracking-tight">
 												You have no orders
 											</h3>
@@ -154,8 +146,11 @@ function OrdersTable({
 						</TableBody>
 					</Table>
 				</div>
-			</ScrollArea>
-			<DataTablePagination table={table} />
+			</div>
+			<DataTablePagination
+				table={table}
+				className="p-4 border-t border-border"
+			/>
 		</div>
 	);
 }

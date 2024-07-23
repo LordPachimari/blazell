@@ -82,10 +82,10 @@ const RealTime = ({ className }: { className?: string }) => {
 							fit="cover"
 						/>
 						<div className="w-full px-4 flex flex-col gap-3">
-							<Skeleton className="h-7 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-3/4 rounded-2xl" />
+							<Skeleton className="h-7 w-full rounded-lg" />
+							<Skeleton className="h-4 w-full rounded-lg" />
+							<Skeleton className="h-4 w-full rounded-lg" />
+							<Skeleton className="h-4 w-3/4 rounded-lg" />
 						</div>
 					</div>
 					<div className="flex py-4">
@@ -98,10 +98,10 @@ const RealTime = ({ className }: { className?: string }) => {
 							fit="cover"
 						/>
 						<div className="w-full px-4 flex flex-col gap-3">
-							<Skeleton className="h-7 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-full rounded-2xl" />
-							<Skeleton className="h-4 w-3/4 rounded-2xl" />
+							<Skeleton className="h-7 w-full rounded-lg" />
+							<Skeleton className="h-4 w-full rounded-lg" />
+							<Skeleton className="h-4 w-full rounded-lg" />
+							<Skeleton className="h-4 w-3/4 rounded-lg" />
 						</div>
 					</div>
 				</CardContent>
@@ -183,7 +183,7 @@ const AnimatedToggleContent = () => {
 							Everything you need to start selling
 						</h2>
 					</span>
-					<p className="text-lg text-mauve-11 text-start sm:text-center lg:text-start lg:max-w-[400px]">
+					<p className="text-lg text-slate-11 text-start sm:text-center lg:text-start lg:max-w-[400px]">
 						Blazell revolutionizes your selling experience with powerful
 						features that make selling online easier and genuinely enjoyable!
 					</p>
@@ -207,18 +207,10 @@ const AnimatedToggleContent = () => {
 			</div>
 			<div className="w-full lg:w-7/12">
 				<div className="relative w-full h-full flex items-center">
-					<RealTime
-						className={cn("hidden lg:absolute", { grid: page === "0" })}
-					/>
-					<Shipping
-						className={cn("hidden lg:absolute", { flex: page === "1" })}
-					/>
-					<Payment
-						className={cn("hidden lg:absolute", { flex: page === "2" })}
-					/>
-					<SalesChannels
-						className={cn("hidden lg:absolute", { flex: page === "3" })}
-					/>
+					<RealTime className={cn("hidden", { grid: page === "0" })} />
+					<Shipping className={cn("hidden", { flex: page === "1" })} />
+					<Payment className={cn("hidden", { flex: page === "2" })} />
+					<SalesChannels className={cn("hidden", { flex: page === "3" })} />
 				</div>
 			</div>
 		</div>

@@ -32,10 +32,6 @@ export default function Orders() {
 
 	const windowSize = useWindowSize(100);
 
-	const createOrder = useCallback(async () => {
-		// await dashboardRep?.mutate.createOrder({
-		// });
-	}, []);
 	const [orderID, _setOrderID] = useState<string | undefined>(undefined);
 	const [opened, setOpened] = useState(false);
 	const setOrderID = (id: string | undefined) => {
@@ -81,27 +77,28 @@ export default function Orders() {
 		}
 	}, [searchWorker]);
 	return (
-		<main className="w-full p-4 md:px-10 md:py-6 flex justify-center ">
-			<div className="justify-center flex flex-col w-full lg:flex-row gap-6 max-w-7xl">
+		<main className="w-full p-4 md:py-3 flex justify-center  pb-16 lg:pb-3 ">
+			<div className="justify-center flex flex-col w-full lg:flex-row gap-3 max-w-7xl">
 				<section className="w-full xl:w-8/12">
-					<div className="flex flex-col pb-4">
-						<PageHeader
-							title="Orders"
-							className="justify-center md:justify-start"
-						/>
-						<div className="hidden md:flex gap-4">
+					<div className="flex flex-col pb-3">
+						<div className="hidden md:flex gap-3">
 							<Revenue type="daily" amount={20} />
 							<Revenue type="weekly" amount={200} />
 							<Revenue type="monthly" amount={2000} />
 						</div>
 					</div>
-					<OrdersTable
-						orders={searchResults ?? orders ?? []}
-						createOrder={createOrder}
-						orderID={orderID}
-						setOrderID={setOrderID}
-						onSearch={onSearch}
-					/>
+					<div className="max-w-7xl w-full bg-component border border-border rounded-lg">
+						<PageHeader
+							title="Orders"
+							className="px-4 justify-center md:justify-start"
+						/>
+						<OrdersTable
+							orders={searchResults ?? orders ?? []}
+							orderID={orderID}
+							setOrderID={setOrderID}
+							onSearch={onSearch}
+						/>
+					</div>
 				</section>
 				<section className="w-full lg:w-4/12 relative lg:flex flex-col items-start hidden">
 					{orderID ? (
@@ -120,8 +117,8 @@ export default function Orders() {
 							</ClientOnly>
 						</>
 					) : (
-						<div className="h-[58rem] w-[24rem] sticky top-10 flex justify-center items-center border bg-component shadow-inner hover:bg-mauve-2  border-border   rounded-2xl">
-							<h1 className="font-bold text-xl text-mauve-8">Order preview</h1>
+						<div className="h-[50rem] w-[25rem] sticky top-16 flex justify-center items-center border bg-component shadow-inner hover:bg-slate-2  border-border   rounded-lg">
+							<h1 className="font-bold text-xl text-slate-8">Order preview</h1>
 						</div>
 					)}
 				</section>

@@ -54,6 +54,7 @@ app.get("/transform", async (c) => {
 	}
 
 	const imageURL = url.searchParams.get("image");
+	console.log("imageURL", imageURL);
 	if (!imageURL) {
 		return c.text('Missing "image" value', 400);
 	}

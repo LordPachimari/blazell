@@ -1,6 +1,5 @@
 import { schema } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { generateID } from "@blazell/utils";
 import {
 	AssignOptionValueToVariantSchema,
 	DeleteProductOptionValueSchema,
@@ -54,7 +53,7 @@ const updateProductOptionValues = zod(
 				Effect.sync(() => {
 					if (!oldOptionValuesSet.has(val.value)) {
 						optionValuesToCreate.push({
-							id: generateID({ prefix: "p_op_val" }),
+							id: val.id,
 							optionID,
 							value: val.value,
 							version: 0,
