@@ -125,7 +125,7 @@ const OrderInfo = ({ order }: { order: Order | undefined }) => {
 		<Card className="p-0">
 			<CardHeader className="flex justify-between gap-2 p-4 border-b border-border">
 				<span className="flex justify-between flex-wrap gap-2">
-					<h1 className="font-bold text-xl text-ellipsis overflow-hidden">{`Order: ${order?.id}`}</h1>
+					<h1 className="font-bold text-lg text-ellipsis overflow-hidden">{`${order?.id}`}</h1>
 					<div className="flex gap-2 mt-0 no-space-y">
 						<OrderStatus status={order?.status ?? "pending"} />
 						<DropdownMenu>

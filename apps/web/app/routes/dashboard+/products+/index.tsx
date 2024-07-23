@@ -23,7 +23,7 @@ function ProductsPage() {
 	);
 
 	return (
-		<main className="p-3 w-full flex justify-center">
+		<main className="p-3 w-full flex justify-center pb-16 lg:pb-3">
 			<div className="max-w-7xl w-full bg-component border border-border rounded-lg">
 				<PageHeader
 					title="Products"

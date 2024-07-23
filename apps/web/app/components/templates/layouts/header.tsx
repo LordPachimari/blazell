@@ -18,6 +18,7 @@ import { useGlobalStore } from "~/zustand/store";
 import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
+import { useWindowSize } from "~/hooks/use-window-size";
 
 function Header() {
 	const { userContext } = useRequestInfo();
@@ -25,6 +26,8 @@ function Header() {
 	const { cartID, fakeAuthID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
+
+	const windowSize = useWindowSize(100);
 	if (isRootPage) return null;
 
 	return (
@@ -39,9 +42,9 @@ function Header() {
 
 			{/* Right corner */}
 			<div className="gap-2 flex items-center ">
-				<GlobalSearchCombobox />
-				<Notifications />
+				{windowSize.width > 1024 && <GlobalSearchCombobox />}
 				<ThemeToggle />
+				<Notifications />
 				<CartSheet cartID={cartID ?? null} />
 				{user ? (
 					<DropdownMenu>

@@ -2,11 +2,10 @@ import { cn } from "@blazell/ui";
 import { DialogContent, DialogRoot } from "@blazell/ui/dialog-vaul";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 import { Link, useLocation } from "@remix-run/react";
+import Image from "~/components/molecules/image";
 import { useWindowSize } from "~/hooks/use-window-size";
 import { useDashboardState } from "~/zustand/state";
 import { useDashboardStore } from "~/zustand/store";
-import { DashboardSearchCombobox } from "./search";
-import Image from "~/components/molecules/image";
 
 export type DashboardSidebarItem = {
 	title: string;
@@ -121,13 +120,12 @@ export const DashboardSidebarMobile = () => {
 			open={opened}
 			onOpenChange={setOpened}
 		>
-			<DialogContent className="w-44 bg-component m-0 rounded-none rounded-tr-lg rounded-br-lg">
+			<DialogContent className="w-72 bg-component m-0 rounded-none">
 				<nav className={cn("flex flex-col px-1 w-full ")}>
 					<div>
 						<StoreInfo />
-						<DashboardSearchCombobox />
 					</div>
-					<ul className="justify-center items-center flex w-full flex-col gap-2 py-6">
+					<ul className="justify-center items-center flex w-full flex-col gap-2 py-2">
 						{items.map((item) => {
 							const Icon = Icons[item.icon ?? "chevronLeft"];
 
@@ -138,7 +136,7 @@ export const DashboardSidebarMobile = () => {
 									key={item.title}
 									onClick={() => setOpened(false)}
 									className={cn(
-										"group relative rounded-lg flex h-8 w-full items-center gap-3 px-2 cursor-pointer dark:hover:bg-component hover:bg-slate-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-brand-7",
+										"group relative rounded-lg flex h-12 lg:8 w-full items-center gap-3 px-2 cursor-pointer dark:hover:bg-component hover:bg-slate-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-brand-7",
 										{
 											"bg-component hover:bg-slate-1 dark:hover:bg-border hover:border-t-slate-7 border border-border":
 												pathname === item.href,
