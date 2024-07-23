@@ -65,7 +65,7 @@ const DashboardNav = () => {
 				<DynamicBreadcrumb />
 			</div>
 
-			<div className="flex-1">
+			<div className="flex-1 px-2">
 				<DashboardSearchCombobox />
 			</div>
 

@@ -32,7 +32,7 @@ export function DataTableToolbar<TData>({
 }: Readonly<DataTableToolbarProps<TData>>) {
 	return (
 		<div className={cn("flex items-center justify-between", className)}>
-			<div className="flex gap-2">
+			<div className="flex gap-2 pr-2">
 				<Input
 					placeholder="Search"
 					onChange={(event) => {
