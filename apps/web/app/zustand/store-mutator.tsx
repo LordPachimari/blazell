@@ -70,6 +70,7 @@ export const MarketplaceStoreMutator = ({
 	);
 	const diffProducts = useMarketplaceStore((state) => state.diffProducts);
 	const diffVariants = useMarketplaceStore((state) => state.diffVariants);
+	const diffStores = useMarketplaceStore((state) => state.diffStores);
 	const rep = useReplicache((state) => state.marketplaceRep);
 	useSubscribe(
 		rep,
@@ -93,6 +94,12 @@ export const MarketplaceStoreMutator = ({
 			initialValuesInFirstDiff: true,
 		});
 	}, [rep, diffVariants]);
+	useEffect(() => {
+		return rep?.experimentalWatch(diffStores, {
+			prefix: "store",
+			initialValuesInFirstDiff: true,
+		});
+	}, [rep, diffStores]);
 	return <>{children}</>;
 };
 export const DashboardStoreMutator = ({

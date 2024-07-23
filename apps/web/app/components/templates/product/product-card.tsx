@@ -15,7 +15,7 @@ const ProductCard = ({
 
 	const defaultVariant = variantMap.get(product.defaultVariantID);
 	return (
-		<Card className="relative aspect-square p-2 min-w-[15rem] cursor-pointer hover:scale-105 transition-all duration-100 ease-out">
+		<Card className="relative aspect-square p-2 min-w-[15rem] cursor-pointer lg:hover:scale-105 lg:transition-all lg:duration-100 lg:ease-out">
 			<CardContent className="relative flex h-full w-full flex-col gap-4">
 				<section className="flex h-full w-full  border border-border   overflow-hidden rounded-lg items-center justify-center">
 					{!defaultVariant?.thumbnail ? (

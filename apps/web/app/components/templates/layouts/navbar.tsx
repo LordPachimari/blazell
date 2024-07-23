@@ -13,7 +13,7 @@ function Navbar(props: { children: React.ReactNode }) {
 		<header
 			{...props}
 			className={cn(
-				"bg-transparent border-b backdrop-blur-sm lg:backdrop-blur-md fixed px-4 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  flex items-center justify-between lg:border lg:border-slate-t lg:dark:border-slate-7 py-2 transition-all duration-300 hover:border lg:bg-component",
+				"bg-component border-border border-b backdrop-blur-sm fixed px-4 inset-x-0 top-0 z-30 left-1/2 transform -translate-x-1/2  flex items-center justify-between py-2 transition-all duration-300",
 				requestInfo.userPrefs.sidebarState === "open" &&
 					!noSidebarPaths.has(location.pathname) &&
 					isScrolled &&

@@ -77,7 +77,7 @@ export default function Orders() {
 		}
 	}, [searchWorker]);
 	return (
-		<main className="w-full p-4 md:py-3 flex justify-center ">
+		<main className="w-full p-4 md:py-3 flex justify-center  pb-16 lg:pb-3 ">
 			<div className="justify-center flex flex-col w-full lg:flex-row gap-3 max-w-7xl">
 				<section className="w-full xl:w-8/12">
 					<div className="flex flex-col pb-3">

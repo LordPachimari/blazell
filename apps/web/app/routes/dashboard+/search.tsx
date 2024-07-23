@@ -141,27 +141,25 @@ export function DashboardSearchCombobox() {
 		<>
 			<Button
 				variant={"outline"}
-				className={cn("hidden group relative lg:flex gap-1 px-2")}
+				className={cn("group relative flex gap-1 px-2")}
 				onClick={() => open()}
 			>
 				<Icons.MagnifyingGlassIcon
 					aria-hidden="true"
 					className="size-5 text-slate-11 "
 				/>
-				<span className="text-slate-11  font-light px-4">Dashboard search</span>
+				<span className="text-slate-11 text-nowrap font-light px-4">
+					Dashboard search
+				</span>
 				<span className="sr-only">Dashboard search...</span>
 
-				<Kbd title={"Command"} className=" text-slate-11 border-border ">
+				<Kbd
+					title={"Command"}
+					className=" text-slate-11 border-border text-nowrap "
+				>
 					{"⌘"} K
 				</Kbd>
 			</Button>
-			<button
-				type="button"
-				className="flex lg:hidden rounded-full hover:bg-slate-a-2 p-2"
-				onClick={() => open()}
-			>
-				<Icons.MagnifyingGlassIcon className="text-slate-11 hover:text-brand-9 size-6" />
-			</button>
 
 			<Transition appear show={isOpen}>
 				<Dialog

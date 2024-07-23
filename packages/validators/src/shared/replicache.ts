@@ -37,7 +37,7 @@ export const SPACE_RECORD = {
 		"notifications" as const,
 	],
 	dashboard: ["store" as const],
-	marketplace: ["products" as const],
+	marketplace: ["stores"],
 };
 export const SpaceIDSchema = Schema.Literal(
 	"dashboard",
