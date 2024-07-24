@@ -31,6 +31,7 @@ function MobileGallery({ images }: GalleryProps) {
 							<CarouselItem
 								key={id}
 								className={cn("shadow-none w-full flex justify-center")}
+								onClick={(e) => e.stopPropagation()}
 							>
 								{!uploaded ? (
 									<img
@@ -62,8 +63,8 @@ function MobileGallery({ images }: GalleryProps) {
 							</CarouselItem>
 						)}
 					</CarouselContent>
-					<CarouselPrevious />
-					<CarouselNext />
+					<CarouselPrevious onClick={(e) => e.stopPropagation()} />
+					<CarouselNext onClick={(e) => e.stopPropagation()} />
 				</Carousel>
 			</div>
 		</div>
