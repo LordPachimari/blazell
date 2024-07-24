@@ -42,20 +42,16 @@ export const loader: LoaderFunction = async (args) => {
 
 export default function DashboardLayout() {
 	return (
-		<DashboardStoreProvider>
-			<DashboardStoreMutator>
-				<SidebarLayoutWrapper>
-					<DashboardSidebarMobile />
-					<DashboardSidebar>
-						<div className="relative md:pl-40 pt-14 w-full ">
-							<DashboardNav />
+		<SidebarLayoutWrapper>
+			<DashboardSidebarMobile />
+			<DashboardSidebar>
+				<div className="relative md:pl-40 pt-14 w-full ">
+					<DashboardNav />
 
-							<Outlet />
-						</div>
-					</DashboardSidebar>
-				</SidebarLayoutWrapper>
-			</DashboardStoreMutator>
-		</DashboardStoreProvider>
+					<Outlet />
+				</div>
+			</DashboardSidebar>
+		</SidebarLayoutWrapper>
 	);
 }
 const DashboardNav = () => {

@@ -34,11 +34,13 @@ import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
 import tiptap from "./tiptap.css?url";
 import {
+	DashboardStoreProvider,
 	GlobalSearchProvider,
 	GlobalStoreProvider,
 	MarketplaceStoreProvider,
 } from "./zustand/store";
 import {
+	DashboardStoreMutator,
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
@@ -132,17 +134,21 @@ function App() {
 					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
 							<MarketplaceStoreProvider>
-								<GlobalSearchProvider>
-									<GlobalStoreMutator>
-										<MarketplaceStoreMutator>
-											<Sidebar />
-											<MobileSidebar />
-											<Header />
-											<Outlet />
-											<Toaster />
-										</MarketplaceStoreMutator>
-									</GlobalStoreMutator>
-								</GlobalSearchProvider>
+								<DashboardStoreProvider>
+									<GlobalSearchProvider>
+										<GlobalStoreMutator>
+											<MarketplaceStoreMutator>
+												<DashboardStoreMutator>
+													<Sidebar />
+													<MobileSidebar />
+													<Header />
+													<Outlet />
+													<Toaster />
+												</DashboardStoreMutator>
+											</MarketplaceStoreMutator>
+										</GlobalStoreMutator>
+									</GlobalSearchProvider>
+								</DashboardStoreProvider>
 							</MarketplaceStoreProvider>
 						</GlobalStoreProvider>
 						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>
