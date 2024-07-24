@@ -297,7 +297,7 @@ const StoreComponent = ({ store }: { store: Store }) => {
 							className="rounded-lg w-full object-cover"
 						/>
 					) : (
-						<div className="h-[120px] w-full bg-slate-4 ">
+						<div className="h-[120px] w-full bg-slate-5 ">
 							<Noise />
 						</div>
 					)}
