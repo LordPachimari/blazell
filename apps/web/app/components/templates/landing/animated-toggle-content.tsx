@@ -106,17 +106,9 @@ const RealTime = ({ className }: { className?: string }) => {
 					</div>
 				</CardContent>
 			</Card>
-			<div className="w-full relative flex flex-col items-center">
+			<div className="w-full flex flex-col items-center">
 				<div className="h-4" />
 				<AnimatedList className="bg-component w-full col-span-1 row-span-1" />
-
-				<Button
-					variant="outline"
-					size="icon"
-					className="absolute rounded-full top-0 right-[45%]  z-20"
-				>
-					<Icons.Notification className="animate-notification-shake text-brand-9" />
-				</Button>
 			</div>
 		</div>
 	);
