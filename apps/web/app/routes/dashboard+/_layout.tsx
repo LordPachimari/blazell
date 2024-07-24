@@ -4,8 +4,6 @@ import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 import { userContext } from "~/sessions.server";
-import { DashboardStoreProvider } from "~/zustand/store";
-import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 
 import {
