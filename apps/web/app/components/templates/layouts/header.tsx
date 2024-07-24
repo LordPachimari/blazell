@@ -112,10 +112,7 @@ function Notifications() {
 				<Icons.Notification className="w-5 h-5 text-slate-11" />
 				<span className="sr-only">Notifications</span>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent
-				align="center"
-				className="min-w-[300px] hidden lg:block"
-			>
+			<DropdownMenuContent align="center" className="min-w-[300px] block">
 				{notifications.length === 0 && (
 					<div className="flex flex-col gap-1 mt-4">
 						<h2 className="font-bold text-center">You're all caught up.</h2>
