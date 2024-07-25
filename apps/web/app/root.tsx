@@ -34,16 +34,15 @@ import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
 import tiptap from "./tiptap.css?url";
 import {
-	DashboardStoreProvider,
 	GlobalSearchProvider,
 	GlobalStoreProvider,
 	MarketplaceStoreProvider,
 } from "./zustand/store";
 import {
-	DashboardStoreMutator,
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
+import { Toploader } from "./components/molecules/top-loader";
 
 export const links: LinksFunction = () => {
 	return [
@@ -129,26 +128,23 @@ function App() {
 
 	return (
 		<Document nonce={nonce} env={data.ENV} theme={theme}>
+			<Toploader />
 			<MarketplaceReplicacheProvider>
 				<GlobalReplicacheProvider>
 					<DashboardReplicacheProvider>
 						<GlobalStoreProvider>
 							<MarketplaceStoreProvider>
-								<DashboardStoreProvider>
-									<GlobalSearchProvider>
-										<GlobalStoreMutator>
-											<MarketplaceStoreMutator>
-												<DashboardStoreMutator>
-													<Sidebar />
-													<MobileSidebar />
-													<Header />
-													<Outlet />
-													<Toaster />
-												</DashboardStoreMutator>
-											</MarketplaceStoreMutator>
-										</GlobalStoreMutator>
-									</GlobalSearchProvider>
-								</DashboardStoreProvider>
+								<GlobalSearchProvider>
+									<GlobalStoreMutator>
+										<MarketplaceStoreMutator>
+											<Sidebar />
+											<MobileSidebar />
+											<Header />
+											<Outlet />
+											<Toaster />
+										</MarketplaceStoreMutator>
+									</GlobalStoreMutator>
+								</GlobalSearchProvider>
 							</MarketplaceStoreProvider>
 						</GlobalStoreProvider>
 						<ClientOnly>{() => <PartykitProvider />}</ClientOnly>

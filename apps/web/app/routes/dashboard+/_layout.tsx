@@ -16,6 +16,8 @@ import {
 } from "@blazell/ui/breadcrumb";
 import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
 import { DashboardSearchCombobox } from "./search";
+import { DashboardStoreProvider } from "~/zustand/store";
+import { DashboardStoreMutator } from "~/zustand/store-mutator";
 export const loader: LoaderFunction = async (args) => {
 	const cookieHeader = args.request.headers.get("Cookie");
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
@@ -40,16 +42,20 @@ export const loader: LoaderFunction = async (args) => {
 
 export default function DashboardLayout() {
 	return (
-		<SidebarLayoutWrapper>
-			<DashboardSidebarMobile />
-			<DashboardSidebar>
-				<div className="relative md:pl-40 pt-14 w-full ">
-					<DashboardNav />
+		<DashboardStoreProvider>
+			<DashboardStoreMutator>
+				<SidebarLayoutWrapper>
+					<DashboardSidebarMobile />
+					<DashboardSidebar>
+						<div className="relative md:pl-40 pt-14 w-full ">
+							<DashboardNav />
 
-					<Outlet />
-				</div>
-			</DashboardSidebar>
-		</SidebarLayoutWrapper>
+							<Outlet />
+						</div>
+					</DashboardSidebar>
+				</SidebarLayoutWrapper>
+			</DashboardStoreMutator>
+		</DashboardStoreProvider>
 	);
 }
 const DashboardNav = () => {
