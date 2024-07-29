@@ -34,18 +34,18 @@ const items: SidebarItem[] = [
 		icon: "Marketplace",
 		items: [],
 	},
-	{
-		title: "Auctions",
-		href: "/auction",
-		icon: "Billing",
-		items: [],
-	},
-	{
-		title: "Settings",
-		href: "/settings",
-		icon: "Settings",
-		items: [],
-	},
+	// {
+	// 	title: "Auctions",
+	// 	href: "/auction",
+	// 	icon: "Billing",
+	// 	items: [],
+	// },
+	// {
+	// 	title: "Settings",
+	// 	href: "/settings",
+	// 	icon: "Settings",
+	// 	items: [],
+	// },
 ];
 
 const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/onboarding"]);
@@ -90,7 +90,7 @@ const Sidebar = () => {
 						<Button
 							size={"icon"}
 							variant={"ghost"}
-							className="text-slate-11 text-sm rounded-full"
+							className="text-slate-11 text-sm rounded-lg"
 							type="submit"
 							onClick={() =>
 								fetcher.submit(
