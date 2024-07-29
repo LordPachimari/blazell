@@ -13,7 +13,6 @@ import { AnimatePresence } from "framer-motion";
 import { z } from "zod";
 import { userContext } from "~/sessions.server";
 import { CreateUser } from "./create-user";
-import { Intro } from "./intro";
 
 // type LoaderData = {
 // 	authID: string;
@@ -75,8 +74,9 @@ export default function Page() {
 		<main className="w-screen h-screen bg-background">
 			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<AnimatePresence mode="wait">
-				{!step ||
-					(step === "create" && <CreateUser authID={null} email={undefined} />)}
+				{(!step || step === "create") && (
+					<CreateUser authID={null} email={undefined} />
+				)}
 				{/* {step === "connect" && <ConnectStripe storeId={storeId} />} */}
 			</AnimatePresence>
 		</main>
