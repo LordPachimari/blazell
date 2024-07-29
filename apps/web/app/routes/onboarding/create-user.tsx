@@ -121,7 +121,7 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 				className="flex flex-col space-y-4 rounded-lg max-w-lg bg-background/60 p-8"
 			>
 				<StepHeader
-					title="Create your username"
+					title="Enter your username"
 					description="You store will have the same name as your username. You can update it later."
 				/>
 				<motion.div
