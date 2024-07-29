@@ -75,8 +75,8 @@ export default function Page() {
 		<main className="w-screen h-screen bg-background">
 			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<AnimatePresence mode="wait">
-				{!step && <Intro key="intro" />}
-				{step === "create" && <CreateUser authID={null} email={undefined} />}
+				{!step ||
+					(step === "create" && <CreateUser authID={null} email={undefined} />)}
 				{/* {step === "connect" && <ConnectStripe storeId={storeId} />} */}
 			</AnimatePresence>
 		</main>
