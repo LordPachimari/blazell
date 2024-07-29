@@ -9,7 +9,6 @@ import {
 	type SpaceRecord,
 } from "@blazell/validators";
 import { Schema } from "@effect/schema";
-import { clerkMiddleware, type getAuth } from "@hono/clerk-auth";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { Effect, Layer } from "effect";
@@ -21,6 +20,8 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
+import { WorkOS, type User } from "@workos-inc/node";
+import { getCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -44,23 +45,39 @@ app.use("*", async (c, next) => {
 	});
 	return wrapped(c, next);
 });
-app.use("*", clerkMiddleware());
 
 app.use("*", async (c, next) => {
 	const client = new Pool({ connectionString: c.env.DATABASE_URL });
 	const db = drizzle(client, { schema });
-	// const auth = getAuth(c);
-	const fakeAuthId = c.req.header("x-fake-auth-id");
 
+	const workos = new WorkOS(c.env.WORKOS_API_KEY, {
+		clientId: c.env.WORKOS_CLIENT_ID,
+	});
+	const sessionData = getCookie(c, "wos-session");
+	console.log("sessionData<=========", sessionData);
+	if (sessionData) {
+		const { authenticated } =
+			await workos.userManagement.authenticateWithSessionCookie({
+				sessionData,
+				cookiePassword: c.env.WORKOS_COOKIE_PASSWORD,
+			});
+
+		if (authenticated) {
+			const session = await workos.userManagement.getSessionFromCookie({
+				sessionData,
+				cookiePassword: c.env.WORKOS_COOKIE_PASSWORD,
+			});
+			c.set("auth" as never, { auth: session?.user });
+		}
+	}
 	c.set("db" as never, db);
-	c.set("auth" as never, { userId: fakeAuthId });
 
 	return next();
 });
 
 app.post("/pull/:spaceID", async (c) => {
 	// 1: PARSE INPUT
-	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
+	const auth = c.get("auth" as never) as User | undefined;
 	const db = c.get("db" as never) as Db;
 	const subspaceIDs = c.req.queries("subspaces");
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
@@ -80,7 +97,7 @@ app.post("/pull/:spaceID", async (c) => {
 		ReplicacheContext,
 		ReplicacheContext.of({
 			spaceID,
-			authID: auth?.userId,
+			authID: auth?.id,
 			clientGroupID: body.clientGroupID,
 			subspaceIDs: subspaceIDs as SpaceRecord[typeof spaceID] | undefined,
 		}),
@@ -128,7 +145,7 @@ app.post("/static-pull", async (c) => {
 
 app.post("/push/:spaceID", async (c) => {
 	// 1: PARSE INPUT
-	const auth = c.get("auth" as never) as ReturnType<typeof getAuth>;
+	const auth = c.get("auth" as never) as User | undefined;
 	const db = c.get("db" as never) as Db;
 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
 		c.req.param("spaceID"),
@@ -152,7 +169,7 @@ app.post("/push/:spaceID", async (c) => {
 			ReplicacheContext,
 			ReplicacheContext.of({
 				spaceID,
-				authID: auth?.userId,
+				authID: auth?.id,
 				clientGroupID: body.clientGroupID,
 				subspaceIDs: undefined,
 			}),

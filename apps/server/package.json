@@ -28,6 +28,7 @@
 		"@effect/platform": "^0.53.12",
 		"@effect/schema": "^0.67.9",
 		"@hono/clerk-auth": "^1.0.1",
+		"@workos-inc/node": "^7.17.1",
 		"drizzle-orm": "^0.30.7",
 		"effect": "^3.2.9",
 		"hono": "^4.4.4",

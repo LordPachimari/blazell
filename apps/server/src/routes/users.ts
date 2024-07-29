@@ -1,26 +1,38 @@
 import { UserService } from "@blazell/api";
 import type { Db } from "@blazell/db";
 import { Database } from "@blazell/shared";
-import { CreateUserSchema, type Bindings } from "@blazell/validators";
+import type { Bindings } from "@blazell/validators";
 import * as Http from "@effect/platform/HttpClient";
 import type { getAuth } from "@hono/clerk-auth";
+import type { User } from "@workos-inc/node";
 import { Effect } from "effect";
 import { Hono } from "hono";
+import { z } from "zod";
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.post("/create-user", async (c) => {
 	const db = c.get("db" as never) as Db;
-	const props = CreateUserSchema.parse(await c.req.json());
+	const auth = c.get("auth" as never) as User | undefined;
+	if (!auth)
+		return c.json({ type: "ERROR", message: "Unauthorized", status: 401 }, 401);
+	const props = z
+		.object({ username: z.string(), countryCode: z.string() })
+		.parse(await c.req.json());
 
 	const result = await Effect.runPromise(
 		Effect.gen(function* () {
-			const { countryCode, user } = props;
+			const { countryCode, username } = props;
 
 			yield* Effect.tryPromise(() =>
 				db.transaction(async (tx) =>
 					UserService.createUser({
 						countryCode,
-						user,
+						user: {
+							authID: auth.id,
+							email: auth.email,
+							username,
+							fullName: `${auth.firstName} ${auth.lastName}`,
+						},
 					})
 						.pipe(Effect.provideService(Database, Database.of({ manager: tx })))
 						.pipe(Effect.orDie),

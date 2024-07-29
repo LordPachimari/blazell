@@ -7,4 +7,10 @@ export type Bindings = {
 	PARTYKIT_ORIGIN: string;
 	IMAGE_API_TOKEN: string;
 	ACCOUNT_ID: string;
+	WORKOS_API_KEY: string;
+	WORKOS_CLIENT_ID: string;
+	WORKOS_COOKIE_PASSWORD: string;
+};
+export type Auth = {
+	id: string;
 };

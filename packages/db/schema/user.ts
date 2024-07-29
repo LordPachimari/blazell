@@ -18,7 +18,6 @@ export const users = pgTable(
 	{
 		id: varchar("id").notNull().primaryKey(),
 		authID: varchar("auth_id"),
-
 		username: varchar("username"),
 		avatar: json("avatar").$type<Image>(),
 		fullName: varchar("full_name"),

@@ -109,8 +109,8 @@ export function EditStore({ store }: { store: Store }) {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					...(requestInfo.userContext.fakeAuthID && {
-						"x-fake-auth-id": requestInfo.userContext.fakeAuthID,
+					...(requestInfo.userContext.authID && {
+						"x-fake-auth-id": requestInfo.userContext.authID,
 					}),
 				},
 				body: JSON.stringify({ name: data.name }),

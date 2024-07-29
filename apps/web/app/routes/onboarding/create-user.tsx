@@ -14,12 +14,8 @@ import {
 	SelectValue,
 } from "@blazell/ui/select";
 import { toast } from "@blazell/ui/toast";
-import { generateID } from "@blazell/utils";
-import {
-	FormResponseSchema,
-	type CreateUser as CreateUserType,
-} from "@blazell/validators";
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { FormResponseSchema } from "@blazell/validators";
+import { useNavigate } from "@remix-run/react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { FieldErrorMessage } from "~/components/field-error";
@@ -30,15 +26,9 @@ interface CreateUserFormState {
 	countryCode: string;
 }
 
-interface CreateUserProps {
-	email: string | undefined;
-	authID: string | null;
-}
-
-export function CreateUser({ authID, email }: CreateUserProps) {
+export function CreateUser() {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
-	const fetcher = useFetcher();
 	// const countries = React.useMemo(() => Object.entries(ISO_1666), []);
 
 	const {
@@ -56,7 +46,6 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 	});
 
 	async function onSubmit(value: CreateUserFormState) {
-		// if (!email || !authID) return navigate("/sign-up");
 		setIsLoading(true);
 
 		const exist = await fetch(
@@ -67,27 +56,12 @@ export function CreateUser({ authID, email }: CreateUserProps) {
 			setIsLoading(false);
 			return;
 		}
-		const fakeAuthID = generateID({ prefix: "user" });
-		fetcher.submit(
-			{
-				fakeAuthID,
-			},
-			{
-				method: "POST",
-				preventScrollReset: true,
-				action: "/onboarding",
-			},
-		);
 		const result = await fetch(`${window.ENV.WORKER_URL}/users/create-user`, {
 			method: "POST",
 			body: JSON.stringify({
-				user: {
-					email: email ?? `${value.username}@fake.com`,
-					username: value.username,
-					authID: authID ?? fakeAuthID,
-				},
+				username: value.username,
 				countryCode: value.countryCode,
-			} satisfies CreateUserType),
+			}),
 		})
 			.then((res) => res.json())
 			.then(FormResponseSchema.parse);

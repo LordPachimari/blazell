@@ -22,8 +22,7 @@ import { useWindowSize } from "~/hooks/use-window-size";
 
 function Header() {
 	const { userContext } = useRequestInfo();
-	const { user } = userContext;
-	const { cartID, fakeAuthID } = userContext;
+	const { cartID, user } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 
@@ -87,7 +86,7 @@ function Header() {
 					</DropdownMenu>
 				) : (
 					<Link
-						to={!fakeAuthID ? "/onboarding" : "/dashboard"}
+						to={!user ? "/onboarding" : "/dashboard"}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 						className={cn(buttonVariants(), "rounded-lg hidden lg:flex")}

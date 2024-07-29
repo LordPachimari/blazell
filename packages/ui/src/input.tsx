@@ -111,7 +111,7 @@ const Input = React.forwardRef<
 					)}
 				>
 					<button
-						className="focus:shadow-borders-interactive-w-focus h-fit w-fit rounded-sm text-ui-fg-muted outline-none transition-all hover:text-ui-fg-base focus:text-ui-fg-base active:text-ui-fg-base"
+						className="focus:shadow-borders-interactive-w-focus h-fit w-fit rounded-sm text-ui-fg-muted outline-none transition-all hover:text-ui-fg-base focus:text-ui-fg-base active:text-ui-fg-base focus-visible:ring-1 focus-visible:ring-ring"
 						type="button"
 						onClick={() => {
 							setTypeState(typeState === "password" ? "text" : "password");

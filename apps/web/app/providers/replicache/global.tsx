@@ -12,7 +12,7 @@ export function GlobalReplicacheProvider({
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID, user } = userContext;
+	const { cartID, user } = userContext;
 
 	useEffect(() => {
 		if (globalRep) {
@@ -31,7 +31,6 @@ export function GlobalReplicacheProvider({
 					headers: {
 						"Content-Type": "application/json",
 						...(cartID && { "x-cart-id": cartID }),
-						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 						...(user?.id && { "x-user-id": user.id }),
 					},
 					body: JSON.stringify(req),
@@ -51,7 +50,6 @@ export function GlobalReplicacheProvider({
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
 				});
@@ -65,7 +63,7 @@ export function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, cartID, fakeAuthID, user]);
+	}, [globalRep, setGlobalRep, cartID, user]);
 
 	return <>{children}</>;
 }

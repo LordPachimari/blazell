@@ -1,9 +1,8 @@
 import type { User } from "@blazell/validators/client";
 // import { getAuth } from "@clerk/remix/ssr.server";
-import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
+import { json, redirect, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import { userContext } from "~/sessions.server";
 import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 
 import {
@@ -14,31 +13,32 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@blazell/ui/breadcrumb";
+import { authkitLoader, getSignInUrl } from "@workos-inc/authkit-remix";
 import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
-import { DashboardSearchCombobox } from "./search";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
-export const loader: LoaderFunction = async (args) => {
-	const cookieHeader = args.request.headers.get("Cookie");
-	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	if (!userContextCookie.fakeAuthID) {
-		return redirect("/onboarding");
-	}
-	// const { getToken, userId } = await getAuth(args);
-	// if (!userId) return redirect("/sign-in");
-	// const token = await getToken();
-	const user = await fetch(`${args.context.cloudflare.env.WORKER_URL}/users`, {
-		method: "GET",
-		headers: {
-			// Authorization: `Bearer ${token}`,
-			"x-fake-auth-id": userContextCookie.fakeAuthID,
+import { DashboardSearchCombobox } from "./search";
+export const loader = (args: LoaderFunctionArgs) =>
+	authkitLoader(
+		args,
+		async ({ auth }) => {
+			if (!auth.user) {
+				const signInUrl = await getSignInUrl();
+				return redirect(signInUrl);
+			}
+			const user = await fetch(
+				`${args.context.cloudflare.env.WORKER_URL}/users/id/${auth.user.id}`,
+				{
+					method: "GET",
+				},
+			).then((res) => res.json() as Promise<User | undefined>);
+			if (!user) {
+				return redirect("/onboarding");
+			}
+			return json(user);
 		},
-	}).then((res) => res.json() as Promise<User | undefined>);
-	if (!user) {
-		return redirect("/onboarding");
-	}
-	return json(user);
-};
+		{ ensureSignedIn: true },
+	);
 
 export default function DashboardLayout() {
 	return (
