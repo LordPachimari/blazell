@@ -19,3 +19,5 @@ export type LineItem = InferSelectModel<typeof schema.lineItems>;
 export type Order = InferSelectModel<typeof schema.orders>;
 export type ClientError = InferSelectModel<typeof schema.clientErrors>;
 export type Notification = InferSelectModel<typeof schema.notifications>;
+export type Verification = InferSelectModel<typeof schema.verifications>;
+export type Session = InferSelectModel<typeof schema.sessions>;

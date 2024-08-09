@@ -9,3 +9,5 @@ export * from "./response";
 export * from "./websocket";
 export * from "./state";
 export * from "./order";
+export * from "./auth";
+export * from "./environment";

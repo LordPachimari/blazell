@@ -1,20 +1,20 @@
 import { Console, Effect, pipe } from "effect";
 
-import type { GetRowsWTableName } from "../types";
-import { Database } from "@blazell/shared";
+import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, NotFound } from "@blazell/validators";
-import { ReplicacheContext } from "../../../context";
+import type { GetRowsWTableName } from "../types";
 
 export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { authID } = yield* ReplicacheContext;
-		if (!authID) return [];
+		const { auth } = yield* AuthContext;
+		const userID = auth.user?.id;
+		if (!userID) return [];
 		const { manager } = yield* Database;
 
 		const ordersCVD = yield* pipe(
 			Effect.tryPromise(() =>
 				manager.query.users.findFirst({
-					where: (users, { eq }) => eq(users.authID, authID),
+					where: (users, { eq }) => eq(users.id, userID),
 					columns: {
 						email: true,
 					},

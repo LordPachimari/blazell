@@ -17,9 +17,9 @@ export const loader: LoaderFunction = async (args) => {
 			statusText: "Not Found",
 		});
 	}
-	const product = (await fetch(
-		`${args.context.cloudflare.env.WORKER_URL}/products/${handle}`,
-	).then((res) => res.json())) as Product | null;
+	const product = (await fetch(`/products/${handle}`).then((res) =>
+		res.json(),
+	)) as Product | null;
 	if (!product) {
 		throw new Response(null, {
 			status: 404,

@@ -14,16 +14,16 @@ import Image from "~/components/molecules/image";
 import { Logo } from "~/components/molecules/logo";
 import { GlobalSearchCombobox } from "~/components/search";
 import { useRequestInfo } from "~/hooks/use-request-info";
+import { useWindowSize } from "~/hooks/use-window-size";
 import { useGlobalStore } from "~/zustand/store";
 import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
-import { useWindowSize } from "~/hooks/use-window-size";
 
 function Header() {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
-	const { cartID, fakeAuthID } = userContext;
+	const { cartID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 
@@ -46,7 +46,7 @@ function Header() {
 				<ThemeToggle />
 				<Notifications />
 				<CartSheet cartID={cartID ?? null} />
-				{user ? (
+				{user?.username ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
@@ -87,7 +87,9 @@ function Header() {
 					</DropdownMenu>
 				) : (
 					<Link
-						to={!fakeAuthID ? "/onboarding" : "/dashboard"}
+						to={
+							!user ? "/login" : !user.username ? "/onboarding" : "/dashboard"
+						}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 						className={cn(buttonVariants(), "rounded-lg hidden lg:flex")}

@@ -25,15 +25,13 @@ export function useRequestInfo() {
 export function useOptimisticUserContextMode() {
 	const fetchers = useFetchers();
 	const userContext = fetchers.find(
-		(f) =>
-			f.formAction === "/onboarding" || f.formAction === "/action/set-cart-id",
+		(f) => f.formAction === "/action/set-cart-id",
 	);
 
 	if (userContext?.formData) {
 		const submission = parseWithZod(userContext.formData, {
 			schema: z.object({
 				cartID: z.optional(z.string()),
-				fakeAuthID: z.optional(z.string()),
 			}),
 		});
 

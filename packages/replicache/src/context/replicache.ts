@@ -7,7 +7,6 @@ class ReplicacheContext extends Context.Tag("TableMutator")<
 		spaceID: SpaceID;
 		subspaceIDs: SpaceRecord[SpaceID] | undefined;
 		clientGroupID: string;
-		authID: string | null | undefined;
 	}
 >() {}
 export { ReplicacheContext };

@@ -1,11 +1,12 @@
-import type { Bindings } from "@blazell/validators";
+import type { Bindings, Env } from "@blazell/validators";
 import { Context } from "effect";
 
 class Cloudflare extends Context.Tag("Cloudflare")<
 	Cloudflare,
 	{
-		readonly env: Bindings;
+		readonly env: Env & Bindings;
 		readonly headers: Headers;
+		readonly request: Request;
 	}
 >() {}
 

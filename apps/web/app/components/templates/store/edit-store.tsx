@@ -1,4 +1,3 @@
-import type { Image as ImageType } from "@blazell/validators";
 import { cn } from "@blazell/ui";
 import { Avatar } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
@@ -14,6 +13,7 @@ import { Label } from "@blazell/ui/label";
 import { LoadingSpinner } from "@blazell/ui/loading";
 import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
+import type { Image as ImageType } from "@blazell/validators";
 import type { Store } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as base64 from "base64-arraybuffer";
@@ -29,10 +29,8 @@ import getCroppedImg from "~/utils/crop";
 import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 import CropImage from "./crop-image";
-import { useRequestInfo } from "~/hooks/use-request-info";
 export type View = "default" | "cropStoreImage" | "cropHeaderImage";
 export function EditStore({ store }: { store: Store }) {
-	const requestInfo = useRequestInfo();
 	const [isLoading, setIsLoading] = useState(false);
 	const [view, setView] = useState<
 		"default" | "cropStoreImage" | "cropHeaderImage"
@@ -94,9 +92,7 @@ export function EditStore({ store }: { store: Store }) {
 	const onSubmit = async (data: { name: string; description: string }) => {
 		setIsLoading(true);
 		if (data.name !== store.name) {
-			const response = await fetch(
-				`${window.ENV.WORKER_URL}/stores/${data.name}`,
-			);
+			const response = await fetch(`/api/stores/${data.name}`);
 			const exist = await response.json();
 
 			if (exist) {
@@ -105,14 +101,12 @@ export function EditStore({ store }: { store: Store }) {
 				return;
 			}
 
-			await fetch(`${window.ENV.WORKER_URL}/stores/update-store/${store.id}`, {
+			await fetch(`/api/stores/update-store/${store.id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					...(requestInfo.userContext.fakeAuthID && {
-						"x-fake-auth-id": requestInfo.userContext.fakeAuthID,
-					}),
 				},
+				credentials: "include",
 				body: JSON.stringify({ name: data.name }),
 			});
 		}

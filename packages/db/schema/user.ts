@@ -17,9 +17,8 @@ export const users = pgTable(
 	"users",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		authID: varchar("auth_id"),
-
 		username: varchar("username"),
+		google_id: varchar("google_id"),
 		avatar: json("avatar").$type<Image>(),
 		fullName: varchar("full_name"),
 		patronymic: varchar("patronymic"),
@@ -36,7 +35,7 @@ export const users = pgTable(
 	},
 	(users) => ({
 		emailIndex: uniqueIndex("email_index1").on(users.email),
-		authIDIndex: uniqueIndex("auth_id_index1").on(users.authID),
+		googleIDIndex: uniqueIndex("google_id_index1").on(users.google_id),
 		usernameIndex: uniqueIndex("username_index1").on(users.username),
 	}),
 );

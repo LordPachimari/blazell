@@ -1,4 +1,3 @@
-import type { User } from "@blazell/validators/client";
 import {
 	json,
 	redirect,
@@ -8,67 +7,69 @@ import {
 import { useSearchParams } from "@remix-run/react";
 
 import { parseWithZod } from "@conform-to/zod";
-import { invariantResponse } from "@epic-web/invariant";
 import { AnimatePresence } from "framer-motion";
-import { z } from "zod";
-import { userContext } from "~/sessions.server";
-import { CreateUser } from "./create-user";
+import { getHonoClient } from "server";
+import { checkHoneypot } from "~/server/honeypot.server";
 import { Intro } from "./intro";
+import { Onboard, UserOnboardSchema } from "./onboard";
 
-// type LoaderData = {
-// 	authID: string;
-// };
 export const loader: LoaderFunction = async (args) => {
-	const cookieHeader = args.request.headers.get("Cookie");
-	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	// const { getToken, userId } = await getAuth(args);
-	// if (!userId) return redirect("/sign-up");
-	// const token = await getToken();
-	const user = await fetch(`${args.context.cloudflare.env.WORKER_URL}/users`, {
-		method: "GET",
-		headers: {
-			// Authorization: `Bearer ${token}`,
-			"x-fake-auth-id": userContextCookie.fakeAuthID,
-		},
-	}).then((res) => res.json() as Promise<User | undefined>);
-	if (user) {
-		return redirect("/dashboard");
+	const { context } = args;
+	const { user } = context;
+	if (!user) {
+		return redirect("/login");
 	}
-	return json({
-		// authID: userId,
-	});
+	return json({});
 };
-export async function action({ request }: ActionFunctionArgs) {
-	const cookieHeader = request.headers.get("Cookie");
-	const cookie = (await userContext.parse(cookieHeader)) || {};
+export async function action({ request, context }: ActionFunctionArgs) {
 	const formData = await request.formData();
+	checkHoneypot(formData, context.cloudflare.env.HONEYPOT_SECRET);
 
 	const submission = parseWithZod(formData, {
-		schema: z.object({
-			fakeAuthID: z.string(),
+		schema: UserOnboardSchema,
+	});
+	if (submission.status !== "success") {
+		return json({ result: submission.reply() });
+	}
+	const url = new URL(request.url);
+	const origin = url.origin;
+	const honoClient = getHonoClient(origin);
+	const usernameResult = await honoClient.api.users.username[":username"].$get({
+		param: {
+			username: submission.value.username,
+		},
+	});
+	if (usernameResult.ok) {
+		const exist = await usernameResult.json();
+		if (exist) {
+			return json({
+				result: submission.reply({
+					fieldErrors: {
+						username: ["Username already exist."],
+					},
+				}),
+			});
+		}
+	}
+	const onboardResult = await honoClient.api.users.onboard.$post({
+		json: {
+			username: submission.value.username,
+			countryCode: submission.value.countryCode,
+		},
+	});
+	if (onboardResult.ok) {
+		return redirect(submission.value.redirectTo ?? "/dashboard");
+	}
+	return json({
+		result: submission.reply({
+			fieldErrors: {
+				username: ["Something wrong happened. Please try again later."],
+			},
 		}),
 	});
-	invariantResponse(
-		submission.status === "success",
-		"Invalid fake auth received",
-	);
-	cookie.fakeAuthID = submission.value.fakeAuthID;
-	return json(
-		{ result: submission.reply() },
-		{
-			headers: {
-				"Set-Cookie": await userContext.serialize(cookie, {
-					maxAge: 31536000,
-					path: "/",
-					httpOnly: true,
-				}),
-			},
-		},
-	);
 }
 
 export default function Page() {
-	// const data = useLoaderData<LoaderData>();
 	const [search] = useSearchParams();
 	const step = search.get("step");
 	return (
@@ -76,7 +77,7 @@ export default function Page() {
 			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<AnimatePresence mode="wait">
 				{!step && <Intro key="intro" />}
-				{step === "create" && <CreateUser authID={null} email={undefined} />}
+				{step === "create" && <Onboard />}
 				{/* {step === "connect" && <ConnectStripe storeId={storeId} />} */}
 			</AnimatePresence>
 		</main>

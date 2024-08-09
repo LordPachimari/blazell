@@ -8,7 +8,7 @@ function PartykitProvider() {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID, user } = userContext;
+	const { cartID, user } = userContext;
 
 	usePartySocket({
 		// usePartySocket takes the same arguments as PartySocket.
@@ -27,20 +27,20 @@ function PartykitProvider() {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
 					const result = await fetch(
-						`${window.ENV.WORKER_URL}/pull/global?${subspaces
+						`/api/pull/global?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 								...(user?.id && {
 									"x-user-id": user.id,
 								}),
 								...(cartID && { "x-cart-id": cartID }),
 							},
 							body: JSON.stringify(req),
+							credentials: "include",
 						},
 					);
 
@@ -75,21 +75,20 @@ function PartykitProvider() {
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
 			console.log("message", subspaces);
-			console.log("fakeAuthID", fakeAuthID);
 			if (dashboardRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
 					const result = await fetch(
-						`${window.ENV.WORKER_URL}/pull/dashboard?${subspaces
+						`/api/pull/dashboard?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 							},
 							body: JSON.stringify(req),
+							credentials: "include",
 						},
 					);
 
@@ -128,7 +127,7 @@ function PartykitProvider() {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
 					const result = await fetch(
-						`${window.ENV.WORKER_URL}/pull/marketplace?${subspaces
+						`/api/pull/marketplace?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{

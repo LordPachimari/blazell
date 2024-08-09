@@ -2,7 +2,7 @@ import { Clock, Effect, Layer } from "effect";
 import type { PatchOperation, PullResponseOKV1 } from "replicache";
 
 import { tableNameToTableMap, type Db } from "@blazell/db";
-import { Database, type Cloudflare } from "@blazell/shared";
+import { AuthContext, Database, type Cloudflare } from "@blazell/shared";
 import {
 	NeonDatabaseError,
 	type Cookie,
@@ -22,14 +22,15 @@ export const pull = ({
 }): Effect.Effect<
 	PullResponseOKV1,
 	NeonDatabaseError | InvalidValue,
-	ReplicacheContext | Cloudflare
+	ReplicacheContext | Cloudflare | AuthContext
 > =>
 	Effect.gen(function* (_) {
-		const { spaceID, authID } = yield* ReplicacheContext;
+		const { spaceID } = yield* ReplicacheContext;
+		const { auth } = yield* AuthContext;
 		const requestCookie = pull.cookie;
 		yield* _(Effect.log(`SPACE ID ${spaceID}`));
 
-		if (spaceID === "dashboard" && !authID) {
+		if (spaceID === "dashboard" && !auth.user) {
 			yield* _(Effect.log("not authorized"));
 			const resp: PullResponseOKV1 = {
 				lastMutationIDChanges: {},

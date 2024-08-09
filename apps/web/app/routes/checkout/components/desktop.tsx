@@ -1,4 +1,5 @@
 import { Button } from "@blazell/ui/button";
+import { toast } from "@blazell/ui/toast";
 import { CheckoutFormSchema, type CheckoutForm } from "@blazell/validators";
 import type { Cart, User } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +11,6 @@ import { useGlobalStore } from "~/zustand/store";
 import { CartInfo } from "./cart-info";
 import { CustomerInfo } from "./customer-info";
 import { ShippingAddressInfo } from "./shipping-address-info";
-import { toast } from "@blazell/ui/toast";
 
 export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 	const users = useGlobalStore((state) => state.users);
@@ -67,19 +67,16 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 		}
 		setIsLoading(true);
 
-		const orderIDs = await fetch(
-			`${window.ENV.WORKER_URL}/carts/complete-cart`,
-			{
-				headers: {
-					"Content-Type": "application/json",
-				},
-				method: "POST",
-				body: JSON.stringify({
-					id: cartID,
-					checkoutInfo: data,
-				}),
+		const orderIDs = await fetch("/api/carts/complete-cart", {
+			headers: {
+				"Content-Type": "application/json",
 			},
-		).then((res) => res.json() as Promise<string[]>);
+			method: "POST",
+			body: JSON.stringify({
+				id: cartID,
+				checkoutInfo: data,
+			}),
+		}).then((res) => res.json() as Promise<string[]>);
 		if (orderIDs.length > 0) {
 			navigate(
 				`/order-confirmation?${orderIDs.map((id) => `id=${id}`).join("&")}`,

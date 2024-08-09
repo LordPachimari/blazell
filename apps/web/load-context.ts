@@ -1,16 +1,18 @@
+import type { AuthUser, Env } from "@blazell/validators";
+import type {
+	Session,
+	SessionData,
+	SessionStorage,
+} from "@remix-run/cloudflare";
 import type { PlatformProxy } from "wrangler";
-import { z } from "zod";
 
-type Cloudflare = Omit<PlatformProxy<AppEnv>, "dispose">;
-export const AppEnvSchema = z.object({
-	REPLICACHE_KEY: z.string(),
-	WORKER_URL: z.string(),
-	PARTYKIT_HOST: z.string(),
-});
-export type AppEnv = z.infer<typeof AppEnvSchema>;
+type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
 
 declare module "@remix-run/cloudflare" {
 	interface AppLoadContext {
 		cloudflare: Cloudflare;
+		sessionStorage: SessionStorage<SessionData, SessionData>;
+		session: Session<SessionData, SessionData>;
+		user: AuthUser | undefined;
 	}
 }
