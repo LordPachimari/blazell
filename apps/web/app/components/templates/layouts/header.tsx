@@ -14,11 +14,11 @@ import { Logo } from "~/components/molecules/logo";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { GlobalSearchCombobox } from "~/components/search";
 import { useRequestInfo } from "~/hooks/use-request-info";
-import { useWindowSize } from "~/hooks/use-window-size";
 import { useGlobalStore } from "~/zustand/store";
 import { CartSheet } from "../cart/cart-sheet";
 import { Navbar } from "./navbar";
 import { ThemeToggle } from "./theme-toggle";
+import { useWindowSize } from "~/hooks/use-window-size";
 
 function Header() {
 	const { userContext } = useRequestInfo();
