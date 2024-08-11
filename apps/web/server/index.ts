@@ -24,7 +24,6 @@ import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 import { remix } from "remix-hono/handler";
 import { getSession, getSessionStorage, session } from "remix-hono/session";
-import { typedEnv } from "remix-hono/typed-env";
 import { getUserAndSession } from "~/server/auth.server";
 import { Authentication, authMiddleware } from "./auth";
 import { getDB } from "./lib/db";
@@ -35,6 +34,8 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
+//@ts-expect-error it's not typed
+import * as build from "../build/server";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
@@ -235,17 +236,14 @@ const routes = app
 	.route("/api/products", products)
 	.use("*", async (c, next) => {
 		if (process.env.NODE_ENV === "production" || import.meta.env.PROD) {
-			//@ts-ignore
-			const serverBuild = await import("../build/server");
 			return remix({
-				build: serverBuild,
+				build,
 				mode: "production",
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				async getLoadContext(c) {
 					const sessionStorage = getSessionStorage(c);
 					const session = getSession(c);
-					const env = typedEnv(c.env, BindingsSchema);
+					const env = BindingsSchema.parse(c.env);
 					const url = new URL(c.req.url);
 					const origin = url.origin;
 					const auth = new Authentication({

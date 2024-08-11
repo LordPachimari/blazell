@@ -17,7 +17,6 @@ export const authUsers = pgTable(
 		avatar: varchar("avatar"),
 		googleID: varchar("google_id"),
 		fullName: varchar("full_name"),
-		patronymic: varchar("patronymic"),
 		userID: varchar("user_id"),
 		email: varchar("email").notNull(),
 		phone: varchar("phone"),
@@ -30,8 +29,8 @@ export const authUsers = pgTable(
 		emailIndex: uniqueIndex("email_index").on(users.email),
 		googleIDIndex: uniqueIndex("google_id_index1").on(users.googleID),
 		fullNameIndex: index("full_name_index").on(users.fullName),
-		userIDIndex: uniqueIndex("user_id_index").on(users.userID),
-		phoneIndex: uniqueIndex("phone_index").on(users.phone),
+		userIDIndex: uniqueIndex("user_id_index5").on(users.userID),
+		phoneIndex: uniqueIndex("phone_index1").on(users.phone),
 	}),
 );
 export const authUserRelations = relations(authUsers, ({ one }) => ({
