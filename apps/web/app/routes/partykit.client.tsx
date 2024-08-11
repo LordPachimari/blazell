@@ -123,6 +123,7 @@ function PartykitProvider() {
 		},
 		onMessage(e) {
 			const subspaces = JSON.parse(e.data) as string[];
+			console.log("message", subspaces);
 			if (marketplaceRep) {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
@@ -136,6 +137,7 @@ function PartykitProvider() {
 								"Content-Type": "application/json",
 							},
 							body: JSON.stringify(req),
+							credentials: "include",
 						},
 					);
 

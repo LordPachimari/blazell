@@ -1,6 +1,7 @@
 import { ulid } from "ulidx";
 
 const prefixes = [
+	"auth",
 	"address",
 	"user",
 	"product",

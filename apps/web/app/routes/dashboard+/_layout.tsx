@@ -16,6 +16,9 @@ import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import { DashboardSearchCombobox } from "./search";
+import { ProfileDropdown } from "~/components/profile-dropdown";
+import { useRequestInfo } from "~/hooks/use-request-info";
+import type { AuthUser } from "@blazell/validators";
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
 	const { user } = context;
@@ -48,6 +51,8 @@ export default function DashboardLayout() {
 	);
 }
 const DashboardNav = () => {
+	const { userContext } = useRequestInfo();
+	const { user } = userContext;
 	return (
 		<div className="h-14 flex items-center w-full fixed top-0 border-b bg-background border-border z-20 px-3">
 			<div className="flex items-center flex-1">
@@ -58,8 +63,9 @@ const DashboardNav = () => {
 				<DashboardSearchCombobox />
 			</div>
 
-			<div className="flex-1">
+			<div className="flex-1 flex justify-start items-center gap-2 px-4">
 				<ThemeToggle />
+				{user && <ProfileDropdown user={user as AuthUser} />}
 			</div>
 		</div>
 	);

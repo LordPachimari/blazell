@@ -11,19 +11,18 @@ import {
 
 import { addresses } from "./address";
 import { stores } from "./store";
-import type { Image } from "../types";
+import { authUsers } from "./auth";
 
 export const users = pgTable(
 	"users",
 	{
 		id: varchar("id").notNull().primaryKey(),
-		username: varchar("username"),
-		google_id: varchar("google_id"),
-		avatar: json("avatar").$type<Image>(),
-		fullName: varchar("full_name"),
-		patronymic: varchar("patronymic"),
+		authID: varchar("auth_id").references(() => authUsers.id),
 		email: varchar("email").notNull(),
 		phone: varchar("phone"),
+		username: varchar("username"),
+		fullName: varchar("full_name"),
+		avatar: varchar("avatar"),
 		description: text("description"),
 		role: text("role", { enum: ["moderator", "user"] })
 			.notNull()
@@ -35,13 +34,20 @@ export const users = pgTable(
 	},
 	(users) => ({
 		emailIndex: uniqueIndex("email_index1").on(users.email),
-		googleIDIndex: uniqueIndex("google_id_index1").on(users.google_id),
+		fullNameIndex: uniqueIndex("full_name_index1").on(users.fullName),
+		phoneIndex: uniqueIndex("phone_index1").on(users.phone),
 		usernameIndex: uniqueIndex("username_index1").on(users.username),
+		authIDIndex: uniqueIndex("auth_id_index1").on(users.authID),
 	}),
 );
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
 	stores: many(stores, { relationName: "founder.stores" }),
 	addresses: many(addresses),
+	authUser: one(authUsers, {
+		fields: [users.authID],
+		references: [authUsers.id],
+		relationName: "auth.user",
+	}),
 }));
 export const adminsToStores = pgTable(
 	"admins_to_stores",

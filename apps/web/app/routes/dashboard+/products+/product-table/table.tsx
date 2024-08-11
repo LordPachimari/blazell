@@ -166,7 +166,7 @@ function ProductsTable({
 										className="h-full text-center"
 									>
 										<div className="flex w-full h-full flex-col items-center gap-1 py-4 text-center">
-											<h3 className="text-2xl font-bold font-freeman tracking-tight">
+											<h3 className="text-lg text-slate-11 font-freeman tracking-tight">
 												You have no products
 											</h3>
 											<p className="text-sm text-muted-foreground">

@@ -18,3 +18,4 @@ export * from "./error";
 export * from "./notification";
 export * from "./verification";
 export * from "./session";
+export * from "./auth";

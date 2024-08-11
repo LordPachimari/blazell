@@ -1,11 +1,6 @@
 import { UserService } from "@blazell/api";
-import { Database } from "@blazell/shared";
-import {
-	EmailSchema,
-	type Auth,
-	type Bindings,
-	type Env,
-} from "@blazell/validators";
+import { AuthContext, Database } from "@blazell/shared";
+import type { Auth, Bindings, Env } from "@blazell/validators";
 import * as Http from "@effect/platform/HttpClient";
 import { zValidator } from "@hono/zod-validator";
 import { Console, Effect } from "effect";
@@ -16,6 +11,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 	.get("/", async (c) => {
 		const db = getDB({ connectionString: c.env.DATABASE_URL });
 		const auth = c.get("auth" as never) as Auth;
+		console.log("auth from users", auth);
 		const userID = auth.user?.id;
 		if (!userID) return c.json(null, 200);
 		const cachedUser = await c.env.KV.get(userID);
@@ -47,6 +43,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 					id: true,
 				},
 			});
+			console.log("result from uernma", result);
 			if (!result) return c.json(null, 200);
 
 			return c.json(result, 200);
@@ -90,31 +87,6 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 		},
 	)
 	.post(
-		"/create",
-		zValidator(
-			"json",
-			z.object({
-				email: EmailSchema,
-			}),
-		),
-		async (c) => {
-			const { email } = c.req.valid("json");
-			const db = getDB({ connectionString: c.env.DATABASE_URL });
-			const result = await Effect.runPromise(
-				UserService.createUser({
-					email,
-				}).pipe(
-					Effect.provideService(Database, Database.of({ manager: db })),
-					Effect.orDie,
-				),
-			);
-			if (result) {
-				return c.json(result, 200);
-			}
-			return c.text("Insertion failed", 400);
-		},
-	)
-	.post(
 		"/onboard",
 		zValidator(
 			"json",
@@ -125,14 +97,15 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 		),
 		async (c) => {
 			const db = getDB({ connectionString: c.env.DATABASE_URL });
+
 			const auth = c.get("auth" as never) as Auth;
 			const { username, countryCode } = c.req.valid("json");
-			const userID = auth.user?.id;
-			if (!userID)
+			if (!auth.user) {
 				return c.json(
-					{ type: "ERROR", message: "Unauthorized", status: 200 as const },
+					{ type: "ERROR", message: "Unauthorized", status: 401 as const },
 					401,
 				);
+			}
 			const result = await Effect.runPromise(
 				Effect.gen(function* () {
 					yield* Effect.tryPromise(() =>
@@ -140,10 +113,10 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 							UserService.onboardUser({
 								countryCode,
 								username,
-								userID,
 							})
 								.pipe(
 									Effect.provideService(Database, Database.of({ manager: tx })),
+									Effect.provideService(AuthContext, AuthContext.of({ auth })),
 								)
 								.pipe(Effect.orDie),
 						),

@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, pipe } from "effect";
 
 import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
@@ -7,15 +7,36 @@ import type { GetRowsWTableName } from "../types";
 export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
 		const { auth } = yield* AuthContext;
-		const userID = auth.user?.id;
-		if (!userID) return [];
+		const authID = auth.user?.id;
+		if (!authID) return [];
 		const { manager } = yield* Database;
 		const rowsWTableName: RowsWTableName[] = [];
+		const activeStoreIDEffect = pipe(
+			Effect.tryPromise(() =>
+				fullRows
+					? manager.query.jsonTable.findFirst({
+							where: (jsonTable, { eq }) =>
+								eq(jsonTable.id, `active_store_id_${authID}`),
+						})
+					: manager.query.jsonTable.findFirst({
+							where: (jsonTable, { eq }) =>
+								eq(jsonTable.id, `active_store_id_${authID}`),
+							columns: {
+								id: true,
+								version: true,
+							},
+						}),
+			),
+			Effect.catchTags({
+				UnknownException: (error) =>
+					new NeonDatabaseError({ message: error.message }),
+			}),
+		);
 
-		const storeData = yield* Effect.tryPromise(() =>
+		const storeDataEffect = Effect.tryPromise(() =>
 			fullRows
 				? manager.query.users.findFirst({
-						where: (user, { eq }) => eq(user.id, userID),
+						where: (user, { eq }) => eq(user.authID, authID),
 						with: {
 							stores: {
 								with: {
@@ -83,7 +104,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 						},
 					})
 				: manager.query.users.findFirst({
-						where: (users, { eq }) => eq(users.id, userID),
+						where: (users, { eq }) => eq(users.authID, authID),
 						with: {
 							stores: {
 								columns: {
@@ -128,6 +149,17 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 			Effect.catchTags({
 				UnknownException: (error) =>
 					new NeonDatabaseError({ message: error.message }),
+			}),
+		);
+		const [activeStoreID, storeData] = yield* Effect.all(
+			[activeStoreIDEffect, storeDataEffect],
+			{ concurrency: 2 },
+		);
+
+		yield* Effect.sync(() =>
+			rowsWTableName.push({
+				tableName: "json" as const,
+				rows: activeStoreID ? [activeStoreID] : [],
 			}),
 		);
 

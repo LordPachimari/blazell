@@ -2,6 +2,7 @@ import type { schema } from "@blazell/db";
 
 import type { InferSelectModel } from "drizzle-orm";
 
+export type AuthUser = InferSelectModel<typeof schema.authUsers>;
 export type Store = InferSelectModel<typeof schema.stores>;
 export type User = InferSelectModel<typeof schema.users>;
 export type Address = InferSelectModel<typeof schema.addresses>;

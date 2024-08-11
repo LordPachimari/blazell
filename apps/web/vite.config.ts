@@ -13,8 +13,19 @@ export default defineConfig({
 			externalConditions: ["workerd", "worker"],
 		},
 	},
+	server: {
+		// https://github.com/remix-run/remix/discussions/8917#discussioncomment-8640023
+		warmup: {
+			clientFiles: [
+				"./app/entry.client.tsx",
+				"./app/root.tsx",
+				"./app/routes/**/*",
+			],
+		},
+	},
 	optimizeDeps: {
 		exclude: ["chunk-QTVTVLJO.js"],
+		include: ["./app/routes/**/*"],
 	},
 	plugins: [
 		// MillionLint.vite(),

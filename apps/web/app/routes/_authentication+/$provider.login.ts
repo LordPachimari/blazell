@@ -1,55 +1,19 @@
-import { redirect, type LoaderFunction } from "@remix-run/cloudflare";
-import { Authentication, getHonoClient } from "server";
-import { getAuthSessionStorage } from "~/sessions.server";
+import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
+import { getHonoClient } from "server";
 
-export const loader: LoaderFunction = async ({ request, context }) => {
+export async function action({ request, context }: ActionFunctionArgs) {
+	const { session } = context;
 	const url = new URL(request.url);
 	const origin = url.origin;
-	const { ENVIRONMENT, SESSION_SECRET } = context.cloudflare.env;
-	const state = url.searchParams.get("state");
-	const code = url.searchParams.get("code");
+
 	const honoClient = getHonoClient(origin);
-	if (!state || !code) {
-		return new Response("Invalid request", { status: 400 });
-	}
-	const result = await honoClient.api.auth.login.google.callback.$get({
-		query: {
-			state,
-			code,
-		},
-	});
+	const result = await honoClient.api.auth.google.$get();
 	if (result.ok) {
-		const { user, signUp, type } = await result.json();
-		if (type === "SUCCESS") {
-			const auth = new Authentication({
-				serverURL: origin,
-			});
-
-			const authSessionStorage = getAuthSessionStorage({
-				...(ENVIRONMENT && { ENVIRONMENT }),
-				...(SESSION_SECRET && { SESSION_SECRET }),
-			});
-			const session = await auth.createSession(user.id);
-
-			const authSession = await authSessionStorage.getSession(
-				request.headers.get("cookie"),
-			);
-			return redirect(signUp ? "/onboarding" : "/marketplace", {
-				headers: {
-					...(session &&
-						!session.fresh && {
-							"set-cookie": await authSessionStorage.commitSession(
-								authSession,
-								{
-									expires: new Date(session.expiresAt),
-								},
-							),
-						}),
-				},
-			});
-		}
-		redirect("/login");
+		const { codeVerifier, state, url } = await result.json();
+		session.set("google_oauth_state", state);
+		session.set("code_verifier", codeVerifier);
+		return redirect(url);
 	}
-
-	redirect("/login");
-};
+	console.log("error", result.status);
+	return null;
+}

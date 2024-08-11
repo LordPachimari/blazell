@@ -1,17 +1,18 @@
-import { ReplicacheContext, pull, push, staticPull } from "@blazell/replicache";
+import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
+
 import {
 	BindingsSchema,
 	PullRequest,
 	PushRequest,
 	SpaceIDSchema,
 	type Auth,
-	type AuthSession,
 	type Bindings,
 	type Env,
 	type SpaceRecord,
 } from "@blazell/validators";
 import { Schema } from "@effect/schema";
+import type { AppLoadContext } from "@remix-run/cloudflare";
 import {
 	createWorkersKVSessionStorage,
 	type RequestHandler,
@@ -21,10 +22,11 @@ import { Hono } from "hono";
 import { hc } from "hono/client";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
-// import { staticAssets } from "remix-hono/cloudflare";
 import { remix } from "remix-hono/handler";
 import { getSession, getSessionStorage, session } from "remix-hono/session";
-import { Authentication } from "./auth";
+import { typedEnv } from "remix-hono/typed-env";
+import { getUserAndSession } from "~/server/auth.server";
+import { Authentication, authMiddleware } from "./auth";
 import { getDB } from "./lib/db";
 import auth from "./routes/auth";
 import carts from "./routes/carts";
@@ -33,12 +35,8 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
-import type { AppLoadContext } from "@remix-run/cloudflare";
-import { typedEnv } from "remix-hono/typed-env";
-import { getUserAndSession } from "~/server/auth.server";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
-
 let handler: RequestHandler | undefined;
 
 const routes = app
@@ -80,7 +78,6 @@ const routes = app
 	})
 	.use(
 		"*",
-		// staticAssets(),
 		session({
 			autoCommit: true,
 			createSessionStorage(c) {
@@ -95,50 +92,12 @@ const routes = app
 				});
 			},
 		}),
-		// async (c, next) => {
-		// 	if (process.env.NODE_ENV === "production" || import.meta.env.PROD) {
-		// 		return staticAssets()(c, next);
-		// 	}
-		// 	await next();
-		// },
-
-		async (c, next) => {
-			const auth = new Authentication({
-				serverURL: c.env.WORKER_URL,
-			});
-			const honoSession = getSession(c);
-
-			const sessionID = honoSession.get(auth.sessionCookieName);
-			console.log("sessionId", sessionID);
-			if (!sessionID) {
-				c.set("auth" as never, {
-					user: null,
-					session: null,
-				});
-				return next();
-			}
-
-			let currentSession: AuthSession | undefined;
-			const { session, user } = await auth.validateSession(sessionID);
-			if (session && !session.fresh && user) {
-				await auth.invalidateSession(session.id);
-				const newSession = await auth.createSession(user.id);
-				honoSession.set(auth.sessionCookieName, newSession);
-				currentSession = newSession;
-			}
-			if (session) currentSession = session;
-
-			c.set("auth" as never, {
-				user,
-				session: currentSession,
-			});
-
-			return next();
-		},
+		authMiddleware,
 	)
 	.post("/api/pull/:spaceID", async (c) => {
 		// 1: PARSE INPUT
 		const auth = c.get("auth" as never) as Auth;
+		console.log("AUTH FROM PULL", auth);
 		const db = getDB({ connectionString: c.env.DATABASE_URL });
 		const subspaceIDs = c.req.queries("subspaces");
 		const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
@@ -258,6 +217,13 @@ const routes = app
 		return c.json({}, 200);
 	})
 	.get("/api/hello", (c) => {
+		const auth = c.get("auth" as never) as Auth;
+		console.log("auth", auth);
+		return c.text("hello");
+	})
+	.post("/api/test", (c) => {
+		const auth = c.get("auth" as never) as Auth;
+		console.log("auth from test", auth);
 		return c.text("hello");
 	})
 	.route("/api/auth", auth)

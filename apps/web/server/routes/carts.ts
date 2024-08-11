@@ -1,4 +1,3 @@
-import * as Http from "@effect/platform/HttpClient";
 import { ErrorService } from "@blazell/api";
 import { schema, tableNameToTableMap, type Db } from "@blazell/db";
 import { Database } from "@blazell/shared";
@@ -12,6 +11,7 @@ import {
 	type Env,
 	type InsertOrder,
 } from "@blazell/validators";
+import * as Http from "@effect/platform/HttpClient";
 import { eq, sql } from "drizzle-orm";
 import { Effect } from "effect";
 import { Hono } from "hono";
@@ -131,8 +131,8 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 									id: newUserID,
 									createdAt: new Date().toISOString(),
 									version: 0,
-									email: checkoutInfo.email,
 									fullName: checkoutInfo.fullName,
+									email: checkoutInfo.email,
 								}),
 							);
 						}

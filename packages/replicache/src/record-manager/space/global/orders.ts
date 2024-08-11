@@ -7,24 +7,28 @@ import type { GetRowsWTableName } from "../types";
 export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
 		const { auth } = yield* AuthContext;
-		const userID = auth.user?.id;
-		if (!userID) return [];
+		const authID = auth.user?.id;
+		if (!authID) return [];
 		const { manager } = yield* Database;
 
 		const ordersCVD = yield* pipe(
 			Effect.tryPromise(() =>
 				manager.query.users.findFirst({
-					where: (users, { eq }) => eq(users.id, userID),
+					where: (users, { eq }) => eq(users.authID, authID),
 					columns: {
 						email: true,
 					},
 				}),
 			),
-			Effect.flatMap((userEmail) => {
-				if (!userEmail)
-					return Effect.fail(new NotFound({ message: "User not found" }));
-				return Effect.succeed(userEmail.email);
-			}),
+			Effect.flatMap((userEmail) =>
+				Effect.gen(function* () {
+					if (!userEmail)
+						return yield* Effect.fail(
+							new NotFound({ message: "User not found" }),
+						);
+					return yield* Effect.succeed(userEmail.email);
+				}),
+			),
 			Effect.flatMap((email) =>
 				Effect.tryPromise(() =>
 					fullRows

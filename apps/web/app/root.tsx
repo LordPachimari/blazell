@@ -13,8 +13,7 @@ import {
 	useLoaderData,
 } from "@remix-run/react";
 //@ts-ignore
-import type { Env, Theme } from "@blazell/validators";
-import type { User } from "@blazell/validators/client";
+import type { AuthUser, Env, Theme } from "@blazell/validators";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Toploader } from "./components/molecules/top-loader";
@@ -62,7 +61,7 @@ export type RootLoaderData = {
 			sidebarState?: string;
 		};
 		userContext: {
-			user?: User;
+			user?: AuthUser;
 			cartID?: string;
 		};
 	};

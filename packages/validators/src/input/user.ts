@@ -9,10 +9,6 @@ export const OnboardSchema = z.object({
 	countryCode: z.string(),
 });
 export type Onboard = z.infer<typeof OnboardSchema>;
-export const UserSchema = z.object({
-	email: z.string(),
-});
-export type User = z.infer<typeof UserSchema>;
 export const UserUpdatesSchema = InsertUserSchema.pick({
 	username: true,
 	description: true,

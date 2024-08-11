@@ -11,13 +11,19 @@ import {
 	SelectValue,
 } from "@blazell/ui/select";
 import { OnboardSchema } from "@blazell/validators";
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import {
+	getFormProps,
+	getInputProps,
+	getSelectProps,
+	useForm,
+} from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
 import type { action } from ".";
 import { StepHeader } from "./step-header";
+import { LoadingSpinner } from "@blazell/ui/loading";
 export const UserOnboardSchema = OnboardSchema.and(
 	z.object({ redirectTo: z.string().optional() }),
 );
@@ -33,9 +39,11 @@ export function Onboard() {
 		defaultValue: { username: "", countryCode: "", redirectTo },
 		lastResult: actionData?.result,
 		onValidate({ formData }) {
-			return parseWithZod(formData, {
+			const result = parseWithZod(formData, {
 				schema: UserOnboardSchema,
 			});
+			console.log("result", result.status, result.payload);
+			return result;
 		},
 	});
 
@@ -58,7 +66,7 @@ export function Onboard() {
 				className="flex flex-col space-y-4 rounded-lg max-w-lg bg-background/60 p-8"
 			>
 				<StepHeader
-					title="Create your username"
+					title="Enter your username"
 					description="You store will have the same name as your username. You can update it later."
 				/>
 				<motion.div
@@ -85,14 +93,15 @@ export function Onboard() {
 							{...getInputProps(fields.username, { type: "text" })}
 						/>
 						{fields.username.errors && (
-							<p className="px-1 text-xs text-red-9">
+							<p className="px-1 text-sm text-red-9">
 								{fields.username.errors[0]}
 							</p>
 						)}
 						<label htmlFor="username" className="sr-only">
 							Country
 						</label>
-						<Select name={fields.username.name}>
+						{/* @ts-ignore */}
+						<Select {...getSelectProps(fields.countryCode)}>
 							<SelectTrigger className="my-3">
 								<SelectValue placeholder="Country" />
 							</SelectTrigger>
@@ -116,6 +125,9 @@ export function Onboard() {
 								className="w-full rounded-lg"
 								disabled={isPending}
 							>
+								{isPending && (
+									<LoadingSpinner className="text-white size-4 mr-2" />
+								)}
 								Create user
 							</Button>
 						</div>

@@ -8,6 +8,7 @@ import {
 	Link,
 	useActionData,
 	useFetcher,
+	useNavigation,
 	useSearchParams,
 } from "@remix-run/react";
 import { z } from "zod";
@@ -17,6 +18,7 @@ import { checkHoneypot } from "~/server/honeypot.server";
 import { EmailSchema } from "@blazell/validators";
 import { useCallback } from "react";
 import { getHonoClient } from "server";
+import { LoadingSpinner } from "@blazell/ui/loading";
 const schema = z.object({
 	email: EmailSchema,
 	redirectTo: z.string().optional(),
@@ -53,6 +55,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		const json = await result.json();
 		return redirect(json.verifyURL);
 	}
+
 	return json(
 		{
 			result: submission.reply({
@@ -80,6 +83,7 @@ const Login = () => {
 		},
 	});
 	const onGoogleClick = useCallback(() => {
+		console.log("clicked");
 		return fetcher.submit(
 			{},
 			{
@@ -88,6 +92,11 @@ const Login = () => {
 			},
 		);
 	}, [fetcher.submit]);
+	const navigation = useNavigation();
+
+	const isEmailSubmitting = navigation.formAction === "/login";
+
+	const isGoogleSubmitting = navigation.formAction === "/google/login";
 
 	return (
 		<div className="flex items-center h-full justify-center py-12">
@@ -100,7 +109,7 @@ const Login = () => {
 						</span>
 					</h1>
 				</div>
-				<Form method="POST" {...getFormProps(form)}>
+				<Form method="POST" {...getFormProps(form)} navigate={false}>
 					<div className="grid gap-4">
 						<div className="grid gap-2">
 							<Input
@@ -112,9 +121,11 @@ const Login = () => {
 						<Button
 							type="submit"
 							className="w-full text-sm font-body"
-							disabled={isPending}
-							onClick={onGoogleClick}
+							disabled={isPending || isEmailSubmitting}
 						>
+							{(isPending || isEmailSubmitting) && (
+								<LoadingSpinner className="text-white size-4 mr-2" />
+							)}
 							Continue with email
 						</Button>
 						<div className="relative">
@@ -127,31 +138,38 @@ const Login = () => {
 								</span>
 							</div>
 						</div>
-						<Button
-							variant="outline"
-							className="w-full font-body text-slate-11 text-sm"
-						>
-							Google
-						</Button>
-						<p className="px-8 text-center text-sm text-muted-foreground">
-							By clicking continue, you agree to our{" "}
-							<Link
-								to="/terms"
-								className="underline underline-offset-4 hover:text-primary"
-							>
-								Terms of Service
-							</Link>{" "}
-							and{" "}
-							<Link
-								to="/privacy"
-								className="underline underline-offset-4 hover:text-primary"
-							>
-								Privacy Policy
-							</Link>
-							.
-						</p>
 					</div>
 				</Form>
+
+				<Button
+					type="button"
+					variant="outline"
+					className="w-full font-body text-slate-11 text-sm"
+					onClick={onGoogleClick}
+					disabled={isPending || isGoogleSubmitting}
+				>
+					{(isPending || isGoogleSubmitting) && (
+						<LoadingSpinner className="text-slate-11 size-4 mr-2" />
+					)}
+					Google
+				</Button>
+				<p className="px-8 text-center text-sm text-muted-foreground">
+					By clicking continue, you agree to our{" "}
+					<Link
+						to="/terms"
+						className="underline underline-offset-4 hover:text-primary"
+					>
+						Terms of Service
+					</Link>{" "}
+					and{" "}
+					<Link
+						to="/privacy"
+						className="underline underline-offset-4 hover:text-primary"
+					>
+						Privacy Policy
+					</Link>
+					.
+				</p>
 			</div>
 		</div>
 	);

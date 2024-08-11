@@ -1,6 +1,9 @@
 import type { AuthSession, AuthUser } from "@blazell/validators";
 import { TimeSpan, createDate, isWithinExpirationDate } from "oslo";
 import { getHonoClient } from "..";
+import { SESSION_KEY } from "~/server/auth.server";
+import type { Context, Next } from "hono";
+import { getSession } from "remix-hono/session";
 
 export class Authentication<
 	_SessionAttributes extends {} = Record<never, never>,
@@ -18,7 +21,7 @@ export class Authentication<
 	}) {
 		this.sessionExpiresIn = options?.sessionExpiresIn ?? new TimeSpan(30, "d");
 		this.client = getHonoClient(options?.serverURL ?? "http://localhost:5173");
-		this.sessionCookieName = options?.sessionCookieName ?? "blazell-session";
+		this.sessionCookieName = options?.sessionCookieName ?? SESSION_KEY;
 	}
 
 	public async validateSession(
@@ -32,6 +35,7 @@ export class Authentication<
 
 		if (result.ok) {
 			const { session, user } = await result.json();
+
 			if (!session) return { user: null, session: null };
 			if (!user) {
 				await this.client.api.auth.session[":id"].$delete({
@@ -65,11 +69,11 @@ export class Authentication<
 		return { user: null, session: null };
 	}
 
-	public async createSession(userID: string): Promise<AuthSession> {
+	public async createSession(authID: string): Promise<AuthSession> {
 		const sessionExpiresAt = createDate(this.sessionExpiresIn);
 		const result = await this.client.api.auth["create-session"].$post({
 			json: {
-				userID,
+				authID,
 				expiresAt: sessionExpiresAt.toISOString(),
 			},
 		});
@@ -88,10 +92,10 @@ export class Authentication<
 		});
 	}
 
-	public async invalidateUserSessions(userID: string): Promise<void> {
-		await this.client.api.auth["user-session"][":userID"].$delete({
+	public async invalidateUserSessions(authID: string): Promise<void> {
+		await this.client.api.auth["user-session"][":authID"].$delete({
 			param: {
-				userID,
+				authID,
 			},
 		});
 	}
@@ -111,3 +115,41 @@ export class Authentication<
 		return token ?? null;
 	}
 }
+
+export const authMiddleware = async (c: Context, next: Next) => {
+	const url = new URL(c.req.url);
+	const origin = url.origin;
+	const auth = new Authentication({
+		serverURL: origin,
+	});
+	const honoSession = getSession(c);
+
+	const sessionID =
+		(honoSession.get(auth.sessionCookieName) as string) ??
+		auth.readBearerToken(c.req.raw.headers.get("Authorization") ?? "");
+	if (!sessionID) {
+		c.set("auth" as never, {
+			user: null,
+			session: null,
+		});
+		return next();
+	}
+
+	let currentSession: AuthSession | undefined;
+	const { session, user } = await auth.validateSession(sessionID);
+	console.log("session and user from validation", session, user);
+	if (session && !session.fresh && user) {
+		await auth.invalidateSession(session.id);
+		const newSession = await auth.createSession(user.id);
+		honoSession.set(auth.sessionCookieName, newSession.id);
+		currentSession = newSession;
+	}
+	if (session) currentSession = session;
+
+	c.set("auth" as never, {
+		user,
+		session: currentSession,
+	});
+
+	await next();
+};

@@ -12,7 +12,7 @@ const inputBaseStyles = cn(
 	"bg-slate-1 hover:bg-slate-2 border-border border-b-slate-7 placeholder-slate-9 text-ui-fg-base shadow-sm transition-fg relative w-full appearance-none rounded-lg border outline-none",
 	"focus-visible:border-brand-8 focus-visible:dark:border-brand-9 focus-visible:shadow-brand-5 focus-visible:shadow",
 	"disabled:text-slate-8 disabled:!bg-slate-1 disabled:placeholder-slate-8 disabled:cursor-not-allowed disabled:!shadow-none",
-	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-brand-10 invalid:!border-red-10",
+	"aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!border-red-9 aria-[invalid=true]:focus:!border-2 aria-[invalid=true]:focus:!shadow-none invalid:!border-red-10",
 );
 
 export const inputVariants = cva(
@@ -73,7 +73,7 @@ const Input = React.forwardRef<
 					className={cn(
 						"absolute bottom-0 left-0 flex items-center justify-center text-ui-fg-muted border-r",
 						{
-							"h-11 w-11": size === "base",
+							"h-10 w-10": size === "base",
 							"h-9 w-9": size === "small",
 						},
 					)}

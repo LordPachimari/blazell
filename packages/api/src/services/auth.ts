@@ -3,7 +3,7 @@ import { Cloudflare, Database } from "@blazell/shared";
 import { generateID, getDomainUrl } from "@blazell/utils";
 import type { Verification } from "@blazell/validators/server";
 import * as OTPAuth from "otpauth";
-import { Effect } from "effect";
+import { Console, Effect } from "effect";
 import { eq } from "drizzle-orm";
 
 const getRedirectToUrl = ({
@@ -14,17 +14,11 @@ const getRedirectToUrl = ({
 	redirectTo?: string;
 }) =>
 	Effect.gen(function* () {
-		const { env } = yield* Cloudflare;
+		const { request } = yield* Cloudflare;
+		const url = new URL(request.url);
+		const origin = url.origin;
 
-		const redirectToUrl = new URL(
-			`${
-				env.ENVIRONMENT === "production"
-					? "https://blazell.com"
-					: env.ENVIRONMENT === "development"
-						? "https://development.blazell.pages.dev"
-						: "http://localhost:5173"
-			}/verify`,
-		);
+		const redirectToUrl = new URL(`${origin}/verify`);
 		redirectToUrl.searchParams.set("target", target);
 		if (redirectTo) {
 			redirectToUrl.searchParams.set("redirectTo", redirectTo);
@@ -76,6 +70,7 @@ const prepareVerification = ({
 					digits: totp.digits,
 					period: totp.period,
 				} satisfies Verification)
+
 				.onConflictDoUpdate({
 					set: {
 						createdAt: new Date().toISOString(),
@@ -111,7 +106,9 @@ const verifyOTP = (props: { target: string; otp: string }) => {
 			digits: verification.digits,
 			period: verification.period,
 		});
-		if (!totp.validate({ token: otp, window: 1 })) {
+		const delta = totp.validate({ token: otp, window: 1 });
+		yield* Console.log("delta", delta);
+		if (delta === null) {
 			return false;
 		}
 		yield* Effect.tryPromise(() =>

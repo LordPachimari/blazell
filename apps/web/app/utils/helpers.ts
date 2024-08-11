@@ -32,3 +32,6 @@ export function isMacOs() {
 
 	return window.navigator.userAgent.includes("Mac");
 }
+export const isTouchDevice = () => {
+	return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+};
