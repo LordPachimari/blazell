@@ -229,7 +229,7 @@ const routes = app
 	.route("/api/variants", variants)
 	.route("/api/stores", stores)
 	.route("/api/products", products)
-	.all("*", async (c) => {
+	.use("*", async (c) => {
 		//@ts-ignore
 		const handler = createRequestHandler(build, "development");
 		const remixContext = {
