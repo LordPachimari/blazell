@@ -1,6 +1,6 @@
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
-
+import { createPagesFunctionHandler } from "@remix-run/cloudflare-pages";
 import {
 	BindingsSchema,
 	PullRequest,
@@ -11,9 +11,12 @@ import {
 	type Env,
 	type SpaceRecord,
 } from "@blazell/validators";
+import devServer from "@hono/vite-dev-server";
 import { Schema } from "@effect/schema";
 import type { AppLoadContext } from "@remix-run/cloudflare";
+
 import {
+	createRequestHandler,
 	createWorkersKVSessionStorage,
 	type RequestHandler,
 } from "@remix-run/cloudflare";
@@ -34,8 +37,6 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
-//@ts-expect-error it's not typed
-import * as build from "../build/server";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
@@ -234,64 +235,56 @@ const routes = app
 	.route("/api/variants", variants)
 	.route("/api/stores", stores)
 	.route("/api/products", products)
-	.use("*", async (c, next) => {
-		if (process.env.NODE_ENV === "production" || import.meta.env.PROD) {
-			return remix({
-				build,
-				mode: "production",
-				// @ts-ignore
-				async getLoadContext(c) {
-					const sessionStorage = getSessionStorage(c);
-					const session = getSession(c);
-					const env = BindingsSchema.parse(c.env);
-					const url = new URL(c.req.url);
-					const origin = url.origin;
-					const auth = new Authentication({
-						serverURL: origin,
-					});
+	.all("*", async (c) => {
+		// @ts-expect-error it's not typed
+		const build =
+			// c.env.ENVIRONMENT === "local"
+			// 	? await import("virtual:remix/server-build")
+			await import("@remix-run/dev/server-build");
 
-					const { user } = await getUserAndSession(auth, session);
-					return {
-						cloudflare: {
-							env,
-						},
-						sessionStorage,
-						session,
-						user,
-					};
-				},
-			})(c, next);
-		}
-		if (!handler) {
-			// @ts-expect-error it's not typed
-			const build = await import("virtual:remix/server-build");
-			const { createRequestHandler } = await import("@remix-run/cloudflare");
-			handler = createRequestHandler(build, "development");
-		}
-
-		const sessionStorage = getSessionStorage(c);
-		const session = getSession(c);
-
-		const url = new URL(c.req.url);
-		const origin = url.origin;
-		const auth = new Authentication({
-			serverURL: origin,
-		});
-
-		const { user } = await getUserAndSession(auth, session);
-
-		//@ts-ignore
-		const env = BindingsSchema.parse(c.env);
+		const handler = createRequestHandler(build, "development");
 		const remixContext = {
 			cloudflare: {
-				env,
+				env: c.env,
 			},
-			sessionStorage,
-			session,
-			user,
 		} as unknown as AppLoadContext;
 		return handler(c.req.raw, remixContext);
 	});
+// .use("*", async (c) => {
+// 	// const serverBuild = await import("../build/server");
+// 	const { createRequestHandler } = await import("@remix-run/cloudflare");
+// 	handler = createRequestHandler(
+// 		// @ts-ignore /* @vite-ignore */
+// 		() =>
+// 			c.env.ENVIRONMENT === "local"
+// 				? import("virtual:remix/server-build")
+// 				: import("@remix-run/dev/server-build"),
+// 		c.env.ENVIRONMENT === "production" ? "production" : "development",
+// 	);
+
+// 	const sessionStorage = getSessionStorage(c);
+// 	const session = getSession(c);
+
+// 	const url = new URL(c.req.url);
+// 	const origin = url.origin;
+// 	const auth = new Authentication({
+// 		serverURL: origin,
+// 	});
+
+// 	const { user } = await getUserAndSession(auth, session);
+
+// 	//@ts-ignore
+// 	const env = BindingsSchema.parse(c.env);
+// 	const remixContext = {
+// 		cloudflare: {
+// 			env,
+// 		},
+// 		sessionStorage,
+// 		session,
+// 		user,
+// 	} as unknown as AppLoadContext;
+// 	return handler(c.req.raw, remixContext);
+// });
 export default app;
 export type AppType = typeof routes;
 export const getHonoClient = (serverURL: string) => hc<AppType>(serverURL);
