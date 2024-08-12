@@ -1,8 +1,6 @@
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
-import { createPagesFunctionHandler } from "@remix-run/cloudflare-pages";
 import {
-	BindingsSchema,
 	PullRequest,
 	PushRequest,
 	SpaceIDSchema,
@@ -11,7 +9,6 @@ import {
 	type Env,
 	type SpaceRecord,
 } from "@blazell/validators";
-import devServer from "@hono/vite-dev-server";
 import { Schema } from "@effect/schema";
 import type { AppLoadContext } from "@remix-run/cloudflare";
 
@@ -25,10 +22,8 @@ import { Hono } from "hono";
 import { hc } from "hono/client";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
-import { remix } from "remix-hono/handler";
-import { getSession, getSessionStorage, session } from "remix-hono/session";
-import { getUserAndSession } from "~/server/auth.server";
-import { Authentication, authMiddleware } from "./auth";
+import { session } from "remix-hono/session";
+import { authMiddleware } from "./auth";
 import { getDB } from "./lib/db";
 import auth from "./routes/auth";
 import carts from "./routes/carts";
@@ -39,7 +34,6 @@ import users from "./routes/users";
 import variants from "./routes/variants";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
-let handler: RequestHandler | undefined;
 
 const routes = app
 	.use("*", async (c, next) => {
@@ -236,12 +230,7 @@ const routes = app
 	.route("/api/stores", stores)
 	.route("/api/products", products)
 	.all("*", async (c) => {
-		// @ts-expect-error it's not typed
-		const build =
-			// c.env.ENVIRONMENT === "local"
-			// 	? await import("virtual:remix/server-build")
-			await import("@remix-run/dev/server-build");
-
+		//@ts-ignore
 		const handler = createRequestHandler(build, "development");
 		const remixContext = {
 			cloudflare: {
