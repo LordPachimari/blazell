@@ -15,7 +15,6 @@ import type { AppLoadContext } from "@remix-run/cloudflare";
 import {
 	createRequestHandler,
 	createWorkersKVSessionStorage,
-	type RequestHandler,
 } from "@remix-run/cloudflare";
 import { Effect, Layer } from "effect";
 import { Hono } from "hono";
@@ -230,6 +229,8 @@ const routes = app
 	.route("/api/stores", stores)
 	.route("/api/products", products)
 	.use("*", async (c) => {
+		const build = await import("@remix-run/dev/server-build");
+		// const build = await import("virtual:remix/server-build");
 		//@ts-ignore
 		const handler = createRequestHandler(build, "development");
 		const remixContext = {
