@@ -90,145 +90,145 @@ const routes = app
 		}),
 		authMiddleware,
 	)
-	// .post("/api/pull/:spaceID", async (c) => {
-	// 	// 1: PARSE INPUT
-	// 	const auth = c.get("auth" as never) as Auth;
-	// 	console.log("AUTH FROM PULL", auth);
-	// 	const db = getDB({ connectionString: c.env.DATABASE_URL });
-	// 	const subspaceIDs = c.req.queries("subspaces");
-	// 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
-	// 		c.req.param("spaceID"),
-	// 	);
-	// 	const body = PullRequest.decodeUnknownSync(await c.req.json());
-	// 	console.log("subspaceIDs", subspaceIDs);
+	.post("/api/pull/:spaceID", async (c) => {
+		// 1: PARSE INPUT
+		const auth = c.get("auth" as never) as Auth;
+		console.log("AUTH FROM PULL", auth);
+		const db = getDB({ connectionString: c.env.DATABASE_URL });
+		const subspaceIDs = c.req.queries("subspaces");
+		const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
+			c.req.param("spaceID"),
+		);
+		const body = PullRequest.decodeUnknownSync(await c.req.json());
+		console.log("subspaceIDs", subspaceIDs);
 
-	// 	const CloudflareLive = Layer.succeed(
-	// 		Cloudflare,
-	// 		Cloudflare.of({
-	// 			headers: c.req.raw.headers,
-	// 			env: c.env,
-	// 			request: c.req.raw,
-	// 		}),
-	// 	);
-	// 	const ReplicacheContextLive = Layer.succeed(
-	// 		ReplicacheContext,
-	// 		ReplicacheContext.of({
-	// 			spaceID,
-	// 			clientGroupID: body.clientGroupID,
-	// 			subspaceIDs: subspaceIDs as SpaceRecord[typeof spaceID] | undefined,
-	// 		}),
-	// 	);
+		const CloudflareLive = Layer.succeed(
+			Cloudflare,
+			Cloudflare.of({
+				headers: c.req.raw.headers,
+				env: c.env,
+				request: c.req.raw,
+			}),
+		);
+		const ReplicacheContextLive = Layer.succeed(
+			ReplicacheContext,
+			ReplicacheContext.of({
+				spaceID,
+				clientGroupID: body.clientGroupID,
+				subspaceIDs: subspaceIDs as SpaceRecord[typeof spaceID] | undefined,
+			}),
+		);
 
-	// 	const AuthContextLive = Layer.succeed(
-	// 		AuthContext,
-	// 		AuthContext.of({
-	// 			auth,
-	// 		}),
-	// 	);
+		const AuthContextLive = Layer.succeed(
+			AuthContext,
+			AuthContext.of({
+				auth,
+			}),
+		);
 
-	// 	// 2: PULL
-	// 	const pullEffect = pull({
-	// 		body,
-	// 		db,
-	// 	}).pipe(
-	// 		Effect.provide(AuthContextLive),
-	// 		Effect.provide(CloudflareLive),
-	// 		Effect.provide(ReplicacheContextLive),
-	// 		Effect.orDie,
-	// 	);
+		// 2: PULL
+		const pullEffect = pull({
+			body,
+			db,
+		}).pipe(
+			Effect.provide(AuthContextLive),
+			Effect.provide(CloudflareLive),
+			Effect.provide(ReplicacheContextLive),
+			Effect.orDie,
+		);
 
-	// 	// 3: RUN PROMISE
-	// 	const pullResponse = await Effect.runPromise(pullEffect);
+		// 3: RUN PROMISE
+		const pullResponse = await Effect.runPromise(pullEffect);
 
-	// 	return c.json(pullResponse, 200);
-	// })
-	// .post("/api/static-pull", async (c) => {
-	// 	// 1: PARSE INPUT
-	// 	const db = getDB({ connectionString: c.env.DATABASE_URL });
-	// 	const body = PullRequest.decodeUnknownSync(await c.req.json());
+		return c.json(pullResponse, 200);
+	})
+	.post("/api/static-pull", async (c) => {
+		// 1: PARSE INPUT
+		const db = getDB({ connectionString: c.env.DATABASE_URL });
+		const body = PullRequest.decodeUnknownSync(await c.req.json());
 
-	// 	// 2: PULL
-	// 	const pullEffect = staticPull({ body }).pipe(
-	// 		Effect.provideService(Database, { manager: db }),
-	// 		Effect.provideService(
-	// 			Cloudflare,
-	// 			Cloudflare.of({
-	// 				env: c.env,
-	// 				headers: c.req.raw.headers,
-	// 				request: c.req.raw,
-	// 			}),
-	// 		),
-	// 		Effect.orDie,
-	// 	);
+		// 2: PULL
+		const pullEffect = staticPull({ body }).pipe(
+			Effect.provideService(Database, { manager: db }),
+			Effect.provideService(
+				Cloudflare,
+				Cloudflare.of({
+					env: c.env,
+					headers: c.req.raw.headers,
+					request: c.req.raw,
+				}),
+			),
+			Effect.orDie,
+		);
 
-	// 	// 3: RUN PROMISE
-	// 	const pullResponse = await Effect.runPromise(pullEffect);
+		// 3: RUN PROMISE
+		const pullResponse = await Effect.runPromise(pullEffect);
 
-	// 	return c.json(pullResponse, 200);
-	// })
-	// .post("/api/push/:spaceID", async (c) => {
-	// 	// 1: PARSE INPUT
-	// 	const auth = c.get("auth" as never) as Auth;
-	// 	const db = getDB({ connectionString: c.env.DATABASE_URL });
-	// 	const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
-	// 		c.req.param("spaceID"),
-	// 	);
-	// 	const body = PushRequest.decodeUnknownSync(await c.req.json());
+		return c.json(pullResponse, 200);
+	})
+	.post("/api/push/:spaceID", async (c) => {
+		// 1: PARSE INPUT
+		const auth = c.get("auth" as never) as Auth;
+		const db = getDB({ connectionString: c.env.DATABASE_URL });
+		const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
+			c.req.param("spaceID"),
+		);
+		const body = PushRequest.decodeUnknownSync(await c.req.json());
 
-	// 	// 2: PULL
-	// 	const pushEffect = push({
-	// 		body,
-	// 		db,
-	// 		partyKitOrigin: c.env.PARTYKIT_ORIGIN,
-	// 	}).pipe(
-	// 		Effect.provideService(
-	// 			AuthContext,
-	// 			AuthContext.of({
-	// 				auth,
-	// 			}),
-	// 		),
-	// 		Effect.provideService(
-	// 			Cloudflare,
-	// 			Cloudflare.of({
-	// 				env: c.env,
-	// 				headers: c.req.raw.headers,
-	// 				request: c.req.raw,
-	// 			}),
-	// 		),
-	// 		Effect.provideService(
-	// 			ReplicacheContext,
-	// 			ReplicacheContext.of({
-	// 				spaceID,
-	// 				clientGroupID: body.clientGroupID,
-	// 				subspaceIDs: undefined,
-	// 			}),
-	// 		),
-	// 		Effect.scoped,
-	// 		Effect.orDie,
-	// 	);
+		// 2: PULL
+		const pushEffect = push({
+			body,
+			db,
+			partyKitOrigin: c.env.PARTYKIT_ORIGIN,
+		}).pipe(
+			Effect.provideService(
+				AuthContext,
+				AuthContext.of({
+					auth,
+				}),
+			),
+			Effect.provideService(
+				Cloudflare,
+				Cloudflare.of({
+					env: c.env,
+					headers: c.req.raw.headers,
+					request: c.req.raw,
+				}),
+			),
+			Effect.provideService(
+				ReplicacheContext,
+				ReplicacheContext.of({
+					spaceID,
+					clientGroupID: body.clientGroupID,
+					subspaceIDs: undefined,
+				}),
+			),
+			Effect.scoped,
+			Effect.orDie,
+		);
 
-	// 	// 3: RUN PROMISE
-	// 	await Effect.runPromise(pushEffect);
+		// 3: RUN PROMISE
+		await Effect.runPromise(pushEffect);
 
-	// 	return c.json({}, 200);
-	// })
-	// .get("/api/hello", (c) => {
-	// 	const auth = c.get("auth" as never) as Auth;
-	// 	console.log("auth", auth);
-	// 	return c.text("hello");
-	// })
-	// .post("/api/test", (c) => {
-	// 	const auth = c.get("auth" as never) as Auth;
-	// 	console.log("auth from test", auth);
-	// 	return c.text("hello");
-	// })
+		return c.json({}, 200);
+	})
+	.get("/api/hello", (c) => {
+		const auth = c.get("auth" as never) as Auth;
+		console.log("auth", auth);
+		return c.text("hello");
+	})
+	.post("/api/test", (c) => {
+		const auth = c.get("auth" as never) as Auth;
+		console.log("auth from test", auth);
+		return c.text("hello");
+	})
 	// .route("/api/auth", auth)
-	// .route("/api/users", users)
-	// .route("/api/orders", orders)
-	// .route("/api/carts", carts)
-	// .route("/api/variants", variants)
-	// .route("/api/stores", stores)
-	// .route("/api/products", products)
+	.route("/api/users", users)
+	.route("/api/orders", orders)
+	.route("/api/carts", carts)
+	.route("/api/variants", variants)
+	.route("/api/stores", stores)
+	.route("/api/products", products)
 	.use("*", async (c) => {
 		//@ts-ignore
 		const handler = createRequestHandler(build, "development");
