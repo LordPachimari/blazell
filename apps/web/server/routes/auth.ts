@@ -21,87 +21,87 @@ import { eq, lte } from "drizzle-orm";
 import { Effect } from "effect";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
-import { Authentication } from "server";
 import { z } from "zod";
 import { getOtpHTML } from "../emails/verification";
 import { getDB } from "../lib/db";
+import { Authentication } from "@blazell/auth";
 
 const app = new Hono<{ Bindings: Bindings & Env }>()
-	// .post(
-	// 	"/prepare-verification",
-	// 	zValidator("json", PrepareVerificationSchema),
-	// 	async (c) => {
-	// 		const db = getDB({ connectionString: c.env.DATABASE_URL });
-	// 		const { email, redirectTo } = c.req.valid("json");
+	.post(
+		"/prepare-verification",
+		zValidator("json", PrepareVerificationSchema),
+		async (c) => {
+			const db = getDB({ connectionString: c.env.DATABASE_URL });
+			const { email, redirectTo } = c.req.valid("json");
 
-	// 		const user = await db.query.users.findFirst({
-	// 			where: (users, { eq }) => eq(users.email, email),
-	// 			columns: {
-	// 				id: true,
-	// 			},
-	// 		});
+			const user = await db.query.users.findFirst({
+				where: (users, { eq }) => eq(users.email, email),
+				columns: {
+					id: true,
+				},
+			});
 
-	// 		const { emailVerifyURL, otp, verifyURL } = await Effect.runPromise(
-	// 			AuthService.prepareVerification({
-	// 				target: email,
-	// 				...(!user
-	// 					? {
-	// 							redirectTo: `${new URL(c.req.url).origin}/onboarding`,
-	// 						}
-	// 					: redirectTo && { redirectTo }),
-	// 			}).pipe(
-	// 				Effect.provideService(Database, { manager: db }),
-	// 				Effect.provideService(
-	// 					Cloudflare,
-	// 					Cloudflare.of({
-	// 						env: c.env,
-	// 						headers: c.req.raw.headers,
-	// 						request: c.req.raw,
-	// 					}),
-	// 				),
-	// 			),
-	// 		);
-	// 		console.log("Generated OTP", otp);
-	// 		console.log("Generated Verify URL", verifyURL);
-	// 		// Initialize the SES client
-	// 		const sesClient = new SESClient({
-	// 			region: "ap-southeast-2", // replace with your region
-	// 			credentials: {
-	// 				accessKeyId: c.env.AWS_EMAIL_ACCESS_KEY,
-	// 				secretAccessKey: c.env.AWS_EMAIL_SECRET_KEY,
-	// 			},
-	// 		});
-	// 		const params = {
-	// 			Destination: {
-	// 				ToAddresses: [email],
-	// 			},
-	// 			Message: {
-	// 				Body: {
-	// 					Html: {
-	// 						Charset: "UTF-8",
-	// 						Data: await getOtpHTML({
-	// 							otp,
-	// 							verifyURL: emailVerifyURL.toString(),
-	// 						}),
-	// 					},
-	// 				},
-	// 				Subject: {
-	// 					Data: "Verify your email",
-	// 				},
-	// 			},
-	// 			Source: "opachimari@gmail.com",
-	// 		};
-	// 		try {
-	// 			const command = new SendEmailCommand(params);
-	// 			await sesClient.send(command);
+			const { emailVerifyURL, otp, verifyURL } = await Effect.runPromise(
+				AuthService.prepareVerification({
+					target: email,
+					...(!user
+						? {
+								redirectTo: `${new URL(c.req.url).origin}/onboarding`,
+							}
+						: redirectTo && { redirectTo }),
+				}).pipe(
+					Effect.provideService(Database, { manager: db }),
+					Effect.provideService(
+						Cloudflare,
+						Cloudflare.of({
+							env: c.env,
+							headers: c.req.raw.headers,
+							request: c.req.raw,
+						}),
+					),
+				),
+			);
+			console.log("Generated OTP", otp);
+			console.log("Generated Verify URL", verifyURL);
+			// Initialize the SES client
+			const sesClient = new SESClient({
+				region: "ap-southeast-2", // replace with your region
+				credentials: {
+					accessKeyId: c.env.AWS_EMAIL_ACCESS_KEY,
+					secretAccessKey: c.env.AWS_EMAIL_SECRET_KEY,
+				},
+			});
+			const params = {
+				Destination: {
+					ToAddresses: [email],
+				},
+				Message: {
+					Body: {
+						Html: {
+							Charset: "UTF-8",
+							Data: await getOtpHTML({
+								otp,
+								verifyURL: emailVerifyURL.toString(),
+							}),
+						},
+					},
+					Subject: {
+						Data: "Verify your email",
+					},
+				},
+				Source: "opachimari@gmail.com",
+			};
+			try {
+				const command = new SendEmailCommand(params);
+				await sesClient.send(command);
 
-	// 			return c.json({ verifyURL }, 200);
-	// 		} catch (error) {
-	// 			console.error("Error sending email:", error);
-	// 			return c.json({ error: "Failed to send email" }, 500);
-	// 		}
-	// 	},
-	// )
+				return c.json({ status: "success" }, 200);
+			} catch (error) {
+				console.error("Error sending email:", error);
+				return c.json({ status: "error" }, 500);
+			}
+		},
+	)
 	.get(
 		"/user-session",
 		zValidator(
@@ -200,9 +200,10 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 		if (!validationResult) {
 			return c.json(
 				{
+					status: "success",
 					valid: false,
 					onboard: false,
-					session: undefined,
+					session: null,
 				},
 				200,
 			);
@@ -224,12 +225,15 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			authUser = newUser;
 		}
 
-		const auth = new Authentication({
-			serverURL: origin,
-		});
+		const auth = Authentication({ serverURL: origin });
 		const userSession = await auth.createSession(authUser.id);
 		return c.json(
-			{ valid: true, onboard: !authUser.username, session: userSession },
+			{
+				status: "success",
+				valid: true,
+				onboard: !authUser.username,
+				session: userSession,
+			},
 			200,
 		);
 	})
@@ -321,8 +325,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 					} else {
 						return c.json(
 							{
-								type: "ERROR",
-								message: "Something wrong happened",
+								status: "error",
 								onboard: false,
 								session: null,
 							},
@@ -333,16 +336,15 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 					}
 				}
 
-				const auth = new Authentication({
+				const auth = Authentication({
 					serverURL: origin,
 				});
 
 				const userSession = await auth.createSession(authUser.id);
 				return c.json({
-					type: "SUCCESS",
+					status: "success",
 					onboard,
 					session: userSession,
-					message: "Successfully authenticated",
 				});
 			} catch (e) {
 				console.log(e);
@@ -350,10 +352,9 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 					// bad verification code, invalid credentials, etc
 					return c.json(
 						{
-							type: "ERROR" as const,
+							status: "error",
 							onboard: false,
 							session: null,
-							message: "Bad verification code. Invalid credentials",
 						},
 						400,
 					);
@@ -361,11 +362,9 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 
 				return c.json(
 					{
-						type: "ERROR" as const,
-
+						status: "error",
 						onboard: false,
 						session: null,
-						message: "Error validating",
 					},
 					500,
 				);

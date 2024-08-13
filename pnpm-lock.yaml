@@ -143,6 +143,9 @@ importers:
       '@blazell/api':
         specifier: workspace:^
         version: link:../../packages/api
+      '@blazell/auth':
+        specifier: workspace:^
+        version: link:../../packages/auth
       '@blazell/db':
         specifier: workspace:^
         version: link:../../packages/db
@@ -171,8 +174,11 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0(react-dom@18.3.1)(react@18.3.1)
       '@effect/platform':
-        specifier: ^0.53.12
-        version: 0.53.12(@effect/schema@0.67.9)(effect@3.2.9)
+        specifier: ^0.61.8
+        version: 0.61.8(@effect/schema@0.70.4)(effect@3.6.3)
+      '@effect/schema':
+        specifier: ^0.70.4
+        version: 0.70.4(effect@3.6.3)
       '@epic-web/client-hints':
         specifier: ^1.3.2
         version: 1.3.2
@@ -252,8 +258,8 @@ importers:
         specifier: ^0.30.7
         version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(@neondatabase/serverless@0.9.3)(@opentelemetry/api@1.8.0)(@types/react@18.3.2)(react@18.3.1)
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       framer-motion:
         specifier: ^11.2.2
         version: 11.2.2(react-dom@18.3.1)(react@18.3.1)
@@ -433,8 +439,8 @@ importers:
         specifier: ^0.30.7
         version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(@neondatabase/serverless@0.9.3)(@opentelemetry/api@1.8.0)(@types/react@18.3.2)(react@18.3.1)
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       otpauth:
         specifier: ^9.3.1
         version: 9.3.1
@@ -464,11 +470,42 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  packages/auth:
+    dependencies:
+      '@blazell/validators':
+        specifier: workspace:*
+        version: link:../validators
+      '@effect/platform':
+        specifier: ^0.61.8
+        version: 0.61.8(@effect/schema@0.70.4)(effect@3.6.3)
+      '@effect/schema':
+        specifier: ^0.70.4
+        version: 0.70.4(effect@3.6.3)
+      effect:
+        specifier: ^3.6.3
+        version: 3.6.3
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.7.3
+        version: 1.7.3
+      '@blazell/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
+      '@blazell/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@cloudflare/workers-types':
+        specifier: ^4.20240529.0
+        version: 4.20240605.0
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
   packages/db:
     dependencies:
       '@effect/schema':
-        specifier: ^0.67.9
-        version: 0.67.9(effect@3.2.9)
+        specifier: ^0.70.4
+        version: 0.70.4(effect@3.6.3)
       '@neondatabase/serverless':
         specifier: ^0.9.3
         version: 0.9.3
@@ -525,11 +562,11 @@ importers:
         specifier: workspace:*
         version: link:../validators
       '@effect/platform':
-        specifier: ^0.53.12
-        version: 0.53.12(@effect/schema@0.67.9)(effect@3.2.9)
+        specifier: ^0.61.8
+        version: 0.61.8(@effect/schema@0.70.4)(effect@3.6.3)
       '@effect/schema':
-        specifier: ^0.67.9
-        version: 0.67.9(effect@3.2.9)
+        specifier: ^0.70.4
+        version: 0.70.4(effect@3.6.3)
       base64-arraybuffer:
         specifier: ^1.0.2
         version: 1.0.2
@@ -537,8 +574,8 @@ importers:
         specifier: ^0.30.7
         version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(@neondatabase/serverless@0.9.3)(@opentelemetry/api@1.8.0)(@types/react@18.3.2)(react@18.3.1)
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       replicache:
         specifier: 14.2.2
         version: 14.2.2
@@ -574,8 +611,8 @@ importers:
         specifier: ^0.30.7
         version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(@neondatabase/serverless@0.9.3)(@opentelemetry/api@1.8.0)(@types/react@18.3.2)(react@18.3.1)
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       remeda:
         specifier: ^1.60.1
         version: 1.61.0
@@ -759,8 +796,8 @@ importers:
         specifier: ^1.11.10
         version: 1.11.11
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       ulidx:
         specifier: ^2.3.0
         version: 2.3.0
@@ -787,8 +824,8 @@ importers:
         specifier: ^0.1.0
         version: link:../db
       '@effect/schema':
-        specifier: ^0.67.9
-        version: 0.67.9(effect@3.2.9)
+        specifier: ^0.70.4
+        version: 0.70.4(effect@3.6.3)
       drizzle-orm:
         specifier: ^0.30.7
         version: 0.30.10(@cloudflare/workers-types@4.20240605.0)(@neondatabase/serverless@0.9.3)(@opentelemetry/api@1.8.0)(@types/react@18.3.2)(react@18.3.1)
@@ -796,8 +833,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(drizzle-orm@0.30.10)(zod@3.23.8)
       effect:
-        specifier: ^3.2.9
-        version: 3.2.9
+        specifier: ^3.6.3
+        version: 3.6.3
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -3874,26 +3911,25 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@effect/platform@0.53.12(@effect/schema@0.67.9)(effect@3.2.9):
-    resolution: {integrity: sha512-pGPan6gNP+4MOFaveIc2CvzhxXtb6idXiWIrms+GrrixatVWZz3QpPjM/zsCd5+Wfdnt6NoMk5hxDtauZKjR7Q==}
+  /@effect/platform@0.61.8(@effect/schema@0.70.4)(effect@3.6.3):
+    resolution: {integrity: sha512-EP+IFVSO5/bcyMDbnVb8kUw2mJlgkpPRgxfkTec8+jizM5GYAgzULkSM3Oe+aCtog45J+UImjEPLTDjcCiVmxg==}
     peerDependencies:
-      '@effect/schema': ^0.67.9
-      effect: ^3.2.1
+      '@effect/schema': ^0.70.4
+      effect: ^3.6.3
     dependencies:
-      '@effect/schema': 0.67.9(effect@3.2.9)
-      effect: 3.2.9
-      find-my-way-ts: 0.1.2
-      multipasta: 0.2.1
-      path-browserify: 1.0.1
+      '@effect/schema': 0.70.4(effect@3.6.3)
+      effect: 3.6.3
+      find-my-way-ts: 0.1.5
+      multipasta: 0.2.5
     dev: false
 
-  /@effect/schema@0.67.9(effect@3.2.9):
-    resolution: {integrity: sha512-bly2PIIZGA9lhahCu+RuLHIS04H9sTYaD7Rkb+Jz2lhEHVWtzDO0hNyfigGJ7M1MDlaC3LKA9BY1uLKQmBnyRg==}
+  /@effect/schema@0.70.4(effect@3.6.3):
+    resolution: {integrity: sha512-iviV5abu6x3pMjg2uI2Mv5/1FpXLgkUhxJmt2lyzjKoAIED3lcntcrzJBMRbjYDOB0SJL1tYCY/Y0r2rPkC/JQ==}
     peerDependencies:
-      effect: ^3.2.1
+      effect: ^3.6.3
     dependencies:
-      effect: 3.2.9
-      fast-check: 3.18.0
+      effect: 3.6.3
+      fast-check: 3.21.0
     dev: false
 
   /@egjs/hammerjs@2.0.17:
@@ -12534,8 +12570,8 @@ packages:
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  /effect@3.2.9:
-    resolution: {integrity: sha512-TuEFLfG1GAxOArND+0WHpY7rq1xFf95JxAyF/VqNll/qwaXwt1qeoCHfNxaCBBbF7/NRmkhsSXJOpBsUg9GEoA==}
+  /effect@3.6.3:
+    resolution: {integrity: sha512-KHD2j476/9KvmeqBN+kNNf+HwCycLqSY1jqxtVjL0P0D7SMV9FGSMBiNmFqy8BZ7kKCsCeF2sQ/8v6KxKF3Gkg==}
     dev: false
 
   /electron-to-chromium@1.4.769:
@@ -13454,15 +13490,11 @@ packages:
       tmp: 0.0.33
     dev: true
 
-  /fast-check@3.18.0:
-    resolution: {integrity: sha512-/951xaT0kA40w0GXRsZXEwSTE7LugjZtSA/8vPgFkiPQ8wNp8tRvqWuNDHBgLxJYXtsK11e/7Q4ObkKW5BdTFQ==}
+  /fast-check@3.21.0:
+    resolution: {integrity: sha512-QpmbiqRFRZ+SIlBJh6xi5d/PgXciUc/xWKc4Vi2RWEHHIRx6oM3f0fWNna++zP9VB5HUBTObUK9gTKQP3vVcrQ==}
     engines: {node: '>=8.0.0'}
     dependencies:
       pure-rand: 6.1.0
-    dev: false
-
-  /fast-decode-uri-component@1.0.1:
-    resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
     dev: false
 
   /fast-deep-equal@2.0.1:
@@ -13482,12 +13514,6 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
-
-  /fast-querystring@1.1.2:
-    resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
-    dependencies:
-      fast-decode-uri-component: 1.0.1
-    dev: false
 
   /fast-xml-parser@4.3.6:
     resolution: {integrity: sha512-M2SovcRxD4+vC493Uc2GZVcZaj66CCJhWurC4viynVSTvrpErCShNcDz1lAho6n9REQKvL/ll4A4/fw6Y9z8nw==}
@@ -13631,10 +13657,8 @@ packages:
       pkg-dir: 3.0.0
     dev: false
 
-  /find-my-way-ts@0.1.2:
-    resolution: {integrity: sha512-AWsH49RGcyayzzxSAkwQKC1bToY5ForAfNreix88slo7wijg1wwTtCPvUUoVm/qhIY3UVSHBKApw8mOGPxsvSg==}
-    dependencies:
-      fast-querystring: 1.1.2
+  /find-my-way-ts@0.1.5:
+    resolution: {integrity: sha512-4GOTMrpGQVzsCH2ruUn2vmwzV/02zF4q+ybhCIrw/Rkt3L8KWcycdC6aJMctJzwN4fXD4SD5F/4B9Sksh5rE0A==}
     dev: false
 
   /find-root@1.1.0:
@@ -17472,8 +17496,8 @@ packages:
   /ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  /multipasta@0.2.1:
-    resolution: {integrity: sha512-0NR15o5iewJFMsZ4jN6cztCd4izTLZPyHUfBrakbg/x70B8zplPE6qumbs+A7LmhGtQMzpN/K8MOOdifMgAKFA==}
+  /multipasta@0.2.5:
+    resolution: {integrity: sha512-c8eMDb1WwZcE02WVjHoOmUVk7fnKU/RmUcosHACglrWAuPQsEJv+E8430sXj6jNc1jHw0zrS16aCjQh4BcEb4A==}
     dev: false
 
   /mustache@4.2.0:

@@ -1,19 +1,51 @@
+import { AuthAPI } from "@blazell/validators";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
 import { type ActionFunctionArgs, redirect } from "@remix-run/cloudflare";
-import { getHonoClient } from "server";
+import { Effect } from "effect";
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	const { session } = context;
 	const url = new URL(request.url);
 	const origin = url.origin;
 
-	const honoClient = getHonoClient(origin);
-	const result = await honoClient.api.auth.google.$get();
-	if (result.ok) {
-		const { codeVerifier, state, url } = await result.json();
-		session.set("google_oauth_state", state);
-		session.set("code_verifier", codeVerifier);
-		return redirect(url);
+	const {
+		status,
+		url: googleURL,
+		codeVerifier,
+		state,
+	} = await Effect.runPromise(
+		HttpClientRequest.post(`${origin}/api/auth/google`)
+			.pipe(
+				HttpClientRequest.jsonBody({
+					redirectTo: "/",
+				}),
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.flatMap(HttpClientResponse.schemaBodyJson(AuthAPI.GoogleSchema)),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.toString);
+						return {
+							status: "error",
+							url: null,
+							codeVerifier: null,
+							state: null,
+						};
+					}),
+				),
+			),
+	);
+	if (status === "error" || !googleURL || !codeVerifier || !state) {
+		return redirect("/error");
 	}
-	console.log("error", result.status);
-	return null;
+
+	session.set("google_oauth_state", state);
+	session.set("code_verifier", codeVerifier);
+	return redirect(googleURL);
 }

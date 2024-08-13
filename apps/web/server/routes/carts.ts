@@ -11,7 +11,7 @@ import {
 	type Env,
 	type InsertOrder,
 } from "@blazell/validators";
-import * as Http from "@effect/platform/HttpClient";
+import { HttpClient, HttpClientRequest } from "@effect/platform";
 import { eq, sql } from "drizzle-orm";
 import { Effect } from "effect";
 import { Hono } from "hono";
@@ -310,22 +310,26 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			Effect.retry({ times: 2 }),
 			Effect.zipLeft(
 				Effect.all([
-					Http.request
-						.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/dashboard`)
-						.pipe(
-							Http.request.jsonBody(["store"]),
-							Effect.andThen(Http.client.fetch),
-							Effect.retry({ times: 3 }),
-							Effect.scoped,
-						),
-					Http.request
-						.post(`${c.env.PARTYKIT_ORIGIN}/parties/main/global`)
-						.pipe(
-							Http.request.jsonBody(["cart", "orders", "notifications"]),
-							Effect.andThen(Http.client.fetch),
-							Effect.retry({ times: 3 }),
-							Effect.scoped,
-						),
+					HttpClientRequest.post(
+						`${c.env.PARTYKIT_ORIGIN}/parties/main/dashboard`,
+					).pipe(
+						HttpClientRequest.jsonBody(["store"]),
+						Effect.andThen(HttpClient.fetch),
+						Effect.retry({ times: 3 }),
+						Effect.scoped,
+						//TODO: Handle errors
+						Effect.orDie,
+					),
+					HttpClientRequest.post(
+						`${c.env.PARTYKIT_ORIGIN}/parties/main/global`,
+					).pipe(
+						HttpClientRequest.jsonBody(["cart", "orders", "notifications"]),
+						Effect.andThen(HttpClient.fetch),
+						Effect.retry({ times: 3 }),
+						Effect.scoped,
+						//TODO: Handle errors
+						Effect.orDie,
+					),
 				]),
 			),
 		);

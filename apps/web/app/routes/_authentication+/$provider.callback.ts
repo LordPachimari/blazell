@@ -1,12 +1,17 @@
+import { SESSION_KEY } from "@blazell/auth";
+import { AuthAPI } from "@blazell/validators";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
 import { type ActionFunctionArgs, redirect, json } from "@remix-run/cloudflare";
-import { getHonoClient } from "server";
-import { SESSION_KEY } from "~/server/auth.server";
+import { Effect } from "effect";
 
 export async function loader({ request, context }: ActionFunctionArgs) {
 	const { session } = context;
 	const url = new URL(request.url);
 	const origin = url.origin;
-	console.log("CALLBACK CALLED");
 
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
@@ -31,24 +36,42 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 			status: 401,
 		});
 	}
+	const {
+		session: userSession,
+		status,
+		onboard,
+	} = await Effect.runPromise(
+		HttpClientRequest.post(
+			`${origin}/api/auth/google/callback?code=${code}&codeVerifier=${codeVerifier}`,
+		)
+			.pipe(
+				HttpClientRequest.jsonBody({
+					code,
+					codeVerifier,
+				}),
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.flatMap(
+					HttpClientResponse.schemaBodyJson(AuthAPI.GoogleCallbackSchema),
+				),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.toString());
+						return {
+							status: "error",
+							onboard: false,
+							session: null,
+						};
+					}),
+				),
+			),
+	);
 
-	const honoClient = getHonoClient(origin);
-	const result = await honoClient.api.auth.google.callback.$get({
-		query: {
-			code,
-			codeVerifier,
-		},
-	});
-	if (result.ok) {
-		const { type, session: userSession, onboard } = await result.json();
-		if (type === "ERROR" || !userSession) {
-			return redirect("/error");
-		}
-		session.set(SESSION_KEY, userSession.id);
-		return onboard ? redirect("/onboarding") : redirect("/dashboard");
+	if (status === "error" || !userSession) {
+		return redirect("/error");
 	}
-
-	console.log("error", result.status);
-	redirect("/error");
-	return json({});
+	session.set(SESSION_KEY, userSession.id);
+	return onboard ? redirect("/onboarding") : redirect("/dashboard");
 }

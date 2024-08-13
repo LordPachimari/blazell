@@ -1,7 +1,4 @@
-import {
-	vitePlugin as remix,
-	cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
-} from "@remix-run/dev";
+import { vitePlugin as remix } from "@remix-run/dev";
 import { flatRoutes } from "remix-flat-routes";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -34,10 +31,9 @@ export default defineConfig({
 	plugins: [
 		// MillionLint.vite(),
 		remixDevTools(),
-		// remixCloudflareDevProxy(),
 		devServer({
 			adapter,
-			entry: "./server/index",
+			entry: "/server/index.ts",
 			exclude: [...defaultOptions.exclude, "/assets/**", "/app/**"],
 			injectClientScript: false,
 		}),

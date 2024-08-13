@@ -1,10 +1,9 @@
+import { SESSION_KEY, type Authentication } from "@blazell/auth";
 import type { AuthSession } from "@blazell/validators";
 import type { Session, SessionData } from "@remix-run/cloudflare";
-import type { Authentication } from "server";
-export const SESSION_KEY = "blazell-session";
 
 export async function getUserAndSession(
-	auth: Authentication,
+	auth: ReturnType<typeof Authentication>,
 	session: Session<SessionData, SessionData>,
 	sessionKey?: string,
 ) {
@@ -15,7 +14,7 @@ export async function getUserAndSession(
 	if (userSession && !userSession.fresh && user) {
 		await auth.invalidateSession(session.id);
 		const newSession = await auth.createSession(user.id);
-		session.set(auth.sessionCookieName, newSession);
+		session.set(auth.sessionKey, newSession);
 		currentSession = newSession;
 	}
 	if (userSession) currentSession = userSession;

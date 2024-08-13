@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@blazell/validators": "workspace:*",
 		"dayjs": "^1.11.10",
-		"effect": "^3.2.9",
+		"effect": "^3.6.3",
 		"ulidx": "^2.3.0"
 	},
 	"devDependencies": {

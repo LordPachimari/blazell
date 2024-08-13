@@ -1,0 +1,31 @@
+{
+	"name": "@blazell/auth",
+	"private": true,
+	"sideEffects": false,
+	"version": "0.1.0",
+	"main": "./index.ts",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"beautify": "biome format . --write",
+		"format": "biome format ./app",
+		"lint": "dotenv -v SKIP_ENV_VALIDATION=1 biome lint .",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@blazell/validators": "workspace:*",
+		"@effect/platform": "^0.61.8",
+		"@effect/schema": "^0.70.4",
+		"effect": "^3.6.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.3",
+		"@blazell/tailwind-config": "workspace:*",
+		"@blazell/tsconfig": "workspace:*",
+		"@cloudflare/workers-types": "^4.20240529.0",
+		"typescript": "^5.4.5"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

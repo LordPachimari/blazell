@@ -6,12 +6,17 @@ import {
 } from "@remix-run/cloudflare";
 import { useSearchParams } from "@remix-run/react";
 
+import { UsersAPI } from "@blazell/validators";
 import { parseWithZod } from "@conform-to/zod";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
+import { Effect } from "effect";
 import { AnimatePresence } from "framer-motion";
-import { getHonoClient } from "server";
 import { checkHoneypot } from "~/server/honeypot.server";
 import { Onboard, UserOnboardSchema } from "./onboard";
-import { SESSION_KEY } from "~/server/auth.server";
 
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
@@ -23,8 +28,6 @@ export const loader: LoaderFunction = async (args) => {
 };
 export async function action({ request, context }: ActionFunctionArgs) {
 	const formData = await request.formData();
-	const { session } = context;
-	const userSessionID = session.get(SESSION_KEY);
 	checkHoneypot(formData, context.cloudflare.env.HONEYPOT_SECRET);
 
 	const submission = parseWithZod(formData, {
@@ -35,63 +38,60 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 	const url = new URL(request.url);
 	const origin = url.origin;
-	const honoClient = getHonoClient(origin);
-	const usernameResult = await honoClient.api.users.username[":username"].$get(
-		{
-			param: {
-				username: submission.value.username,
-			},
-		},
-		{
-			headers: {
-				authorization: `Bearer ${userSessionID}`,
-			},
-		},
+	const { username } = await Effect.runPromise(
+		HttpClientRequest.get(
+			`${origin}/api/users/username/${submission.value.username}`,
+		).pipe(
+			HttpClient.fetchOk,
+			Effect.flatMap(
+				HttpClientResponse.schemaBodyJson(UsersAPI.UsernameSchema),
+			),
+			Effect.scoped,
+			Effect.orDie,
+		),
 	);
-	if (usernameResult.ok) {
-		const exist = await usernameResult.json();
-		if (exist) {
-			return json({
-				result: submission.reply({
-					fieldErrors: {
-						username: ["Username already exist."],
-					},
-				}),
-			});
-		}
-	}
-
-	const onboardResult = await honoClient.api.users.onboard.$post(
-		{
-			json: {
-				username: submission.value.username,
-				countryCode: submission.value.countryCode,
-			},
-		},
-		{
-			headers: {
-				authorization: `Bearer ${userSessionID}`,
-			},
-		},
-	);
-	if (onboardResult.ok) {
-		return redirect(submission.value.redirectTo ?? "/dashboard");
-	}
-	if (onboardResult.status === 401)
+	if (username) {
 		return json({
 			result: submission.reply({
 				fieldErrors: {
-					username: ["Unauthorized"],
+					username: ["Username already exist."],
 				},
 			}),
 		});
-	return json({
-		result: submission.reply({
-			fieldErrors: {
-				username: ["Something wrong happened. Please try again later."],
-			},
-		}),
-	});
+	}
+	const { status } = await Effect.runPromise(
+		HttpClientRequest.post(`${origin}/api/users/onboard`)
+			.pipe(
+				HttpClientRequest.jsonBody({
+					username: submission.value.username,
+					countryCode: submission.value.countryCode,
+				}),
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.flatMap(
+					HttpClientResponse.schemaBodyJson(UsersAPI.OnboardSchema),
+				),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.toString());
+						return {
+							status: "error",
+						};
+					}),
+				),
+			),
+	);
+	if (status === "error") {
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					username: ["Something wrong happened. Please try again later."],
+				},
+			}),
+		});
+	}
 }
 
 export default function Page() {

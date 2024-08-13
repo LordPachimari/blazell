@@ -15,7 +15,7 @@ import {
 	type SpaceRecord,
 	type TableNotFound,
 } from "@blazell/validators";
-import * as Http from "@effect/platform/HttpClient";
+import { HttpClient, HttpClientRequest } from "@effect/platform";
 
 import type { Scope } from "effect/Scope";
 import { entries } from "remeda";
@@ -175,9 +175,11 @@ export const push = ({
 		yield* Effect.forEach(
 			Array.from(affectedSpacesMap.entries()),
 			([spaceID, subspaceIDs]) =>
-				Http.request.post(`${partyKitOrigin}/parties/main/${spaceID}`).pipe(
-					Http.request.jsonBody(Array.from(subspaceIDs)),
-					Effect.andThen(Http.client.fetch),
+				HttpClientRequest.post(
+					`${partyKitOrigin}/parties/main/${spaceID}`,
+				).pipe(
+					HttpClientRequest.jsonBody(Array.from(subspaceIDs)),
+					Effect.andThen(HttpClient.fetch),
 					Effect.retry({ times: 3 }),
 					Effect.catchAll(() => Effect.succeed({})),
 				),

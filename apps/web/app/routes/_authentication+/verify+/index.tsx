@@ -1,3 +1,4 @@
+import { SESSION_KEY } from "@blazell/auth";
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import {
@@ -7,8 +8,14 @@ import {
 	REGEXP_ONLY_DIGITS_AND_CHARS,
 } from "@blazell/ui/input-otp";
 import { LoadingSpinner } from "@blazell/ui/loading";
+import { AuthAPI } from "@blazell/validators";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
 import {
 	type ActionFunctionArgs,
 	type LoaderFunctionArgs,
@@ -16,10 +23,9 @@ import {
 	redirect,
 } from "@remix-run/cloudflare";
 import { Form, useActionData } from "@remix-run/react";
-import { getHonoClient } from "server";
+import { Effect } from "effect";
 import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
-import { SESSION_KEY } from "~/server/auth.server";
 import { checkHoneypot } from "~/server/honeypot.server";
 export const loader = async (args: LoaderFunctionArgs) => {
 	const { request, context } = args;
@@ -34,45 +40,51 @@ export const loader = async (args: LoaderFunctionArgs) => {
 	console.log("otp", otp, target);
 
 	if (otp && target) {
-		const honoClient = getHonoClient(origin);
-		const validationResult = await honoClient.api.auth["verify-otp"].$post(
-			{
-				json: {
-					otp,
-					target,
-				},
-			},
-			{
-				headers: {
-					credentials: "include",
-				},
-			},
+		const {
+			valid,
+			onboard,
+			session: userSession,
+		} = await Effect.runPromise(
+			HttpClientRequest.post(`${origin}/api/auth/verify-otp`)
+				.pipe(
+					HttpClientRequest.jsonBody({
+						otp,
+						target,
+					}),
+					Effect.andThen(HttpClient.fetchOk),
+					Effect.flatMap(
+						HttpClientResponse.schemaBodyJson(AuthAPI.VerifyOTPSchema),
+					),
+					Effect.scoped,
+				)
+				.pipe(
+					Effect.catchAll((error) =>
+						Effect.sync(() => {
+							console.error(error.toString);
+							return {
+								valid: false,
+								onboard: false,
+								session: null,
+							};
+						}),
+					),
+				),
 		);
 
-		console.log("from link", validationResult.status);
-
-		if (validationResult.ok) {
-			const {
-				valid,
-				onboard,
-				session: userSession,
-			} = await validationResult.json();
-			if (!valid) {
-				console.log("INVALID");
-				return json({});
-			}
-
-			const onboardingURL = new URL(`${origin}/onboarding`);
-			redirectTo && onboardingURL.searchParams.set("redirectTo", redirectTo);
-			target && onboardingURL.searchParams.set("target", target);
-			userSession && session.set(SESSION_KEY, userSession.id);
-			console.log("WHAT IS ONBOARD", onboard);
-			if (onboard) {
-				return redirect(onboardingURL.toString());
-			}
-			return redirect(redirectTo ?? "/marketplace");
+		if (!valid) {
+			console.log("INVALID");
+			return json({});
 		}
-		return json({});
+
+		const onboardingURL = new URL(`${origin}/onboarding`);
+		redirectTo && onboardingURL.searchParams.set("redirectTo", redirectTo);
+		target && onboardingURL.searchParams.set("target", target);
+		userSession && session.set(SESSION_KEY, userSession.id);
+		console.log("WHAT IS ONBOARD", onboard);
+		if (onboard) {
+			return redirect(onboardingURL.toString());
+		}
+		return redirect(redirectTo ?? "/marketplace");
 	}
 	return json({});
 };
@@ -96,53 +108,64 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 		return json({
 			result: submission.reply({
 				fieldErrors: {
+					otp: ["Error happened. Please try again later."],
+				},
+			}),
+		});
+	}
+	const {
+		status,
+		valid,
+		onboard,
+		session: userSession,
+	} = await Effect.runPromise(
+		HttpClientRequest.post(`${origin}/api/auth/verify-otp`)
+			.pipe(
+				HttpClientRequest.jsonBody({
+					otp: submission.value.otp,
+					target,
+				}),
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.flatMap(
+					HttpClientResponse.schemaBodyJson(AuthAPI.VerifyOTPSchema),
+				),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.toString);
+						return {
+							status: "error",
+							valid: false,
+							onboard: false,
+							session: null,
+						};
+					}),
+				),
+			),
+	);
+	if (status === "error") {
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					otp: ["Error happened. Please try again later."],
+				},
+			}),
+		});
+	}
+	if (!valid) {
+		return json({
+			result: submission.reply({
+				fieldErrors: {
 					otp: ["Invalid code"],
 				},
 			}),
 		});
 	}
-	const honoClient = getHonoClient(origin);
-	const validationResult = await honoClient.api.auth["verify-otp"].$post(
-		{
-			json: {
-				otp: submission.value.otp,
-				target: target,
-			},
-		},
-		{
-			headers: {
-				credentials: "include",
-			},
-		},
-	);
+	userSession && session.set(SESSION_KEY, userSession.id);
 
-	if (validationResult.ok) {
-		const {
-			valid,
-			onboard,
-			session: userSession,
-		} = await validationResult.json();
-
-		if (!valid) {
-			return json({
-				result: submission.reply({
-					fieldErrors: {
-						otp: ["Invalid code"],
-					},
-				}),
-			});
-		}
-		userSession && session.set(SESSION_KEY, userSession.id);
-
-		return redirect(onboard ? "/onboarding" : redirectTo ?? "/marketplace");
-	}
-	return json({
-		result: submission.reply({
-			fieldErrors: {
-				otp: ["Error happened. Please try again later."],
-			},
-		}),
-	});
+	return redirect(onboard ? "/onboarding" : redirectTo ?? "/marketplace");
 };
 
 function Verify() {

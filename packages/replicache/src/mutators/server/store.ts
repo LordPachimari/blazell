@@ -15,7 +15,11 @@ import {
 import * as base64 from "base64-arraybuffer";
 import { TableMutator } from "../../context/table-mutator";
 import { zod } from "../../util/zod";
-import * as Http from "@effect/platform/HttpClient";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
 
 const createStore = zod(CreateStoreSchema, (input) =>
 	Effect.gen(function* () {
@@ -91,22 +95,20 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 						return formData;
 					}),
 					Effect.flatMap((formData) =>
-						Http.request
-							.post(
-								`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1`,
-							)
-							.pipe(
-								Http.request.setHeaders({
-									Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-								}),
-								Http.request.formDataBody(formData),
-								Http.client.fetch,
-								Effect.flatMap(
-									Http.response.schemaBodyJson(UploadResponseSchema),
-								),
-								Effect.scoped,
-								Effect.orDie,
+						HttpClientRequest.post(
+							`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1`,
+						).pipe(
+							HttpClientRequest.setHeaders({
+								Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+							}),
+							HttpClientRequest.formDataBody(formData),
+							HttpClient.fetch,
+							Effect.flatMap(
+								HttpClientResponse.schemaBodyJson(UploadResponseSchema),
 							),
+							Effect.scoped,
+							Effect.orDie,
+						),
 					),
 					Effect.flatMap((response) =>
 						Effect.gen(function* () {
@@ -143,32 +145,30 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 					const splitted = url.split("/");
 					const cloudflareID = splitted[splitted.length - 2];
 					if (!cloudflareID) return;
-					return yield* Http.request
-						.del(
-							`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
-						)
-						.pipe(
-							Http.request.setHeaders({
-								Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-							}),
-							Http.client.fetch,
-							Effect.retry({ times: 3 }),
-							Effect.scoped,
-							Effect.catchTags({
-								RequestError: (e) =>
-									Effect.gen(function* () {
-										yield* Console.error("Error deleting image", e.message);
+					return yield* HttpClientRequest.del(
+						`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
+					).pipe(
+						HttpClientRequest.setHeaders({
+							Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+						}),
+						HttpClient.fetch,
+						Effect.retry({ times: 3 }),
+						Effect.scoped,
+						Effect.catchTags({
+							RequestError: (e) =>
+								Effect.gen(function* () {
+									yield* Console.error("Error deleting image", e.message);
 
-										return yield* Effect.succeed({});
-									}),
-								ResponseError: (e) =>
-									Effect.gen(function* () {
-										yield* Console.error("Error deleting image", e.message);
+									return yield* Effect.succeed({});
+								}),
+							ResponseError: (e) =>
+								Effect.gen(function* () {
+									yield* Console.error("Error deleting image", e.message);
 
-										return yield* Effect.succeed({});
-									}),
-							}),
-						);
+									return yield* Effect.succeed({});
+								}),
+						}),
+					);
 				}),
 
 			{
@@ -256,19 +256,17 @@ const deleteStoreImage = zod(DeleteStoreImageSchema, (input) =>
 		);
 
 		if (cloudflareID)
-			yield* Http.request
-				.del(
-					`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
-				)
-				.pipe(
-					Http.request.setHeaders({
-						Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
-					}),
-					Http.client.fetch,
-					Effect.retry({ times: 3 }),
-					Effect.scoped,
-					Effect.orDie,
-				);
+			yield* HttpClientRequest.del(
+				`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v1/${cloudflareID}`,
+			).pipe(
+				HttpClientRequest.setHeaders({
+					Authorization: `Bearer ${env.IMAGE_API_TOKEN}`,
+				}),
+				HttpClient.fetch,
+				Effect.retry({ times: 3 }),
+				Effect.scoped,
+				Effect.orDie,
+			);
 	}),
 );
 const setActiveStoreID = zod(SetActiveStoreIDSchema, (input) =>

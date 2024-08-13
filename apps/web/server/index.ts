@@ -1,6 +1,7 @@
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
 import {
+	BindingsSchema,
 	PullRequest,
 	PushRequest,
 	SpaceIDSchema,
@@ -10,19 +11,16 @@ import {
 	type SpaceRecord,
 } from "@blazell/validators";
 import { Schema } from "@effect/schema";
-import type { AppLoadContext } from "@remix-run/cloudflare";
-
-import {
-	createRequestHandler,
-	createWorkersKVSessionStorage,
-} from "@remix-run/cloudflare";
+import type { AppLoadContext, RequestHandler } from "@remix-run/cloudflare";
+import { createWorkersKVSessionStorage } from "@remix-run/cloudflare";
 import { Effect, Layer } from "effect";
 import { Hono } from "hono";
-import { hc } from "hono/client";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
-import { session } from "remix-hono/session";
-import { authMiddleware } from "./auth";
+import { staticAssets } from "remix-hono/cloudflare";
+import { remix } from "remix-hono/handler";
+import { getSession, session } from "remix-hono/session";
+import { getUserAndSession } from "~/server/auth.server";
 import { getDB } from "./lib/db";
 import auth from "./routes/auth";
 import carts from "./routes/carts";
@@ -31,10 +29,14 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
+import { authMiddleware } from "./lib/middlewares";
+import { Authentication } from "@blazell/auth";
+import { hc } from "hono/client";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
+let handler: RequestHandler | undefined;
 
-const routes = app
+const route = app
 	.use("*", async (c, next) => {
 		const wrapped = cors({
 			origin:
@@ -228,54 +230,73 @@ const routes = app
 	.route("/api/variants", variants)
 	.route("/api/stores", stores)
 	.route("/api/products", products)
-	.use("*", async (c) => {
-		const build = await import("@remix-run/dev/server-build");
-		// const build = await import("virtual:remix/server-build");
-		//@ts-ignore
-		const handler = createRequestHandler(build, "development");
-		const remixContext = {
-			cloudflare: {
-				env: c.env,
-			},
-		} as unknown as AppLoadContext;
-		return handler(c.req.raw, remixContext);
-	});
-// .use("*", async (c) => {
-// 	// const serverBuild = await import("../build/server");
-// 	const { createRequestHandler } = await import("@remix-run/cloudflare");
-// 	handler = createRequestHandler(
-// 		// @ts-ignore /* @vite-ignore */
-// 		() =>
-// 			c.env.ENVIRONMENT === "local"
-// 				? import("virtual:remix/server-build")
-// 				: import("@remix-run/dev/server-build"),
-// 		c.env.ENVIRONMENT === "production" ? "production" : "development",
-// 	);
+	.use(
+		async (c, next) => {
+			if (process.env.NODE_ENV !== "development" || import.meta.env.PROD) {
+				return staticAssets()(c, next);
+			}
+			await next();
+		},
+		async (c, next) => {
+			if (process.env.NODE_ENV !== "development" || import.meta.env.PROD) {
+				//@ts-ignore
+				const serverBuild = await import("../build/server");
+				const session = getSession(c);
+				const env = BindingsSchema.parse(c.env);
+				const url = new URL(c.req.url);
+				const origin = url.origin;
+				const auth = Authentication({
+					serverURL: origin,
+				});
 
-// 	const sessionStorage = getSessionStorage(c);
-// 	const session = getSession(c);
+				const { user } = await getUserAndSession(auth, session);
 
-// 	const url = new URL(c.req.url);
-// 	const origin = url.origin;
-// 	const auth = new Authentication({
-// 		serverURL: origin,
-// 	});
+				const remixContext = {
+					cloudflare: {
+						env,
+					},
+					session,
+					user,
+				} as unknown as AppLoadContext;
+				return remix({
+					//@ts-ignore
+					build: serverBuild,
+					mode: "production",
+					getLoadContext() {
+						return remixContext;
+					},
+				})(c, next);
+				// biome-ignore lint/style/noUselessElse: <explanation>
+			} else {
+				const session = getSession(c);
+				const env = BindingsSchema.parse(c.env);
+				const url = new URL(c.req.url);
+				const origin = url.origin;
+				const auth = Authentication({
+					serverURL: origin,
+				});
 
-// 	const { user } = await getUserAndSession(auth, session);
+				const { user } = await getUserAndSession(auth, session);
 
-// 	//@ts-ignore
-// 	const env = BindingsSchema.parse(c.env);
-// 	const remixContext = {
-// 		cloudflare: {
-// 			env,
-// 		},
-// 		sessionStorage,
-// 		session,
-// 		user,
-// 	} as unknown as AppLoadContext;
-// 	return handler(c.req.raw, remixContext);
-// });
+				const remixContext = {
+					cloudflare: {
+						env,
+					},
+					session,
+					user,
+				} as unknown as AppLoadContext;
+				if (!handler) {
+					// @ts-expect-error it's not typed
+					const build = await import("virtual:remix/server-build");
+					const { createRequestHandler } = await import(
+						"@remix-run/cloudflare"
+					);
+					handler = createRequestHandler(build, "development");
+				}
+				return handler(c.req.raw, remixContext);
+			}
+		},
+	);
+const client = hc<typeof route>("/");
+export { client };
 export default app;
-export type AppType = typeof routes;
-export const getHonoClient = (serverURL: string) => hc<AppType>(serverURL);
-export * from "./auth";

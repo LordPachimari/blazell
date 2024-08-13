@@ -1,6 +1,5 @@
+import { Authentication, SESSION_KEY } from "@blazell/auth";
 import { json, type ActionFunctionArgs } from "@remix-run/cloudflare";
-import { Authentication } from "server";
-import { SESSION_KEY } from "~/server/auth.server";
 import { userContext } from "~/sessions.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -9,7 +8,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	const cookie = (await userContext.parse(cookieHeader)) || {};
 	const url = new URL(request.url);
 	const origin = url.origin;
-	const auth = new Authentication({
+	const auth = Authentication({
 		serverURL: origin,
 	});
 

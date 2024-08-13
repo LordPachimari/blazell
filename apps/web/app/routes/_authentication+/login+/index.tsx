@@ -6,7 +6,6 @@ import { type ActionFunctionArgs, json, redirect } from "@remix-run/cloudflare";
 import {
 	Form,
 	Link,
-	useActionData,
 	useFetcher,
 	useNavigation,
 	useSearchParams,
@@ -15,10 +14,11 @@ import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { checkHoneypot } from "~/server/honeypot.server";
 
-import { EmailSchema } from "@blazell/validators";
-import { useCallback } from "react";
-import { getHonoClient } from "server";
 import { LoadingSpinner } from "@blazell/ui/loading";
+import { EmailSchema } from "@blazell/validators";
+import { HttpClient, HttpClientRequest } from "@effect/platform";
+import { Effect } from "effect";
+import { useCallback } from "react";
 const schema = z.object({
 	email: EmailSchema,
 	redirectTo: z.string().optional(),
@@ -34,41 +34,43 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 	const url = new URL(request.url);
 	const origin = url.origin;
-	const honoClient = getHonoClient(origin);
-	const result = await honoClient.api.auth["prepare-verification"].$post(
-		{
-			json: {
-				email: submission.value.email,
-				...(submission.value.redirectTo && {
-					redirectTo: submission.value.redirectTo,
+	await Effect.runPromise(
+		HttpClientRequest.post(`${origin}/api/auth/prepare-verification`)
+			.pipe(
+				HttpClientRequest.jsonBody({
+					email: submission.value.email,
+					...(submission.value.redirectTo && {
+						redirectTo: submission.value.redirectTo,
+					}),
 				}),
-			},
-		},
-		{
-			headers: {
-				credentials: "include",
-			},
-		},
-	);
-
-	if (result.ok) {
-		const json = await result.json();
-		return redirect(json.verifyURL);
-	}
-
-	return json(
-		{
-			result: submission.reply({
-				fieldErrors: {
-					email: ["Something went wrong. Please try again later."],
-				},
-			}),
-		},
-		{ status: result.status },
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.reason, error.toString());
+						const url = new URL(`${origin}/error`);
+						url.searchParams.set(
+							"error",
+							"Something went wrong. Please try again later.",
+						);
+						return redirect(url.toString());
+					}),
+				),
+				Effect.zipLeft(
+					Effect.sync(() => {
+						const url = new URL(`${origin}/verify`);
+						url.searchParams.set("target", submission.value.email);
+						submission.value.redirectTo &&
+							url.searchParams.set("redirectTo", submission.value.redirectTo);
+						return redirect(url.toString());
+					}),
+				),
+			),
 	);
 }
 const Login = () => {
-	const actionData = useActionData<typeof action>();
 	const isPending = useIsPending();
 	const fetcher = useFetcher();
 	const [searchParams] = useSearchParams();
@@ -77,7 +79,6 @@ const Login = () => {
 		id: "login-form",
 		constraint: getZodConstraint(schema),
 		defaultValue: { redirectTo, email: "" },
-		lastResult: actionData?.result,
 		onValidate({ formData }) {
 			return parseWithZod(formData, { schema });
 		},
