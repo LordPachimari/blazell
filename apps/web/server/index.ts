@@ -222,7 +222,7 @@ const routes = app
 		console.log("auth from test", auth);
 		return c.text("hello");
 	})
-	// .route("/api/auth", auth)
+	.route("/api/auth", auth)
 	.route("/api/users", users)
 	.route("/api/orders", orders)
 	.route("/api/carts", carts)
