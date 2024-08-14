@@ -16,6 +16,7 @@
 		"@elysiajs/cors": "^1.0.2",
 		"effect": "^3.6.3",
 		"elysia": "latest",
+		"resend": "^3.5.0",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
