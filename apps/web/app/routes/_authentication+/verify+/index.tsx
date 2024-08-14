@@ -1,4 +1,4 @@
-import { SESSION_KEY } from "@blazell/auth";
+import { SESSION_KEY } from "@blazell/auth/src";
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import {

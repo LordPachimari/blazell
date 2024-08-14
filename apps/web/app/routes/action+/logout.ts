@@ -1,4 +1,4 @@
-import { Authentication, SESSION_KEY } from "@blazell/auth";
+import { Authentication, SESSION_KEY } from "@blazell/auth/src";
 import { json, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { userContext } from "~/sessions.server";
 

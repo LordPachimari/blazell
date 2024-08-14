@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { Authentication } from "@blazell/auth";
+import { Authentication } from "@blazell/auth/src";
 import { getSession } from "remix-hono/session";
 import type { AuthSession } from "@blazell/validators";
 

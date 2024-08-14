@@ -1,5 +1,5 @@
 import { AuthService } from "@blazell/api";
-import { Authentication } from "@blazell/auth";
+import { Authentication } from "@blazell/auth/src";
 import { schema } from "@blazell/db";
 import { Cloudflare, Database } from "@blazell/shared";
 import { generateID } from "@blazell/utils";

@@ -3,13 +3,13 @@
 	"private": true,
 	"sideEffects": false,
 	"version": "0.1.0",
-	"main": "./index.ts",
+	"main": "./src/index.ts",
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"beautify": "biome format . --write",
-		"format": "biome format ./app",
-		"lint": "dotenv -v SKIP_ENV_VALIDATION=1 biome lint .",
+		"beautify": "biome format ./src --write",
+		"format": "biome format ./src",
+		"lint": "dotenv -v SKIP_ENV_VALIDATION=1 biome lint ./src",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {

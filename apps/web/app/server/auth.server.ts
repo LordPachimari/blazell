@@ -1,4 +1,4 @@
-import { SESSION_KEY, type Authentication } from "@blazell/auth";
+import { SESSION_KEY, type Authentication } from "@blazell/auth/src";
 import type { AuthSession } from "@blazell/validators";
 import type { Session, SessionData } from "@remix-run/cloudflare";
 

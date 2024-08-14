@@ -1,4 +1,4 @@
-import { Authentication } from "@blazell/auth";
+import { Authentication } from "@blazell/auth/src";
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
 import {

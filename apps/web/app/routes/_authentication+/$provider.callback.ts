@@ -1,4 +1,4 @@
-import { SESSION_KEY } from "@blazell/auth";
+import { SESSION_KEY } from "@blazell/auth/src";
 import { AuthAPI } from "@blazell/validators";
 import {
 	HttpClient,
