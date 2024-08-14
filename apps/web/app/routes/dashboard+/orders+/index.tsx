@@ -118,7 +118,9 @@ export default function Orders() {
 						</>
 					) : (
 						<div className="h-[50rem] w-[25rem] sticky top-16 flex justify-center items-center border bg-component shadow-inner hover:bg-slate-2  border-border   rounded-lg">
-							<h1 className="font-bold text-xl text-slate-8">Order preview</h1>
+							<h1 className="font-bold text-xl text-slate-10 font-freeman">
+								Order preview
+							</h1>
 						</div>
 					)}
 				</section>

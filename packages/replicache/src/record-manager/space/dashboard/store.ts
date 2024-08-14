@@ -1,13 +1,13 @@
 import { Effect, pipe } from "effect";
 
-import { Database } from "@blazell/shared";
+import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
-import { ReplicacheContext } from "../../../context";
 import type { GetRowsWTableName } from "../types";
 
 export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { authID } = yield* ReplicacheContext;
+		const { auth } = yield* AuthContext;
+		const authID = auth.user?.id;
 		if (!authID) return [];
 		const { manager } = yield* Database;
 		const rowsWTableName: RowsWTableName[] = [];

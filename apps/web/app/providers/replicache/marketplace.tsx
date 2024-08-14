@@ -24,17 +24,14 @@ function MarketplaceReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const result = await fetch(
-					`${window.ENV.WORKER_URL}/pull/marketplace`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(req),
-						credentials: "include",
+				const result = await fetch("/api/pull/marketplace", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
 					},
-				);
+					body: JSON.stringify(req),
+					credentials: "include",
+				});
 
 				return {
 					response: result.status === 200 ? await result.json() : undefined,
@@ -45,16 +42,13 @@ function MarketplaceReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const result = await fetch(
-					`${window.ENV.WORKER_URL}/push/marketplace`,
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(req),
+				const result = await fetch("/api/push/marketplace", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
 					},
-				);
+					body: JSON.stringify(req),
+				});
 
 				return {
 					httpRequestInfo: {

@@ -21,7 +21,7 @@ export function ProductTypeCards() {
 							/>
 						</CardContent>
 					</Card>
-					<Card className="hidden lg:block absolute right-48 top-3  p-2">
+					<Card className="block absolute right-2 top-48 rotate-45 lg:right-48 lg:top-3  p-2">
 						<CardContent className="overflow-hidden">
 							<Image
 								src="/assets/product-2.jpg"

@@ -13,7 +13,7 @@ import { GlobalSearchCombobox } from "~/components/search";
 import { noHeaderPaths } from "~/constants";
 import { useSidebarState } from "~/hooks/use-sidebar";
 import { useWindowSize } from "~/hooks/use-window-size";
-import type { action } from "~/routes/action.set-sidebar";
+import type { action } from "~/routes/action+/set-sidebar";
 import { useDashboardState } from "~/zustand/state";
 export type SidebarItem = {
 	title: string;
@@ -34,21 +34,21 @@ const items: SidebarItem[] = [
 		icon: "Marketplace",
 		items: [],
 	},
-	{
-		title: "Auctions",
-		href: "/auction",
-		icon: "Billing",
-		items: [],
-	},
-	{
-		title: "Settings",
-		href: "/settings",
-		icon: "Settings",
-		items: [],
-	},
+	// {
+	// 	title: "Auctions",
+	// 	href: "/auction",
+	// 	icon: "Billing",
+	// 	items: [],
+	// },
+	// {
+	// 	title: "Settings",
+	// 	href: "/settings",
+	// 	icon: "Settings",
+	// 	items: [],
+	// },
 ];
 
-const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/onboarding"]);
+const noSidebarPaths = new Set(["/", "/onboarding", "/login", "/verify"]);
 
 const Sidebar = () => {
 	const fetcher = useFetcher<typeof action>();
@@ -90,7 +90,7 @@ const Sidebar = () => {
 						<Button
 							size={"icon"}
 							variant={"ghost"}
-							className="text-slate-11 text-sm rounded-full"
+							className="text-slate-11 text-sm rounded-lg"
 							type="submit"
 							onClick={() =>
 								fetcher.submit(
@@ -220,6 +220,7 @@ export const DialogSidebar = () => {
 								<Link
 									to={item.href}
 									key={item.title}
+									onClick={() => setOpened(false)}
 									className={cn(
 										"group/link flex h-12 lg:h-10 w-full items-center gap-3 rounded-lg px-2 cursor-pointer hover:bg-slate-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-brand-7",
 									)}

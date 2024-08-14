@@ -9,6 +9,7 @@ export default function StoresPage() {
 	const products = useDashboardStore((state) =>
 		state.products.filter((product) => product.storeID === activeStoreID),
 	);
+	console.log("store", store);
 
 	return (
 		<section className="w-full p-3 flex justify-center">

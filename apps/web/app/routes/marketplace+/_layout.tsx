@@ -26,9 +26,15 @@ export default function MarketplaceLayout() {
 		</SidebarLayoutWrapper>
 	);
 }
-
 const Featured = () => {
 	const stores = useMarketplaceStore((state) => state.stores);
+	if (stores.length < 5) {
+		return <Featured3 stores={stores} />;
+	}
+	return <Featured5 stores={stores} />;
+};
+
+const Featured3 = ({ stores }: { stores: Store[] }) => {
 	const [currentIndex, setCurrentIndex] = useState<number>(0);
 	const [direction, setDirection] = useState<number>(0);
 	console.log("stores", stores);
@@ -54,9 +60,9 @@ const Featured = () => {
 		visible: (custom: { position: "left" | "center" | "right" }) => ({
 			x:
 				custom.position === "left"
-					? "-60%"
+					? "-50%"
 					: custom.position === "right"
-						? "60%"
+						? "50%"
 						: "0%",
 			scale: custom.position === "center" ? 1 : 0.8,
 			zIndex: custom.position === "center" ? 2 : 1,
@@ -136,6 +142,142 @@ const Featured = () => {
 		</div>
 	);
 };
+const Featured5 = ({ stores }: { stores: Store[] }) => {
+	const [currentIndex, setCurrentIndex] = useState<number>(0);
+	const [direction, setDirection] = useState<number>(0);
+	console.log("stores", stores);
+
+	useEffect(() => {
+		if (stores.length > 0) {
+			setCurrentIndex(0);
+		}
+	}, [stores]);
+
+	if (!stores || stores.length === 0) {
+		return null;
+	}
+
+	const slideVariants = {
+		hidden: (custom: {
+			direction: number;
+			position: "far-left" | "left" | "center" | "right" | "far-right";
+		}) => ({
+			x: custom.direction > 0 ? "100%" : "-100%",
+			scale: 0.6,
+			opacity: 0,
+		}),
+		visible: (custom: {
+			position: "far-left" | "left" | "center" | "right" | "far-right";
+		}) => ({
+			x:
+				custom.position === "far-left"
+					? "-60%"
+					: custom.position === "left"
+						? "-40%"
+						: custom.position === "right"
+							? "40%"
+							: custom.position === "far-right"
+								? "60%"
+								: "0%",
+			scale:
+				custom.position === "center"
+					? 1
+					: custom.position === "left" || custom.position === "right"
+						? 0.8
+						: 0.6,
+			zIndex:
+				custom.position === "center"
+					? 5
+					: custom.position === "left" || custom.position === "right"
+						? 3
+						: 1,
+			opacity: 1,
+			transition: { type: "spring", stiffness: 300, damping: 30 },
+		}),
+		exit: (custom: {
+			direction: number;
+			position: "far-left" | "left" | "center" | "right" | "far-right";
+		}) => ({
+			x: custom.direction < 0 ? "100%" : "-100%",
+			scale: 0.6,
+			opacity: 0,
+		}),
+	};
+
+	const swipe = (newDirection: number): void => {
+		setDirection(newDirection);
+		setCurrentIndex((prevIndex) => {
+			let newIndex = prevIndex + newDirection;
+			if (newIndex < 0) newIndex = stores.length - 1;
+			if (newIndex >= stores.length) newIndex = 0;
+			return newIndex;
+		});
+	};
+
+	const dragEndHandler = (
+		_: MouseEvent | TouchEvent | PointerEvent,
+		info: PanInfo,
+	): void => {
+		const swipeThreshold = 50;
+		if (info.offset.x > swipeThreshold) {
+			swipe(-1);
+		} else if (info.offset.x < -swipeThreshold) {
+			swipe(1);
+		}
+	};
+
+	return (
+		<div className="mb-10 hidden lg:block">
+			<div className="relative h-[410px] overflow-hidden">
+				<AnimatePresence initial={false} custom={{ direction }}>
+					{[-2, -1, 0, 1, 2].map((offset) => {
+						const index =
+							(currentIndex + offset + stores.length) % stores.length;
+						const position =
+							offset === -2
+								? "far-left"
+								: offset === -1
+									? "left"
+									: offset === 0
+										? "center"
+										: offset === 1
+											? "right"
+											: "far-right";
+						return (
+							<motion.div
+								key={stores[index]!.id}
+								custom={{ direction, position }}
+								variants={slideVariants}
+								initial="hidden"
+								animate="visible"
+								exit="exit"
+								className={cn(
+									"absolute top-0 left-[30%] p-2 -translate-x-1/2 w-5/12 h-full",
+									"flex justify-center",
+									position === "far-left" || position === "far-right"
+										? "hidden lg:flex"
+										: "hidden md:flex",
+								)}
+								drag={position === "center" ? "x" : false}
+								dragConstraints={
+									position === "center" ? { left: 0, right: 0 } : {}
+								}
+								onDragEnd={position === "center" ? dragEndHandler : () => {}}
+								onClick={() => {
+									if (position === "far-left" || position === "left") swipe(-1);
+									if (position === "far-right" || position === "right")
+										swipe(1);
+								}}
+							>
+								<StoreComponent store={stores[index]!} />
+							</motion.div>
+						);
+					})}
+				</AnimatePresence>
+			</div>
+		</div>
+	);
+};
 const StoreComponent = ({ store }: { store: Store }) => {
 	const isInitialized = useMarketplaceStore((state) => state.isInitialized);
 	return (
@@ -155,7 +297,7 @@ const StoreComponent = ({ store }: { store: Store }) => {
 							className="rounded-lg w-full object-cover"
 						/>
 					) : (
-						<div className="h-[120px] w-full bg-slate-4 ">
+						<div className="h-[120px] w-full bg-slate-5 ">
 							<Noise />
 						</div>
 					)}

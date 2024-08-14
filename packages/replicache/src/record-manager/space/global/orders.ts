@@ -1,13 +1,13 @@
 import { Console, Effect, pipe } from "effect";
 
-import type { GetRowsWTableName } from "../types";
-import { Database } from "@blazell/shared";
+import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, NotFound } from "@blazell/validators";
-import { ReplicacheContext } from "../../../context";
+import type { GetRowsWTableName } from "../types";
 
 export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { authID } = yield* ReplicacheContext;
+		const { auth } = yield* AuthContext;
+		const authID = auth.user?.id;
 		if (!authID) return [];
 		const { manager } = yield* Database;
 
@@ -20,11 +20,15 @@ export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 					},
 				}),
 			),
-			Effect.flatMap((userEmail) => {
-				if (!userEmail)
-					return Effect.fail(new NotFound({ message: "User not found" }));
-				return Effect.succeed(userEmail.email);
-			}),
+			Effect.flatMap((userEmail) =>
+				Effect.gen(function* () {
+					if (!userEmail)
+						return yield* Effect.fail(
+							new NotFound({ message: "User not found" }),
+						);
+					return yield* Effect.succeed(userEmail.email);
+				}),
+			),
 			Effect.flatMap((email) =>
 				Effect.tryPromise(() =>
 					fullRows

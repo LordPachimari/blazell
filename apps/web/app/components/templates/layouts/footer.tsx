@@ -97,15 +97,7 @@ export default function Footer() {
 				<div className="text-center">
 					<span className="block text-sm text-center text-gray-500 dark:text-gray-400">
 						© 2024 Blazell™. All Rights Reserved. Built by
-						<a
-							href="https://github.com/LordPachi"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-brand-9 pl-1 font-bold"
-						>
-							LordPachi
-						</a>
-						.
+						<p className="text-brand-9 pl-1 font-bold">LordPachi</p>.
 					</span>
 					<ul className="flex justify-center mt-5 space-x-5">
 						{/* SVG icons here for social media links */}

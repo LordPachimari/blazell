@@ -23,12 +23,14 @@ import {
 } from "@blazell/ui/form";
 import { Icons } from "@blazell/ui/icons";
 import { Label } from "@blazell/ui/label";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import { TagInput } from "@blazell/ui/tag-input";
 import type { Product } from "@blazell/validators/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { isTouchDevice } from "~/utils/helpers";
 const schema = z.object({
 	tags: z.array(z.string()),
 });
@@ -40,6 +42,7 @@ export function Organize({
 	product: Product | undefined;
 }) {
 	const [opened, setOpened] = React.useState(false);
+	const [dropdownOpened, setDropdownOpened] = React.useState(false);
 
 	const methods = useForm<ProductOrganize>({
 		resolver: zodResolver(schema),
@@ -58,8 +61,21 @@ export function Organize({
 					<CardHeader className="p-4 border-b flex justify-between rounded-t-lg items-center flex-row border-border">
 						<CardTitle>Organize</CardTitle>
 						<div className="flex gap-2 mt-0 no-space-y">
-							<DropdownMenu>
+							<DropdownMenu
+								open={dropdownOpened}
+								onOpenChange={setDropdownOpened}
+							>
 								<DropdownMenuTrigger
+									onPointerDown={(e) => {
+										if (isTouchDevice()) {
+											e.preventDefault();
+										}
+									}}
+									onClick={() => {
+										if (isTouchDevice()) {
+											setDropdownOpened((state) => !state);
+										}
+									}}
 									className={cn(
 										buttonVariants({ size: "icon", variant: "ghost" }),
 										"rounded-lg h-8 w-8 p-0 border-transparent hover:border-border hover:bg-slate-3",
@@ -108,33 +124,35 @@ export function Organize({
 						<DialogTitle className="p-4 border-b border-border font-bold text-xl">
 							Edit attributes
 						</DialogTitle>
-						<section className="p-4 flex flex-col gap-4">
-							<div className="flex flex-col gap-3">
-								<Label>Type</Label>
-								<Badge className="border-red-7 bg-red-4 text-red-9">
-									Physical
-								</Badge>
+						<ScrollArea className="p-4 h-[78vh]  pt-0">
+							<div className="h-full flex flex-col pt-4 gap-4">
+								<div className="flex flex-col gap-3">
+									<Label>Type</Label>
+									<Badge className="border-red-7 bg-red-4 text-red-9">
+										Physical
+									</Badge>
+								</div>
+								<FormField
+									control={methods.control}
+									name="tags"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Tags</FormLabel>
+											<FormControl>
+												<TagInput
+													placeholder="tags"
+													value={field.value ?? []}
+													onChange={field.onChange}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
-							<FormField
-								control={methods.control}
-								name="tags"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Tags</FormLabel>
-										<FormControl>
-											<TagInput
-												placeholder="tags"
-												value={field.value ?? []}
-												onChange={field.onChange}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</section>
+						</ScrollArea>
 
-						<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
+						<div className="p-4 bg-component flex justify-end w-full border-t border-border absolute bottom-0">
 							{" "}
 							<div className="flex gap-2">
 								{" "}

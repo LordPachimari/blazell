@@ -1,3 +1,4 @@
+import { AuthUserSchema } from "@blazell/validators";
 import { parseWithZod } from "@conform-to/zod";
 import { invariant } from "@epic-web/invariant";
 import { useFetchers, useRouteLoaderData } from "@remix-run/react";
@@ -26,14 +27,14 @@ export function useOptimisticUserContextMode() {
 	const fetchers = useFetchers();
 	const userContext = fetchers.find(
 		(f) =>
-			f.formAction === "/onboarding" || f.formAction === "/action/set-cart-id",
+			f.formAction === "/action/set-cart-id" ||
+			f.formAction === "/action/logout",
 	);
-
 	if (userContext?.formData) {
 		const submission = parseWithZod(userContext.formData, {
 			schema: z.object({
 				cartID: z.optional(z.string()),
-				fakeAuthID: z.optional(z.string()),
+				user: z.nullable(AuthUserSchema),
 			}),
 		});
 

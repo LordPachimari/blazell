@@ -1,11 +1,18 @@
 // import { getAuth } from "@clerk/remix/ssr.server";
 import { Badge } from "@blazell/ui/badge";
 import { Icons } from "@blazell/ui/icons";
+import { redirect, type LoaderFunction, json } from "@remix-run/cloudflare";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Features } from "~/components/templates/landing/features";
 import { Hero } from "~/components/templates/landing/hero";
 import Footer from "~/components/templates/layouts/footer";
 
+export const loader: LoaderFunction = async ({ context }) => {
+	const { user } = context;
+	console.log("user from marketing", user);
+	if (user) return redirect("/marketplace");
+	return json({});
+};
 export const meta: MetaFunction = () => {
 	return [
 		{ title: "Blazell" },
@@ -23,7 +30,7 @@ export default function Index() {
 				<Badge className="bg-brand-5 h-6 border-brand-6 text-brand-9">
 					Beta
 				</Badge>
-				Under develpoment. Many features and designs are not yet implemented.
+				Under development.
 				<Icons.Right className="size-4" />
 			</div>
 			<Hero />

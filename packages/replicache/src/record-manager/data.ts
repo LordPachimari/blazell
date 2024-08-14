@@ -19,7 +19,7 @@ import {
 	type SpaceRecord,
 } from "@blazell/validators";
 
-import { Database, type Cloudflare } from "@blazell/shared";
+import { type AuthContext, Database, type Cloudflare } from "@blazell/shared";
 
 import { ReplicacheContext } from "../context";
 import { SpaceRecordGetter, fullRowsGetter } from "./space/getter";
@@ -58,7 +58,7 @@ export const getRowsWTableName = <T extends SpaceID>({
 }): Effect.Effect<
 	RowsWTableName[],
 	InvalidValue | NeonDatabaseError,
-	Cloudflare | ReplicacheContext | Database
+	Cloudflare | ReplicacheContext | Database | AuthContext
 > => {
 	const getRowsWTableName = SpaceRecordGetter[spaceID][subspaceID];
 	if (getRowsWTableName) {
@@ -122,7 +122,7 @@ const getNewSpaceRecord = ({
 		subspaceRecord: SubspaceRecord;
 	}>,
 	InvalidValue | NeonDatabaseError,
-	Cloudflare | Database | ReplicacheContext
+	Cloudflare | Database | ReplicacheContext | AuthContext
 > => {
 	return Effect.gen(function* () {
 		const { spaceID, subspaceIDs } = yield* ReplicacheContext;
@@ -376,7 +376,7 @@ const createSpacePatch = ({
 const createSpaceResetPatch = (): Effect.Effect<
 	PatchOperation[],
 	InvalidValue | NeonDatabaseError,
-	Cloudflare | ReplicacheContext | Database
+	Cloudflare | ReplicacheContext | Database | AuthContext
 > =>
 	Effect.gen(function* () {
 		yield* Effect.log("RESET PATCH");

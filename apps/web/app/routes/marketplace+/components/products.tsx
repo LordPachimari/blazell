@@ -22,7 +22,7 @@ const Products = () => {
 		);
 	return (
 		<section className="flex flex-col gap-2">
-			<div className="grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
+			<div className="grid md:grid-cols-5 sm:grid-cols-4 gap-1 grid-cols-2 min-[350px]:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 grid-rows-12">
 				{products.map((product) => (
 					<ProductCard key={product.id} product={product} />
 				))}

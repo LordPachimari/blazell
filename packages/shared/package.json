@@ -8,7 +8,6 @@
 	"exports": {
 		".": "./src/index.ts"
 	},
-
 	"scripts": {
 		"beautify": "biome format ./src --write",
 		"clean": "rm -rf .turbo node_modules",
@@ -21,7 +20,7 @@
 		"@blazell/utils": "workspace:*",
 		"@blazell/validators": "workspace:*",
 		"drizzle-orm": "^0.30.7",
-		"effect": "^3.2.9",
+		"effect": "^3.6.3",
 		"remeda": "^1.60.1",
 		"replicache": "14.2.2",
 		"ulidx": "^2.3.0",
@@ -30,7 +29,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.3",
 		"@blazell/tsconfig": "workspace:*",
-		"typescript": "^5.4.5",
-		"@cloudflare/workers-types": "^4.20240529.0"
+		"@cloudflare/workers-types": "^4.20240529.0",
+		"typescript": "^5.4.5"
 	}
 }

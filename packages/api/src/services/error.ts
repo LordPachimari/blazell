@@ -1,9 +1,9 @@
-import * as Http from "@effect/platform/HttpClient";
 import { schema } from "@blazell/db";
 import { Database } from "@blazell/shared";
 import { generateID } from "@blazell/utils";
 import { NeonDatabaseError } from "@blazell/validators";
 import type { ClientError } from "@blazell/validators/server";
+import { HttpClient, HttpClientRequest } from "@effect/platform";
 import { Effect } from "effect";
 
 export const CreateClientError = ({
@@ -36,14 +36,12 @@ export const CreateClientError = ({
 					Effect.fail(new NeonDatabaseError({ message: error.message })),
 			}),
 			Effect.zipLeft(
-				Http.request
-					.post(`${partyKitOrigin}/parties/main/global`)
-					.pipe(
-						Http.request.jsonBody(["errors"]),
-						Effect.andThen(Http.client.fetch),
-						Effect.retry({ times: 3 }),
-						Effect.scoped,
-					),
+				HttpClientRequest.post(`${partyKitOrigin}/parties/main/global`).pipe(
+					HttpClientRequest.jsonBody(["errors"]),
+					Effect.andThen(HttpClient.fetch),
+					Effect.retry({ times: 3 }),
+					Effect.scoped,
+				),
 			),
 		);
 	});

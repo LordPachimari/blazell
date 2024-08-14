@@ -95,7 +95,7 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	createProductOption: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	createPrices: {
@@ -106,12 +106,12 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	deleteProduct: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	publishProduct: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	copyProduct: {
@@ -119,22 +119,22 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	deleteProductOption: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	deleteProductOptionValue: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	deletePrices: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	deleteVariant: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	duplicateVariant: {
@@ -142,22 +142,22 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	updateProduct: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	updateImagesOrder: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	updateProductOption: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	updateProductOptionValues: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	updatePrice: {
@@ -165,17 +165,17 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	updateVariant: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	uploadImages: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	deleteImage: {
 		dashboard: ["store"],
-		marketplace: ["products"],
+		marketplace: ["stores"],
 		global: ["cart"],
 	},
 	createStore: {
@@ -183,6 +183,7 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	updateStore: {
 		dashboard: ["store"],
+		marketplace: ["stores"],
 	},
 	createOrder: {
 		dashboard: ["store"],

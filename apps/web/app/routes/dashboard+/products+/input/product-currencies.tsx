@@ -46,8 +46,8 @@ function Currencies({
 			<DialogContent className="w-[350px]">
 				<DialogTitle className="p-4">Currencies</DialogTitle>
 
-				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] p-2 ">
-					<Input type="search" />
+				<ScrollArea className="h-[calc(100vh-100px)] border-y-[1px] p-2 pt-0">
+					<Input type="search" className="mt-4" />
 					<ToggleGroup
 						value={currencyCodes}
 						variant="outline"
@@ -75,7 +75,7 @@ function Currencies({
 						{/* ))} */}
 					</ToggleGroup>
 				</ScrollArea>
-				<div className="p-4">
+				<div className="p-4 bg-component">
 					<Button
 						size="md"
 						type="button"

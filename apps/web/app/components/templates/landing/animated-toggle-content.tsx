@@ -1,7 +1,6 @@
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import { Card, CardContent } from "@blazell/ui/card";
-import { Icons } from "@blazell/ui/icons";
 import { Ping } from "@blazell/ui/ping";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
@@ -106,17 +105,9 @@ const RealTime = ({ className }: { className?: string }) => {
 					</div>
 				</CardContent>
 			</Card>
-			<div className="w-full relative flex flex-col items-center">
+			<div className="w-full flex flex-col items-center">
 				<div className="h-4" />
 				<AnimatedList className="bg-component w-full col-span-1 row-span-1" />
-
-				<Button
-					variant="outline"
-					size="icon"
-					className="absolute rounded-full top-0 right-[45%]  z-20"
-				>
-					<Icons.Notification className="animate-notification-shake text-brand-9" />
-				</Button>
 			</div>
 		</div>
 	);

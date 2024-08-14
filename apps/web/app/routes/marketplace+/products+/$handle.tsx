@@ -11,15 +11,18 @@ type LoaderData = {
 };
 export const loader: LoaderFunction = async (args) => {
 	const handle = args.params.handle;
+	const { request } = args;
+	const url = new URL(request.url);
+	const origin = url.origin;
 	if (!handle) {
 		throw new Response(null, {
 			status: 404,
 			statusText: "Not Found",
 		});
 	}
-	const product = (await fetch(
-		`${args.context.cloudflare.env.WORKER_URL}/products/${handle}`,
-	).then((res) => res.json())) as Product | null;
+	const product = (await fetch(`${origin}/api/products/${handle}`).then((res) =>
+		res.json(),
+	)) as Product | null;
 	if (!product) {
 		throw new Response(null, {
 			status: 404,
@@ -56,7 +59,6 @@ export default function Page() {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const selectedVariantHandle = searchParams.get("variant") ?? undefined;
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const setSelectedVariantHandle = (handle: string | undefined) => {
 		setSearchParams(
 			(prev) => {

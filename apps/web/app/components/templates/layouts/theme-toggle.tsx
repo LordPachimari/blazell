@@ -13,7 +13,7 @@ import { useCallback } from "react";
 import { ClientOnly } from "remix-utils/client-only";
 import { useOptimisticThemeMode } from "~/hooks/use-theme";
 import { useUserPreferences } from "~/hooks/use-user-preferences";
-import type { action } from "~/routes/action.set-theme";
+import type { action } from "~/routes/action+/set-theme";
 
 export function ThemeToggle() {
 	const fetcher = useFetcher<typeof action>();

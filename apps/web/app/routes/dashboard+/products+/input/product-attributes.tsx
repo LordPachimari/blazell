@@ -40,6 +40,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { z } from "zod";
+import { isTouchDevice } from "~/utils/helpers";
 const schema = VariantSchema.pick({
 	weight: true,
 	width: true,
@@ -58,6 +59,7 @@ export function Attributes({
 	updateVariant: (props: UpdateVariant) => Promise<void>;
 }) {
 	const [opened, setOpened] = React.useState(false);
+	const [dropdownOpened, setDropdownOpened] = React.useState(false);
 	const countries = React.useMemo(() => Object.entries(ISO_1666), []);
 
 	const methods = useForm<ProductAttributes>({
@@ -111,8 +113,21 @@ export function Attributes({
 				<CardHeader className="p-4 border-b flex justify-between rounded-t-lg items-center flex-row border-border">
 					<CardTitle>Attributes</CardTitle>
 					<div className="flex gap-2 mt-0 no-space-y">
-						<DropdownMenu>
+						<DropdownMenu
+							open={dropdownOpened}
+							onOpenChange={setDropdownOpened}
+						>
 							<DropdownMenuTrigger
+								onPointerDown={(e) => {
+									if (isTouchDevice()) {
+										e.preventDefault();
+									}
+								}}
+								onClick={() => {
+									if (isTouchDevice()) {
+										setDropdownOpened((state) => !state);
+									}
+								}}
 								className={cn(
 									buttonVariants({ size: "icon", variant: "ghost" }),
 									"rounded-lg h-8 w-8 p-0 border-transparent hover:border-border hover:bg-slate-3",
@@ -198,133 +213,135 @@ export function Attributes({
 						<DialogTitle className="p-4 border-b border-border font-bold text-xl">
 							Edit attributes
 						</DialogTitle>
-						<section className="p-4 flex flex-col gap-4">
-							<FormField
-								control={methods.control}
-								name="height"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Height</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												value={field.value ?? ""}
-												type="number"
-												onChange={(event) =>
-													field.onChange(event.target.valueAsNumber)
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="width"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Width</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												value={field.value ?? ""}
-												type="number"
-												onChange={(event) =>
-													field.onChange(event.target.valueAsNumber)
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="length"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Length</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												value={field.value ?? ""}
-												type="number"
-												onChange={(event) =>
-													field.onChange(event.target.valueAsNumber)
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="weight"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Weight</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												value={field.value ?? ""}
-												type="number"
-												onChange={(event) =>
-													field.onChange(event.target.valueAsNumber)
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="material"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Material</FormLabel>
-										<FormControl>
-											<Input {...field} value={field.value ?? ""} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="originCountry"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Origin</FormLabel>
-										<FormControl>
-											<Select
-												{...field}
-												value={field.value ?? ""}
-												onValueChange={(value) => field.onChange(value)}
-											>
-												<SelectTrigger className="my-3">
-													<SelectValue placeholder="Origin country" />
-												</SelectTrigger>
-												<SelectContent>
-													<ScrollArea className="h-[300px]">
-														{countries.map(([code, name]) => (
-															<SelectItem key={code} value={code}>
-																{name}
-															</SelectItem>
-														))}
-													</ScrollArea>
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</section>
+						<ScrollArea className="p-4 h-[78vh] pt-0">
+							<div className="h-full flex flex-col pt-4 gap-4">
+								<FormField
+									control={methods.control}
+									name="height"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Height</FormLabel>
+											<FormControl>
+												<Input
+													{...field}
+													value={field.value ?? ""}
+													type="number"
+													onChange={(event) =>
+														field.onChange(event.target.valueAsNumber)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="width"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Width</FormLabel>
+											<FormControl>
+												<Input
+													{...field}
+													value={field.value ?? ""}
+													type="number"
+													onChange={(event) =>
+														field.onChange(event.target.valueAsNumber)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="length"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Length</FormLabel>
+											<FormControl>
+												<Input
+													{...field}
+													value={field.value ?? ""}
+													type="number"
+													onChange={(event) =>
+														field.onChange(event.target.valueAsNumber)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="weight"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Weight</FormLabel>
+											<FormControl>
+												<Input
+													{...field}
+													value={field.value ?? ""}
+													type="number"
+													onChange={(event) =>
+														field.onChange(event.target.valueAsNumber)
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="material"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Material</FormLabel>
+											<FormControl>
+												<Input {...field} value={field.value ?? ""} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="originCountry"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Origin</FormLabel>
+											<FormControl>
+												<Select
+													{...field}
+													value={field.value ?? ""}
+													onValueChange={(value) => field.onChange(value)}
+												>
+													<SelectTrigger className="my-3">
+														<SelectValue placeholder="Origin country" />
+													</SelectTrigger>
+													<SelectContent>
+														<ScrollArea className="h-[300px]">
+															{countries.map(([code, name]) => (
+																<SelectItem key={code} value={code}>
+																	{name}
+																</SelectItem>
+															))}
+														</ScrollArea>
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</ScrollArea>
 
-						<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
+						<div className="p-4 flex justify-end bg-component w-full border-t border-border absolute bottom-0">
 							<div className="flex gap-2">
 								<Button variant={"outline"} onClick={() => setOpened(false)}>
 									Cancel

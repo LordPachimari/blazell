@@ -16,3 +16,6 @@ export * from "./line-item";
 export * from "./order";
 export * from "./error";
 export * from "./notification";
+export * from "./verification";
+export * from "./session";
+export * from "./auth";

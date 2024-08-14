@@ -22,6 +22,7 @@ import {
 } from "@blazell/ui/form";
 import { Icons } from "@blazell/ui/icons";
 import { Input } from "@blazell/ui/input";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Switch } from "@blazell/ui/switch";
 import { Textarea } from "@blazell/ui/textarea";
 import { toast } from "@blazell/ui/toast";
@@ -38,6 +39,7 @@ import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ProductStatus } from "~/components/molecules/statuses/product-status";
+import { isTouchDevice } from "~/utils/helpers";
 const schema = VariantSchema.pick({
 	title: true,
 	description: true,
@@ -62,6 +64,7 @@ export function ProductInfo({
 	updateProduct: (updates: UpdateProduct["updates"]) => Promise<void>;
 }) {
 	const [opened, setOpened] = React.useState(false);
+	const [dropdownOpened, setDropdownOpened] = React.useState(false);
 
 	const methods = useForm<ProductInfo>({
 		resolver: zodResolver(schema),
@@ -126,12 +129,25 @@ export function ProductInfo({
 					<CardTitle>{defaultVariant?.title ?? "Untitled"}</CardTitle>
 					<div className="flex gap-2 mt-0 no-space-y">
 						<ProductStatus status={product?.status ?? "draft"} />
-						<DropdownMenu>
+						<DropdownMenu
+							open={dropdownOpened}
+							onOpenChange={setDropdownOpened}
+						>
 							<DropdownMenuTrigger
 								className={cn(
 									buttonVariants({ size: "icon", variant: "ghost" }),
 									"rounded-lg h-8 w-8 p-0 border-transparent hover:border-border hover:bg-slate-3",
 								)}
+								onPointerDown={(e) => {
+									if (isTouchDevice()) {
+										e.preventDefault();
+									}
+								}}
+								onClick={() => {
+									if (isTouchDevice()) {
+										setDropdownOpened((state) => !state);
+									}
+								}}
 							>
 								<Icons.Dots className="h-4 w-4 text-slate-11" />
 								<span className="sr-only">Open menu</span>
@@ -181,117 +197,118 @@ export function ProductInfo({
 						<DialogTitle className="p-4 border-b border-border font-bold text-xl">
 							Edit product
 						</DialogTitle>
-						<section className="p-4 flex flex-col gap-4">
-							<FormField
-								control={methods.control}
-								name="status"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Status</FormLabel>
-										<FormControl>
-											<ToggleGroup
-												type="single"
-												value={field.value ?? "draft"}
-												onValueChange={field.onChange}
-											>
-												{productStatuses.map((status) => (
-													<ToggleGroupItem
-														key={status}
-														value={status}
-														className="text-sm h-9"
-													>
-														{status}
-													</ToggleGroupItem>
-												))}
-											</ToggleGroup>
-										</FormControl>
-										<FormDescription>Change product status.</FormDescription>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="title"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Title</FormLabel>
-										<FormControl>
-											<Input {...field} value={field.value ?? ""} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={methods.control}
-								name="handle"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Handle</FormLabel>
-										<FormControl>
-											<Input
-												className="bg-slate-1 "
-												icon={
-													<div className="flex justify-center items-center text-slate-9">
-														/
-													</div>
-												}
-												{...field}
-												value={field.value ?? ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={methods.control}
-								name="description"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Description</FormLabel>
-										<FormControl>
-											<Textarea
-												className="bg-slate-1"
-												{...field}
-												value={field.value ?? ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={methods.control}
-								name="discountable"
-								render={({ field }) => (
-									<FormItem className="flex gap-4 bg-slate-2 border border-border p-4 items-center justify-between rounded-lg">
-										<FormControl>
-											<>
-												<div className="flex flex-col gap-2">
-													<h2 className="font-bold text-sm">Discountable</h2>
-													<p className="text-sm text-slate-11">
-														When checked, discounts will be applied to this
-														product.
-													</p>
-												</div>
-												<Switch
-													checked={field.value ?? false}
-													onCheckedChange={field.onChange}
+						<ScrollArea className="p-4 h-[78vh]  pt-0">
+							<div className="h-full flex flex-col pt-4 gap-4">
+								<FormField
+									control={methods.control}
+									name="status"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Status</FormLabel>
+											<FormControl>
+												<ToggleGroup
+													type="single"
+													value={field.value ?? "draft"}
+													onValueChange={field.onChange}
+												>
+													{productStatuses.map((status) => (
+														<ToggleGroupItem
+															key={status}
+															value={status}
+															className="text-sm h-9"
+														>
+															{status}
+														</ToggleGroupItem>
+													))}
+												</ToggleGroup>
+											</FormControl>
+											<FormDescription>Change product status.</FormDescription>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="title"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Title</FormLabel>
+											<FormControl>
+												<Input {...field} value={field.value ?? ""} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={methods.control}
+									name="handle"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Handle</FormLabel>
+											<FormControl>
+												<Input
+													className="bg-slate-1 "
+													icon={
+														<div className="flex justify-center items-center text-slate-9">
+															/
+														</div>
+													}
+													{...field}
+													value={field.value ?? ""}
 												/>
-											</>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</section>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-						<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
-							{" "}
+								<FormField
+									control={methods.control}
+									name="description"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Description</FormLabel>
+											<FormControl>
+												<Textarea
+													className="bg-slate-1"
+													{...field}
+													value={field.value ?? ""}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={methods.control}
+									name="discountable"
+									render={({ field }) => (
+										<FormItem className="flex gap-4 bg-slate-2 border border-border p-4 items-center justify-between rounded-lg">
+											<FormControl>
+												<>
+													<div className="flex flex-col gap-2">
+														<h2 className="font-bold text-sm">Discountable</h2>
+														<p className="text-sm text-slate-11">
+															When checked, discounts will be applied to this
+															product.
+														</p>
+													</div>
+													<Switch
+														checked={field.value ?? false}
+														onCheckedChange={field.onChange}
+													/>
+												</>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</ScrollArea>
+
+						<div className="p-4 bg-component flex justify-end w-full border-t border-border absolute bottom-0">
 							<div className="flex gap-2">
 								{" "}
 								<Button variant={"outline"} onClick={() => setOpened(false)}>
