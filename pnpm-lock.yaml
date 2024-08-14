@@ -18,6 +18,34 @@ importers:
         specifier: ^1.13.2
         version: 1.13.3
 
+  apps/elysia:
+    dependencies:
+      '@aws-sdk/client-ses':
+        specifier: ^3.624.0
+        version: 3.624.0
+      '@elysiajs/cors':
+        specifier: ^1.0.2
+        version: 1.1.0(elysia@1.1.6)
+      effect:
+        specifier: ^3.6.3
+        version: 3.6.3
+      elysia:
+        specifier: latest
+        version: 1.1.6(@sinclair/typebox@0.33.5)(typescript@5.4.5)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.7.3
+        version: 1.7.3
+      '@flydotio/dockerfile':
+        specifier: latest
+        version: 0.5.8
+      bun-types:
+        specifier: latest
+        version: 1.1.24
+
   apps/expo:
     dependencies:
       '@expo/metro-config':
@@ -134,34 +162,6 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
-
-  apps/server:
-    dependencies:
-      '@aws-sdk/client-ses':
-        specifier: ^3.624.0
-        version: 3.624.0
-      '@elysiajs/cors':
-        specifier: ^1.0.2
-        version: 1.1.0(elysia@1.1.6)
-      effect:
-        specifier: ^3.6.3
-        version: 3.6.3
-      elysia:
-        specifier: latest
-        version: 1.1.6(@sinclair/typebox@0.33.5)(typescript@5.4.5)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
-    devDependencies:
-      '@biomejs/biome':
-        specifier: ^1.7.3
-        version: 1.7.3
-      '@flydotio/dockerfile':
-        specifier: latest
-        version: 0.5.8
-      bun-types:
-        specifier: latest
-        version: 1.1.23
 
   apps/web:
     dependencies:
@@ -11346,8 +11346,8 @@ packages:
     resolution: {integrity: sha512-uYBjakWipfaO/bXI7E8rq6kpwHRZK5cNYrUv2OzZSI/FvmdMyXJ2tG9dKcjEC5YHmHpUAwsargWIZNWdxb/bnQ==}
     dev: false
 
-  /bun-types@1.1.23:
-    resolution: {integrity: sha512-0MxVB5V8Zl98IMiDhhxzYEFyK7TpjPEXf/5A3R/RrYvYG3WXOFWhH61ITdWi7o4Iyvjq21qLwQDi6okzichAyA==}
+  /bun-types@1.1.24:
+    resolution: {integrity: sha512-UNEcYawHWOVw9GYQdOgjJvTQduYlPckmRMqpBqfkWpUzeK2CZfEP/JOYBH6SMypyfkNg/Zsqf0olN6vMrSPg3w==}
     dependencies:
       '@types/node': 20.12.14
       '@types/ws': 8.5.12
