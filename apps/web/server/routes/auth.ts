@@ -62,6 +62,10 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 				),
 			);
 			console.log("Generated OTP", otp);
+			const emailTemp = BlazellOTPEmail({
+				otp,
+				verifyURL: emailVerifyURL.toString(),
+			});
 			// const resend = new Resend(c.env.RESEND_API_KEY);
 
 			// const data = await resend.emails.send({
