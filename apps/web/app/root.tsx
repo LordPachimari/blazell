@@ -12,7 +12,6 @@ import {
 	ScrollRestoration,
 	useLoaderData,
 } from "@remix-run/react";
-//@ts-ignore
 import type { AuthUser, Env, Theme } from "@blazell/validators";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";

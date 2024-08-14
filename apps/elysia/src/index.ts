@@ -12,11 +12,18 @@ const VerifyOTPSchema = z.object({
 
 const app = new Elysia()
 	.use(
-		cors({
-			origin: [/^https:\/\/blazell\.com$/, /^https:\/\/blazell\.pages\.dev$/],
-			methods: ["POST", "OPTIONS", "GET", "PUT"],
-			credentials: true,
-		}),
+		cors(
+			process.env.NODE_ENV === "production"
+				? {
+						origin: [
+							/^https:\/\/blazell\.com$/,
+							/^https:\/\/blazell\.pages\.dev$/,
+						],
+						methods: ["POST", "OPTIONS", "GET", "PUT"],
+						credentials: true,
+					}
+				: {},
+		),
 	)
 	.get("/", () => ({ message: "Hello, world!" }))
 	.post("/emails/verify-otp", async ({ body }) => {
