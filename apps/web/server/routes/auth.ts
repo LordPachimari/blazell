@@ -4,7 +4,6 @@ import { schema } from "@blazell/db";
 import { Cloudflare, Database } from "@blazell/shared";
 import { generateID } from "@blazell/utils";
 import type { AuthUser, GoogleProfile, InsertAuth } from "@blazell/validators";
-import { Resend } from "resend";
 import {
 	PrepareVerificationSchema,
 	VerifyOTPSchema,
@@ -22,8 +21,9 @@ import { eq, lte } from "drizzle-orm";
 import { Effect } from "effect";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
+import { Resend } from "resend";
 import { z } from "zod";
-import { getOtpHTML } from "../emails/verification";
+import { BlazellOTPEmail } from "../emails/verification";
 import { getDB } from "../lib/db";
 
 const app = new Hono<{ Bindings: Bindings & Env }>()
@@ -41,7 +41,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 				},
 			});
 
-			const { emailVerifyURL, otp, verifyURL } = await Effect.runPromise(
+			const { emailVerifyURL, otp } = await Effect.runPromise(
 				AuthService.prepareVerification({
 					target: email,
 					...(!user
@@ -62,14 +62,13 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 				),
 			);
 			console.log("Generated OTP", otp);
-			console.log("Generated Verify URL", verifyURL);
 			const resend = new Resend(c.env.RESEND_API_KEY);
 
 			const data = await resend.emails.send({
 				from: "blazell@blazell.com",
 				to: [email],
 				subject: "hello world",
-				html: getOtpHTML({
+				react: BlazellOTPEmail({
 					otp,
 					verifyURL: emailVerifyURL.toString(),
 				}),

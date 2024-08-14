@@ -40,7 +40,6 @@ const prepareVerification = ({
 			target,
 			...(redirectTo && { redirectTo }),
 		});
-		const verifyURL = new URL(emailVerifyURL.toString());
 
 		// A cryptographically secure random secret can also be generated with:
 		const secret = new OTPAuth.Secret({ size: 20 }).base32;
@@ -86,7 +85,7 @@ const prepareVerification = ({
 		// add the otp to the url we'll email the user.
 		emailVerifyURL.searchParams.set("otp", otp);
 
-		return { otp, emailVerifyURL, verifyURL };
+		return { otp, emailVerifyURL };
 	});
 const verifyOTP = (props: { target: string; otp: string }) => {
 	return Effect.gen(function* () {
