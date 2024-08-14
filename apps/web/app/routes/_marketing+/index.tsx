@@ -1,11 +1,18 @@
 // import { getAuth } from "@clerk/remix/ssr.server";
 import { Badge } from "@blazell/ui/badge";
 import { Icons } from "@blazell/ui/icons";
+import { redirect, type LoaderFunction, json } from "@remix-run/cloudflare";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { Features } from "~/components/templates/landing/features";
 import { Hero } from "~/components/templates/landing/hero";
 import Footer from "~/components/templates/layouts/footer";
 
+export const loader: LoaderFunction = async ({ context }) => {
+	const { user } = context;
+	console.log("user from marketing", user);
+	if (user) return redirect("/marketplace");
+	return json({});
+};
 export const meta: MetaFunction = () => {
 	return [
 		{ title: "Blazell" },

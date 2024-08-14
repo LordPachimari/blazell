@@ -12,5 +12,5 @@
 		// Vite takes care of building everything, not tsc.
 		"noEmit": true
 	},
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules", "build"]
 }

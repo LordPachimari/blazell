@@ -5,20 +5,19 @@ import {
 	json,
 	pgTable,
 	text,
-	uniqueIndex,
 	varchar,
 } from "drizzle-orm/pg-core";
 
+import type { Image } from "../types/image";
+import { orders } from "./order";
 import { products } from "./product";
 import { adminsToStores, users } from "./user";
-import { orders } from "./order";
-import type { Image } from "../types/image";
 export const stores = pgTable(
 	"stores",
 	{
 		id: varchar("id").notNull().primaryKey(),
 
-		name: text("name").notNull(),
+		name: varchar("name").notNull(),
 		logo: json("logo").$type<{
 			id: string;
 			url: string;
@@ -37,7 +36,7 @@ export const stores = pgTable(
 		version: integer("version").notNull(),
 	},
 	(t) => ({
-		storeNameIndex: uniqueIndex("store_name_index").on(t.name),
+		storeNameIndex: index("store_name_index").on(t.name),
 		founderIDIndex: index("founder_id_index").on(t.founderID),
 		countryCodeIndex: index("country_code_index").on(t.countryCode),
 	}),

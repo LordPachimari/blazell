@@ -1,6 +1,7 @@
 import { ulid } from "ulidx";
 
 const prefixes = [
+	"auth",
 	"address",
 	"user",
 	"product",
@@ -20,6 +21,8 @@ const prefixes = [
 	"line_item",
 	"order",
 	"notification",
+	"verification",
+	"session",
 ] as const;
 
 export type Prefix = (typeof prefixes)[number];

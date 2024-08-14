@@ -1,4 +1,3 @@
-import type { User } from "@blazell/validators/client";
 import {
 	json,
 	redirect,
@@ -6,77 +5,108 @@ import {
 	type LoaderFunction,
 } from "@remix-run/cloudflare";
 import { useSearchParams } from "@remix-run/react";
-
+import { UsersAPI } from "@blazell/validators";
 import { parseWithZod } from "@conform-to/zod";
-import { invariantResponse } from "@epic-web/invariant";
+import {
+	HttpClient,
+	HttpClientRequest,
+	HttpClientResponse,
+} from "@effect/platform";
+import { Effect } from "effect";
 import { AnimatePresence } from "framer-motion";
-import { z } from "zod";
-import { userContext } from "~/sessions.server";
-import { CreateUser } from "./create-user";
+import { checkHoneypot } from "~/server/honeypot.server";
+import { Onboard, UserOnboardSchema } from "./onboard";
+import { SESSION_KEY } from "@blazell/auth/src";
 
-// type LoaderData = {
-// 	authID: string;
-// };
 export const loader: LoaderFunction = async (args) => {
-	const cookieHeader = args.request.headers.get("Cookie");
-	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	// const { getToken, userId } = await getAuth(args);
-	// if (!userId) return redirect("/sign-up");
-	// const token = await getToken();
-	const user = await fetch(`${args.context.cloudflare.env.WORKER_URL}/users`, {
-		method: "GET",
-		headers: {
-			// Authorization: `Bearer ${token}`,
-			"x-fake-auth-id": userContextCookie.fakeAuthID,
-		},
-	}).then((res) => res.json() as Promise<User | undefined>);
-	if (user) {
-		return redirect("/dashboard");
+	const { context } = args;
+	const { user } = context;
+	if (!user) {
+		return redirect("/login");
 	}
-	return json({
-		// authID: userId,
-	});
+	return json({});
 };
-export async function action({ request }: ActionFunctionArgs) {
-	const cookieHeader = request.headers.get("Cookie");
-	const cookie = (await userContext.parse(cookieHeader)) || {};
+export async function action({ request, context }: ActionFunctionArgs) {
 	const formData = await request.formData();
+	checkHoneypot(formData, context.cloudflare.env.HONEYPOT_SECRET);
 
 	const submission = parseWithZod(formData, {
-		schema: z.object({
-			fakeAuthID: z.string(),
-		}),
+		schema: UserOnboardSchema,
 	});
-	invariantResponse(
-		submission.status === "success",
-		"Invalid fake auth received",
+	if (submission.status !== "success") {
+		return json({ result: submission.reply() });
+	}
+	const url = new URL(request.url);
+	const origin = url.origin;
+	const redirectTo = url.searchParams.get("redirectTo");
+	const { username } = await Effect.runPromise(
+		HttpClientRequest.get(
+			`${origin}/api/users/username/${submission.value.username}`,
+		).pipe(
+			HttpClient.fetchOk,
+			Effect.flatMap(
+				HttpClientResponse.schemaBodyJson(UsersAPI.UsernameSchema),
+			),
+			Effect.scoped,
+			Effect.orDie,
+		),
 	);
-	cookie.fakeAuthID = submission.value.fakeAuthID;
-	return json(
-		{ result: submission.reply() },
-		{
-			headers: {
-				"Set-Cookie": await userContext.serialize(cookie, {
-					maxAge: 31536000,
-					path: "/",
-					httpOnly: true,
+	if (username) {
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					username: ["Username already exist."],
+				},
+			}),
+		});
+	}
+	const session = context.session;
+	const sessionID = session.get(SESSION_KEY);
+	const { status } = await Effect.runPromise(
+		HttpClientRequest.post(`${origin}/api/users/onboard`)
+			.pipe(
+				HttpClientRequest.setHeader("Authorization", `Bearer ${sessionID}`),
+				HttpClientRequest.jsonBody({
+					username: submission.value.username,
+					countryCode: submission.value.countryCode,
 				}),
-			},
-		},
+				Effect.andThen(HttpClient.fetchOk),
+				Effect.flatMap(
+					HttpClientResponse.schemaBodyJson(UsersAPI.OnboardSchema),
+				),
+				Effect.scoped,
+			)
+			.pipe(
+				Effect.catchAll((error) =>
+					Effect.sync(() => {
+						console.error(error.toString());
+						return {
+							status: "error",
+						};
+					}),
+				),
+			),
 	);
+	if (status === "error") {
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					username: ["Something wrong happened. Please try again later."],
+				},
+			}),
+		});
+	}
+	return redirectTo ? redirect(redirectTo) : redirect("/dashboard");
 }
 
 export default function Page() {
-	// const data = useLoaderData<LoaderData>();
 	const [search] = useSearchParams();
 	const step = search.get("step");
 	return (
 		<main className="w-screen h-screen bg-background">
 			<div className="fixed -z-10 left-0 right-0 h-[450px] opacity-60 bg-gradient-to-b from-brand-3 to-transparent " />
 			<AnimatePresence mode="wait">
-				{(!step || step === "create") && (
-					<CreateUser authID={null} email={undefined} />
-				)}
+				{(!step || step === "create") && <Onboard />}
 				{/* {step === "connect" && <ConnectStripe storeId={storeId} />} */}
 			</AnimatePresence>
 		</main>

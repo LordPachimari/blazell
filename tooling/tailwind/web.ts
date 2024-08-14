@@ -265,6 +265,10 @@ export default {
 							"rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg)",
 					},
 				},
+				"caret-blink": {
+					"0%,70%,100%": { opacity: "1" },
+					"20%,50%": { opacity: "0" },
+				},
 			},
 			backgroundImage: {
 				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -272,6 +276,7 @@ export default {
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				"caret-blink": "caret-blink 1.25s ease-out infinite",
 				fadeIn: "fadeIn .3s ease-in-out",
 				blink: "blink 1.4s both infinite",
 				ring: "ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite",

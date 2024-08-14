@@ -26,6 +26,7 @@ import debounce from "lodash.debounce";
 import React, { useCallback } from "react";
 import { useReplicache } from "~/zustand/replicache";
 import { Currencies } from "./product-currencies";
+import { isTouchDevice } from "~/utils/helpers";
 
 interface ProductPricingProps {
 	prices: (Price | InsertPrice)[];
@@ -40,6 +41,7 @@ function Pricing({
 	className,
 }: ProductPricingProps) {
 	const [opened, setOpened] = React.useState(false);
+	const [dropdownOpened, setDropdownOpened] = React.useState(false);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const updatePrice = useCallback(
@@ -92,8 +94,21 @@ function Pricing({
 						)}
 					</CardTitle>
 					<div className="flex gap-2 items-start m-0">
-						<DropdownMenu>
+						<DropdownMenu
+							open={dropdownOpened}
+							onOpenChange={setDropdownOpened}
+						>
 							<DropdownMenuTrigger
+								onPointerDown={(e) => {
+									if (isTouchDevice()) {
+										e.preventDefault();
+									}
+								}}
+								onClick={() => {
+									if (isTouchDevice()) {
+										setDropdownOpened((state) => !state);
+									}
+								}}
 								className={cn(
 									buttonVariants({ size: "icon", variant: "ghost" }),
 									"rounded-lg h-8 w-8 p-0 m-0 border-transparent hover:border-border hover:bg-slate-3",

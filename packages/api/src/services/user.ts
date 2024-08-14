@@ -1,62 +1,68 @@
 import { schema } from "@blazell/db";
-import { Database } from "@blazell/shared";
+import { AuthContext, Database } from "@blazell/shared";
 import { generateID } from "@blazell/utils";
 import {
 	NeonDatabaseError,
-	type CreateUser,
 	type InsertStore,
 	type InsertUser,
+	type Onboard,
 } from "@blazell/validators";
 import { sql } from "drizzle-orm";
-import { Effect } from "effect";
-import { jsonTable } from "../../../db/schema";
-const createUser = (props: CreateUser) =>
+import { Console, Effect } from "effect";
+const onboardUser = (props: Onboard) =>
 	Effect.gen(function* () {
-		const { countryCode, user } = props;
+		const { countryCode, username } = props;
 		const { manager } = yield* Database;
-		const userID = generateID({ prefix: "user" });
-		const newUser: InsertUser = {
-			id: userID,
-			email: user.email,
-			authID: user.authID,
+		const { auth } = yield* AuthContext;
+		if (!auth.user) return;
+		const user: InsertUser = {
+			id: generateID({ prefix: "auth" }),
 			createdAt: new Date().toISOString(),
-			username: user.username,
 			version: 0,
+			username,
+			email: auth.user.email,
+			...(auth.user.id && { authID: auth.user.id }),
+			...(auth.user.avatar && { avatar: auth.user.avatar }),
+			...(auth.user.fullName && { fullName: auth.user.fullName }),
 		};
-		const storeID = generateID({ prefix: "store" });
 		const store: InsertStore = {
-			id: storeID,
+			id: generateID({ prefix: "store" }),
 			createdAt: new Date().toISOString(),
-			name: user.username,
+			name: username,
 			version: 0,
-			founderID: userID,
+			founderID: user.id,
 			countryCode,
 		};
-		const existingUser = yield* Effect.tryPromise(() =>
-			manager.query.users.findFirst({
-				where: (users, { eq }) => eq(users.email, user.email),
-			}),
+
+		yield* Console.log("Onboarding user", username);
+		yield* Effect.tryPromise(() =>
+			manager
+				.insert(schema.users)
+				//@ts-ignore
+				.values(user)
+				.onConflictDoUpdate({
+					target: schema.users.id,
+					set: {
+						version: sql`${schema.users.version} + 1`,
+						username,
+						authID: auth.user!.id,
+						...(auth.user?.avatar && { avatar: auth.user!.avatar }),
+					},
+				}),
 		);
-		if (existingUser) {
-			yield* Effect.tryPromise(() =>
-				manager
-					.update(schema.users)
-					//@ts-ignore
-					.set({
-						...user,
+		yield* Effect.all(
+			[
+				Effect.tryPromise(() =>
+					manager.update(schema.authUsers).set({
+						username,
 					}),
-			);
-		} else {
-			yield* Effect.tryPromise(() =>
-				manager
-					.insert(schema.users)
+				),
+				Effect.tryPromise(
 					//@ts-ignore
-					.values(newUser),
-			);
-		}
-		yield* Effect.tryPromise(
-			//@ts-ignore
-			() => manager.insert(schema.stores).values(store),
+					() => manager.insert(schema.stores).values(store),
+				),
+			],
+			{ concurrency: 2 },
 		);
 		yield* Effect.tryPromise(() =>
 			manager
@@ -64,13 +70,13 @@ const createUser = (props: CreateUser) =>
 				.values({
 					id: `active_store_id_${user.authID}`,
 					version: 0,
-					value: storeID,
+					value: store.id,
 				})
 				.onConflictDoUpdate({
 					target: schema.jsonTable.id,
 					set: {
-						version: sql`${jsonTable.version} + 1`,
-						value: storeID,
+						version: sql`${schema.jsonTable.version} + 1`,
+						value: store.id,
 					},
 				}),
 		);
@@ -81,4 +87,4 @@ const createUser = (props: CreateUser) =>
 		}),
 	);
 
-export { createUser };
+export { onboardUser };

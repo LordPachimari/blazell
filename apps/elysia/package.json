@@ -1,0 +1,28 @@
+{
+	"name": "@blazell/elysia",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"license": "MIT",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "bun run --watch src/index.ts",
+		"format": "biome format ./src",
+		"lint": "biome lint src",
+		"beautify": "biome format ./src --write"
+	},
+	"dependencies": {
+		"@aws-sdk/client-ses": "^3.624.0",
+		"@elysiajs/cors": "^1.0.2",
+		"effect": "^3.6.3",
+		"elysia": "latest",
+		"resend": "^3.5.0",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.3",
+		"@flydotio/dockerfile": "latest",
+		"bun-types": "latest"
+	},
+	"module": "src/index.js"
+}

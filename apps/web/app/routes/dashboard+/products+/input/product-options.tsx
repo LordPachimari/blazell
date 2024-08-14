@@ -30,6 +30,8 @@ import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { ProductOption } from "@blazell/validators/client";
 import { useReplicache } from "~/zustand/replicache";
+import { isTouchDevice } from "~/utils/helpers";
+import { ScrollArea } from "@blazell/ui/scroll-area";
 
 interface CreateOptionProps {
 	productID: string;
@@ -43,6 +45,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 	const [selectedOption, setSelectedOption] = React.useState<ProductOption>();
 	const [selectedOptionName, setSelectedOptionName] = React.useState<string>();
 	const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
+	const [dropdownOpened, setDropdownOpened] = React.useState(false);
 	const dashboardRep = useReplicache((state) => state.dashboardRep);
 	const createOption = useCallback(
 		async ({ name, values }: { name: string; values?: string[] }) => {
@@ -161,8 +164,21 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 						</span>
 					</CardTitle>
 					<div className="flex gap-2 items-start m-0">
-						<DropdownMenu>
+						<DropdownMenu
+							open={dropdownOpened}
+							onOpenChange={setDropdownOpened}
+						>
 							<DropdownMenuTrigger
+								onPointerDown={(e) => {
+									if (isTouchDevice()) {
+										e.preventDefault();
+									}
+								}}
+								onClick={() => {
+									if (isTouchDevice()) {
+										setDropdownOpened((state) => !state);
+									}
+								}}
 								className={cn(
 									buttonVariants({ size: "icon", variant: "ghost" }),
 									"rounded-lg h-8 w-8 p-0 m-0 border-transparent hover:border-border hover:bg-slate-3",
@@ -258,26 +274,28 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 					<DialogTitle className="p-4 border-b border-border font-bold text-xl">
 						Create option
 					</DialogTitle>
-					<section className="p-4 flex flex-col gap-4">
-						<div className="flex flex-col gap-2">
-							<Label className="pl-[1px]">Name</Label>
-							<Input
-								className="bg-slate-1"
-								value={optionName}
-								placeholder="Color"
-								onChange={(e) => setOptionName(e.target.value)}
-							/>
-						</div>
+					<ScrollArea className="p-4 h-[78vh] pt-0">
+						<div className="h-full flex flex-col pt-4 gap-4">
+							<div className="flex flex-col gap-2">
+								<Label className="pl-[1px]">Name</Label>
+								<Input
+									className="bg-slate-1"
+									value={optionName}
+									placeholder="Color"
+									onChange={(e) => setOptionName(e.target.value)}
+								/>
+							</div>
 
-						<div className="flex flex-col gap-2">
-							<Label className="pl-[1px]">Values</Label>
-							<TagInput
-								className="bg-slate-1"
-								value={values}
-								onChange={(value) => setValues(value)}
-							/>
+							<div className="flex flex-col gap-2">
+								<Label className="pl-[1px]">Values</Label>
+								<TagInput
+									className="bg-slate-1"
+									value={values}
+									onChange={(value) => setValues(value)}
+								/>
+							</div>
 						</div>
-					</section>
+					</ScrollArea>
 					<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
 						<div className="flex gap-2">
 							<Button
@@ -345,7 +363,7 @@ export function ProductOptions({ productID, options }: CreateOptionProps) {
 							/>
 						</div>
 					</section>
-					<div className="p-4 flex justify-end w-full border-t border-border absolute bottom-0">
+					<div className="p-4 flex bg-component justify-end w-full border-t border-border absolute bottom-0">
 						<div className="flex gap-2">
 							<Button
 								variant={"outline"}

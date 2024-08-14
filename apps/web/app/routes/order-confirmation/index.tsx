@@ -14,9 +14,9 @@ export const loader: LoaderFunction = async (args) => {
 	const orderIDs = isArray(ids)
 		? ids.map((id) => `id=${id}`).join("&")
 		: `id=${ids}`;
-	const orders = await fetch(
-		`${args.context.cloudflare.env.WORKER_URL}/orders/order?${orderIDs}`,
-	).then((res) => res.json() as Promise<Order[] | null>);
+	const orders = await fetch(`/orders/order?${orderIDs}`).then(
+		(res) => res.json() as Promise<Order[] | null>,
+	);
 	if (!orders) {
 		throw new Response(null, {
 			status: 404,

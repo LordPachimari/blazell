@@ -1,27 +1,27 @@
 import { Effect, pipe } from "effect";
 
-import { Database } from "@blazell/shared";
+import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError } from "@blazell/validators";
-import { ReplicacheContext } from "../../../context";
 import type { GetRowsWTableName } from "../types";
 
 export const userCVD: GetRowsWTableName = ({ fullRows = false }) => {
 	return Effect.gen(function* () {
-		const { authID } = yield* ReplicacheContext;
+		const { auth } = yield* AuthContext;
+		const authID = auth.user?.id;
 		if (!authID) return [];
 		const { manager } = yield* Database;
 		return yield* pipe(
 			Effect.tryPromise(() =>
 				fullRows
 					? manager.query.users.findFirst({
-							where: (users, { eq }) => eq(users.authID, authID),
+							where: (users, { eq }) => eq(users.id, authID),
 						})
 					: manager.query.users.findFirst({
 							columns: {
 								id: true,
 								version: true,
 							},
-							where: (users, { eq }) => eq(users.authID, authID),
+							where: (users, { eq }) => eq(users.id, authID),
 						}),
 			),
 			Effect.map((user) => [

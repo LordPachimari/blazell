@@ -1,8 +1,8 @@
+import { GlobalMutators } from "@blazell/replicache";
 import { useEffect } from "react";
 import { Replicache } from "replicache";
-import { useReplicache } from "~/zustand/replicache";
-import { GlobalMutators } from "@blazell/replicache";
 import { useRequestInfo } from "~/hooks/use-request-info";
+import { useReplicache } from "~/zustand/replicache";
 
 export function GlobalReplicacheProvider({
 	children,
@@ -12,7 +12,7 @@ export function GlobalReplicacheProvider({
 	const globalRep = useReplicache((state) => state.globalRep);
 	const setGlobalRep = useReplicache((state) => state.setGlobalRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, fakeAuthID, user } = userContext;
+	const { cartID, user } = userContext;
 
 	useEffect(() => {
 		if (globalRep) {
@@ -26,12 +26,11 @@ export function GlobalReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const result = await fetch(`${window.ENV.WORKER_URL}/pull/global`, {
+				const result = await fetch("/api/pull/global", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						...(cartID && { "x-cart-id": cartID }),
-						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 						...(user?.id && { "x-user-id": user.id }),
 					},
 					body: JSON.stringify(req),
@@ -47,13 +46,13 @@ export function GlobalReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const result = await fetch(`${window.ENV.WORKER_URL}/push/global`, {
+				const result = await fetch("/api/push/global", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						...(fakeAuthID && { "x-fake-auth-id": fakeAuthID }),
 					},
 					body: JSON.stringify(req),
+					credentials: "include",
 				});
 
 				return {
@@ -65,7 +64,7 @@ export function GlobalReplicacheProvider({
 			},
 		});
 		setGlobalRep(r);
-	}, [globalRep, setGlobalRep, cartID, fakeAuthID, user]);
+	}, [globalRep, setGlobalRep, cartID, user]);
 
 	return <>{children}</>;
 }

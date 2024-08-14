@@ -1,17 +1,17 @@
 import { cn } from "@blazell/ui";
-import { Button, buttonVariants } from "@blazell/ui/button";
+import { buttonVariants } from "@blazell/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@blazell/ui/dropdown-menu";
 import { Icons } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
+import type { AuthUser } from "@blazell/validators";
 import { Link, useLocation } from "@remix-run/react";
-import Image from "~/components/molecules/image";
 import { Logo } from "~/components/molecules/logo";
+import { ProfileDropdown } from "~/components/profile-dropdown";
 import { GlobalSearchCombobox } from "~/components/search";
 import { useRequestInfo } from "~/hooks/use-request-info";
 import { useGlobalStore } from "~/zustand/store";
@@ -22,8 +22,9 @@ import { useWindowSize } from "~/hooks/use-window-size";
 
 function Header() {
 	const { userContext } = useRequestInfo();
+
 	const { user } = userContext;
-	const { cartID, fakeAuthID } = userContext;
+	const { cartID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 
@@ -46,48 +47,13 @@ function Header() {
 				<ThemeToggle />
 				<Notifications />
 				<CartSheet cartID={cartID ?? null} />
-				{user ? (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="outline"
-								size="icon"
-								className="overflow-hidden rounded-lg"
-							>
-								<Image
-									src={user.avatar?.url}
-									width={36}
-									height={36}
-									alt="Avatar"
-									className="overflow-hidden rounded-lg"
-								/>
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="center" className="w-[200px]">
-							<Link to="/dashboard" prefetch="intent">
-								<DropdownMenuItem className="flex gap-2 ">
-									<Icons.Dashboard size={16} /> Dashboard
-								</DropdownMenuItem>
-							</Link>
-							<Link to="/orders" prefetch="intent">
-								<DropdownMenuItem className="flex gap-2">
-									<Icons.Order size={16} /> Orders
-								</DropdownMenuItem>
-							</Link>
-							<Link to="/settings" prefetch="intent">
-								<DropdownMenuItem className="flex gap-2 ">
-									<Icons.Settings size={16} /> Settings
-								</DropdownMenuItem>
-							</Link>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem className="flex gap-2 focus:text-red-9 focus:bg-red-2">
-								<Icons.Logout size={16} /> Logout
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+				{user?.username ? (
+					<ProfileDropdown user={user as AuthUser} />
 				) : (
 					<Link
-						to={!fakeAuthID ? "/onboarding" : "/dashboard"}
+						to={
+							!user ? "/login" : !user.username ? "/onboarding" : "/dashboard"
+						}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}
 						className={cn(buttonVariants(), "rounded-lg hidden lg:flex")}

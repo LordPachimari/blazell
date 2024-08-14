@@ -1,9 +1,7 @@
-import type { User } from "@blazell/validators/client";
 // import { getAuth } from "@clerk/remix/ssr.server";
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import { userContext } from "~/sessions.server";
 import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 
 import {
@@ -14,27 +12,21 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@blazell/ui/breadcrumb";
+import type { AuthUser } from "@blazell/validators";
+import { ProfileDropdown } from "~/components/profile-dropdown";
 import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
-import { DashboardSearchCombobox } from "./search";
+import { useRequestInfo } from "~/hooks/use-request-info";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
+import { DashboardSearchCombobox } from "./search";
 export const loader: LoaderFunction = async (args) => {
-	const cookieHeader = args.request.headers.get("Cookie");
-	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	if (!userContextCookie.fakeAuthID) {
-		return redirect("/onboarding");
-	}
-	// const { getToken, userId } = await getAuth(args);
-	// if (!userId) return redirect("/sign-in");
-	// const token = await getToken();
-	const user = await fetch(`${args.context.cloudflare.env.WORKER_URL}/users`, {
-		method: "GET",
-		headers: {
-			// Authorization: `Bearer ${token}`,
-			"x-fake-auth-id": userContextCookie.fakeAuthID,
-		},
-	}).then((res) => res.json() as Promise<User | undefined>);
+	const { context } = args;
+	const { user } = context;
+
 	if (!user) {
+		return redirect("/login");
+	}
+	if (!user.username) {
 		return redirect("/onboarding");
 	}
 	return json(user);
@@ -59,6 +51,8 @@ export default function DashboardLayout() {
 	);
 }
 const DashboardNav = () => {
+	const { userContext } = useRequestInfo();
+	const { user } = userContext;
 	return (
 		<div className="h-14 flex items-center w-full fixed top-0 border-b bg-background border-border z-20 px-3">
 			<div className="flex items-center flex-1">
@@ -69,8 +63,9 @@ const DashboardNav = () => {
 				<DashboardSearchCombobox />
 			</div>
 
-			<div className="flex-1">
+			<div className="flex-1 flex justify-start items-center gap-2 px-4">
 				<ThemeToggle />
+				{user && <ProfileDropdown user={user as AuthUser} />}
 			</div>
 		</div>
 	);

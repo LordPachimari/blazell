@@ -13,7 +13,7 @@ import { GlobalSearchCombobox } from "~/components/search";
 import { noHeaderPaths } from "~/constants";
 import { useSidebarState } from "~/hooks/use-sidebar";
 import { useWindowSize } from "~/hooks/use-window-size";
-import type { action } from "~/routes/action.set-sidebar";
+import type { action } from "~/routes/action+/set-sidebar";
 import { useDashboardState } from "~/zustand/state";
 export type SidebarItem = {
 	title: string;
@@ -48,7 +48,7 @@ const items: SidebarItem[] = [
 	// },
 ];
 
-const noSidebarPaths = new Set(["/", "/sign-in", "/sign-up", "/onboarding"]);
+const noSidebarPaths = new Set(["/", "/onboarding", "/login", "/verify"]);
 
 const Sidebar = () => {
 	const fetcher = useFetcher<typeof action>();

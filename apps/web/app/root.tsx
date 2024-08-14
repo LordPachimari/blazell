@@ -13,8 +13,7 @@ import {
 	useLoaderData,
 } from "@remix-run/react";
 //@ts-ignore
-import type { Theme } from "@blazell/validators";
-import type { User } from "@blazell/validators/client";
+import type { AuthUser, Env, Theme } from "@blazell/validators";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/templates/layouts/header";
@@ -22,17 +21,15 @@ import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
 import { useNonce } from "./hooks/use-nonce";
 import { useTheme } from "./hooks/use-theme";
+import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
 import { GlobalReplicacheProvider } from "./providers/replicache/global";
 import { MarketplaceReplicacheProvider } from "./providers/replicache/marketplace";
+import { PartykitProvider } from "./routes/partykit.client";
 import { prefs, userContext } from "./sessions.server";
+import sonnerStyles from "./sonner.css?url";
 import stylesheet from "./tailwind.css?url";
 import { getDomainUrl } from "./utils/helpers";
-import sonnerStyles from "./sonner.css?url";
-import { AppEnvSchema, type AppEnv } from "load-context";
-import { DashboardReplicacheProvider } from "./providers/replicache/dashboard";
-import { PartykitProvider } from "./routes/partykit.client";
 import vaulStyles from "./vaul.css?url";
-import tiptap from "./tiptap.css?url";
 import {
 	GlobalSearchProvider,
 	GlobalStoreProvider,
@@ -51,11 +48,10 @@ export const links: LinksFunction = () => {
 		{ rel: "stylesheet", href: stylesheet },
 		{ rel: "stylesheet", href: sonnerStyles },
 		{ rel: "stylesheet", href: vaulStyles },
-		{ rel: "stylesheet", href: tiptap },
 	].filter(Boolean);
 };
 export type RootLoaderData = {
-	ENV: AppEnv;
+	ENV: Env;
 	requestInfo: {
 		hints: ReturnType<typeof getHints>;
 		origin: string;
@@ -65,60 +61,39 @@ export type RootLoaderData = {
 			sidebarState?: string;
 		};
 		userContext: {
-			user?: User;
-			authID: string | null;
+			user?: AuthUser;
 			cartID?: string;
-			fakeAuthID?: string;
 		};
 	};
 };
 
 export const loader: LoaderFunction = async (args) => {
 	const { context, request } = args;
+	const { REPLICACHE_KEY, PARTYKIT_HOST } = context.cloudflare.env;
+	const { user } = context;
 
-	const { PARTYKIT_HOST, REPLICACHE_KEY, WORKER_URL } = AppEnvSchema.parse(
-		context.cloudflare.env,
-	);
 	const cookieHeader = request.headers.get("Cookie");
 	const prefsCookie = (await prefs.parse(cookieHeader)) || {};
 	const userContextCookie = (await userContext.parse(cookieHeader)) || {};
-	// const token = await getToken();
-	// const user = await fetch(`${WORKER_URL}/users`, {
-	// 	method: "GET",
-	// 	headers: {
-	// 		Authorization: `Bearer ${token}`,
-	// 	},
-	// }).then((res) => res.json() as Promise<User | undefined>);
-	const user = userContextCookie.fakeAuthID
-		? await fetch(`${WORKER_URL}/users/id/${userContextCookie.fakeAuthID}`, {
-				method: "GET",
-			}).then((res) => res.json() as Promise<User | undefined>)
-		: undefined;
-	return json(
-		{
-			ENV: {
-				REPLICACHE_KEY,
-				WORKER_URL,
-				PARTYKIT_HOST,
+	return json({
+		ENV: {
+			REPLICACHE_KEY,
+			PARTYKIT_HOST,
+		},
+		requestInfo: {
+			hints: getHints(request),
+			origin: getDomainUrl(request),
+			path: new URL(request.url).pathname,
+			userPrefs: {
+				theme: prefsCookie.theme,
+				sidebarState: prefsCookie.sidebarState,
 			},
-			requestInfo: {
-				hints: getHints(request),
-				origin: getDomainUrl(request),
-				path: new URL(request.url).pathname,
-				userPrefs: {
-					theme: prefsCookie.theme,
-					sidebarState: prefsCookie.sidebarState,
-				},
-				userContext: {
-					...(user && { user }),
-					// authID: userId,
-					cartID: userContextCookie.cartID,
-					fakeAuthID: userContextCookie.fakeAuthID,
-				},
+			userContext: {
+				...(user && { user }),
+				cartID: userContextCookie.cartID,
 			},
 		},
-		// { headers: { "Cache-Control": "private, max-age=1800" } },
-	);
+	});
 };
 
 function App() {
