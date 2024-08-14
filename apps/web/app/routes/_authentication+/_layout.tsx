@@ -7,7 +7,7 @@ function SignIn() {
 				<img
 					src="https://cdn.midjourney.com/845a8afa-1b61-478c-aff5-013bb5bb3d89/0_0.jpeg"
 					alt="Onboarding"
-					className="h-full max-h-screen w-full object-cover dark:brightness-[0.2] dark:grayscale"
+					className="h-full max-h-screen w-full object-cover dark:brightness-[0.5] dark:grayscale"
 				/>
 			</div>
 			<Outlet />
