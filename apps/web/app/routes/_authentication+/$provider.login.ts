@@ -18,19 +18,16 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		codeVerifier,
 		state,
 	} = await Effect.runPromise(
-		HttpClientRequest.post(`${origin}/api/auth/google`)
+		HttpClientRequest.get(`${origin}/api/auth/google`)
 			.pipe(
-				HttpClientRequest.jsonBody({
-					redirectTo: "/",
-				}),
-				Effect.andThen(HttpClient.fetchOk),
+				HttpClient.fetchOk,
 				Effect.flatMap(HttpClientResponse.schemaBodyJson(AuthAPI.GoogleSchema)),
 				Effect.scoped,
 			)
 			.pipe(
 				Effect.catchAll((error) =>
 					Effect.sync(() => {
-						console.error(error.toString);
+						console.error(error.toString());
 						return {
 							status: "error",
 							url: null,
@@ -41,6 +38,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 				),
 			),
 	);
+	console.log("all from login", status, googleURL, codeVerifier, state);
 	if (status === "error" || !googleURL || !codeVerifier || !state) {
 		return redirect("/error");
 	}

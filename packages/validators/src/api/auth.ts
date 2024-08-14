@@ -9,15 +9,7 @@ const VerifyOTPSchema = Schema.Struct({
 	status: Schema.Literal("success", "error"),
 	valid: Schema.Boolean,
 	onboard: Schema.Boolean,
-	session: Schema.NullOr(
-		Schema.Struct({
-			id: Schema.String,
-			authID: Schema.String,
-			createdAt: Schema.String,
-			expiresAt: Schema.String,
-			fresh: Schema.Boolean,
-		}),
-	),
+	session: Schema.NullishOr(SessionSchema),
 });
 
 const PrepareVerificationSchema = Schema.Struct({
@@ -33,10 +25,7 @@ const GoogleSchema = Schema.Struct({
 
 const GoogleCallbackSchema = Schema.Struct({
 	status: Schema.Literal("success", "error"),
-	session: Schema.extend(
-		SessionSchema,
-		Schema.Struct({ fresh: Schema.Boolean }),
-	),
+	session: SessionSchema,
 	onboard: Schema.Boolean,
 });
 export {

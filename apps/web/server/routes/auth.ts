@@ -1,9 +1,10 @@
-import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses";
 import { AuthService } from "@blazell/api";
+import { Authentication } from "@blazell/auth";
 import { schema } from "@blazell/db";
 import { Cloudflare, Database } from "@blazell/shared";
 import { generateID } from "@blazell/utils";
 import type { AuthUser, GoogleProfile, InsertAuth } from "@blazell/validators";
+import { Resend } from "resend";
 import {
 	PrepareVerificationSchema,
 	VerifyOTPSchema,
@@ -24,7 +25,6 @@ import { cache } from "hono/cache";
 import { z } from "zod";
 import { getOtpHTML } from "../emails/verification";
 import { getDB } from "../lib/db";
-import { Authentication } from "@blazell/auth";
 
 const app = new Hono<{ Bindings: Bindings & Env }>()
 	.post(
@@ -63,43 +63,20 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			);
 			console.log("Generated OTP", otp);
 			console.log("Generated Verify URL", verifyURL);
-			// Initialize the SES client
-			const sesClient = new SESClient({
-				region: "ap-southeast-2", // replace with your region
-				credentials: {
-					accessKeyId: c.env.AWS_EMAIL_ACCESS_KEY,
-					secretAccessKey: c.env.AWS_EMAIL_SECRET_KEY,
-				},
-			});
-			const params = {
-				Destination: {
-					ToAddresses: [email],
-				},
-				Message: {
-					Body: {
-						Html: {
-							Charset: "UTF-8",
-							Data: await getOtpHTML({
-								otp,
-								verifyURL: emailVerifyURL.toString(),
-							}),
-						},
-					},
-					Subject: {
-						Data: "Verify your email",
-					},
-				},
-				Source: "opachimari@gmail.com",
-			};
-			try {
-				const command = new SendEmailCommand(params);
-				await sesClient.send(command);
+			const resend = new Resend("re_123456789");
 
-				return c.json({ status: "success" }, 200);
-			} catch (error) {
-				console.error("Error sending email:", error);
-				return c.json({ status: "error" }, 500);
-			}
+			const data = await resend.emails.send({
+				from: "blazell@blazell.com",
+				to: [email],
+				subject: "hello world",
+				html: await getOtpHTML({
+					otp,
+					verifyURL: emailVerifyURL.toString(),
+				}),
+			});
+			return c.json({
+				data,
+			});
 		},
 	)
 	.get(
@@ -252,6 +229,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 		});
 		return c.json(
 			{
+				status: "success",
 				state,
 				codeVerifier,
 				url: googleURL,

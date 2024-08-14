@@ -1,3 +1,4 @@
+import { Authentication } from "@blazell/auth";
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
 import {
@@ -22,6 +23,7 @@ import { remix } from "remix-hono/handler";
 import { getSession, session } from "remix-hono/session";
 import { getUserAndSession } from "~/server/auth.server";
 import { getDB } from "./lib/db";
+import { authMiddleware } from "./lib/middlewares";
 import auth from "./routes/auth";
 import carts from "./routes/carts";
 import orders from "./routes/orders";
@@ -29,14 +31,11 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
-import { authMiddleware } from "./lib/middlewares";
-import { Authentication } from "@blazell/auth";
-import { hc } from "hono/client";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
 
-const route = app
+app
 	.use("*", async (c, next) => {
 		const wrapped = cors({
 			origin:
@@ -297,6 +296,4 @@ const route = app
 			}
 		},
 	);
-const client = hc<typeof route>("/");
-export { client };
 export default app;

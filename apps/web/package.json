@@ -87,6 +87,7 @@
 		"remix-utils": "^7.6.0",
 		"replicache": "14.2.2",
 		"replicache-react": "^5.0.1",
+		"resend": "^3.5.0",
 		"tunnel-rat": "^0.1.2",
 		"ulidx": "^2.3.0",
 		"zod": "^3.23.8",

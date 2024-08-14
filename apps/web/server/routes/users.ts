@@ -43,7 +43,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 					username: true,
 				},
 			});
-			if (!result) return c.json(null, 200);
+			if (!result) return c.json({ username: null }, 200);
 
 			return c.json(result, 200);
 		},
@@ -98,6 +98,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			const db = getDB({ connectionString: c.env.DATABASE_URL });
 
 			const auth = c.get("auth" as never) as Auth;
+			console.log("auth from onboard", auth);
 			const { username, countryCode } = c.req.valid("json");
 			if (!auth.user) {
 				return c.json({ status: "error", honoStatus: 401 as const }, 401);

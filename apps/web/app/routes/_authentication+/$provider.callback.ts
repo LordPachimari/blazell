@@ -41,15 +41,11 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 		status,
 		onboard,
 	} = await Effect.runPromise(
-		HttpClientRequest.post(
+		HttpClientRequest.get(
 			`${origin}/api/auth/google/callback?code=${code}&codeVerifier=${codeVerifier}`,
 		)
 			.pipe(
-				HttpClientRequest.jsonBody({
-					code,
-					codeVerifier,
-				}),
-				Effect.andThen(HttpClient.fetchOk),
+				HttpClient.fetchOk,
 				Effect.flatMap(
 					HttpClientResponse.schemaBodyJson(AuthAPI.GoogleCallbackSchema),
 				),

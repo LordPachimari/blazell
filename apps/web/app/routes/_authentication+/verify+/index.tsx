@@ -164,6 +164,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 		});
 	}
 	userSession && session.set(SESSION_KEY, userSession.id);
+	console.log("onboard from verify", onboard);
 
 	return redirect(onboard ? "/onboarding" : redirectTo ?? "/marketplace");
 };

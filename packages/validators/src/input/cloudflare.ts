@@ -3,6 +3,7 @@ import { z } from "zod";
 const BindingsSchema = z.object({
 	DATABASE_URL: z.string(),
 	REPLICACHE_KEY: z.string(),
+	RESEND_API_KEY: z.string(),
 	ENVIRONMENT: z.enum([
 		"production",
 		"test",

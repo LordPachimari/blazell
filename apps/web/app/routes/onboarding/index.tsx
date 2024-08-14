@@ -5,7 +5,6 @@ import {
 	type LoaderFunction,
 } from "@remix-run/cloudflare";
 import { useSearchParams } from "@remix-run/react";
-
 import { UsersAPI } from "@blazell/validators";
 import { parseWithZod } from "@conform-to/zod";
 import {
@@ -17,6 +16,7 @@ import { Effect } from "effect";
 import { AnimatePresence } from "framer-motion";
 import { checkHoneypot } from "~/server/honeypot.server";
 import { Onboard, UserOnboardSchema } from "./onboard";
+import { SESSION_KEY } from "@blazell/auth";
 
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
@@ -38,6 +38,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 	const url = new URL(request.url);
 	const origin = url.origin;
+	const redirectTo = url.searchParams.get("redirectTo");
 	const { username } = await Effect.runPromise(
 		HttpClientRequest.get(
 			`${origin}/api/users/username/${submission.value.username}`,
@@ -59,9 +60,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			}),
 		});
 	}
+	const session = context.session;
+	const sessionID = session.get(SESSION_KEY);
 	const { status } = await Effect.runPromise(
 		HttpClientRequest.post(`${origin}/api/users/onboard`)
 			.pipe(
+				HttpClientRequest.setHeader("Authorization", `Bearer ${sessionID}`),
 				HttpClientRequest.jsonBody({
 					username: submission.value.username,
 					countryCode: submission.value.countryCode,
@@ -92,6 +96,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			}),
 		});
 	}
+	return redirectTo ? redirect(redirectTo) : redirect("/dashboard");
 }
 
 export default function Page() {

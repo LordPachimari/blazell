@@ -14,7 +14,7 @@ const SessionSchema = Schema.Struct({
 	createdAt: Schema.String,
 });
 const UserAndSessionSchema = Schema.Struct({
-	user: Schema.Union(
+	user: Schema.NullishOr(
 		Schema.Struct({
 			id: Schema.String,
 			email: Schema.String,
@@ -22,12 +22,8 @@ const UserAndSessionSchema = Schema.Struct({
 			fullName: Schema.Union(Schema.String, Schema.Null),
 			username: Schema.Union(Schema.String, Schema.Null),
 		}),
-		Schema.Null,
 	),
-	session: Schema.extend(
-		SessionSchema,
-		Schema.Struct({ fresh: Schema.Boolean }),
-	),
+	session: Schema.NullishOr(SessionSchema),
 });
 export const SESSION_KEY = "blazell-session";
 

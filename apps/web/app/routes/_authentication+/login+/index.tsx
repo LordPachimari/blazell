@@ -34,7 +34,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 	const url = new URL(request.url);
 	const origin = url.origin;
-	await Effect.runPromise(
+	return await Effect.runPromise(
 		HttpClientRequest.post(`${origin}/api/auth/prepare-verification`)
 			.pipe(
 				HttpClientRequest.jsonBody({
@@ -58,7 +58,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 						return redirect(url.toString());
 					}),
 				),
-				Effect.zipLeft(
+				Effect.zipRight(
 					Effect.sync(() => {
 						const url = new URL(`${origin}/verify`);
 						url.searchParams.set("target", submission.value.email);
