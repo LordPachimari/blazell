@@ -10,6 +10,7 @@ import {
 	type Bindings,
 	type Env,
 } from "@blazell/validators";
+import { HttpClient, HttpClientRequest } from "@effect/platform";
 import { zValidator } from "@hono/zod-validator";
 import {
 	generateCodeVerifier,
@@ -21,9 +22,7 @@ import { eq, lte } from "drizzle-orm";
 import { Effect } from "effect";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
-import { Resend } from "resend";
 import { z } from "zod";
-import { BlazellOTPEmail } from "../emails/verification";
 import { getDB } from "../lib/db";
 
 const app = new Hono<{ Bindings: Bindings & Env }>()
@@ -62,24 +61,37 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 				),
 			);
 			console.log("Generated OTP", otp);
-			const emailTemp = BlazellOTPEmail({
-				otp,
-				verifyURL: emailVerifyURL.toString(),
-			});
-			// const resend = new Resend(c.env.RESEND_API_KEY);
+			console.log("server url", `${c.env.SERVER_URL}/emails/verify-otp`);
 
-			// const data = await resend.emails.send({
-			// 	from: "blazell@blazell.com",
-			// 	to: [email],
-			// 	subject: "hello world",
-			// 	react: BlazellOTPEmail({
-			// 		otp,
-			// 		verifyURL: emailVerifyURL.toString(),
-			// 	}),
-			// });
-			return c.json({
-				// data,
-			});
+			const { status } = await Effect.runPromise(
+				HttpClientRequest.post(`${c.env.SERVER_URL}/emails/verify-otp`).pipe(
+					HttpClientRequest.jsonBody({
+						otp,
+						email,
+						emailVerifyURL: emailVerifyURL.toString(),
+					}),
+					Effect.andThen(HttpClient.fetchOk),
+					Effect.scoped,
+					Effect.catchAll((error) =>
+						Effect.sync(() => {
+							console.error(error.toString());
+							return {
+								status: "error",
+							};
+						}),
+					),
+				),
+			);
+			if (status === "error") {
+				return c.json(
+					{
+						status: "error",
+					},
+					500,
+				);
+			}
+
+			return c.json({});
 		},
 	)
 	.get(

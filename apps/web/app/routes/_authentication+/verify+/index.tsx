@@ -37,6 +37,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
 	const otp = searchParams.get("otp");
 	const redirectTo = searchParams.get("redirectTo");
 	const target = searchParams.get("target");
+	const error = searchParams.get("error");
+	if (error) {
+		return redirect("/error");
+	}
 	console.log("otp", otp, target);
 
 	if (otp && target) {

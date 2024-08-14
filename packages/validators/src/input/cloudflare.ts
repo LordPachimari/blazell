@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 const BindingsSchema = z.object({
+	SERVER_URL: z.string(),
 	DATABASE_URL: z.string(),
 	REPLICACHE_KEY: z.string(),
-	RESEND_API_KEY: z.string(),
 	ENVIRONMENT: z.enum([
 		"production",
 		"test",
@@ -19,8 +19,6 @@ const BindingsSchema = z.object({
 	ACCOUNT_ID: z.string(),
 	GOOGLE_CLIENT_ID: z.string(),
 	GOOGLE_CLIENT_SECRET: z.string(),
-	AWS_EMAIL_ACCESS_KEY: z.string(),
-	AWS_EMAIL_SECRET_KEY: z.string(),
 });
 
 type Env = z.infer<typeof BindingsSchema>;
