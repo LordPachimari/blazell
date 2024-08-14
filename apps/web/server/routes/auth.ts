@@ -62,19 +62,19 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 				),
 			);
 			console.log("Generated OTP", otp);
-			const resend = new Resend(c.env.RESEND_API_KEY);
+			// const resend = new Resend(c.env.RESEND_API_KEY);
 
-			const data = await resend.emails.send({
-				from: "blazell@blazell.com",
-				to: [email],
-				subject: "hello world",
-				react: BlazellOTPEmail({
-					otp,
-					verifyURL: emailVerifyURL.toString(),
-				}),
-			});
+			// const data = await resend.emails.send({
+			// 	from: "blazell@blazell.com",
+			// 	to: [email],
+			// 	subject: "hello world",
+			// 	react: BlazellOTPEmail({
+			// 		otp,
+			// 		verifyURL: emailVerifyURL.toString(),
+			// 	}),
+			// });
 			return c.json({
-				data,
+				// data,
 			});
 		},
 	)
