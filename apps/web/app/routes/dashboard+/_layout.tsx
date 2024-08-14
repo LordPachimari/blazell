@@ -2,7 +2,6 @@
 import { json, redirect, type LoaderFunction } from "@remix-run/cloudflare";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
-import { userContext } from "~/sessions.server";
 import DashboardSidebar, { DashboardSidebarMobile } from "./sidebar";
 
 import {
@@ -13,13 +12,13 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@blazell/ui/breadcrumb";
+import type { AuthUser } from "@blazell/validators";
+import { ProfileDropdown } from "~/components/profile-dropdown";
 import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
+import { useRequestInfo } from "~/hooks/use-request-info";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import { DashboardSearchCombobox } from "./search";
-import { ProfileDropdown } from "~/components/profile-dropdown";
-import { useRequestInfo } from "~/hooks/use-request-info";
-import type { AuthUser } from "@blazell/validators";
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
 	const { user } = context;
