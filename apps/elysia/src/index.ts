@@ -1,4 +1,3 @@
-import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses";
 import { cors } from "@elysiajs/cors";
 import { Elysia, error } from "elysia";
 import { z } from "zod";

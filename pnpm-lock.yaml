@@ -20,12 +20,12 @@ importers:
 
   apps/elysia:
     dependencies:
-      '@aws-sdk/client-ses':
-        specifier: ^3.624.0
-        version: 3.624.0
       '@elysiajs/cors':
         specifier: ^1.0.2
         version: 1.1.0(elysia@1.1.6)
+      '@react-email/components':
+        specifier: ^0.0.22
+        version: 0.0.22(@types/react@18.3.2)(react-dom@18.3.1)(react@18.3.1)
       effect:
         specifier: ^3.6.3
         version: 3.6.3
