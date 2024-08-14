@@ -1,4 +1,3 @@
-import { renderAsync } from "@react-email/render";
 import {
 	Body,
 	Container,
@@ -8,6 +7,7 @@ import {
 	Link,
 	Preview,
 	Text,
+	render,
 } from "@react-email/components";
 interface OTPEmailTemplateProps {
 	verifyURL: string;
@@ -90,12 +90,9 @@ const footer = {
 	textAlign: "center" as const,
 };
 const getOtpHTML = ({ otp, verifyURL }: { otp: string; verifyURL: string }) => {
-	const html = renderAsync(
-		<BlazellOTPEmail otp={otp} verifyURL={verifyURL} />,
-		{
-			pretty: true,
-		},
-	);
+	const html = render(<BlazellOTPEmail otp={otp} verifyURL={verifyURL} />, {
+		pretty: true,
+	});
 	return html;
 };
 

@@ -63,13 +63,13 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			);
 			console.log("Generated OTP", otp);
 			console.log("Generated Verify URL", verifyURL);
-			const resend = new Resend("re_123456789");
+			const resend = new Resend(c.env.RESEND_API_KEY);
 
 			const data = await resend.emails.send({
 				from: "blazell@blazell.com",
 				to: [email],
 				subject: "hello world",
-				html: await getOtpHTML({
+				html: getOtpHTML({
 					otp,
 					verifyURL: emailVerifyURL.toString(),
 				}),
