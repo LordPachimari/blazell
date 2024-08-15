@@ -149,7 +149,7 @@ export const DashboardStoreMutator = ({
 	}, [rep, diffOrders]);
 	useEffect(() => {
 		return rep?.experimentalWatch(diffCustomers, {
-			prefix: "user",
+			prefix: "customer",
 			initialValuesInFirstDiff: true,
 		});
 	}, [rep, diffCustomers]);

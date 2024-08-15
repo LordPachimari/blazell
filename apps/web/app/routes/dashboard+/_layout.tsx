@@ -19,6 +19,10 @@ import { useRequestInfo } from "~/hooks/use-request-info";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import { DashboardSearchCombobox } from "./search";
+import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
+import { useDashboardState } from "~/zustand/state";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
 	const { user } = context;
@@ -53,9 +57,28 @@ export default function DashboardLayout() {
 const DashboardNav = () => {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
+
+	const splitPath = location.pathname.split("/");
+	const mainPath = splitPath[1];
+
+	const opened = useDashboardState((state) => state.opened);
+	const setOpened = useDashboardState((state) => state.setOpened);
 	return (
 		<div className="h-14 flex items-center w-full fixed top-0 border-b bg-background border-border z-20 px-3">
 			<div className="flex items-center flex-1">
+				<Button
+					variant="ghost"
+					size="icon"
+					className={cn(
+						"bottom-4 bg-transparent left-3 size-10 z-50 md:hidden",
+						{
+							hidden: mainPath !== "dashboard",
+						},
+					)}
+					onClick={() => setOpened(!opened)}
+				>
+					<Icons.Menu size={20} strokeWidth={strokeWidth} />
+				</Button>
 				<DynamicBreadcrumb />
 			</div>
 
@@ -63,8 +86,10 @@ const DashboardNav = () => {
 				<DashboardSearchCombobox />
 			</div>
 
-			<div className="flex-1 flex justify-start items-center gap-2 px-4">
-				<ThemeToggle />
+			<div className="flex-1 flex justify-start items-center gap-2">
+				<div className="hidden sm:block">
+					<ThemeToggle />
+				</div>
 				{user && <ProfileDropdown user={user as AuthUser} />}
 			</div>
 		</div>

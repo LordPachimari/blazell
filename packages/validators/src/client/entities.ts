@@ -42,10 +42,9 @@ export type ProductOptionValue = Server.ProductOptionValue & {
 	option: ProductOption;
 };
 export type User = Server.User;
-export type Customer = Pick<
-	User,
-	"id" | "fullName" | "username" | "email" | "phone"
->;
+export type Customer = Server.Customer & {
+	user?: User;
+};
 export type Address = Server.Address;
 export type LineItem = Server.LineItem & {
 	variant: PublishedVariant;

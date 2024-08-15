@@ -167,13 +167,9 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 					manager.query.orders.findMany({
 						where: (orders, { inArray }) => inArray(orders.id, keys),
 						with: {
-							user: {
-								columns: {
-									id: true,
-									fullName: true,
-									email: true,
-									username: true,
-									phone: true,
+							customer: {
+								with: {
+									user: true,
 								},
 							},
 							store: {

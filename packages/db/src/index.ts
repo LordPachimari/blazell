@@ -24,6 +24,7 @@ const tableName = [
 	"orders",
 	"clientErrors",
 	"notifications",
+	"customers",
 ] as const;
 
 export const client = new Pool();

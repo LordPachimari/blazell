@@ -23,6 +23,7 @@ const prefixes = [
 	"notification",
 	"verification",
 	"session",
+	"customer",
 ] as const;
 
 export type Prefix = (typeof prefixes)[number];

@@ -22,3 +22,4 @@ export type ClientError = InferSelectModel<typeof schema.clientErrors>;
 export type Notification = InferSelectModel<typeof schema.notifications>;
 export type Verification = InferSelectModel<typeof schema.verifications>;
 export type Session = InferSelectModel<typeof schema.sessions>;
+export type Customer = InferSelectModel<typeof schema.customers>;

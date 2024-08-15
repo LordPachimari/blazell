@@ -18,6 +18,7 @@ import {
 	orders,
 	clientErrors,
 	notifications,
+	customers,
 } from "./schema";
 
 type UserTable = typeof users;
@@ -52,6 +53,8 @@ type OrderTable = typeof orders;
 
 type ClientErrorTable = typeof clientErrors;
 
+type CustomerTable = typeof customers;
+
 type NotificationTable = typeof notifications;
 export type JsonTable = typeof jsonTable;
 export type Table =
@@ -72,7 +75,8 @@ export type Table =
 	| AddressTable
 	| OrderTable
 	| ClientErrorTable
-	| NotificationTable;
+	| NotificationTable
+	| CustomerTable;
 export const tableNameToTableMap: Record<TableName, Table> = {
 	users,
 	products,
@@ -92,5 +96,6 @@ export const tableNameToTableMap: Record<TableName, Table> = {
 	orders,
 	clientErrors,
 	notifications,
+	customers,
 };
 export type TableNameToTableMap = typeof tableNameToTableMap;

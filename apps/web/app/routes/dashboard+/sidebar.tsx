@@ -55,9 +55,13 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 				<ul className="justify-center py-2 items-center flex w-full flex-col gap-2">
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
+						console.log("location", location.pathname);
+						console.log("href", item.href);
+						console.log("true or nah", location.pathname.startsWith(item.href));
+						const Nav = location.pathname.startsWith(item.href) ? "div" : Link;
 
 						return (
-							<Link
+							<Nav
 								to={item.href}
 								prefetch="viewport"
 								key={item.title}
@@ -96,7 +100,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 								>
 									{item.title}
 								</span>
-							</Link>
+							</Nav>
 						);
 					})}
 				</ul>

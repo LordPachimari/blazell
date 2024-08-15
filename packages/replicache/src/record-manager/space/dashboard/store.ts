@@ -67,13 +67,9 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 									founder: true,
 									orders: {
 										with: {
-											user: {
-												columns: {
-													id: true,
-													fullName: true,
-													email: true,
-													username: true,
-													phone: true,
+											customer: {
+												with: {
+													user: true,
 												},
 											},
 											items: {
@@ -133,10 +129,11 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 											version: true,
 										},
 										with: {
-											user: {
+											customer: {
 												columns: {
 													id: true,
 													version: true,
+													createdAt: true,
 												},
 											},
 										},
@@ -194,15 +191,12 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 							),
 
 							Effect.sync(() => {
-								const customers = store.orders
-									.map((order) => {
-										return order.user;
-									})
-									.filter((user) => user !== null);
+								const customers = store.orders.map((order) => {
+									return order.customer;
+								});
 
 								rowsWTableName.push({
-									tableName: "users" as const,
-									//@ts-ignore
+									tableName: "customers" as const,
 									rows: customers,
 								});
 							}),

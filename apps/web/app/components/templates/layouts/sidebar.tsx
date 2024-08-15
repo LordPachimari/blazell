@@ -10,11 +10,9 @@ import { Link, useFetcher, useLocation } from "@remix-run/react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { GlobalSearchCombobox } from "~/components/search";
-import { noHeaderPaths } from "~/constants";
 import { useSidebarState } from "~/hooks/use-sidebar";
 import { useWindowSize } from "~/hooks/use-window-size";
 import type { action } from "~/routes/action+/set-sidebar";
-import { useDashboardState } from "~/zustand/state";
 export type SidebarItem = {
 	title: string;
 	href: string;
@@ -109,10 +107,9 @@ const Sidebar = () => {
 					<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">
 						{items.map((item) => {
 							const Icon = Icons[item.icon ?? "chevronLeft"];
-							const Nav =
-								item.href === `/${location.pathname.split("/")[1]}`
-									? "div"
-									: Link;
+							const Nav = location.pathname.startsWith(item.href)
+								? "div"
+								: Link;
 
 							return (
 								<Nav
@@ -157,11 +154,6 @@ const Sidebar = () => {
 
 const MobileSidebar = () => {
 	const location = useLocation();
-	const splitPath = location.pathname.split("/");
-	const mainPath = splitPath[1];
-
-	const opened = useDashboardState((state) => state.opened);
-	const setOpened = useDashboardState((state) => state.setOpened);
 	const windowSize = useWindowSize(100);
 
 	return (
@@ -175,24 +167,8 @@ const MobileSidebar = () => {
 				)}
 			>
 				<ul className="justify-evenly items-center flex w-full h-full gap-4 p-2">
-					<Button
-						variant="ghost"
-						size="icon"
-						className={cn(
-							"bottom-4 bg-transparent border-none left-3 size-10 z-50 md:hidden",
-							{
-								hidden: mainPath !== "dashboard",
-							},
-						)}
-						onClick={() => setOpened(!opened)}
-					>
-						<Icons.Dashboard size={20} strokeWidth={strokeWidth} />
-					</Button>
-
 					<DialogSidebar />
-					{windowSize.width < 1024 && !noHeaderPaths(location.pathname) && (
-						<GlobalSearchCombobox />
-					)}
+					{windowSize.width < 1024 && <GlobalSearchCombobox />}
 				</ul>
 			</nav>
 		</div>
@@ -207,11 +183,15 @@ export const DialogSidebar = () => {
 	return (
 		<DialogRoot
 			shouldScaleBackground={true}
-			direction={mainPath === "dashboard" ? "right" : "left"}
+			direction={"left"}
 			open={opened}
 			onOpenChange={setOpened}
 		>
-			<DialogTrigger className="px-2">
+			<DialogTrigger
+				className={
+					"px-2 focus-visible:outline-none rounded-lg size-10 focus-visible:ring-1 focus-visible:ring-ring"
+				}
+			>
 				<Icons.Menu className="text-slate-11" />
 			</DialogTrigger>
 			<DialogContent className="w-72 py-4 bg-component h-screen m-0 rounded-none ">

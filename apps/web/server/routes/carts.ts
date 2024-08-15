@@ -83,7 +83,7 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 			db.transaction(
 				async (transaction) =>
 					Effect.gen(function* () {
-						const [cart, existingUser] = yield* Effect.all([
+						const [cart, existingCustomer, existingUser] = yield* Effect.all([
 							Effect.tryPromise(() =>
 								transaction.query.carts.findFirst({
 									where: (carts, { eq }) => eq(carts.id, id),
@@ -101,6 +101,15 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 								}),
 							),
 
+							Effect.tryPromise(() =>
+								transaction.query.customers.findFirst({
+									where: (customers, { eq }) =>
+										eq(customers.email, checkoutInfo.email),
+									columns: {
+										id: true,
+									},
+								}),
+							),
 							Effect.tryPromise(() =>
 								transaction.query.users.findFirst({
 									where: (users, { eq }) => eq(users.email, checkoutInfo.email),
@@ -121,20 +130,36 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 							);
 						}
 
+						const newCustomerID = generateID({ prefix: "customer" });
 						const newUserID = generateID({ prefix: "user" });
 						const newShippingAddressID = generateID({ prefix: "address" });
 
 						/* create new user if not found */
-						if (!existingUser) {
-							yield* Effect.tryPromise(() =>
-								transaction.insert(schema.users).values({
-									id: newUserID,
-									createdAt: new Date().toISOString(),
-									version: 0,
-									fullName: checkoutInfo.fullName,
-									email: checkoutInfo.email,
-								}),
-							);
+						if (!existingCustomer) {
+							yield* Effect.all([
+								!existingCustomer
+									? Effect.tryPromise(() =>
+											transaction.insert(schema.customers).values({
+												id: newCustomerID,
+												createdAt: new Date().toISOString(),
+												version: 0,
+												email: checkoutInfo.email,
+												userID: existingUser ? existingUser.id : newUserID,
+											}),
+										)
+									: Effect.succeed({}),
+								!existingUser
+									? Effect.tryPromise(() =>
+											transaction.insert(schema.users).values({
+												id: newUserID,
+												createdAt: new Date().toISOString(),
+												version: 0,
+												fullName: checkoutInfo.fullName,
+												email: checkoutInfo.email,
+											}),
+										)
+									: Effect.succeed({}),
+							]);
 						}
 
 						/* create new address*/
@@ -187,7 +212,9 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 											cart.shippingAddressID ?? newShippingAddressID,
 										phone: checkoutInfo.phone,
 										fullName: checkoutInfo.fullName,
-										userID: existingUser ? existingUser.id : newUserID,
+										customerID: existingCustomer
+											? existingCustomer.id
+											: newCustomerID,
 										storeID,
 										total: subtotal,
 										status: "pending",
