@@ -234,7 +234,12 @@ function Stat({
 		>
 			<CardHeader className="pb-2">
 				<CardDescription>
-					This {type === "daily" ? "day" : type === "weekly" ? "week" : "month"}
+					{type === "daily"
+						? "Daily"
+						: type === "weekly"
+							? "Weekly"
+							: "Monthly"}{" "}
+					<span className="font-bold">new customers</span>
 				</CardDescription>
 				<CardTitle className="text-4xl">{`${getNumber(type)}`}</CardTitle>
 			</CardHeader>

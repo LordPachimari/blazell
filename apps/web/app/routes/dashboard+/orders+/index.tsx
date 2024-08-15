@@ -223,12 +223,17 @@ function Revenue({
 		<Card
 			className={cn("max-w-sm", {
 				"hidden lg:block": type === "monthly",
-				"hidden md:block": type === "weekly",
+				"hidden sm:block": type === "weekly",
 			})}
 		>
 			<CardHeader className="pb-2">
 				<CardDescription>
-					This {type === "daily" ? "day" : type === "weekly" ? "week" : "month"}
+					{type === "daily"
+						? "Daily"
+						: type === "weekly"
+							? "Weekly"
+							: "Monthly"}{" "}
+					<span className="font-bold">sales</span>
 				</CardDescription>
 				<CardTitle className="text-4xl">{`$${getAmount(type)}`}</CardTitle>
 			</CardHeader>
@@ -333,12 +338,17 @@ function Numbers({
 		<Card
 			className={cn("max-w-sm", {
 				"hidden lg:block": type === "monthly",
-				"hidden md:block": type === "weekly",
+				"hidden sm:block": type === "weekly",
 			})}
 		>
 			<CardHeader className="pb-2">
 				<CardDescription>
-					This {type === "daily" ? "day" : type === "weekly" ? "week" : "month"}
+					{type === "daily"
+						? "Daily"
+						: type === "weekly"
+							? "Weekly"
+							: "Monthly"}
+					<span className="font-bold"> # orders</span>
 				</CardDescription>
 				<CardTitle className="text-4xl">{getNumber(type)}</CardTitle>
 			</CardHeader>

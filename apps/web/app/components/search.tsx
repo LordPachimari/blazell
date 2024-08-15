@@ -155,7 +155,7 @@ export function GlobalSearchCombobox() {
 						aria-hidden="true"
 					/>
 					<div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-						<div className="flex justify-center lg:items-center p-4">
+						<div className="flex justify-center p-4">
 							<TransitionChild
 								enter="ease-out duration-300"
 								enterFrom="opacity-0 transform-[scale(95%)]"
