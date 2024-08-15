@@ -57,6 +57,7 @@ export default function DashboardLayout() {
 const DashboardNav = () => {
 	const { userContext } = useRequestInfo();
 	const { user } = userContext;
+	const location = useLocation();
 
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
