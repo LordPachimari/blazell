@@ -42,7 +42,6 @@ interface DashboardSidebarProps {
 const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 	const { pathname } = useLocation();
 	const mainPath = pathname.split("/")[2];
-	console.log("mainPat", mainPath);
 
 	return (
 		<div className="w-full h-full flex relative inset-0">
@@ -55,10 +54,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 				<ul className="justify-center py-2 items-center flex w-full flex-col gap-2">
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
-						console.log("location", location.pathname);
-						console.log("href", item.href);
-						console.log("true or nah", location.pathname.startsWith(item.href));
-						const Nav = location.pathname.startsWith(item.href) ? "div" : Link;
+						const Nav = pathname.startsWith(item.href) ? "div" : Link;
 
 						return (
 							<Nav
