@@ -58,8 +58,16 @@ const updateProduct = zod(UpdateProductSchema, (input) =>
 	Effect.gen(function* () {
 		const tableMutator = yield* TableMutator;
 		const { manager } = yield* Database;
-		const { updates, id } = input;
-		yield* tableMutator.update(id, updates, "products");
+		const { updates, id, storeID } = input;
+		yield* Effect.all(
+			[
+				tableMutator.update(id, updates, "products"),
+				storeID
+					? tableMutator.update(storeID, {}, "stores")
+					: Effect.succeed({}),
+			],
+			{ concurrency: 2 },
+		);
 		if (updates.status) {
 			/* delete all the existing line items in the cart so that the user doesn't accidentally buy a product with a modified price */
 			yield* Effect.tryPromise(() =>

@@ -23,8 +23,7 @@ import { useWindowSize } from "~/hooks/use-window-size";
 function Header() {
 	const { userContext } = useRequestInfo();
 
-	const { user } = userContext;
-	const { cartID } = userContext;
+	const { user, cartID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 

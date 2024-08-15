@@ -129,10 +129,11 @@ export function ProductInput({
 				await dashboardRep.mutate.updateProduct({
 					id: productID,
 					updates,
+					storeID: product?.storeID,
 				});
 			}
 		},
-		[dashboardRep, productID],
+		[dashboardRep, productID, product?.storeID],
 	);
 
 	const updateVariant = useCallback(
@@ -214,6 +215,8 @@ export function ProductInput({
 									setView={setView}
 									setIsOpen1={setIsOpen1}
 									onPublish={onPublish}
+									productStatus={product?.status ?? "draft"}
+									updateProduct={updateProduct}
 								/>
 							</div>
 						</section>
@@ -251,6 +254,8 @@ export function ProductInput({
 								setView={setView}
 								setIsOpen1={setIsOpen1}
 								onPublish={onPublish}
+								updateProduct={updateProduct}
+								productStatus={product?.status ?? "draft"}
 							/>
 						</section>
 						<section className="flex flex-col gap-3 order-2 w-full">
@@ -275,11 +280,15 @@ export function ProductInput({
 function DeleteOrPublish({
 	setIsOpen1,
 	onPublish,
+	productStatus,
 	setView,
+	updateProduct,
 }: {
 	setIsOpen1: (value: boolean) => void;
 	onPublish: () => void;
 	setView: (value: "preview" | "input") => void;
+	updateProduct: (updates: UpdateProduct["updates"]) => Promise<void>;
+	productStatus: Product["status"];
 }) {
 	return (
 		<>
@@ -321,20 +330,24 @@ function DeleteOrPublish({
 
 			<Button
 				size="md"
-				onClick={(e) => {
+				onClick={async (e) => {
 					e.preventDefault();
 					e.stopPropagation();
-					onPublish();
+					productStatus !== "published"
+						? onPublish()
+						: await updateProduct({ status: "draft" });
 				}}
-				onKeyDown={(e) => {
+				onKeyDown={async (e) => {
 					if (e.key === "Enter" || e.key === " ") {
 						e.preventDefault();
 						e.stopPropagation();
-						onPublish();
+						productStatus !== "published"
+							? onPublish()
+							: await updateProduct({ status: "draft" });
 					}
 				}}
 			>
-				Publish
+				{productStatus === "published" ? "Unpublish" : "Publish"}
 			</Button>
 		</>
 	);

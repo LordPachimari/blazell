@@ -54,6 +54,7 @@ const Sidebar = () => {
 	const fetcher = useFetcher<typeof action>();
 	const mode = useSidebarState();
 	const nextMode = mode === "open" ? "closed" : "open";
+	const location = useLocation();
 	useHotkeys(["s"], () => {
 		fetcher.submit(
 			{ sidebarState: nextMode },
@@ -63,7 +64,6 @@ const Sidebar = () => {
 			},
 		);
 	});
-	const location = useLocation();
 	const splitPath = location.pathname.split("/");
 	const mainPath = splitPath[1];
 
@@ -109,9 +109,13 @@ const Sidebar = () => {
 					<ul className="justify-center items-center flex w-full flex-col gap-4 px-2 py-6">
 						{items.map((item) => {
 							const Icon = Icons[item.icon ?? "chevronLeft"];
+							const Nav =
+								item.href === `/${location.pathname.split("/")[1]}`
+									? "div"
+									: Link;
 
 							return (
-								<Link
+								<Nav
 									to={item.href}
 									key={item.title}
 									className={cn(
@@ -140,7 +144,7 @@ const Sidebar = () => {
 									>
 										{item.title}
 									</span>
-								</Link>
+								</Nav>
 							);
 						})}
 					</ul>

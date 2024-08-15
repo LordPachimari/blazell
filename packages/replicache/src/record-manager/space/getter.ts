@@ -55,6 +55,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									prices: true,
 								},
 							},
+							store: true,
 						},
 					}),
 				),
@@ -76,6 +77,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 						where: (stores, { inArray }) => inArray(stores.id, keys),
 						with: {
 							founder: true,
+							products: true,
 						},
 					}),
 				),

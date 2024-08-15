@@ -12,6 +12,10 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 
 		const result = await db.query.stores.findFirst({
 			where: (stores, { eq }) => eq(stores.name, name),
+			with: {
+				founder: true,
+				products: true,
+			},
 		});
 
 		if (!result) {

@@ -9,11 +9,17 @@ export default function StoresPage() {
 	const products = useDashboardStore((state) =>
 		state.products.filter((product) => product.storeID === activeStoreID),
 	);
-	console.log("store", store);
+	const variantMap = useDashboardStore((state) => state.variantMap);
 
 	return (
 		<section className="w-full p-3 flex justify-center">
-			<Store store={store} isInitialized={isInitialized} products={products} />
+			<Store
+				store={store}
+				isInitialized={isInitialized}
+				products={products}
+				variantMap={variantMap}
+				isDashboard={true}
+			/>
 		</section>
 	);
 }

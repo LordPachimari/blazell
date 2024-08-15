@@ -22,6 +22,7 @@ const ProductUpdatesSchema = InsertProductSchema.pick({
 
 export const UpdateProductSchema = z.object({
 	updates: ProductUpdatesSchema,
+	storeID: z.string().optional(),
 	id: z.string(),
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;

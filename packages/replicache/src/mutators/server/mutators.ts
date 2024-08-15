@@ -185,6 +185,10 @@ export const affectedSpaces: AffectedSpaces = {
 		dashboard: ["store"],
 		marketplace: ["stores"],
 	},
+	deleteStoreImage: {
+		dashboard: ["store"],
+		marketplace: ["stores"],
+	},
 	createOrder: {
 		dashboard: ["store"],
 	},
@@ -208,9 +212,6 @@ export const affectedSpaces: AffectedSpaces = {
 	},
 	updateCart: {
 		global: ["cart"],
-	},
-	deleteStoreImage: {
-		dashboard: ["store"],
 	},
 	setActiveStoreID: {
 		dashboard: ["store"],

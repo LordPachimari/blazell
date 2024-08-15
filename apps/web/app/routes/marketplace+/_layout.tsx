@@ -307,6 +307,7 @@ const StoreComponent = ({ store }: { store: Store }) => {
 					productCount={store.products?.length ?? 0}
 					isInitialized={isInitialized}
 					size="small"
+					storeURL={`/stores/${store.name}`}
 				/>
 			</CardContent>
 			<CardFooter className="p-0 pt-2">

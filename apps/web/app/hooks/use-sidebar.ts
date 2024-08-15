@@ -9,6 +9,7 @@ import { useRequestInfo } from "~/hooks/use-request-info";
 export function useSidebarState() {
 	const requestInfo = useRequestInfo();
 	const optimisticMode = useOptimisticSidebarMode();
+	console.log("sidebar", optimisticMode);
 	return optimisticMode ?? requestInfo.userPrefs.sidebarState ?? "closed";
 }
 
@@ -22,6 +23,7 @@ export function useOptimisticSidebarMode() {
 		(f) => f.formAction === "/action/set-sidebar",
 	);
 
+	console.log("opt", themeFetcher);
 	if (themeFetcher?.formData) {
 		const submission = parseWithZod(themeFetcher.formData, {
 			schema: SidebarFormSchema,

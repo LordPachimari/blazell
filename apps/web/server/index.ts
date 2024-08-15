@@ -31,6 +31,7 @@ import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
+import images from "./routes/images";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
@@ -229,6 +230,7 @@ app
 	.route("/api/variants", variants)
 	.route("/api/stores", stores)
 	.route("/api/products", products)
+	.route("/api/images", images)
 	.use(
 		async (c, next) => {
 			if (process.env.NODE_ENV !== "development" || import.meta.env.PROD) {

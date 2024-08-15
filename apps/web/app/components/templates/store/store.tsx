@@ -2,7 +2,12 @@ import { cn } from "@blazell/ui";
 import { Noise } from "@blazell/ui/noise";
 import { Skeleton } from "@blazell/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@blazell/ui/tabs";
-import type { Product, Store as StoreType } from "@blazell/validators/client";
+import type {
+	Product,
+	PublishedProduct,
+	Store as StoreType,
+	Variant,
+} from "@blazell/validators/client";
 import { Link } from "@remix-run/react";
 import Image from "~/components/molecules/image";
 import { toImageURL } from "~/utils/helpers";
@@ -13,10 +18,14 @@ export function Store({
 	store,
 	isInitialized,
 	products,
+	variantMap,
+	isDashboard = false,
 }: {
 	store: StoreType | undefined;
 	isInitialized: boolean;
-	products: Product[];
+	products: (Product | PublishedProduct)[];
+	variantMap: Map<string, Variant>;
+	isDashboard?: boolean;
 }) {
 	return (
 		<div className="relative max-w-7xl w-full">
@@ -57,6 +66,7 @@ export function Store({
 				store={store}
 				productCount={products?.length ?? 0}
 				isInitialized={isInitialized}
+				isDashboard={isDashboard}
 			/>
 
 			<Tabs defaultValue="products" className="mt-6">
@@ -69,7 +79,12 @@ export function Store({
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="products">
-					<ProductSection products={products} isInitialized={!!isInitialized} />
+					<ProductSection
+						products={products}
+						isInitialized={!!isInitialized}
+						variantMap={variantMap}
+						isDashboard={isDashboard}
+					/>
 				</TabsContent>
 				<TabsContent value="announcements">
 					<p className="text-slate-11">No announcements found.</p>
@@ -81,9 +96,13 @@ export function Store({
 const ProductSection = ({
 	products,
 	isInitialized,
+	variantMap,
+	isDashboard,
 }: {
-	products: Product[];
+	products: (Product | PublishedProduct)[];
 	isInitialized: boolean;
+	variantMap: Map<string, Variant>;
+	isDashboard?: boolean;
 }) => {
 	return (
 		<section className="w-full pb-14 sm:pb-0">
@@ -98,11 +117,19 @@ const ProductSection = ({
 				{products?.map((product) => (
 					<Link
 						key={product.id}
-						to={`/dashboard/products/${product.id}`}
+						to={
+							isDashboard
+								? `/dashboard/products/${product.id}`
+								: `/stores/${product.store.name}/products/${product.defaultVariant.handle}`
+						}
 						prefetch="viewport"
 						className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
 					>
-						<ProductCard product={product} key={product.id} />
+						<ProductCard
+							product={product}
+							key={product.id}
+							variantMap={variantMap}
+						/>
 					</Link>
 				))}
 			</section>

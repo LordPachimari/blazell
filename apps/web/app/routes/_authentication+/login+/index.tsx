@@ -3,13 +3,7 @@ import { Input } from "@blazell/ui/input";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { type ActionFunctionArgs, json, redirect } from "@remix-run/cloudflare";
-import {
-	Form,
-	Link,
-	useFetcher,
-	useNavigation,
-	useSearchParams,
-} from "@remix-run/react";
+import { Link, useFetcher, useSearchParams } from "@remix-run/react";
 import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { checkHoneypot } from "~/server/honeypot.server";
@@ -84,7 +78,6 @@ const Login = () => {
 		},
 	});
 	const onGoogleClick = useCallback(() => {
-		console.log("clicked");
 		return fetcher.submit(
 			{},
 			{
@@ -93,11 +86,10 @@ const Login = () => {
 			},
 		);
 	}, [fetcher.submit]);
-	const navigation = useNavigation();
 
-	const isEmailSubmitting = navigation.formAction === "/login";
+	const isEmailSubmitting = fetcher.state === "submitting";
 
-	const isGoogleSubmitting = navigation.formAction === "/google/login";
+	const isGoogleSubmitting = fetcher.state === "submitting";
 
 	return (
 		<div className="flex items-center h-full justify-center py-12">
@@ -110,12 +102,11 @@ const Login = () => {
 						</span>
 					</h1>
 				</div>
-				<Form method="POST" {...getFormProps(form)} navigate={false}>
+				<fetcher.Form method="POST" {...getFormProps(form)}>
 					<div className="grid gap-4">
 						<div className="grid gap-2">
 							<Input
 								placeholder="email@example.com"
-								autoFocus
 								{...getInputProps(fields.email, { type: "email" })}
 							/>
 						</div>
@@ -140,7 +131,7 @@ const Login = () => {
 							</div>
 						</div>
 					</div>
-				</Form>
+				</fetcher.Form>
 
 				<Button
 					type="button"

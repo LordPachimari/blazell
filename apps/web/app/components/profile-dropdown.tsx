@@ -12,6 +12,7 @@ import { Icons } from "@blazell/ui/icons";
 import { useCallback } from "react";
 import type { action } from "~/routes/action+/logout";
 import type { AuthUser } from "@blazell/validators";
+import { LoadingSpinner } from "@blazell/ui/loading";
 
 export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
 	const fetcher = useFetcher<typeof action>();
@@ -26,6 +27,7 @@ export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
 			},
 		);
 	}, [fetcher]);
+	const isLoggingOut = fetcher.state === "submitting";
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -34,13 +36,17 @@ export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
 					size="icon"
 					className="overflow-hidden rounded-lg"
 				>
-					<Image
-						src={user.avatar ?? undefined}
-						width={36}
-						height={36}
-						alt="Avatar"
-						className="overflow-hidden rounded-lg"
-					/>
+					{isLoggingOut ? (
+						<LoadingSpinner className="text-slate-11 size-4" />
+					) : (
+						<Image
+							src={user.avatar ?? undefined}
+							width={36}
+							height={36}
+							alt="Avatar"
+							className="overflow-hidden rounded-lg"
+						/>
+					)}
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="center" className="w-[200px]">
@@ -64,7 +70,9 @@ export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
 					onClick={logout}
 					className="flex gap-2 focus:text-red-9 focus:bg-red-2"
 				>
-					<Icons.Logout size={16} /> Logout
+					<span className="flex items-center gap-2">
+						<Icons.Logout size={16} /> Logout
+					</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

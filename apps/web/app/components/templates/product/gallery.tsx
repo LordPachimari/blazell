@@ -63,8 +63,13 @@ function MobileGallery({ images }: GalleryProps) {
 							</CarouselItem>
 						)}
 					</CarouselContent>
-					<CarouselPrevious onClick={(e) => e.stopPropagation()} />
-					<CarouselNext onClick={(e) => e.stopPropagation()} />
+
+					{images.length > 0 && (
+						<>
+							<CarouselPrevious onClick={(e) => e.stopPropagation()} />
+							<CarouselNext onClick={(e) => e.stopPropagation()} />
+						</>
+					)}
 				</Carousel>
 			</div>
 		</div>

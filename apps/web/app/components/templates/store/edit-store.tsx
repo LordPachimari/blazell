@@ -258,11 +258,20 @@ export function EditStore({ store }: { store: Store }) {
 		/* if header image is a saved image from the store, delete it */
 		if (headerSrc === store.headerImage?.url) {
 			store?.headerImage &&
-				(await dashboardRep?.mutate.deleteStoreImage({
-					storeID: store.id,
-					type: "header",
-					url: store.headerImage.url,
-				}));
+				(await Promise.all([
+					dashboardRep?.mutate.deleteStoreImage({
+						storeID: store.id,
+						type: "header",
+						url: store.headerImage.url,
+					}),
+					store.headerImage?.croppedImage?.url
+						? dashboardRep?.mutate.deleteStoreImage({
+								storeID: store.id,
+								type: "header",
+								url: store.headerImage.croppedImage.url,
+							})
+						: Promise.resolve(null),
+				]));
 			setHeaderSrc(undefined);
 		} else {
 			/* if header image is a new image, remove it or replace it with old image */

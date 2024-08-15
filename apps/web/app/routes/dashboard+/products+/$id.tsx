@@ -12,9 +12,7 @@ function ProductRoute() {
 	const variantMap = useDashboardStore((state) => state.variantMap);
 	const productMap = useDashboardStore((state) => state.productMap);
 	const product = productMap.get(params.id!);
-	const [view, setView] = useState<"input" | "preview">(
-		product?.status === "published" ? "preview" : "input",
-	);
+	const [view, setView] = useState<"input" | "preview">("input");
 	if (!product) {
 		return null;
 	}

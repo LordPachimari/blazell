@@ -8,7 +8,8 @@ import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 import { Effect } from "effect";
 import { useEffect } from "react";
-import { ProductOverview } from "~/components/templates/product/product-overview";
+import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
+import { StoreProductOverview } from "~/components/templates/product/store-product-overview";
 import { useRequestInfo } from "~/hooks/use-request-info";
 import { useMarketplaceStore } from "~/zustand/store";
 type LoaderData = {
@@ -115,34 +116,14 @@ export default function Page() {
 	}, []);
 
 	return (
-		<div
-			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-zinc-900/80 backdrop-blur-sm overflow-y-scroll"
-			onClick={() => {
-				navigate("/marketplace", {
-					preventScrollReset: true,
-					unstable_viewTransition: true,
-					replace: true,
-				});
-			}}
-			onKeyDown={(e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					e.stopPropagation();
-					navigate("/marketplace", {
-						preventScrollReset: true,
-						unstable_viewTransition: true,
-						replace: true,
-					});
-				}
-			}}
-		>
-			<main className="flex w-full justify-center relative">
+		<SidebarLayoutWrapper>
+			<main className="flex w-full justify-center relative pt-16">
 				{isInitialized && !product ? (
 					<h1 className="font-freeman text-3xl mt-80 text-white dark:text-black">
 						Product does not exist or has been deleted.
 					</h1>
 				) : (
-					<ProductOverview
+					<StoreProductOverview
 						product={product ?? serverProduct}
 						variants={variants}
 						selectedVariant={selectedVariant}
@@ -153,6 +134,6 @@ export default function Page() {
 					/>
 				)}
 			</main>
-		</div>
+		</SidebarLayoutWrapper>
 	);
 }

@@ -42,6 +42,7 @@ export const storesCVD: GetRowsWTableName = ({ fullRows }) => {
 											optionValues: true,
 										},
 									},
+									store: true,
 								},
 							},
 						},
@@ -100,7 +101,7 @@ export const storesCVD: GetRowsWTableName = ({ fullRows }) => {
 				Effect.sync(() =>
 					rowsWTableName.push({
 						tableName: "stores" as const,
-						rows: storesCVD,
+						rows: storesCVD.filter((cvd) => cvd.products.length > 0),
 					}),
 				),
 			],

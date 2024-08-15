@@ -21,8 +21,9 @@ export type Product = Server.Product & {
 	options?: ProductOption[];
 	collection: Server.Collection;
 	defaultVariant: Variant;
+	store: Server.Store;
 };
-export type PublishedProduct = Server.Product & {
+export type PublishedProduct = Product & {
 	variants: Variant[];
 	options: ProductOption[];
 	collection: Server.Collection;

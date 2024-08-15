@@ -16,28 +16,34 @@ import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
 import { EditStore } from "./edit-store";
 import { cn } from "@blazell/ui";
+import { Link } from "@remix-run/react";
 
 export function StoreInfo({
 	store,
 	productCount,
 	isInitialized,
 	size = "base",
+	storeURL,
+	isDashboard,
 }: {
 	store: Store | undefined;
 	productCount: number;
 	isInitialized: boolean;
 	size?: "small" | "base";
+	storeURL?: string;
+	isDashboard?: boolean;
 }) {
 	const [aboutOpen, setAboutOpen] = useState(false);
+	const Slot = storeURL ? Link : "div";
 	return (
 		<section>
 			<div
-				className={cn(
-					"relative flex h-full items-center w-full p-0 pt-8 gap-4 ",
-					{ "pt-2": size === "small" },
-				)}
+				className={cn("relative flex h-full w-full p-0 pt-8 gap-4 ", {
+					"pt-2": size === "small",
+				})}
 			>
-				<section
+				<Slot
+					to={storeURL!}
 					className={cn("flex h-full items-center md:w-[230px]", {
 						"md:w-[13Z0px]": size === "small",
 					})}
@@ -71,7 +77,7 @@ export function StoreInfo({
 							<ImagePlaceholder />
 						)}
 					</Avatar>
-				</section>
+				</Slot>
 				<section className="h-full w-full">
 					{!isInitialized ? (
 						<div className="flex flex-col gap-2">
@@ -79,7 +85,7 @@ export function StoreInfo({
 							<Skeleton className="w-[100px] mt-1 h-[15px]" />
 						</div>
 					) : (
-						<div className="flex flex-col">
+						<Slot to={storeURL!} className="flex flex-col">
 							<h1
 								className={cn(
 									"line-clamp-2 font-freeman flex-grow text-2xl font-bold leading-none tracking-tight",
@@ -97,7 +103,7 @@ export function StoreInfo({
 									@{store?.founder?.username}
 								</h2>
 							</span>
-						</div>
+						</Slot>
 					)}
 					<AboutStore
 						isOpen={aboutOpen}
@@ -139,10 +145,10 @@ export function StoreInfo({
 							)}
 						</div>
 						{/* <Button className="mt-2">Follow</Button> */}
-						{store && size === "base" && (
+						{store && size === "base" && isDashboard && (
 							<ClientOnly>{() => <EditStore store={store} />}</ClientOnly>
 						)}
-						{!store && size === "base" && (
+						{!store && size === "base" && isDashboard && (
 							<Button variant="ghost" className="mt-2">
 								Edit store
 							</Button>

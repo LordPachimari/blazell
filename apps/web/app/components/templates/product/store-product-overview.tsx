@@ -1,6 +1,14 @@
 import { cn } from "@blazell/ui";
-import { ScrollArea } from "@blazell/ui/scroll-area";
+import { Card, CardContent } from "@blazell/ui/card";
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from "@blazell/ui/carousel";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
+import type { Image as ImageType } from "@blazell/validators";
 import type {
 	Product,
 	ProductOption,
@@ -13,10 +21,9 @@ import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
 import { Actions } from "./actions";
-import { DesktopGallery, MobileGallery } from "./gallery";
 import { GeneralInfo } from "./product-info";
 
-interface ProductOverviewProps {
+interface StoreProductOverviewProps {
 	product: Product | PublishedProduct | undefined;
 	isDashboard?: boolean;
 	variants: (Variant | PublishedVariant)[];
@@ -28,7 +35,7 @@ interface ProductOverviewProps {
 	setView?: (value: "preview" | "input") => void;
 }
 
-const ProductOverview = ({
+const StoreProductOverview = ({
 	product,
 	isDashboard = false,
 	variants,
@@ -38,33 +45,21 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 	setView,
-}: ProductOverviewProps) => {
+}: StoreProductOverviewProps) => {
 	const [isShaking, setIsShaking] = useState(false);
 
 	return (
 		<main className="relative h-[calc(100vh + 70vh] flex flex-col lg:flex-row w-full">
-			<MobileGallery
-				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
-			/>
-			<DesktopGallery
+			<Gallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
 			/>
 
 			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div
-				className={cn(
-					"flex h-screen w-full lg:w-[400px] col-span-3 lg:col-span-2 sticky top-0 dark:bg-black bg-white",
-					{
-						"top-14": isDashboard,
-					},
-				)}
+				className={cn("flex w-full col-span-3 ")}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<ScrollArea
-					className={cn(
-						"border-t lg:border-t-0 lg:border-border   lg:min-h-screen lg:w-[400px]  lg:mt-0  w-full",
-					)}
-				>
+				<div className={cn("w-full")}>
 					<div className="p-4 h-full w-full">
 						<GeneralInfo
 							defaultVariant={defaultVariant}
@@ -96,12 +91,66 @@ const ProductOverview = ({
 							isShaking={isShaking}
 						/>
 					</div>
-				</ScrollArea>
+				</div>
 			</div>
 		</main>
 	);
 };
-export { ProductOverview };
+export { StoreProductOverview };
+interface GalleryProps {
+	images: ImageType[];
+}
+const Gallery = ({ images }: GalleryProps) => {
+	return (
+		<div className="flex flex-col justify-center items-center w-full gap-4 lg:p-4 h-full">
+			<Carousel>
+				<CarouselContent className="shadow-none">
+					{images.map(({ uploaded, base64, url, name, id, fileType }) => (
+						<CarouselItem
+							key={id}
+							className={cn("shadow-none w-full flex justify-center")}
+							onClick={(e) => e.stopPropagation()}
+						>
+							{!uploaded ? (
+								<img
+									alt={name}
+									className={cn(
+										"md:rounded-lg w-max max-w-full select-none object-contain object-center",
+									)}
+									src={toImageURL(base64, fileType)}
+								/>
+							) : (
+								<Image
+									src={url}
+									className={cn(
+										"lg:rounded-lg w-max max-w-full select-none object-contain object-center",
+									)}
+									quality={100}
+									fit="contain"
+								/>
+							)}
+						</CarouselItem>
+					))}
+					{images.length === 0 && (
+						<CarouselItem className="aspect-square">
+							<Card className="p-4 relative text-center shadow-none lg:shadow-md border-[0px] lg:border lg:border-border   height-full cursor-pointer aspect-square">
+								<CardContent className="p-0 flex h-full justify-center items-center">
+									<ImagePlaceholder size={30} />
+								</CardContent>
+							</Card>
+						</CarouselItem>
+					)}
+				</CarouselContent>
+				{images.length > 0 && (
+					<>
+						<CarouselPrevious onClick={(e) => e.stopPropagation()} />
+						<CarouselNext onClick={(e) => e.stopPropagation()} />
+					</>
+				)}
+			</Carousel>
+		</div>
+	);
+};
 
 const ProductVariants = ({
 	isDashboard = false,

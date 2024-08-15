@@ -1,18 +1,17 @@
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
-import type { Product } from "@blazell/validators/client";
+import type { Product, Variant } from "@blazell/validators/client";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import Price from "~/components/molecules/price";
 import { toImageURL } from "~/utils/helpers";
-import { useDashboardStore } from "~/zustand/store";
 
 const ProductCard = ({
 	product,
+	variantMap,
 }: {
 	product: Product;
+	variantMap: Map<string, Variant>;
 }) => {
-	const variantMap = useDashboardStore((state) => state.variantMap);
-
 	const defaultVariant = variantMap.get(product.defaultVariantID);
 	return (
 		<Card className="relative aspect-square p-2 min-w-[15rem] cursor-pointer lg:hover:scale-105 lg:transition-all lg:duration-100 lg:ease-out">

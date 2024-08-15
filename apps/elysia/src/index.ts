@@ -28,21 +28,22 @@ const app = new Elysia()
 	.get("/", () => ({ message: "Hello, world!" }))
 	.post("/emails/verify-otp", async ({ body }) => {
 		const { email, otp, emailVerifyURL } = VerifyOTPSchema.parse(body);
-		const resend = new Resend(process.env.RESEND_API_KEY);
+		console.log("otp", otp);
+		// const resend = new Resend(process.env.RESEND_API_KEY);
 
-		const data = await resend.emails.send({
-			from: "blazell@blazell.com",
-			to: [email],
-			subject: "Verify Email",
-			html: getOtpHTML({
-				otp,
-				verifyURL: emailVerifyURL.toString(),
-			}),
-		});
-		if (data.error) {
-			console.error(data.error);
-			return error(500, "Failed to send email");
-		}
+		// const data = await resend.emails.send({
+		// 	from: "blazell@blazell.com",
+		// 	to: [email],
+		// 	subject: "Verify Email",
+		// 	html: getOtpHTML({
+		// 		otp,
+		// 		verifyURL: emailVerifyURL.toString(),
+		// 	}),
+		// });
+		// if (data.error) {
+		// 	console.error(data.error);
+		// 	return error(500, "Failed to send email");
+		// }
 	})
 	.listen(8080);
 
