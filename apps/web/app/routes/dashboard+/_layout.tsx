@@ -25,15 +25,15 @@ import { useDashboardState } from "~/zustand/state";
 import { Icons, strokeWidth } from "@blazell/ui/icons";
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
-	const { user } = context;
+	const { authUser } = context;
 
-	if (!user) {
+	if (!authUser) {
 		return redirect("/login");
 	}
-	if (!user.username) {
+	if (!authUser.username) {
 		return redirect("/onboarding");
 	}
-	return json(user);
+	return json(authUser);
 };
 
 export default function DashboardLayout() {
@@ -56,7 +56,7 @@ export default function DashboardLayout() {
 }
 const DashboardNav = () => {
 	const { userContext } = useRequestInfo();
-	const { user } = userContext;
+	const { authUser } = userContext;
 	const location = useLocation();
 
 	const splitPath = location.pathname.split("/");
@@ -91,7 +91,7 @@ const DashboardNav = () => {
 				<div className="hidden sm:block">
 					<ThemeToggle />
 				</div>
-				{user && <ProfileDropdown user={user as AuthUser} />}
+				{authUser && <ProfileDropdown authUser={authUser as AuthUser} />}
 			</div>
 		</div>
 	);

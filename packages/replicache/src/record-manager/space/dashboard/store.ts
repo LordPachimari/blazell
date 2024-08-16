@@ -6,9 +6,8 @@ import type { GetRowsWTableName } from "../types";
 
 export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { auth } = yield* AuthContext;
-		const authID = auth.user?.id;
-		if (!authID) return [];
+		const { authUser } = yield* AuthContext;
+		if (!authUser) return [];
 		const { manager } = yield* Database;
 		const rowsWTableName: RowsWTableName[] = [];
 		const activeStoreIDEffect = pipe(
@@ -16,11 +15,11 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 				fullRows
 					? manager.query.jsonTable.findFirst({
 							where: (jsonTable, { eq }) =>
-								eq(jsonTable.id, `active_store_id_${authID}`),
+								eq(jsonTable.id, `active_store_id_${authUser.id}`),
 						})
 					: manager.query.jsonTable.findFirst({
 							where: (jsonTable, { eq }) =>
-								eq(jsonTable.id, `active_store_id_${authID}`),
+								eq(jsonTable.id, `active_store_id_${authUser.id}`),
 							columns: {
 								id: true,
 								version: true,
@@ -36,7 +35,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 		const storeDataEffect = Effect.tryPromise(() =>
 			fullRows
 				? manager.query.users.findFirst({
-						where: (user, { eq }) => eq(user.authID, authID),
+						where: (user, { eq }) => eq(user.authID, authUser.id),
 						with: {
 							stores: {
 								with: {
@@ -100,7 +99,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 						},
 					})
 				: manager.query.users.findFirst({
-						where: (users, { eq }) => eq(users.authID, authID),
+						where: (users, { eq }) => eq(users.authID, authUser.id),
 						with: {
 							stores: {
 								columns: {

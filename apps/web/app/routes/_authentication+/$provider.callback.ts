@@ -1,17 +1,10 @@
-import { SESSION_KEY } from "@blazell/auth/src";
-import { AuthAPI } from "@blazell/validators";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
-import { type ActionFunctionArgs, redirect, json } from "@remix-run/cloudflare";
-import { Effect } from "effect";
+import { type ActionFunctionArgs, json, redirect } from "@remix-run/cloudflare";
+import { SESSION_KEY } from "server/auth";
+import { createCaller } from "server/trpc";
 
 export async function loader({ request, context }: ActionFunctionArgs) {
 	const { session } = context;
 	const url = new URL(request.url);
-	const origin = url.origin;
 
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
@@ -22,8 +15,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 	}
 	const stateCookie = session.get("google_oauth_state") ?? null;
 	const codeVerifier = session.get("code_verifier") ?? null;
-	console.log("all", code, state, stateCookie, codeVerifier);
-	console.log("compare", stateCookie !== state, stateCookie, state);
 	// verify state
 	if (
 		!state ||
@@ -37,33 +28,18 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 		});
 	}
 	const {
-		session: userSession,
 		status,
 		onboard,
-	} = await Effect.runPromise(
-		HttpClientRequest.get(
-			`${origin}/api/auth/google/callback?code=${code}&codeVerifier=${codeVerifier}`,
-		)
-			.pipe(
-				HttpClient.fetchOk,
-				Effect.flatMap(
-					HttpClientResponse.schemaBodyJson(AuthAPI.GoogleCallbackSchema),
-				),
-				Effect.scoped,
-			)
-			.pipe(
-				Effect.catchAll((error) =>
-					Effect.sync(() => {
-						console.error(error.toString());
-						return {
-							status: "error",
-							onboard: false,
-							session: null,
-						};
-					}),
-				),
-			),
-	);
+		session: userSession,
+	} = await createCaller({
+		env: context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+	}).auth.googleCallback({
+		code,
+		codeVerifier,
+	});
 
 	if (status === "error" || !userSession) {
 		return redirect("/error");

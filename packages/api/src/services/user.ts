@@ -8,22 +8,22 @@ import {
 	type Onboard,
 } from "@blazell/validators";
 import { sql } from "drizzle-orm";
-import { Console, Effect } from "effect";
+import { Effect } from "effect";
 const onboardUser = (props: Onboard) =>
 	Effect.gen(function* () {
 		const { countryCode, username } = props;
 		const { manager } = yield* Database;
-		const { auth } = yield* AuthContext;
-		if (!auth.user) return;
+		const { authUser } = yield* AuthContext;
+		if (!authUser) return;
 		const user: InsertUser = {
 			id: generateID({ prefix: "auth" }),
 			createdAt: new Date().toISOString(),
 			version: 0,
 			username,
-			email: auth.user.email,
-			...(auth.user.id && { authID: auth.user.id }),
-			...(auth.user.avatar && { avatar: auth.user.avatar }),
-			...(auth.user.fullName && { fullName: auth.user.fullName }),
+			email: authUser.email,
+			...(authUser.id && { authID: authUser.id }),
+			...(authUser.avatar && { avatar: authUser.avatar }),
+			...(authUser.fullName && { fullName: authUser.fullName }),
 		};
 		const store: InsertStore = {
 			id: generateID({ prefix: "store" }),
@@ -34,7 +34,6 @@ const onboardUser = (props: Onboard) =>
 			countryCode,
 		};
 
-		yield* Console.log("Onboarding user", username);
 		yield* Effect.tryPromise(() =>
 			manager
 				.insert(schema.users)
@@ -45,8 +44,8 @@ const onboardUser = (props: Onboard) =>
 					set: {
 						version: sql`${schema.users.version} + 1`,
 						username,
-						authID: auth.user!.id,
-						...(auth.user?.avatar && { avatar: auth.user!.avatar }),
+						authID: authUser.id,
+						...(authUser.avatar && { avatar: authUser.avatar }),
 					},
 				}),
 		);

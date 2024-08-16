@@ -19,7 +19,6 @@
 	"dependencies": {
 		"@aws-sdk/client-ses": "^3.624.0",
 		"@blazell/api": "workspace:^",
-		"@blazell/auth": "workspace:^",
 		"@blazell/db": "workspace:^",
 		"@blazell/replicache": "workspace:*",
 		"@blazell/shared": "workspace:*",

@@ -23,12 +23,13 @@ import { useWindowSize } from "~/hooks/use-window-size";
 function Header() {
 	const { userContext } = useRequestInfo();
 
-	const { user, cartID } = userContext;
+	const { authUser, cartID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 
 	const windowSize = useWindowSize(100);
 	if (isRootPage) return null;
+	console.log("auth user", authUser);
 
 	return (
 		<Navbar>
@@ -46,12 +47,16 @@ function Header() {
 				<ThemeToggle />
 				<Notifications />
 				<CartSheet cartID={cartID ?? null} />
-				{user?.username ? (
-					<ProfileDropdown user={user as AuthUser} />
+				{authUser?.username ? (
+					<ProfileDropdown authUser={authUser as AuthUser} />
 				) : (
 					<Link
 						to={
-							!user ? "/login" : !user.username ? "/onboarding" : "/dashboard"
+							!authUser
+								? "/login"
+								: !authUser.username
+									? "/onboarding"
+									: "/dashboard"
 						}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}

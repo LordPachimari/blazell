@@ -1,10 +1,10 @@
-import type { Auth } from "@blazell/validators";
+import type { AuthUser } from "@blazell/validators";
 import { Context } from "effect";
 
 class AuthContext extends Context.Tag("Auth")<
 	AuthContext,
 	{
-		readonly auth: Auth;
+		readonly authUser: AuthUser | null;
 	}
 >() {}
 

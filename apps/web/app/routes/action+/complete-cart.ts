@@ -1,4 +1,3 @@
-import { SESSION_KEY } from "@blazell/auth";
 import { CheckoutFormSchema } from "@blazell/validators";
 import { parseWithZod } from "@conform-to/zod";
 import {
@@ -10,6 +9,7 @@ import { Schema } from "@effect/schema";
 import { invariantResponse } from "@epic-web/invariant";
 import { redirect, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { Console, Effect } from "effect";
+import { SESSION_KEY } from "server/auth";
 import { userContext } from "~/sessions.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {

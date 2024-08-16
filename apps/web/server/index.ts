@@ -1,9 +1,7 @@
-import { Authentication } from "@blazell/auth/src";
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
-import { trpcServer } from "@hono/trpc-server";
 import {
-	BindingsSchema,
+	EnvSchema,
 	PullRequest,
 	PushRequest,
 	SpaceIDSchema,
@@ -13,6 +11,7 @@ import {
 	type SpaceRecord,
 } from "@blazell/validators";
 import { Schema } from "@effect/schema";
+import { trpcServer } from "@hono/trpc-server";
 import type { AppLoadContext, RequestHandler } from "@remix-run/cloudflare";
 import { createWorkersKVSessionStorage } from "@remix-run/cloudflare";
 import { Effect, Layer } from "effect";
@@ -22,18 +21,16 @@ import { csrf } from "hono/csrf";
 import { staticAssets } from "remix-hono/cloudflare";
 import { remix } from "remix-hono/handler";
 import { getSession, session } from "remix-hono/session";
-import { getUserAndSession } from "~/server/auth.server";
 import { getDB } from "./lib/db";
-import { authMiddleware } from "./lib/middlewares";
-import auth from "./routes/auth";
+import { getAuthUser } from "./lib/get-user";
 import carts from "./routes/carts";
+import images from "./routes/images";
 import orders from "./routes/orders";
 import products from "./routes/products";
 import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
-import images from "./routes/images";
-import { appRouter } from "./trpc";
+import { appRouter, type TRPCContext } from "./trpc";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
@@ -91,12 +88,11 @@ app
 				});
 			},
 		}),
-		authMiddleware,
 	)
 	.post("/api/pull/:spaceID", async (c) => {
 		// 1: PARSE INPUT
-		const auth = c.get("auth" as never) as Auth;
-		console.log("AUTH FROM PULL", auth);
+		const authUser = await getAuthUser(c);
+		console.log("USER FROM PULL", authUser);
 		const db = getDB({ connectionString: c.env.DATABASE_URL });
 		const subspaceIDs = c.req.queries("subspaces");
 		const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
@@ -108,9 +104,11 @@ app
 		const CloudflareLive = Layer.succeed(
 			Cloudflare,
 			Cloudflare.of({
-				headers: c.req.raw.headers,
 				env: c.env,
 				request: c.req.raw,
+				bindings: {
+					KV: c.env.KV,
+				},
 			}),
 		);
 		const ReplicacheContextLive = Layer.succeed(
@@ -125,7 +123,7 @@ app
 		const AuthContextLive = Layer.succeed(
 			AuthContext,
 			AuthContext.of({
-				auth,
+				authUser,
 			}),
 		);
 
@@ -157,8 +155,10 @@ app
 				Cloudflare,
 				Cloudflare.of({
 					env: c.env,
-					headers: c.req.raw.headers,
 					request: c.req.raw,
+					bindings: {
+						KV: c.env.KV,
+					},
 				}),
 			),
 			Effect.orDie,
@@ -170,8 +170,9 @@ app
 		return c.json(pullResponse, 200);
 	})
 	.post("/api/push/:spaceID", async (c) => {
+		const authUser = await getAuthUser(c);
+
 		// 1: PARSE INPUT
-		const auth = c.get("auth" as never) as Auth;
 		const db = getDB({ connectionString: c.env.DATABASE_URL });
 		const spaceID = Schema.decodeUnknownSync(SpaceIDSchema)(
 			c.req.param("spaceID"),
@@ -187,15 +188,17 @@ app
 			Effect.provideService(
 				AuthContext,
 				AuthContext.of({
-					auth,
+					authUser,
 				}),
 			),
 			Effect.provideService(
 				Cloudflare,
 				Cloudflare.of({
 					env: c.env,
-					headers: c.req.raw.headers,
 					request: c.req.raw,
+					bindings: {
+						KV: c.env.KV,
+					},
 				}),
 			),
 			Effect.provideService(
@@ -225,7 +228,6 @@ app
 		console.log("auth from test", auth);
 		return c.text("hello");
 	})
-	.route("/api/auth", auth)
 	.route("/api/users", users)
 	.route("/api/orders", orders)
 	.route("/api/carts", carts)
@@ -245,21 +247,16 @@ app
 				//@ts-ignore
 				const serverBuild = await import("../build/server");
 				const session = getSession(c);
-				const env = BindingsSchema.parse(c.env);
-				const url = new URL(c.req.url);
-				const origin = url.origin;
-				const auth = Authentication({
-					serverURL: origin,
-				});
-
-				const { user } = await getUserAndSession(auth, session);
+				const env = EnvSchema.parse(c.env);
+				const authUser = await getAuthUser(c);
 
 				const remixContext = {
 					cloudflare: {
 						env,
+						bindings: c.env.KV,
 					},
 					session,
-					user,
+					authUser,
 				} as unknown as AppLoadContext;
 				return remix({
 					//@ts-ignore
@@ -272,21 +269,17 @@ app
 				// biome-ignore lint/style/noUselessElse: <explanation>
 			} else {
 				const session = getSession(c);
-				const env = BindingsSchema.parse(c.env);
-				const url = new URL(c.req.url);
-				const origin = url.origin;
-				const auth = Authentication({
-					serverURL: origin,
-				});
+				const env = EnvSchema.parse(c.env);
 
-				const { user } = await getUserAndSession(auth, session);
+				const authUser = await getAuthUser(c);
 
 				const remixContext = {
 					cloudflare: {
 						env,
+						bindings: c.env.KV,
 					},
 					session,
-					user,
+					authUser,
 				} as unknown as AppLoadContext;
 				if (!handler) {
 					// @ts-expect-error it's not typed
@@ -301,9 +294,20 @@ app
 		},
 	)
 	.use(
-		"/trpc/*",
+		"/api/*",
 		trpcServer({
 			router: appRouter,
+			createContext: async (_opts, c) => {
+				const authUser = await getAuthUser(c);
+				return {
+					env: c.env,
+					request: c.req.raw,
+					authUser,
+					bindings: {
+						KV: c.env.KV,
+					},
+				} satisfies TRPCContext;
+			},
 		}),
 	);
 export default app;

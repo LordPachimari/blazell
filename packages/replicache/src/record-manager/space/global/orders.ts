@@ -6,15 +6,14 @@ import type { GetRowsWTableName } from "../types";
 
 export const ordersCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { auth } = yield* AuthContext;
-		const authID = auth.user?.id;
-		if (!authID) return [];
+		const { authUser } = yield* AuthContext;
+		if (!authUser) return [];
 		const { manager } = yield* Database;
 
 		const ordersCVD = yield* pipe(
 			Effect.tryPromise(() =>
 				manager.query.users.findFirst({
-					where: (users, { eq }) => eq(users.authID, authID),
+					where: (users, { eq }) => eq(users.authID, authUser.id),
 					columns: {
 						email: true,
 					},

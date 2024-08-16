@@ -1,4 +1,3 @@
-import { SESSION_KEY } from "@blazell/auth/src";
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import {
@@ -24,6 +23,8 @@ import {
 } from "@remix-run/cloudflare";
 import { Form, useActionData } from "@remix-run/react";
 import { Effect } from "effect";
+import { SESSION_KEY } from "server/auth";
+import { createCaller } from "server/trpc";
 import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { checkHoneypot } from "~/server/honeypot.server";
@@ -42,38 +43,20 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		return redirect("/error");
 	}
 	console.log("otp", otp, target);
-
 	if (otp && target) {
 		const {
 			valid,
 			onboard,
 			session: userSession,
-		} = await Effect.runPromise(
-			HttpClientRequest.post(`${origin}/api/auth/verify-otp`)
-				.pipe(
-					HttpClientRequest.jsonBody({
-						otp,
-						target,
-					}),
-					Effect.andThen(HttpClient.fetchOk),
-					Effect.flatMap(
-						HttpClientResponse.schemaBodyJson(AuthAPI.VerifyOTPSchema),
-					),
-					Effect.scoped,
-				)
-				.pipe(
-					Effect.catchAll((error) =>
-						Effect.sync(() => {
-							console.error(error.toString);
-							return {
-								valid: false,
-								onboard: false,
-								session: null,
-							};
-						}),
-					),
-				),
-		);
+		} = await createCaller({
+			env: context.cloudflare.env,
+			request,
+			authUser: null,
+			bindings: context.cloudflare.bindings,
+		}).auth.verifyOTP({
+			otp,
+			target,
+		});
 
 		if (!valid) {
 			console.log("INVALID");
@@ -84,7 +67,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		redirectTo && onboardingURL.searchParams.set("redirectTo", redirectTo);
 		target && onboardingURL.searchParams.set("target", target);
 		userSession && session.set(SESSION_KEY, userSession.id);
-		console.log("WHAT IS ONBOARD", onboard);
 		if (onboard) {
 			return redirect(onboardingURL.toString());
 		}

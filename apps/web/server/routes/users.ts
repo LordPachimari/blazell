@@ -113,7 +113,10 @@ const app = new Hono<{ Bindings: Bindings & Env }>()
 							})
 								.pipe(
 									Effect.provideService(Database, Database.of({ manager: tx })),
-									Effect.provideService(AuthContext, AuthContext.of({ auth })),
+									Effect.provideService(
+										AuthContext,
+										AuthContext.of({ authUser: auth.user }),
+									),
 								)
 								.pipe(Effect.orDie),
 						),

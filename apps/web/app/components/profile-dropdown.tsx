@@ -14,12 +14,12 @@ import type { action } from "~/routes/action+/logout";
 import type { AuthUser } from "@blazell/validators";
 import { LoadingSpinner } from "@blazell/ui/loading";
 
-export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
+export const ProfileDropdown = ({ authUser }: { authUser: AuthUser }) => {
 	const fetcher = useFetcher<typeof action>();
 	const logout = useCallback(() => {
 		return fetcher.submit(
 			{
-				user: null,
+				authUser: null,
 			},
 			{
 				method: "POST",
@@ -40,7 +40,7 @@ export const ProfileDropdown = ({ user }: { user: AuthUser }) => {
 						<LoadingSpinner className="text-slate-11 size-4" />
 					) : (
 						<Image
-							src={user.avatar ?? undefined}
+							src={authUser.avatar ?? undefined}
 							width={36}
 							height={36}
 							alt="Avatar"

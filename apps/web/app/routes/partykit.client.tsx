@@ -8,7 +8,7 @@ function PartykitProvider() {
 	const globalRep = useReplicache((state) => state.globalRep);
 	const marketplaceRep = useReplicache((state) => state.marketplaceRep);
 	const { userContext } = useRequestInfo();
-	const { cartID, user } = userContext;
+	const { cartID, authUser } = userContext;
 
 	usePartySocket({
 		// usePartySocket takes the same arguments as PartySocket.
@@ -34,8 +34,8 @@ function PartykitProvider() {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								...(user?.id && {
-									"x-user-id": user.id,
+								...(authUser?.userID && {
+									"x-user-id": authUser.userID,
 								}),
 								...(cartID && { "x-cart-id": cartID }),
 							},

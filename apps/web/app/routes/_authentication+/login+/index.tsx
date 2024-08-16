@@ -10,9 +10,8 @@ import { checkHoneypot } from "~/server/honeypot.server";
 
 import { LoadingSpinner } from "@blazell/ui/loading";
 import { EmailSchema } from "@blazell/validators";
-import { HttpClient, HttpClientRequest } from "@effect/platform";
-import { Effect } from "effect";
 import { useCallback } from "react";
+import { createCaller } from "server/trpc";
 const schema = z.object({
 	email: EmailSchema,
 	redirectTo: z.string().optional(),
@@ -28,41 +27,27 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	}
 	const url = new URL(request.url);
 	const origin = url.origin;
-	return await Effect.runPromise(
-		HttpClientRequest.post(`${origin}/api/auth/prepare-verification`)
-			.pipe(
-				HttpClientRequest.jsonBody({
-					email: submission.value.email,
-					...(submission.value.redirectTo && {
-						redirectTo: submission.value.redirectTo,
-					}),
-				}),
-				Effect.andThen(HttpClient.fetchOk),
-				Effect.scoped,
-			)
-			.pipe(
-				Effect.catchAll((error) =>
-					Effect.sync(() => {
-						console.error(error.reason, error.toString());
-						const url = new URL(`${origin}/error`);
-						url.searchParams.set(
-							"error",
-							"Something went wrong. Please try again later.",
-						);
-						return redirect(url.toString());
-					}),
-				),
-				Effect.zipRight(
-					Effect.sync(() => {
-						const url = new URL(`${origin}/verify`);
-						url.searchParams.set("target", submission.value.email);
-						submission.value.redirectTo &&
-							url.searchParams.set("redirectTo", submission.value.redirectTo);
-						return redirect(url.toString());
-					}),
-				),
-			),
-	);
+	const { status, message } = await createCaller({
+		env: context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+	}).auth.prepareVerification({
+		email: submission.value.email,
+		redirectTo: submission.value.redirectTo,
+	});
+	if (status === "error") {
+		console.error(message);
+		const url = new URL(`${origin}/error`);
+		url.searchParams.set("error", message);
+		return redirect(url.toString());
+	}
+
+	const successURL = new URL(`${origin}/verify`);
+	successURL.searchParams.set("target", submission.value.email);
+	submission.value.redirectTo &&
+		successURL.searchParams.set("redirectTo", submission.value.redirectTo);
+	return redirect(successURL.toString());
 }
 const Login = () => {
 	const isPending = useIsPending();

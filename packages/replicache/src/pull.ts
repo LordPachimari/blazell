@@ -26,11 +26,11 @@ export const pull = ({
 > =>
 	Effect.gen(function* (_) {
 		const { spaceID } = yield* ReplicacheContext;
-		const { auth } = yield* AuthContext;
+		const { authUser } = yield* AuthContext;
 		const requestCookie = pull.cookie;
 		yield* _(Effect.log(`SPACE ID ${spaceID}`));
 
-		if (spaceID === "dashboard" && !auth.user) {
+		if (spaceID === "dashboard" && !authUser) {
 			yield* _(Effect.log("not authorized"));
 			const resp: PullResponseOKV1 = {
 				lastMutationIDChanges: {},

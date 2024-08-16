@@ -16,7 +16,7 @@ import { Effect } from "effect";
 import { AnimatePresence } from "framer-motion";
 import { checkHoneypot } from "~/server/honeypot.server";
 import { Onboard, UserOnboardSchema } from "./onboard";
-import { SESSION_KEY } from "@blazell/auth/src";
+import { SESSION_KEY } from "server/auth";
 
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;

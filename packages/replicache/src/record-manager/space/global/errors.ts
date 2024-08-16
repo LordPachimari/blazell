@@ -6,10 +6,10 @@ import { NeonDatabaseError } from "@blazell/validators";
 
 export const errorsCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { headers } = yield* Cloudflare;
+		const { request } = yield* Cloudflare;
 
-		const userID = headers.get("x-user-id");
-		const globalID = headers.get("x-global-id");
+		const userID = request.headers.get("x-user-id");
+		const globalID = request.headers.get("x-global-id");
 		const id = userID ?? globalID;
 		if (!id) return [];
 		const { manager } = yield* Database;

@@ -39,7 +39,6 @@ import {
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
-import { createCaller } from "server/trpc";
 
 export const links: LinksFunction = () => {
 	return [
@@ -61,7 +60,7 @@ export type RootLoaderData = {
 			sidebarState?: string;
 		};
 		userContext: {
-			user?: AuthUser;
+			authUser?: AuthUser;
 			cartID?: string;
 		};
 	};
@@ -70,9 +69,7 @@ export type RootLoaderData = {
 export const loader: LoaderFunction = async (args) => {
 	const { context, request } = args;
 	const { REPLICACHE_KEY, PARTYKIT_HOST } = context.cloudflare.env;
-	const { user } = context;
-	const result = await createCaller({}).hello("world");
-	console.log("root BITCHAS", result);
+	const { authUser } = context;
 
 	const cookieHeader = request.headers.get("Cookie");
 	const prefsCookie = (await prefs.parse(cookieHeader)) || {};
@@ -91,7 +88,7 @@ export const loader: LoaderFunction = async (args) => {
 				sidebarState: prefsCookie.sidebarState,
 			},
 			userContext: {
-				...(user && { user }),
+				...(authUser && { authUser }),
 				cartID: userContextCookie.cartID,
 			},
 		},

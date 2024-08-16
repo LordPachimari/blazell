@@ -34,7 +34,7 @@ export function useOptimisticUserContextMode() {
 		const submission = parseWithZod(userContext.formData, {
 			schema: z.object({
 				cartID: z.optional(z.string()),
-				user: z.nullable(AuthUserSchema),
+				authUser: z.nullable(AuthUserSchema),
 			}),
 		});
 
