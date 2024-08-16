@@ -39,6 +39,7 @@ import {
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
+import { createCaller } from "server/trpc";
 
 export const links: LinksFunction = () => {
 	return [
@@ -70,6 +71,8 @@ export const loader: LoaderFunction = async (args) => {
 	const { context, request } = args;
 	const { REPLICACHE_KEY, PARTYKIT_HOST } = context.cloudflare.env;
 	const { user } = context;
+	const result = await createCaller({}).hello("world");
+	console.log("root BITCHAS", result);
 
 	const cookieHeader = request.headers.get("Cookie");
 	const prefsCookie = (await prefs.parse(cookieHeader)) || {};

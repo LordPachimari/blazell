@@ -1,6 +1,7 @@
 import { Authentication } from "@blazell/auth/src";
 import { pull, push, ReplicacheContext, staticPull } from "@blazell/replicache";
 import { AuthContext, Cloudflare, Database } from "@blazell/shared";
+import { trpcServer } from "@hono/trpc-server";
 import {
 	BindingsSchema,
 	PullRequest,
@@ -32,6 +33,7 @@ import stores from "./routes/stores";
 import users from "./routes/users";
 import variants from "./routes/variants";
 import images from "./routes/images";
+import { appRouter } from "./trpc";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
 let handler: RequestHandler | undefined;
@@ -297,5 +299,11 @@ app
 				return handler(c.req.raw, remixContext);
 			}
 		},
+	)
+	.use(
+		"/trpc/*",
+		trpcServer({
+			router: appRouter,
+		}),
 	);
 export default app;

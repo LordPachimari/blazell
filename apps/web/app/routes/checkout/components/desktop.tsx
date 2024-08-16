@@ -10,6 +10,7 @@ import { useGlobalStore } from "~/zustand/store";
 import { CartInfo } from "./cart-info";
 import { CustomerInfo } from "./customer-info";
 import { ShippingAddressInfo } from "./shipping-address-info";
+import { LoadingSpinner } from "@blazell/ui/loading";
 
 export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 	const fetcher = useFetcher();
@@ -83,6 +84,9 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 										type="submit"
 										disabled={isSubmitting}
 									>
+										{isSubmitting && (
+											<LoadingSpinner className="text-white size-4 mr-2" />
+										)}
 										Pay
 									</Button>
 								</section>
@@ -97,6 +101,9 @@ export const DesktopCheckout = ({ cartID }: { cartID: string }) => {
 										type="submit"
 										disabled={isSubmitting}
 									>
+										{isSubmitting && (
+											<LoadingSpinner className="text-white size-4 mr-2" />
+										)}
 										Pay
 									</Button>
 								</section>
