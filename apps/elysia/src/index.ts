@@ -20,7 +20,6 @@ const app = new Elysia()
 							/^https:\/\/blazell\.pages\.dev$/,
 						],
 						methods: ["POST", "OPTIONS", "GET", "PUT"],
-						credentials: true,
 					}
 				: {},
 		),

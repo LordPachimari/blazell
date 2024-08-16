@@ -14,7 +14,7 @@ export const CreateClientError = ({
 }: {
 	title: string;
 	message: string;
-	userID: string | undefined;
+	userID: string | undefined | null;
 	partyKitOrigin: string;
 }) =>
 	Effect.gen(function* () {

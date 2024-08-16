@@ -1,20 +1,24 @@
-import { AuthService } from "@blazell/api";
+import { AuthService, ErrorService, UserService } from "@blazell/api";
 import { verifyOTP } from "@blazell/api/src/services/auth";
-import { schema } from "@blazell/db";
-import { Cloudflare, Database } from "@blazell/shared";
-import { generateID } from "@blazell/utils";
+import { schema, tableNameToTableMap } from "@blazell/db";
+import { AuthContext, Cloudflare, Database } from "@blazell/shared";
+import { cartSubtotal, generateID } from "@blazell/utils";
 import {
+	CartError,
+	CheckoutFormSchema,
+	NeonDatabaseError,
 	PrepareVerificationSchema,
 	type AuthUser,
 	type Env,
 	type GoogleProfile,
 	type InsertAuth,
+	type InsertOrder,
 } from "@blazell/validators";
 import { HttpClient, HttpClientRequest } from "@effect/platform";
 import { initTRPC } from "@trpc/server";
 import { generateCodeVerifier, generateState, Google } from "arctic";
-import { eq, lte } from "drizzle-orm";
-import { Effect } from "effect";
+import { eq, lte, sql } from "drizzle-orm";
+import { Console, Effect } from "effect";
 import { createDate, TimeSpan } from "oslo";
 import { getDB } from "server/lib/db";
 import { z } from "zod";
@@ -28,17 +32,17 @@ export type TRPCContext = {
 };
 const t = initTRPC.context<TRPCContext>().create();
 
-export const publicProcedure = t.procedure;
+export const procedure = t.procedure;
 export const router = t.router;
 const createCallerFactory = t.createCallerFactory;
 
 const helloRouter = router({
-	hello: publicProcedure.query(() => {
-		return "hello";
+	hello: procedure.query(() => {
+		return "hello from trpc";
 	}),
 });
 const authRouter = router({
-	userAndSession: publicProcedure
+	userAndSession: procedure
 		.input(z.object({ sessionID: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
@@ -51,7 +55,7 @@ const authRouter = router({
 			});
 			return { user: session?.user, session };
 		}),
-	createSession: publicProcedure
+	createSession: procedure
 		.input(z.object({ authID: z.string(), expiresAt: z.string() }))
 		.mutation(async ({ ctx, input }) => {
 			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
@@ -65,7 +69,7 @@ const authRouter = router({
 			await db.insert(schema.sessions).values(session).returning();
 			return session;
 		}),
-	deleteSession: publicProcedure
+	deleteSession: procedure
 		.input(z.object({ sessionID: z.string() }))
 		.mutation(async ({ ctx, input }) => {
 			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
@@ -73,13 +77,13 @@ const authRouter = router({
 			await db.delete(schema.sessions).where(eq(schema.sessions.id, sessionID));
 			return sessionID;
 		}),
-	deleteExpiredSessions: publicProcedure.mutation(async ({ ctx }) => {
+	deleteExpiredSessions: procedure.mutation(async ({ ctx }) => {
 		const db = getDB({ connectionString: ctx.env.DATABASE_URL });
 		await db
 			.delete(schema.sessions)
 			.where(lte(schema.sessions.expiresAt, new Date().toISOString()));
 	}),
-	prepareVerification: publicProcedure
+	prepareVerification: procedure
 		.input(PrepareVerificationSchema)
 		.query(async ({ ctx, input }) => {
 			const { env, request, bindings } = ctx;
@@ -144,7 +148,7 @@ const authRouter = router({
 
 			return { status: "success" as const };
 		}),
-	verifyOTP: publicProcedure
+	verifyOTP: procedure
 		.input(z.object({ otp: z.string(), target: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const { env } = ctx;
@@ -193,7 +197,7 @@ const authRouter = router({
 				session,
 			};
 		}),
-	google: publicProcedure.query(async ({ ctx }) => {
+	google: procedure.query(async ({ ctx }) => {
 		const { request, env } = ctx;
 		const url = new URL(request.url);
 		const origin = url.origin;
@@ -228,7 +232,7 @@ const authRouter = router({
 		}
 	}),
 
-	googleCallback: publicProcedure
+	googleCallback: procedure
 		.input(
 			z.object({
 				code: z.string(),
@@ -290,7 +294,10 @@ const authRouter = router({
 					if (newAuthUser) {
 						authUser = newAuthUser;
 					} else {
-						throw new Error("Failed to create user");
+						return {
+							status: "error" as const,
+							message: "Failed to create user",
+						};
 					}
 				}
 
@@ -304,21 +311,654 @@ const authRouter = router({
 				};
 				await db.insert(schema.sessions).values(session).returning();
 				return {
-					status: "success",
+					status: "success" as const,
 					onboard,
 					session,
 				};
 			} catch (error) {
 				console.error(error);
 				return {
-					status: "error",
+					status: "error" as const,
+					message: "Failed to authenticate user",
 				};
 			}
+		}),
+});
+const userRouter = router({
+	id: procedure
+		.input(z.object({ id: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { id } = input;
+			const result = await db.query.users.findFirst({
+				where: (users, { eq }) => eq(users.id, id),
+			});
+
+			return result ?? null;
+		}),
+	username: procedure
+		.input(z.object({ username: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { username } = input;
+			const result = await db.query.users.findFirst({
+				where: (users, { eq }) => eq(users.username, username),
+			});
+
+			return result ?? null;
+		}),
+	email: procedure
+		.input(z.object({ email: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { email } = input;
+			const result = await db.query.users.findFirst({
+				where: (users, { eq }) => eq(users.email, email),
+			});
+
+			return result ?? null;
+		}),
+	onboard: procedure
+		.input(z.object({ username: z.string(), countryCode: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { username, countryCode } = input;
+			const auth = ctx.authUser;
+			if (!auth) {
+				return { status: "error" as const, message: "Unauthorized" };
+			}
+
+			const result = await Effect.runPromise(
+				Effect.gen(function* () {
+					const onboard = yield* Effect.tryPromise(() =>
+						db.transaction(async (tx) =>
+							UserService.onboardUser({
+								countryCode,
+								username,
+							}).pipe(
+								Effect.provideService(Database, Database.of({ manager: tx })),
+								Effect.provideService(
+									AuthContext,
+									AuthContext.of({ authUser: auth }),
+								),
+							),
+						),
+					).pipe(
+						Effect.map(() => ({ status: "success" as const })),
+						Effect.retry({ times: 3 }),
+						Effect.catchAll((e) =>
+							Effect.gen(function* () {
+								yield* Console.log(e.message);
+								return {
+									status: "error" as const,
+									message: "Error onboarding users.",
+								};
+							}),
+						),
+						Effect.zipLeft(
+							Effect.all([
+								HttpClientRequest.post(
+									`${ctx.env.PARTYKIT_ORIGIN}/parties/main/dashboard`,
+								).pipe(
+									HttpClientRequest.jsonBody(["store"]),
+									Effect.andThen(HttpClient.fetch),
+									Effect.retry({ times: 3 }),
+									Effect.scoped,
+								),
+								HttpClientRequest.post(
+									`${ctx.env.PARTYKIT_ORIGIN}/parties/main/global`,
+								).pipe(
+									HttpClientRequest.jsonBody(["user"]),
+									Effect.andThen(HttpClient.fetch),
+									Effect.retry({ times: 3 }),
+									Effect.scoped,
+								),
+							]).pipe(
+								Effect.catchAll((e) =>
+									Effect.sync(() => {
+										console.error(e);
+									}),
+								),
+							),
+						),
+					);
+					return onboard;
+				}),
+			);
+
+			return result;
+		}),
+});
+
+const cartRouter = router({
+	createCart: procedure
+		.input(z.object({ cartID: z.string(), countryCode: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const { authUser } = ctx;
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { cartID, countryCode } = input;
+			const createCartEffect = Effect.tryPromise(() =>
+				db.transaction(
+					async (transaction) =>
+						Effect.gen(function* () {
+							yield* Effect.tryPromise(() =>
+								transaction.insert(schema.carts).values({
+									id: cartID,
+									countryCode,
+									createdAt: new Date().toISOString(),
+									currencyCode: "AUD",
+									...(authUser?.id && { userID: authUser.id }),
+								}),
+							);
+							const [shippingAddress] = yield* Effect.tryPromise(() =>
+								transaction
+									.insert(schema.addresses)
+									.values({
+										countryCode,
+										createdAt: new Date().toISOString(),
+										id: generateID({ prefix: "address" }),
+									})
+									.returning({ id: schema.addresses.id }),
+							);
+							yield* Effect.tryPromise(() =>
+								transaction
+									.update(schema.carts)
+									.set({
+										shippingAddressID: shippingAddress!.id,
+									})
+									.where(eq(schema.carts.id, cartID)),
+							);
+						}).pipe(
+							Effect.catchTags({
+								UnknownException: (error) =>
+									new NeonDatabaseError({ message: error.message }),
+							}),
+						),
+					{ accessMode: "read write", isolationLevel: "read committed" },
+				),
+			).pipe(
+				Effect.flatMap((result) => result),
+				Effect.orDie,
+			);
+			await Effect.runPromise(createCartEffect);
+		}),
+	completeCart: procedure
+		.input(z.object({ checkoutInfo: CheckoutFormSchema, id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { checkoutInfo, id } = input;
+			const orderIDs = await Effect.runPromise(
+				Effect.tryPromise(() =>
+					db.transaction(
+						async (transaction) =>
+							Effect.gen(function* () {
+								const [cart, existingCustomer, existingUser] =
+									yield* Effect.all(
+										[
+											Effect.tryPromise(() =>
+												transaction.query.carts.findFirst({
+													where: (carts, { eq }) => eq(carts.id, id),
+													with: {
+														items: {
+															with: {
+																variant: {
+																	with: {
+																		prices: true,
+																	},
+																},
+															},
+														},
+													},
+												}),
+											),
+
+											Effect.tryPromise(() =>
+												transaction.query.customers.findFirst({
+													where: (customers, { eq }) =>
+														eq(customers.email, checkoutInfo.email),
+													columns: {
+														id: true,
+													},
+												}),
+											),
+											Effect.tryPromise(() =>
+												transaction.query.users.findFirst({
+													where: (users, { eq }) =>
+														eq(users.email, checkoutInfo.email),
+													columns: {
+														id: true,
+													},
+												}),
+											),
+										],
+										{ concurrency: 3 },
+									);
+								if (!cart) {
+									return yield* Effect.fail(
+										new CartError({ message: "Cart not found." }),
+									);
+								}
+								if (!cart.items || cart.items.length === 0) {
+									return yield* Effect.fail(
+										new CartError({ message: "Cart is empty." }),
+									);
+								}
+
+								const newCustomerID = generateID({ prefix: "customer" });
+								const newUserID = generateID({ prefix: "user" });
+								const newShippingAddressID = generateID({ prefix: "address" });
+
+								/* create new user if not found */
+								if (!existingCustomer) {
+									yield* Effect.all([
+										!existingCustomer
+											? Effect.tryPromise(() =>
+													transaction.insert(schema.customers).values({
+														id: newCustomerID,
+														createdAt: new Date().toISOString(),
+														version: 0,
+														email: checkoutInfo.email,
+														userID: existingUser ? existingUser.id : newUserID,
+													}),
+												)
+											: Effect.succeed({}),
+										!existingUser
+											? Effect.tryPromise(() =>
+													transaction.insert(schema.users).values({
+														id: newUserID,
+														createdAt: new Date().toISOString(),
+														version: 0,
+														fullName: checkoutInfo.fullName,
+														email: checkoutInfo.email,
+													}),
+												)
+											: Effect.succeed({}),
+									]);
+								}
+
+								/* create new address*/
+								if (!cart.shippingAddressID) {
+									yield* Effect.tryPromise(() =>
+										transaction.insert(schema.addresses).values({
+											id: newShippingAddressID,
+											address: checkoutInfo.shippingAddress.address,
+											city: checkoutInfo.shippingAddress.city,
+											countryCode: checkoutInfo.shippingAddress.countryCode,
+											postalCode: checkoutInfo.shippingAddress.postalCode,
+											province: checkoutInfo.shippingAddress.province,
+											version: 0,
+											createdAt: new Date().toISOString(),
+											userID: existingUser ? existingUser.id : newUserID,
+										}),
+									);
+								}
+
+								/* items can be from many stores. Map them */
+								const storeIDToLineItem = new Map<string, typeof cart.items>();
+								yield* Effect.forEach(cart.items ?? [], (lineItem) =>
+									Effect.sync(() => {
+										const storeID = lineItem.storeID;
+										const lineItems = storeIDToLineItem.get(storeID) ?? [];
+										lineItems.push(lineItem);
+										storeIDToLineItem.set(storeID, lineItems);
+									}),
+								);
+
+								const storeIDToOrder = new Map<string, InsertOrder>();
+
+								/* Create an order for each store. */
+								yield* Effect.forEach(
+									storeIDToLineItem.entries(),
+									([storeID, lineItems]) =>
+										Effect.gen(function* () {
+											//TODO: DO ACTUAL MATH ON TOTAL AND SUBTOTAL
+											const subtotal = yield* cartSubtotal(lineItems, cart);
+											const newOrder: InsertOrder = {
+												id: generateID({ prefix: "order" }),
+												countryCode: cart.countryCode ?? "AU",
+												currencyCode: "AUD",
+												createdAt: new Date().toISOString(),
+												email: checkoutInfo.email ?? "email not provided",
+												//TODO
+												billingAddressID:
+													cart.shippingAddressID ?? newShippingAddressID,
+												shippingAddressID:
+													cart.shippingAddressID ?? newShippingAddressID,
+												phone: checkoutInfo.phone,
+												fullName: checkoutInfo.fullName,
+												customerID: existingCustomer
+													? existingCustomer.id
+													: newCustomerID,
+												storeID,
+												total: subtotal,
+												status: "pending",
+											};
+											storeIDToOrder.set(storeID, newOrder);
+										}),
+								);
+
+								/* Get order IDs a. */
+								const orderIDs = yield* Effect.tryPromise(() =>
+									transaction
+										.insert(schema.orders)
+										//@ts-ignore
+										.values(Array.from(storeIDToOrder.values()))
+										.returning({ id: schema.orders.id }),
+								);
+								yield* Effect.all([
+									/* for each line item, update the orderID, so that order will include those items */
+									/* for each line item, remove the cartID, so that cart will not include items that were successfully ordered */
+									Effect.forEach(
+										Array.from(storeIDToLineItem.entries()),
+										([storeID, items]) =>
+											Effect.gen(function* () {
+												const effect = Effect.forEach(
+													items,
+													(item) => {
+														return Effect.tryPromise(() =>
+															transaction
+																.update(schema.lineItems)
+																.set({
+																	cartID: null,
+																	orderID: storeIDToOrder.get(storeID)!.id,
+																})
+																.where(eq(schema.lineItems.id, item.id)),
+														);
+													},
+													{ concurrency: "unbounded" },
+												);
+												return yield* effect;
+											}),
+										{ concurrency: "unbounded" },
+									),
+
+									/* save user info for the cart */
+									Effect.tryPromise(() =>
+										transaction
+											.update(schema.carts)
+											.set({
+												fullName: cart.fullName,
+												email: cart.email,
+												phone: cart.phone,
+												version: sql`${schema.carts.version} + 1`,
+												userID: existingUser ? existingUser.id : newUserID,
+												...(!cart.shippingAddressID && {
+													shippingAddressID: newShippingAddressID,
+												}),
+											})
+
+											.where(eq(schema.carts.id, id)),
+									),
+
+									Effect.tryPromise(() =>
+										transaction.insert(schema.notifications).values([
+											{
+												id: generateID({ prefix: "notification" }),
+												createdAt: new Date().toISOString(),
+												type: "ORDER_PLACED" as const,
+												entityID: existingUser ? existingUser.id : newUserID,
+												description: "Order has been placed",
+												title: "Order Placed",
+											},
+											...Array.from(storeIDToOrder.keys()).map((storeID) => ({
+												id: generateID({ prefix: "notification" }),
+												createdAt: new Date().toISOString(),
+												type: "ORDER_PLACED" as const,
+												entityID: storeID,
+												description: "Order has been placed",
+												title: "Order Placed",
+											})),
+										]),
+									),
+								]);
+								return orderIDs.map((order) => order.id);
+							}).pipe(
+								Effect.catchTags({
+									UnknownException: (error) =>
+										new NeonDatabaseError({ message: error.message }),
+								}),
+							),
+						{ accessMode: "read write", isolationLevel: "read committed" },
+					),
+				).pipe(
+					Effect.flatMap((result) => result),
+					Effect.withSpan("complete-cart"),
+					Effect.catchTags({
+						UnknownException: (error) =>
+							Effect.gen(function* () {
+								yield* Console.error(
+									"Unknown blyat",
+									error.message,
+									error.toString(),
+								);
+								yield* ErrorService.CreateClientError({
+									title: "Something wrong happened",
+									message: error.message,
+									partyKitOrigin: ctx.env.PARTYKIT_ORIGIN,
+									userID:
+										ctx.request.headers.get("x-user-id") ??
+										ctx.request.headers.get("x-global-id"),
+								});
+								return [];
+							}),
+						CartError: (error) =>
+							Effect.gen(function* () {
+								yield* Console.error(
+									"Cart error",
+									error.message,
+									error.toString(),
+								);
+
+								yield* ErrorService.CreateClientError({
+									title: "Cart error",
+									message: error.message,
+									partyKitOrigin: ctx.env.PARTYKIT_ORIGIN,
+									userID:
+										ctx.request.headers.get("x-user-id") ??
+										ctx.request.headers.get("x-global-id"),
+								});
+								return [];
+							}),
+						PriceNotFound: (error) =>
+							Effect.gen(function* () {
+								yield* Console.error(
+									"Price not found",
+									error.message,
+									error.toString(),
+								);
+
+								yield* ErrorService.CreateClientError({
+									title: "Price not found",
+									message: error.message,
+									partyKitOrigin: ctx.env.PARTYKIT_ORIGIN,
+									userID:
+										ctx.request.headers.get("x-user-id") ??
+										ctx.request.headers.get("x-global-id"),
+								});
+								return [];
+							}),
+					}),
+
+					Effect.provideService(
+						Database,
+						Database.of({
+							manager: db,
+							tableNameToTableMap,
+						}),
+					),
+					Effect.retry({ times: 2 }),
+					Effect.zipLeft(
+						Effect.all([
+							HttpClientRequest.post(
+								`${ctx.env.PARTYKIT_ORIGIN}/parties/main/dashboard`,
+							).pipe(
+								HttpClientRequest.jsonBody(["store"]),
+								Effect.andThen(HttpClient.fetch),
+								Effect.retry({ times: 3 }),
+								Effect.scoped,
+								//TODO: Handle errors
+								Effect.orDie,
+							),
+							HttpClientRequest.post(
+								`${ctx.env.PARTYKIT_ORIGIN}/parties/main/global`,
+							).pipe(
+								HttpClientRequest.jsonBody(["cart", "orders", "notifications"]),
+								Effect.andThen(HttpClient.fetch),
+								Effect.retry({ times: 3 }),
+								Effect.scoped,
+								//TODO: Handle errors
+							),
+						]),
+					),
+
+					Effect.orDie,
+				),
+			);
+
+			if (!orderIDs) return [];
+
+			return orderIDs;
+		}),
+});
+const orderRouter = router({
+	getByIDs: procedure
+		.input(z.object({ ids: z.array(z.string()) }))
+		.query(async ({ ctx, input }) => {
+			const { ids } = input;
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			if (ids.length === 0) return [];
+
+			const result = await Effect.runPromise(
+				Effect.tryPromise(() =>
+					db.query.orders.findMany({
+						where: (orders, { inArray }) => inArray(orders.id, ids),
+						with: {
+							items: {
+								with: {
+									variant: {
+										with: {
+											optionValues: {
+												with: {
+													optionValue: {
+														with: {
+															option: true,
+														},
+													},
+												},
+											},
+											prices: true,
+										},
+									},
+									product: true,
+								},
+							},
+							shippingAddress: true,
+							billingAddress: true,
+							store: {
+								columns: {
+									id: true,
+									storeImage: true,
+									name: true,
+								},
+							},
+						},
+					}),
+				).pipe(Effect.orDie),
+			);
+
+			if (!result) return [];
+
+			return result;
+		}),
+});
+const productRouter = router({
+	handle: procedure
+		.input(z.object({ handle: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { handle } = input;
+			const variant = await db.query.variants.findFirst({
+				where: (variants, { eq }) => eq(variants.handle, handle),
+				with: {
+					prices: true,
+					optionValues: {
+						with: {
+							optionValue: true,
+						},
+					},
+				},
+			});
+			if (!variant) {
+				return null;
+			}
+			const product = await db.query.products.findFirst({
+				where: (products, { eq }) => eq(products.id, variant.productID),
+				with: {
+					options: {
+						with: {
+							optionValues: true,
+						},
+					},
+				},
+			});
+
+			return {
+				...product,
+				defaultVariant: variant,
+			};
+		}),
+});
+
+const storeRouter = router({
+	name: procedure
+		.input(z.object({ name: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { name } = input;
+			const result = await db.query.stores.findFirst({
+				where: (stores, { eq }) => eq(stores.name, name),
+				with: {
+					founder: true,
+					products: true,
+				},
+			});
+
+			if (!result) {
+				return null;
+			}
+
+			return result;
+		}),
+	update: procedure
+		.input(z.object({ id: z.string(), name: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const { authUser } = ctx;
+			if (!authUser) {
+				return { status: "error", message: "You are not authorized" };
+			}
+
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { id, name } = input;
+			const exist = await db.query.stores.findFirst({
+				where: (stores, { eq }) => eq(stores.name, name),
+			});
+			if (exist) {
+				return { status: "error", message: "Store already exists" };
+			}
+			await db
+				.update(schema.stores)
+				.set({ name })
+				.where(eq(schema.stores.id, id));
 		}),
 });
 export const appRouter = router({
 	hello: helloRouter,
 	auth: authRouter,
+	users: userRouter,
+	carts: cartRouter,
+	orders: orderRouter,
+	products: productRouter,
+	stores: storeRouter,
 });
 
 export const createCaller = createCallerFactory(appRouter);

@@ -29,8 +29,8 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 	}
 	const {
 		status,
-		onboard,
 		session: userSession,
+		onboard,
 	} = await createCaller({
 		env: context.cloudflare.env,
 		request,

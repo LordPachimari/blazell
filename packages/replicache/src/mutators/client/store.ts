@@ -25,6 +25,7 @@ async function updateStore(tx: WriteTransaction, input: UpdateStore) {
 
 	return tx.set(id, {
 		...store,
+		...(updates.name && { name: updates.name }),
 		...(updates.currencyCodes && { currencyCodes: updates.currencyCodes }),
 		...(updates.description && { description: updates.description }),
 		...(updates.storeImage && updates.storeCroppedImage

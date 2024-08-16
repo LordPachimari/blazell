@@ -1,13 +1,8 @@
 import type { Store as StoreType } from "@blazell/validators/client";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
 import type { LoaderFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { Effect } from "effect";
+import { createCaller } from "server/trpc";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 import { Store } from "~/components/templates/store/store";
 import { useMarketplaceStore } from "~/zustand/store";
@@ -18,22 +13,18 @@ type LoaderData = {
 export const loader: LoaderFunction = async (args) => {
 	const name = args.params.name;
 	const { request } = args;
-	const url = new URL(request.url);
-	const origin = url.origin;
 	if (!name) {
 		throw new Response(null, {
 			status: 404,
 			statusText: "Not Found",
 		});
 	}
-	const store = (await Effect.runPromise(
-		HttpClientRequest.get(`${origin}/api/stores/${name}`).pipe(
-			HttpClient.fetchOk,
-			HttpClientResponse.json,
-			Effect.scoped,
-			Effect.catchAll((error) => Effect.fail(error)),
-		),
-	)) as StoreType | null;
+	const store = await createCaller({
+		authUser: null,
+		bindings: args.context.cloudflare.bindings,
+		env: args.context.cloudflare.env,
+		request,
+	}).stores.name({ name });
 	if (!store) {
 		throw new Response(null, {
 			status: 404,

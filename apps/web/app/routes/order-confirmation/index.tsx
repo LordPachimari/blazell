@@ -1,13 +1,7 @@
 import type { Order } from "@blazell/validators/client";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { Console, Effect } from "effect";
-import { isArray } from "effect/Array";
+import { createCaller } from "server/trpc";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 import { OrderComponent } from "~/components/templates/order/order";
 
@@ -15,26 +9,16 @@ type LoaderData = {
 	orders: Order[];
 };
 export const loader: LoaderFunction = async (args) => {
+	const { context, request } = args;
 	const url = new URL(args.request.url);
-	const origin = url.origin;
-	const ids = url.searchParams.get("id");
-	const orderIDs = isArray(ids)
-		? ids.map((id) => `id=${id}`).join("&")
-		: `id=${ids}`;
+	const ids = url.searchParams.getAll("id");
 
-	const orders = (await Effect.runPromise(
-		HttpClientRequest.get(`${origin}/api/orders/order?${orderIDs}`).pipe(
-			HttpClient.fetchOk,
-			HttpClientResponse.json,
-			Effect.scoped,
-			Effect.catchAll((error) =>
-				Effect.gen(function* () {
-					yield* Console.log(error.toString());
-					return undefined;
-				}),
-			),
-		),
-	)) as Order[] | undefined;
+	const orders = await createCaller({
+		env: context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+	}).orders.getByIDs({ ids });
 	if (!orders) {
 		throw new Response(null, {
 			status: 404,

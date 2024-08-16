@@ -27,7 +27,7 @@ function PartykitProvider() {
 				//@ts-ignore
 				globalRep.puller = async (req) => {
 					const result = await fetch(
-						`/api/pull/global?${subspaces
+						`/api/replicache/pull/global?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
@@ -40,7 +40,6 @@ function PartykitProvider() {
 								...(cartID && { "x-cart-id": cartID }),
 							},
 							body: JSON.stringify(req),
-							credentials: "include",
 						},
 					);
 
@@ -79,7 +78,7 @@ function PartykitProvider() {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
 					const result = await fetch(
-						`/api/pull/dashboard?${subspaces
+						`/api/replicache/pull/dashboard?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
@@ -88,7 +87,6 @@ function PartykitProvider() {
 								"Content-Type": "application/json",
 							},
 							body: JSON.stringify(req),
-							credentials: "include",
 						},
 					);
 
@@ -128,7 +126,7 @@ function PartykitProvider() {
 				//@ts-ignore
 				dashboardRep.puller = async (req) => {
 					const result = await fetch(
-						`/api/pull/marketplace?${subspaces
+						`/api/replicache/pull/marketplace?${subspaces
 							.map((val) => `subspaces=${val}`)
 							.join("&")}`,
 						{
@@ -137,7 +135,6 @@ function PartykitProvider() {
 								"Content-Type": "application/json",
 							},
 							body: JSON.stringify(req),
-							credentials: "include",
 						},
 					);
 

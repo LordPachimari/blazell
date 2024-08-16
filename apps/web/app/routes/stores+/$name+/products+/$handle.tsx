@@ -1,13 +1,8 @@
 import type { Product } from "@blazell/validators/client";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
-import { Effect } from "effect";
 import { useEffect } from "react";
+import { createCaller } from "server/trpc";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 import { StoreProductOverview } from "~/components/templates/product/store-product-overview";
 import { useRequestInfo } from "~/hooks/use-request-info";
@@ -19,22 +14,18 @@ type LoaderData = {
 export const loader: LoaderFunction = async (args) => {
 	const handle = args.params.handle;
 	const { request } = args;
-	const url = new URL(request.url);
-	const origin = url.origin;
 	if (!handle) {
 		throw new Response(null, {
 			status: 404,
 			statusText: "Not Found",
 		});
 	}
-	const product = (await Effect.runPromise(
-		HttpClientRequest.get(`${origin}/api/products/${handle}`).pipe(
-			HttpClient.fetchOk,
-			HttpClientResponse.json,
-			Effect.scoped,
-			Effect.catchAll((error) => Effect.fail(error)),
-		),
-	)) as Product | null;
+	const product = await createCaller({
+		env: args.context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: args.context.cloudflare.bindings,
+	}).products.handle({ handle });
 	if (!product) {
 		throw new Response(null, {
 			status: 404,

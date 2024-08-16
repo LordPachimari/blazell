@@ -24,13 +24,12 @@ function MarketplaceReplicacheProvider({
 			pullInterval: null,
 			//@ts-ignore
 			puller: async (req) => {
-				const result = await fetch("/api/pull/marketplace", {
+				const result = await fetch("/api/replicache/pull/marketplace", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(req),
-					credentials: "include",
 				});
 
 				return {
@@ -42,7 +41,7 @@ function MarketplaceReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const result = await fetch("/api/push/marketplace", {
+				const result = await fetch("/api/replicache/push/marketplace", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",

@@ -18,6 +18,7 @@ export const StoreUpdates = StoreSchema.pick({
 	description: true,
 })
 	.extend({
+		name: z.string().optional(),
 		headerImage: ImageSchema.optional(),
 		storeImage: ImageSchema.optional(),
 		storeCroppedImage: ImageSchema.optional(),

@@ -15,10 +15,11 @@ import { toast } from "@blazell/ui/toast";
 import { generateID } from "@blazell/utils";
 import type { Image as ImageType } from "@blazell/validators";
 import type { Store } from "@blazell/validators/client";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { useFetcher } from "@remix-run/react";
 import * as base64 from "base64-arraybuffer";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
 import { FieldErrorMessage } from "~/components/field-error";
@@ -30,6 +31,10 @@ import { toImageURL } from "~/utils/helpers";
 import { useReplicache } from "~/zustand/replicache";
 import CropImage from "./crop-image";
 export type View = "default" | "cropStoreImage" | "cropHeaderImage";
+const schema = z.object({
+	name: z.string().min(3),
+	description: z.string().optional(),
+});
 export function EditStore({ store }: { store: Store }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [view, setView] = useState<
@@ -69,50 +74,47 @@ export function EditStore({ store }: { store: Store }) {
 	});
 	const headerImageInputRef = useRef<HTMLInputElement>(null);
 	const storeImageInputRef = useRef<HTMLInputElement>(null);
-	const {
-		register,
-		handleSubmit,
-		setError,
-		formState: { errors },
-	} = useForm<{
-		name: string;
-		description: string;
-	}>({
-		defaultValues: {
+	const fetcher = useFetcher();
+	const [form, fields] = useForm({
+		id: "update-store",
+		constraint: getZodConstraint(schema),
+		defaultValue: {
 			name: store.name,
 			description: store.description ?? "",
 		},
-		resolver: zodResolver(
-			z.object({
-				name: z.string().min(3),
-				description: z.string().optional(),
-			}),
-		),
+		onValidate({ formData }) {
+			return parseWithZod(formData, { schema });
+		},
+
+		onSubmit(_, { submission }) {
+			if (submission && submission?.status === "success") {
+				return onSubmit(submission.value);
+			}
+		},
 	});
-	const onSubmit = async (data: { name: string; description: string }) => {
+	const onSubmit = async (data: {
+		name: string;
+		description?: string | undefined;
+	}) => {
 		setIsLoading(true);
 		if (data.name !== store.name) {
-			const response = await fetch(`/api/stores/${data.name}`);
+			console.log("what");
+			const response = await fetch(`/api/stores/name/${data.name}`);
 			const exist = await response.json();
 
 			if (exist) {
-				setError("name", { message: "Store name already exists" });
+				toast.error("Store name already exists");
 				setIsLoading(false);
 				return;
 			}
-
-			await fetch(`/api/stores/update-store/${store.id}`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify({ name: data.name }),
-			});
 		}
-		saveStoreUpdates({ description: data.description });
+		saveStoreUpdates({
+			...(data.description && { description: data.description }),
+			...(data.name !== store.name && data.name && { name: data.name }),
+		});
 		toast.success("Store updated successfully.");
 		setIsLoading(false);
+		form.reset();
 		setIsOpen(false);
 	};
 
@@ -200,12 +202,13 @@ export function EditStore({ store }: { store: Store }) {
 		[],
 	);
 	const saveStoreUpdates = useCallback(
-		async ({ description }: { description?: string }) => {
+		async ({ description, name }: { description?: string; name?: string }) => {
 			setIsLoading(true);
 
 			await dashboardRep?.mutate.updateStore({
 				id: store.id,
 				updates: {
+					...(name && name !== store.name && { name }),
 					...(description &&
 						description !== store.description && { description }),
 					/* if there is a new store image, update it */
@@ -301,183 +304,190 @@ export function EditStore({ store }: { store: Store }) {
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="md:w-[600px] bg-slate-2 p-0 gap-0">
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<span className="flex w-full justify-center p-4 border-border  ">
-						<div>
-							{view !== "default" && (
-								<Button
-									className="absolute top-3 left-3"
-									variant="ghost"
-									onClick={() => setView("default")}
-								>
-									Back
-									<Icons.Left size={20} />
-								</Button>
-							)}
-							<div className="absolute top-3 left-3 flex gap-2">
-								{view === "default" &&
-									storeSrc &&
-									!storeSrc.startsWith("http") && (
-										<Button
-											className="text-slate-11"
-											variant="ghost"
-											onClick={() => setView("cropStoreImage")}
-										>
-											store
-											<Icons.Right size={20} />
-										</Button>
-									)}
-								{view === "default" &&
-									headerSrc &&
-									!headerSrc.startsWith("http") && (
-										<Button
-											className="text-slate-11"
-											variant="ghost"
-											onClick={() => setView("cropHeaderImage")}
-										>
-											header
-											<Icons.Right size={20} />
-										</Button>
-									)}
-							</div>
+				<span className="flex w-full justify-center p-4 border-border  ">
+					<div>
+						{view !== "default" && (
+							<Button
+								className="absolute top-3 left-3"
+								variant="ghost"
+								onClick={() => setView("default")}
+							>
+								Back
+								<Icons.Left size={20} />
+							</Button>
+						)}
+						<div className="absolute top-3 left-3 flex gap-2">
+							{view === "default" &&
+								storeSrc &&
+								!storeSrc.startsWith("http") && (
+									<Button
+										className="text-slate-11"
+										variant="ghost"
+										onClick={() => setView("cropStoreImage")}
+									>
+										store
+										<Icons.Right size={20} />
+									</Button>
+								)}
+							{view === "default" &&
+								headerSrc &&
+								!headerSrc.startsWith("http") && (
+									<Button
+										className="text-slate-11"
+										variant="ghost"
+										onClick={() => setView("cropHeaderImage")}
+									>
+										header
+										<Icons.Right size={20} />
+									</Button>
+								)}
 						</div>
-						<DialogTitle className="text-2xl">Edit store</DialogTitle>
-						<Button
-							type="button"
-							variant={"ghost"}
-							size="icon"
-							className="text-slate-11 absolute top-3 right-3"
-							onClick={() => setIsOpen(false)}
-						>
-							<Icons.Close />
-						</Button>
-					</span>
-					<div className="w-full relative">
-						{view === "cropHeaderImage" && headerSrc && (
-							<CropImage
-								src={headerSrc}
-								crop={headerCrop}
-								onCropComplete={onHeaderCropComplete}
-								setCrop={setHeaderCrop}
-								setCroppedArea={setHeaderCroppedArea}
-								type="header"
-							/>
-						)}
-						{view === "cropStoreImage" && storeSrc && (
-							<CropImage
-								src={storeSrc ?? null}
-								crop={storeCrop}
-								onCropComplete={onStoreCropComplete}
-								setCrop={setStoreCrop}
-								setCroppedArea={setStoreCroppedArea}
-								type="store"
-							/>
-						)}
+					</div>
+					<DialogTitle className="text-2xl">Edit store</DialogTitle>
+					<Button
+						type="button"
+						variant={"ghost"}
+						size="icon"
+						className="text-slate-11 absolute top-3 right-3"
+						onClick={() => setIsOpen(false)}
+					>
+						<Icons.Close />
+					</Button>
+				</span>
+				<div className="w-full relative">
+					{view === "cropHeaderImage" && headerSrc && (
+						<CropImage
+							src={headerSrc}
+							crop={headerCrop}
+							onCropComplete={onHeaderCropComplete}
+							setCrop={setHeaderCrop}
+							setCroppedArea={setHeaderCroppedArea}
+							type="header"
+						/>
+					)}
+					{view === "cropStoreImage" && storeSrc && (
+						<CropImage
+							src={storeSrc ?? null}
+							crop={storeCrop}
+							onCropComplete={onStoreCropComplete}
+							setCrop={setStoreCrop}
+							setCroppedArea={setStoreCroppedArea}
+							type="store"
+						/>
+					)}
 
-						<div
-							className={cn("relative w-full h-[14rem]", {
-								hidden: view !== "default",
-							})}
+					<div
+						className={cn("relative w-full h-[14rem]", {
+							hidden: view !== "default",
+						})}
+					>
+						<input
+							type="file"
+							accept="image/*"
+							ref={storeImageInputRef}
+							className="hidden"
+							onChange={onStoreImageChange}
+						/>
+						<Avatar
+							className="border-border bg-slate-3 hover:brightness-90 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
+							onClick={storeInputClick}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									e.stopPropagation();
+									storeInputClick();
+								}
+							}}
 						>
+							<Image
+								src={storeSrc}
+								fit="contain"
+								className="w-[130px]"
+								width={200}
+								quality={100}
+							/>
+						</Avatar>
+						<div
+							className={cn(
+								"w-full h-[160px] bg-slate-5 relative border-y border-border   flex justify-center items-center overflow-hidden",
+							)}
+						>
+							{headerCrop && headerCroppedArea && headerSrc && (
+								<Output croppedArea={headerCroppedArea} src={headerSrc} />
+							)}
+							{!headerCrop && (
+								<Image
+									src={store.headerImage?.croppedImage?.url}
+									fit="contain"
+								/>
+							)}
 							<input
 								type="file"
 								accept="image/*"
-								ref={storeImageInputRef}
+								ref={headerImageInputRef}
 								className="hidden"
-								onChange={onStoreImageChange}
+								onChange={onHeaderImageChange}
 							/>
 							<Avatar
-								className="border-border bg-slate-3 hover:brightness-90 z-20 absolute  left-4 bottom-0 border aspect-square w-full h-full max-w-32 max-h-32 min-w-32 min-h-32 cursor-pointer"
-								onClick={storeInputClick}
+								className="h-16 w-16 cursor-pointer absolute border-border bg-slate-3 hover:brightness-90"
+								onClick={headerInputClick}
 								onKeyDown={(e) => {
 									if (e.key === "Enter" || e.key === " ") {
 										e.preventDefault();
 										e.stopPropagation();
-										storeInputClick();
+										headerInputClick();
 									}
 								}}
 							>
-								<Image
-									src={storeSrc}
-									fit="contain"
-									className="w-[130px]"
-									width={200}
-									quality={100}
-								/>
+								<ImagePlaceholder />
 							</Avatar>
-							<div
-								className={cn(
-									"w-full h-[160px] bg-slate-5 relative border-y border-border   flex justify-center items-center overflow-hidden",
-								)}
-							>
-								{headerCrop && headerCroppedArea && headerSrc && (
-									<Output croppedArea={headerCroppedArea} src={headerSrc} />
-								)}
-								{!headerCrop && (
-									<Image
-										src={store.headerImage?.croppedImage?.url}
-										fit="contain"
-									/>
-								)}
-								<input
-									type="file"
-									accept="image/*"
-									ref={headerImageInputRef}
-									className="hidden"
-									onChange={onHeaderImageChange}
-								/>
-								<Avatar
-									className="h-16 w-16 cursor-pointer absolute border-border bg-slate-3 hover:brightness-90"
-									onClick={headerInputClick}
-									onKeyDown={(e) => {
-										if (e.key === "Enter" || e.key === " ") {
-											e.preventDefault();
-											e.stopPropagation();
-											headerInputClick();
-										}
-									}}
+							{headerSrc && (
+								<Button
+									className="rounded-full absolute top-2 right-2 bg-slate-a-3 hover:bg-slate-a-6 border-none"
+									size={"icon"}
+									variant={"ghost"}
+									onClick={deleteStoreImage}
 								>
-									<ImagePlaceholder />
-								</Avatar>
-								{headerSrc && (
-									<Button
-										className="rounded-full absolute top-2 right-2 bg-slate-a-3 hover:bg-slate-a-6 border-none"
-										size={"icon"}
-										variant={"ghost"}
-										onClick={deleteStoreImage}
-									>
-										<Icons.Close className="text-slate-11" />
-									</Button>
-								)}
-							</div>
+									<Icons.Close className="text-slate-11" />
+								</Button>
+							)}
 						</div>
 					</div>
-					{view === "default" && (
-						<div className="p-4 flex flex-col gap-2">
-							<span>
-								<Label className="text-slate-11 py-2">Name</Label>
-								<Input className="w-full md:w-40" {...register("name")} />
-								<FieldErrorMessage message={errors.name?.message} />
-							</span>
-							<span>
-								<Label className="text-slate-11 py-2">Description</Label>
-								<TextareaAutosize
-									className={cn("", inputVariants())}
-									maxRows={10}
-									autoFocus
-									{...register("description")}
-								/>
-							</span>
+				</div>
+				{view === "default" && (
+					<fetcher.Form
+						className="p-4 flex flex-col gap-2"
+						{...getFormProps(form)}
+					>
+						<span>
+							<Label className="text-slate-11 py-2">Name</Label>
+							<Input
+								className="w-full md:w-40"
+								{...getInputProps(fields.name, { type: "text" })}
+								defaultValue={store.name}
+							/>
+							<FieldErrorMessage message={fields.name?.errors?.[0]} />
+						</span>
+						<span>
+							<Label className="text-slate-11 py-2">Description</Label>
+							<TextareaAutosize
+								className={cn("", inputVariants())}
+								maxRows={10}
+								{...getInputProps(fields.description, { type: "text" })}
+								defaultValue={store.description ?? ""}
+							/>
+						</span>
 
-							<div className="flex justify-center">
-								<Button disabled={isLoading} type="submit">
-									{isLoading && <LoadingSpinner />}
-									Save
-								</Button>
-							</div>
+						<div className="flex justify-center">
+							<Button disabled={isLoading} type="submit">
+								{isLoading && (
+									<LoadingSpinner className="text-white size-4 mr-2" />
+								)}
+								Save
+							</Button>
 						</div>
-					)}
-				</form>
+					</fetcher.Form>
+				)}
 			</DialogContent>
 		</Dialog>
 	);

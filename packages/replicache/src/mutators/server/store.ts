@@ -189,6 +189,7 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 					tableMutator.update(
 						store.id,
 						{
+							...(updates.name && { name: updates.name }),
 							...(updates.description && { description: updates.description }),
 							...(updates.currencyCodes && {
 								currencyCodes: updates.currencyCodes,
