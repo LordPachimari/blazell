@@ -37,7 +37,7 @@ function Header() {
 			{/* <MobileNavMenu /> */}
 			<div />
 			<Logo
-				to="/"
+				to={authUser ? "/marketplace" : "/"}
 				className="absolute left-20 lg:left-40 xl:left-1/2 flex -translate-x-1/2"
 			/>
 

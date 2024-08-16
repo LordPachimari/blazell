@@ -899,6 +899,7 @@ const productRouter = router({
 							optionValues: true,
 						},
 					},
+					store: true,
 				},
 			});
 
@@ -918,7 +919,7 @@ const storeRouter = router({
 			const result = await db.query.stores.findFirst({
 				where: (stores, { eq }) => eq(stores.name, name),
 				with: {
-					founder: true,
+					owner: true,
 					products: true,
 				},
 			});

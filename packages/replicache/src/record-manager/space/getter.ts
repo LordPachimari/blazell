@@ -76,7 +76,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 					manager.query.stores.findMany({
 						where: (stores, { inArray }) => inArray(stores.id, keys),
 						with: {
-							founder: true,
+							owner: true,
 							products: true,
 						},
 					}),

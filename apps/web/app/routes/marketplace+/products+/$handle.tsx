@@ -1,9 +1,10 @@
 import type { Product } from "@blazell/validators/client";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { createCaller } from "server/trpc";
 import { ProductOverview } from "~/components/templates/product/product-overview";
+import { useIsElementScrolled } from "~/hooks/use-is-element-scrolled";
 import { useRequestInfo } from "~/hooks/use-request-info";
 import { useMarketplaceStore } from "~/zustand/store";
 type LoaderData = {
@@ -105,8 +106,13 @@ export default function Page() {
 		};
 	}, []);
 
+	const elementRef = React.useRef(null);
+	const isElementScrolled = useIsElementScrolled(elementRef);
+	console.log("isElementScrolled", isElementScrolled);
+
 	return (
 		<div
+			ref={elementRef}
 			className="fixed inset-0 z-40 w-screen h-screen max-h-screen bg-black/80 dark:bg-zinc-900/80 backdrop-blur-sm overflow-y-scroll"
 			onClick={() => {
 				navigate("/marketplace", {
@@ -141,6 +147,7 @@ export default function Page() {
 						selectedVariantIDOrHandle={selectedVariantHandle}
 						cartID={cartID}
 						defaultVariant={defaultVariant ?? serverProduct.defaultVariant}
+						isScrolled={isElementScrolled}
 					/>
 				)}
 			</main>

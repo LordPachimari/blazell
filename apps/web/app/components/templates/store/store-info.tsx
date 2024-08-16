@@ -100,7 +100,7 @@ export function StoreInfo({
 										"text-sm": size === "small",
 									})}
 								>
-									@{store?.founder?.username}
+									@{store?.owner?.username}
 								</h2>
 							</span>
 						</Slot>

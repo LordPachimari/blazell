@@ -34,8 +34,8 @@ export type ProductOption = Server.ProductOption & {
 	optionValues?: ProductOptionValue[];
 };
 export type Store = Server.Store & {
-	products?: Product[];
-	founder?: Server.User;
+	products?: (Product | PublishedProduct)[];
+	owner?: Server.User;
 };
 export type Price = Server.Price;
 export type ProductOptionValue = Server.ProductOptionValue & {

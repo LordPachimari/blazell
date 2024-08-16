@@ -17,7 +17,7 @@ export function getOrdersColumns(): ColumnDef<Order, unknown>[] {
 			cell: ({ row }) => (
 				<div className="w-[200px] flex gap-2">
 					<Avatar className="h-10 w-10">
-						<AvatarImage src="https://github.com/shadcn.png" />
+						<AvatarImage src={row.original.user?.avatar ?? undefined} />
 						<AvatarFallback>
 							{row.original.user?.username?.slice(0, 2).toUpperCase() ??
 								row.original.fullName?.slice(0, 2).toUpperCase()}

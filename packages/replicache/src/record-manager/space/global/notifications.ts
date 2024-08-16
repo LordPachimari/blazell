@@ -16,7 +16,7 @@ export const notificationsCVD: GetRowsWTableName = ({ fullRows = false }) => {
 
 		const store = yield* Effect.tryPromise(() =>
 			manager.query.stores.findFirst({
-				where: (stores, { eq }) => eq(stores.founderID, id),
+				where: (stores, { eq }) => eq(stores.ownerID, id),
 			}),
 		).pipe(
 			Effect.catchTags({

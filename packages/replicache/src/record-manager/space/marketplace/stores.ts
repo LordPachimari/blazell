@@ -14,7 +14,7 @@ export const storesCVD: GetRowsWTableName = ({ fullRows }) => {
 			fullRows
 				? manager.query.stores.findMany({
 						with: {
-							founder: true,
+							owner: true,
 							products: {
 								where: (products, { eq }) => eq(products.status, "published"),
 								with: {

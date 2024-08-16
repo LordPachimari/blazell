@@ -51,8 +51,8 @@ const CustomerInfo = ({ order }: { order: Order | undefined | null }) => {
 			</CardHeader>
 			<CardContent className="p-4 border-b border-border flex justify-center">
 				<div>
-					<Avatar className="h-36 w-38">
-						<AvatarImage src="https://github.com/shadcn.png" />
+					<Avatar className="size-36">
+						<AvatarImage src={order?.user?.avatar ?? undefined} />
 						<AvatarFallback>
 							{order?.user?.username?.slice(0, 2).toUpperCase() ??
 								order?.fullName?.slice(0, 2).toUpperCase()}

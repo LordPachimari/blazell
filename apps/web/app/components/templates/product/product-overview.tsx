@@ -8,7 +8,7 @@ import type {
 	PublishedVariant,
 	Variant,
 } from "@blazell/validators/client";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
@@ -26,6 +26,7 @@ interface ProductOverviewProps {
 	cartID?: string | undefined;
 	defaultVariant: Variant | PublishedVariant | undefined;
 	setView?: (value: "preview" | "input") => void;
+	isScrolled?: boolean;
 }
 
 const ProductOverview = ({
@@ -38,13 +39,14 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 	setView,
+	isScrolled,
 }: ProductOverviewProps) => {
-	const [isShaking, setIsShaking] = useState(false);
-
+	const [isShaking, setIsShaking] = React.useState(false);
 	return (
 		<main className="relative h-[calc(100vh + 70vh] flex flex-col lg:flex-row w-full">
 			<MobileGallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
+				{...(isScrolled && { isScrolled: isScrolled })}
 			/>
 			<DesktopGallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}

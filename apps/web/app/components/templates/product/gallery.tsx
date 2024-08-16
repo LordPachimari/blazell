@@ -15,13 +15,17 @@ import { toImageURL } from "~/utils/helpers";
 
 interface GalleryProps {
 	images: ImageType[];
+	isScrolled?: boolean;
 }
 
-function MobileGallery({ images }: GalleryProps) {
+function MobileGallery({ images, isScrolled }: GalleryProps) {
 	return (
 		<div
 			className={cn(
-				"sticky top-0 lg:hidden h-full transition-all flex flex-col items-center w-full gap-4",
+				"sticky top-0 lg:hidden h-full transition-all duration-400 ease-in-out flex flex-col items-center w-full gap-4",
+				{
+					"brightness-50 scale-90": isScrolled,
+				},
 			)}
 		>
 			<div className="flex flex-col justify-center items-center w-full gap-4 lg:p-4 h-full">

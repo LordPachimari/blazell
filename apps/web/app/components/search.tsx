@@ -164,7 +164,7 @@ export function GlobalSearchCombobox() {
 								leaveFrom="opacity-100 transform-[scale(100%)]"
 								leaveTo="opacity-0 transform-[scale(95%)]"
 							>
-								<DialogPanel className="w-full md:w-[600px] rounded-lg backdrop-blur-2xl">
+								<DialogPanel className="w-full md:w-[600px] lg:w-[700px] rounded-lg backdrop-blur-2xl">
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus

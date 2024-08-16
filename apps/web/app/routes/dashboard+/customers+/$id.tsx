@@ -22,7 +22,11 @@ export default function CustomerRoute() {
 							{customer?.user?.username ?? customer?.user?.fullName}
 						</h1>
 
-						<OrdersTable orders={orders} toolbar={false} />
+						<OrdersTable
+							orders={orders}
+							toolbar={false}
+							withNavigation={true}
+						/>
 					</div>
 				</section>
 				<section className="w-full lg:w-4/12 flex order-0 flex-col gap-3 lg:order-1">
@@ -43,7 +47,7 @@ const CustomerInfo = ({
 			<CardContent className="p-4 border-b border-border flex justify-center">
 				<div>
 					<Avatar className="h-36 w-38">
-						<AvatarImage src="https://github.com/shadcn.png" />
+						<AvatarImage src={customer?.user?.avatar ?? undefined} />
 						<AvatarFallback>
 							{customer?.user?.username?.slice(0, 2).toUpperCase() ??
 								customer?.user?.fullName?.slice(0, 2).toUpperCase()}

@@ -41,7 +41,7 @@ export const users = pgTable(
 	}),
 );
 export const userRelations = relations(users, ({ many, one }) => ({
-	stores: many(stores, { relationName: "founder.stores" }),
+	stores: many(stores, { relationName: "owner.stores" }),
 	addresses: many(addresses),
 	authUser: one(authUsers, {
 		fields: [users.authID],

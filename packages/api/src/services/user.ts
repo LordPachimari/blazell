@@ -30,7 +30,7 @@ const onboardUser = (props: Onboard) =>
 			createdAt: new Date().toISOString(),
 			name: username,
 			version: 0,
-			founderID: user.id,
+			ownerID: user.id,
 			countryCode,
 		};
 

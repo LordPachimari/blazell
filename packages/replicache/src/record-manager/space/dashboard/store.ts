@@ -63,7 +63,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 											defaultVariant: true,
 										},
 									},
-									founder: true,
+									owner: true,
 									orders: {
 										with: {
 											customer: {
