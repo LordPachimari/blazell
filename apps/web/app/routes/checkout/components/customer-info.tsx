@@ -1,63 +1,43 @@
 import { Input } from "@blazell/ui/input";
-import type { CheckoutForm } from "@blazell/validators";
 import type { User } from "@blazell/validators/client";
-import { useFormContext } from "react-hook-form";
+import { getInputProps, useField, type FieldName } from "@conform-to/react";
 import { FieldErrorMessage } from "~/components/field-error";
 
 export const CustomerInfo = ({
 	user,
+	fields,
 }: {
 	user: User | null | undefined;
+	fields: {
+		email: FieldName<string>;
+		fullName: FieldName<string>;
+		phone: FieldName<string>;
+	};
 }) => {
-	const { register, formState, clearErrors } = useFormContext<CheckoutForm>();
+	const [fullNameMeta, form] = useField(fields.fullName);
+	const [emailMeta] = useField(fields.email);
+	const [phoneMeta] = useField(fields.phone);
+
 	return (
 		<section>
 			<h1 className="text-xl text-slate-10 my-2">Customer information</h1>
+
+			<FieldErrorMessage message={form.errors?.[0]} />
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-				<div>
-					<Input
-						id="fullName"
-						key="fullName"
-						placeholder="Full name"
-						{...register("fullName")}
-						onChange={(e) => {
-							register("fullName").onChange(e);
-							clearErrors();
-						}}
-					/>
-					<FieldErrorMessage message={formState.errors.fullName?.message} />
-				</div>
+				<Input
+					placeholder="Full name"
+					{...getInputProps(fullNameMeta, { type: "text" })}
+				/>
 				{!user && (
-					<div>
-						<Input
-							id="email"
-							type="email"
-							autoCapitalize="none"
-							autoCorrect="off"
-							placeholder="Email"
-							{...register("email")}
-							onChange={(e) => {
-								register("email").onChange(e);
-								clearErrors();
-							}}
-						/>
-						<FieldErrorMessage message={formState.errors.email?.message} />
-					</div>
-				)}
-				<div>
 					<Input
-						id="phone"
-						autoCapitalize="none"
-						autoCorrect="off"
-						placeholder="Phone"
-						{...register("phone")}
-						onChange={(e) => {
-							register("phone").onChange(e);
-							clearErrors();
-						}}
+						placeholder="Email"
+						{...getInputProps(emailMeta, { type: "email" })}
 					/>
-					<FieldErrorMessage message={formState.errors.phone?.message} />
-				</div>
+				)}
+				<Input
+					placeholder="Phone"
+					{...getInputProps(phoneMeta, { type: "text" })}
+				/>
 			</div>
 		</section>
 	);

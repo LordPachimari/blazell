@@ -19,6 +19,7 @@ import { useDataTable } from "~/components/templates/table/use-data-table";
 import type { DebouncedFunc } from "~/types/debounce";
 import { useReplicache } from "~/zustand/replicache";
 import { filterableColumns, getOrdersColumns } from "./columns";
+import { useNavigate } from "@remix-run/react";
 
 interface OrdersTableProps {
 	orders: Order[];
@@ -26,6 +27,7 @@ interface OrdersTableProps {
 	orderID?: string | undefined;
 	toolbar?: boolean;
 	onSearch?: DebouncedFunc<(value: string) => void>;
+	withNavigation?: boolean;
 }
 
 function OrdersTable({
@@ -34,6 +36,7 @@ function OrdersTable({
 	orderID,
 	toolbar = true,
 	onSearch,
+	withNavigation = false,
 }: Readonly<OrdersTableProps>) {
 	const columns = useMemo<ColumnDef<Order>[]>(() => getOrdersColumns(), []);
 	const table = useDataTable({
@@ -52,6 +55,7 @@ function OrdersTable({
 		estimateSize: () => 34,
 		overscan: 20,
 	});
+	const navigate = useNavigate();
 
 	return (
 		<div className="max-w-7xl w-full">
@@ -106,7 +110,9 @@ function OrdersTable({
 											key={row.id}
 											data-state={row.original.id === orderID && "selected"}
 											onClick={() => {
-												setOrderID?.(row.original.id);
+												withNavigation
+													? navigate(`/dashboard/orders/${row.original.id}`)
+													: setOrderID?.(row.original.id);
 											}}
 											style={{
 												height: `${virtualRow.size}px`,

@@ -17,6 +17,7 @@ import { errorsCVD } from "./global/errors";
 import { inArray } from "drizzle-orm";
 import { notificationsCVD } from "./global/notifications";
 import { storesCVD } from "./marketplace/stores";
+import { paymentCVD } from "./dashboard/payment";
 
 export type SpaceRecordGetterType = {
 	[K in SpaceID]: Record<SpaceRecord[K][number], GetRowsWTableName>;
@@ -24,6 +25,7 @@ export type SpaceRecordGetterType = {
 export const SpaceRecordGetter: SpaceRecordGetterType = {
 	dashboard: {
 		store: storeCVD,
+		payment: paymentCVD,
 	},
 	global: {
 		errors: errorsCVD,
@@ -55,6 +57,7 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 									prices: true,
 								},
 							},
+							store: true,
 						},
 					}),
 				),
@@ -75,7 +78,24 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 					manager.query.stores.findMany({
 						where: (stores, { inArray }) => inArray(stores.id, keys),
 						with: {
-							founder: true,
+							owner: true,
+							products: true,
+						},
+					}),
+				),
+				Effect.catchTags({
+					UnknownException: (error) =>
+						new NeonDatabaseError({ message: error.message }),
+				}),
+			);
+		}
+		if (tableName === "paymentProfiles") {
+			return yield* pipe(
+				Effect.tryPromise(() =>
+					manager.query.paymentProfiles.findMany({
+						where: (profile, { inArray }) => inArray(profile.id, keys),
+						with: {
+							stripe: true,
 						},
 					}),
 				),
@@ -165,13 +185,9 @@ export const fullRowsGetter = (tableName: TableName, keys: string[]) =>
 					manager.query.orders.findMany({
 						where: (orders, { inArray }) => inArray(orders.id, keys),
 						with: {
-							user: {
-								columns: {
-									id: true,
-									fullName: true,
-									email: true,
-									username: true,
-									phone: true,
+							customer: {
+								with: {
+									user: true,
 								},
 							},
 							store: {

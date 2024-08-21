@@ -13,28 +13,28 @@ const onboardUser = (props: Onboard) =>
 	Effect.gen(function* () {
 		const { countryCode, username } = props;
 		const { manager } = yield* Database;
-		const { auth } = yield* AuthContext;
-		if (!auth.user) return;
+		const { authUser } = yield* AuthContext;
+		yield* Console.log("AUTH AUTH AUTH AUTH ", authUser, username);
+		if (!authUser) return;
 		const user: InsertUser = {
 			id: generateID({ prefix: "auth" }),
 			createdAt: new Date().toISOString(),
 			version: 0,
 			username,
-			email: auth.user.email,
-			...(auth.user.id && { authID: auth.user.id }),
-			...(auth.user.avatar && { avatar: auth.user.avatar }),
-			...(auth.user.fullName && { fullName: auth.user.fullName }),
+			email: authUser.email,
+			...(authUser.id && { authID: authUser.id }),
+			...(authUser.avatar && { avatar: authUser.avatar }),
+			...(authUser.fullName && { fullName: authUser.fullName }),
 		};
 		const store: InsertStore = {
 			id: generateID({ prefix: "store" }),
 			createdAt: new Date().toISOString(),
 			name: username,
 			version: 0,
-			founderID: user.id,
+			ownerID: user.id,
 			countryCode,
 		};
 
-		yield* Console.log("Onboarding user", username);
 		yield* Effect.tryPromise(() =>
 			manager
 				.insert(schema.users)
@@ -45,11 +45,12 @@ const onboardUser = (props: Onboard) =>
 					set: {
 						version: sql`${schema.users.version} + 1`,
 						username,
-						authID: auth.user!.id,
-						...(auth.user?.avatar && { avatar: auth.user!.avatar }),
+						authID: authUser.id,
+						...(authUser.avatar && { avatar: authUser.avatar }),
 					},
 				}),
 		);
+		yield* Console.log("USER USER USER USER USER ", username);
 		yield* Effect.all(
 			[
 				Effect.tryPromise(() =>

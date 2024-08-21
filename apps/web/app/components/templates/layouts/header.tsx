@@ -23,8 +23,7 @@ import { useWindowSize } from "~/hooks/use-window-size";
 function Header() {
 	const { userContext } = useRequestInfo();
 
-	const { user } = userContext;
-	const { cartID } = userContext;
+	const { authUser, cartID } = userContext;
 	const location = useLocation();
 	const isRootPage = location.pathname === "/";
 
@@ -37,7 +36,7 @@ function Header() {
 			{/* <MobileNavMenu /> */}
 			<div />
 			<Logo
-				to="/"
+				to={authUser ? "/marketplace" : "/"}
 				className="absolute left-20 lg:left-40 xl:left-1/2 flex -translate-x-1/2"
 			/>
 
@@ -47,12 +46,16 @@ function Header() {
 				<ThemeToggle />
 				<Notifications />
 				<CartSheet cartID={cartID ?? null} />
-				{user?.username ? (
-					<ProfileDropdown user={user as AuthUser} />
+				{authUser?.username ? (
+					<ProfileDropdown authUser={authUser as AuthUser} />
 				) : (
 					<Link
 						to={
-							!user ? "/login" : !user.username ? "/onboarding" : "/dashboard"
+							!authUser
+								? "/login"
+								: !authUser.username
+									? "/onboarding"
+									: "/dashboard"
 						}
 						prefetch="viewport"
 						// to={!authID ? "/sign-in" : !user?.id ? "/create-user" : "/dashboard"}

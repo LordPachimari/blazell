@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
@@ -6,9 +6,8 @@ import type { GetRowsWTableName } from "../types";
 
 export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { auth } = yield* AuthContext;
-		const authID = auth.user?.id;
-		if (!authID) return [];
+		const { authUser } = yield* AuthContext;
+		if (!authUser) return [];
 		const { manager } = yield* Database;
 		const rowsWTableName: RowsWTableName[] = [];
 		const activeStoreIDEffect = pipe(
@@ -16,11 +15,11 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 				fullRows
 					? manager.query.jsonTable.findFirst({
 							where: (jsonTable, { eq }) =>
-								eq(jsonTable.id, `active_store_id_${authID}`),
+								eq(jsonTable.id, `active_store_id_${authUser.id}`),
 						})
 					: manager.query.jsonTable.findFirst({
 							where: (jsonTable, { eq }) =>
-								eq(jsonTable.id, `active_store_id_${authID}`),
+								eq(jsonTable.id, `active_store_id_${authUser.id}`),
 							columns: {
 								id: true,
 								version: true,
@@ -36,7 +35,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 		const storeDataEffect = Effect.tryPromise(() =>
 			fullRows
 				? manager.query.users.findFirst({
-						where: (user, { eq }) => eq(user.authID, authID),
+						where: (user, { eq }) => eq(user.authID, authUser.id),
 						with: {
 							stores: {
 								with: {
@@ -64,16 +63,12 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 											defaultVariant: true,
 										},
 									},
-									founder: true,
+									owner: true,
 									orders: {
 										with: {
-											user: {
-												columns: {
-													id: true,
-													fullName: true,
-													email: true,
-													username: true,
-													phone: true,
+											customer: {
+												with: {
+													user: true,
 												},
 											},
 											items: {
@@ -104,7 +99,7 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 						},
 					})
 				: manager.query.users.findFirst({
-						where: (users, { eq }) => eq(users.authID, authID),
+						where: (users, { eq }) => eq(users.authID, authUser.id),
 						with: {
 							stores: {
 								columns: {
@@ -133,10 +128,11 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 											version: true,
 										},
 										with: {
-											user: {
+											customer: {
 												columns: {
 													id: true,
 													version: true,
+													createdAt: true,
 												},
 											},
 										},
@@ -194,15 +190,12 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 							),
 
 							Effect.sync(() => {
-								const customers = store.orders
-									.map((order) => {
-										return order.user;
-									})
-									.filter((user) => user !== null);
+								const customers = store.orders.map((order) => {
+									return order.customer;
+								});
 
 								rowsWTableName.push({
-									tableName: "users" as const,
-									//@ts-ignore
+									tableName: "customers" as const,
 									rows: customers,
 								});
 							}),
@@ -219,6 +212,10 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 				});
 			},
 			{ concurrency: "unbounded" },
+		);
+		yield* Console.log(
+			"rowsWTableName from STORE DASHBOARD",
+			JSON.stringify(rowsWTableName),
 		);
 
 		return rowsWTableName;

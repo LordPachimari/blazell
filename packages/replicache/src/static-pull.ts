@@ -76,10 +76,10 @@ export const staticPull = ({
 
 export const getCategories = () => {
 	return Effect.gen(function* () {
-		const { env } = yield* Cloudflare;
+		const { bindings } = yield* Cloudflare;
 		const { manager } = yield* Database;
 		const cachedCategories = yield* Effect.tryPromise(
-			() => env.KV.get("categories", "json") as Promise<Category[]>,
+			() => bindings.KV.get("categories", "json") as Promise<Category[]>,
 		).pipe(
 			Effect.catchTags({
 				UnknownException: (error) =>
@@ -102,7 +102,7 @@ export const getCategories = () => {
 		);
 
 		yield* Effect.tryPromise(() =>
-			env.KV.put("categories", JSON.stringify(categories)),
+			bindings.KV.put("categories", JSON.stringify(categories)),
 		).pipe(
 			Effect.catchTags({
 				UnknownException: (error) =>

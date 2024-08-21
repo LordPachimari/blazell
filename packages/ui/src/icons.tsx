@@ -36,6 +36,7 @@ import {
 	MinusCircle,
 	Moon,
 	PackageOpen,
+	Paintbrush,
 	PanelLeftClose,
 	PanelRightClose,
 	Plus,
@@ -64,6 +65,9 @@ import {
 	Youtube,
 	type LucideIcon,
 	type LucideProps,
+	Sprout,
+	ShieldHalf,
+	Sparkles,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -134,6 +138,11 @@ export const Icons = {
 	Pending: RectangleEllipsis,
 	SquareUser: SquareUserRound,
 	Flame,
+	Paintbrush,
+	Payment: CreditCard,
+	Plan: Sprout,
+	Security: ShieldHalf,
+	Sparkles,
 	UPC: (props: LucideProps) => (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" {...props}>
 			<g clipPath="url(#a)">

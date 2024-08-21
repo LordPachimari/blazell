@@ -24,13 +24,12 @@ function DashboardReplicacheProvider({
 
 			//@ts-ignore
 			puller: async (req) => {
-				const result = await fetch("/api/pull/dashboard", {
+				const result = await fetch("/api/replicache/pull/dashboard", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(req),
-					credentials: "include",
 				});
 
 				return {
@@ -42,13 +41,12 @@ function DashboardReplicacheProvider({
 				};
 			},
 			pusher: async (req) => {
-				const result = await fetch("/api/push/dashboard", {
+				const result = await fetch("/api/replicache/push/dashboard", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(req),
-					credentials: "include",
 				});
 
 				return {

@@ -23,13 +23,19 @@ const prefixes = [
 	"notification",
 	"verification",
 	"session",
+	"customer",
+	"payment_profile",
+	"balance",
 ] as const;
 
 export type Prefix = (typeof prefixes)[number];
 
 export const generateID = ({
 	prefix,
-}: { prefix: (typeof prefixes)[number] }) => {
+}: { prefix?: (typeof prefixes)[number] }) => {
+	if (!prefix) {
+		return ulid();
+	}
 	return `${prefix}_${ulid()}`;
 };
 

@@ -1,8 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import type { Customer } from "@blazell/validators/client";
+import { DataTableColumnHeader } from "~/components/templates/table/data-table-column-header";
 
 export function getCustomersColumns(): ColumnDef<Customer, unknown>[] {
 	return [
@@ -14,15 +14,15 @@ export function getCustomersColumns(): ColumnDef<Customer, unknown>[] {
 			cell: ({ row }) => (
 				<div className="w-[200px] flex gap-2">
 					<Avatar className="h-10 w-10">
-						<AvatarImage src="https://github.com/shadcn.png" />
+						<AvatarImage src={row.original.user?.avatar ?? undefined} />
 						<AvatarFallback>
-							{row.original.username?.slice(0, 2).toUpperCase() ??
-								row.original.fullName?.slice(0, 2).toUpperCase()}
+							{row.original.user?.username?.slice(0, 2).toUpperCase() ??
+								row.original.user?.fullName?.slice(0, 2).toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
 					<div>
 						<p className="text-sm font-bold">
-							{row.original.username ?? row.original.fullName}
+							{row.original.user?.username ?? row.original.user?.fullName}
 						</p>
 						<p className="text-sm">{row.original.email}</p>
 					</div>

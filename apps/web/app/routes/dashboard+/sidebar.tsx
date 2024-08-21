@@ -35,6 +35,11 @@ const items: DashboardSidebarItem[] = [
 		href: "/dashboard/customers",
 		icon: "Customer",
 	},
+	{
+		title: "Settings",
+		href: "/dashboard/settings",
+		icon: "Settings",
+	},
 ];
 interface DashboardSidebarProps {
 	children: React.ReactNode;
@@ -42,7 +47,6 @@ interface DashboardSidebarProps {
 const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 	const { pathname } = useLocation();
 	const mainPath = pathname.split("/")[2];
-	console.log("mainPat", mainPath);
 
 	return (
 		<div className="w-full h-full flex relative inset-0">
@@ -55,9 +59,10 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 				<ul className="justify-center py-2 items-center flex w-full flex-col gap-2">
 					{items.map((item) => {
 						const Icon = Icons[item.icon ?? "chevronLeft"];
+						const Nav = pathname.startsWith(item.href) ? "div" : Link;
 
 						return (
-							<Link
+							<Nav
 								to={item.href}
 								prefetch="viewport"
 								key={item.title}
@@ -96,14 +101,14 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 								>
 									{item.title}
 								</span>
-							</Link>
+							</Nav>
 						);
 					})}
 				</ul>
 				<div />
 				<div />
 			</nav>
-			{children}
+			<div className="relative md:pl-40 pt-14 w-full ">{children}</div>
 		</div>
 	);
 };

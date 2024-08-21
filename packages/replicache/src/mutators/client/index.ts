@@ -37,6 +37,7 @@ import {
 	assignOptionValueToVariant,
 } from "./product-option-value";
 import { deleteImage, updateImagesOrder, uploadImages } from "./image";
+import { createPaymentProfile } from "./payment-profile";
 
 export type DashboardMutatorsType = {
 	[key in keyof Server.DashboardMutatorsType]: (
@@ -71,6 +72,7 @@ export const DashboardMutators: DashboardMutatorsType = {
 	createOrder,
 	deleteStoreImage,
 	setActiveStoreID,
+	createPaymentProfile,
 };
 export type GlobalMutatorsType = {
 	[key in keyof Server.UserMutatorsType]: (

@@ -1,7 +1,7 @@
 import type { Order } from "@blazell/validators/client";
 import { json, type LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { isArray } from "effect/Array";
+import { createCaller } from "server/trpc";
 import { SidebarLayoutWrapper } from "~/components/templates/layouts/sidebar-wrapper";
 import { OrderComponent } from "~/components/templates/order/order";
 
@@ -9,14 +9,16 @@ type LoaderData = {
 	orders: Order[];
 };
 export const loader: LoaderFunction = async (args) => {
+	const { context, request } = args;
 	const url = new URL(args.request.url);
-	const ids = url.searchParams.get("id");
-	const orderIDs = isArray(ids)
-		? ids.map((id) => `id=${id}`).join("&")
-		: `id=${ids}`;
-	const orders = await fetch(`/orders/order?${orderIDs}`).then(
-		(res) => res.json() as Promise<Order[] | null>,
-	);
+	const ids = url.searchParams.getAll("id");
+
+	const orders = await createCaller({
+		env: context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+	}).orders.getByIDs({ ids });
 	if (!orders) {
 		throw new Response(null, {
 			status: 404,

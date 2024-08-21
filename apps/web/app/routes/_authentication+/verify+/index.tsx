@@ -1,4 +1,3 @@
-import { SESSION_KEY } from "@blazell/auth/src";
 import { cn } from "@blazell/ui";
 import { Button } from "@blazell/ui/button";
 import {
@@ -8,14 +7,8 @@ import {
 	REGEXP_ONLY_DIGITS_AND_CHARS,
 } from "@blazell/ui/input-otp";
 import { LoadingSpinner } from "@blazell/ui/loading";
-import { AuthAPI } from "@blazell/validators";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
 import {
 	type ActionFunctionArgs,
 	type LoaderFunctionArgs,
@@ -23,7 +16,8 @@ import {
 	redirect,
 } from "@remix-run/cloudflare";
 import { Form, useActionData } from "@remix-run/react";
-import { Effect } from "effect";
+import { SESSION_KEY } from "server/auth";
+import { createCaller } from "server/trpc";
 import { z } from "zod";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { checkHoneypot } from "~/server/honeypot.server";
@@ -42,40 +36,23 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		return redirect("/error");
 	}
 	console.log("otp", otp, target);
-
 	if (otp && target) {
 		const {
 			valid,
 			onboard,
 			session: userSession,
-		} = await Effect.runPromise(
-			HttpClientRequest.post(`${origin}/api/auth/verify-otp`)
-				.pipe(
-					HttpClientRequest.jsonBody({
-						otp,
-						target,
-					}),
-					Effect.andThen(HttpClient.fetchOk),
-					Effect.flatMap(
-						HttpClientResponse.schemaBodyJson(AuthAPI.VerifyOTPSchema),
-					),
-					Effect.scoped,
-				)
-				.pipe(
-					Effect.catchAll((error) =>
-						Effect.sync(() => {
-							console.error(error.toString);
-							return {
-								valid: false,
-								onboard: false,
-								session: null,
-							};
-						}),
-					),
-				),
-		);
+			authUser,
+		} = await createCaller({
+			env: context.cloudflare.env,
+			request,
+			authUser: null,
+			bindings: context.cloudflare.bindings,
+		}).auth.verifyOTP({
+			otp,
+			target,
+		});
 
-		if (!valid) {
+		if (!valid || !authUser) {
 			console.log("INVALID");
 			return json({});
 		}
@@ -84,7 +61,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		redirectTo && onboardingURL.searchParams.set("redirectTo", redirectTo);
 		target && onboardingURL.searchParams.set("target", target);
 		userSession && session.set(SESSION_KEY, userSession.id);
-		console.log("WHAT IS ONBOARD", onboard);
 		if (onboard) {
 			return redirect(onboardingURL.toString());
 		}
@@ -96,7 +72,6 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 	const { session } = context;
 	const formData = await request.formData();
 	const url = new URL(request.url);
-	const origin = url.origin;
 	checkHoneypot(formData, context.cloudflare.env.HONEYPOT_SECRET);
 	const submission = parseWithZod(formData, {
 		schema: z.object({
@@ -118,46 +93,19 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 		});
 	}
 	const {
-		status,
 		valid,
 		onboard,
 		session: userSession,
-	} = await Effect.runPromise(
-		HttpClientRequest.post(`${origin}/api/auth/verify-otp`)
-			.pipe(
-				HttpClientRequest.jsonBody({
-					otp: submission.value.otp,
-					target,
-				}),
-				Effect.andThen(HttpClient.fetchOk),
-				Effect.flatMap(
-					HttpClientResponse.schemaBodyJson(AuthAPI.VerifyOTPSchema),
-				),
-				Effect.scoped,
-			)
-			.pipe(
-				Effect.catchAll((error) =>
-					Effect.sync(() => {
-						console.error(error.toString);
-						return {
-							status: "error",
-							valid: false,
-							onboard: false,
-							session: null,
-						};
-					}),
-				),
-			),
-	);
-	if (status === "error") {
-		return json({
-			result: submission.reply({
-				fieldErrors: {
-					otp: ["Error happened. Please try again later."],
-				},
-			}),
-		});
-	}
+	} = await createCaller({
+		env: context.cloudflare.env,
+		request,
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+	}).auth.verifyOTP({
+		otp: submission.value.otp,
+		target,
+	});
+
 	if (!valid) {
 		return json({
 			result: submission.reply({
@@ -168,7 +116,6 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 		});
 	}
 	userSession && session.set(SESSION_KEY, userSession.id);
-	console.log("onboard from verify", onboard);
 
 	return redirect(onboard ? "/onboarding" : redirectTo ?? "/marketplace");
 };

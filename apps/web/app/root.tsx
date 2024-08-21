@@ -1,4 +1,5 @@
 import { Toaster } from "@blazell/ui/toaster";
+import type { AuthUser, Env, Theme } from "@blazell/validators";
 import {
 	json,
 	type LinksFunction,
@@ -12,9 +13,9 @@ import {
 	ScrollRestoration,
 	useLoaderData,
 } from "@remix-run/react";
-import type { AuthUser, Env, Theme } from "@blazell/validators";
 import { ClientOnly } from "remix-utils/client-only";
 import { GeneralErrorBoundary } from "./components/error-boundary";
+import { Toploader } from "./components/molecules/top-loader";
 import { Header } from "./components/templates/layouts/header";
 import { MobileSidebar, Sidebar } from "./components/templates/layouts/sidebar";
 import { ClientHintCheck, getHints } from "./hooks/use-hints";
@@ -38,7 +39,6 @@ import {
 	GlobalStoreMutator,
 	MarketplaceStoreMutator,
 } from "./zustand/store-mutator";
-import { Toploader } from "./components/molecules/top-loader";
 
 export const links: LinksFunction = () => {
 	return [
@@ -60,7 +60,7 @@ export type RootLoaderData = {
 			sidebarState?: string;
 		};
 		userContext: {
-			user?: AuthUser;
+			authUser?: AuthUser;
 			cartID?: string;
 		};
 	};
@@ -69,7 +69,7 @@ export type RootLoaderData = {
 export const loader: LoaderFunction = async (args) => {
 	const { context, request } = args;
 	const { REPLICACHE_KEY, PARTYKIT_HOST } = context.cloudflare.env;
-	const { user } = context;
+	const { authUser } = context;
 
 	const cookieHeader = request.headers.get("Cookie");
 	const prefsCookie = (await prefs.parse(cookieHeader)) || {};
@@ -88,7 +88,7 @@ export const loader: LoaderFunction = async (args) => {
 				sidebarState: prefsCookie.sidebarState,
 			},
 			userContext: {
-				...(user && { user }),
+				...(authUser && { authUser }),
 				cartID: userContextCookie.cartID,
 			},
 		},

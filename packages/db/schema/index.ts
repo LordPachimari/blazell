@@ -19,3 +19,6 @@ export * from "./notification";
 export * from "./verification";
 export * from "./session";
 export * from "./auth";
+export * from "./customer";
+export * from "./payment-profile";
+export * from "./stripe";

@@ -77,8 +77,8 @@ export const OrderPreview = ({ orderID }: { orderID: string }) => {
 						<div className="font-semibold">Shipping Information</div>
 						<address className="grid gap-0.5 not-italic text-slate-11">
 							<span>{order?.fullName}</span>
-							<span>{order?.shippingAddress?.address}</span>
-							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
+							<span>{order?.shippingAddress?.line1}</span>
+							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.state}, ${order?.shippingAddress?.postalCode}`}</span>
 						</address>
 					</div>
 				</div>
@@ -181,8 +181,8 @@ export const OrderPreviewMobile = ({
 							<div className="font-semibold">Shipping Information</div>
 							<address className="grid gap-0.5 not-italic text-slate-11">
 								<span>{order?.fullName}</span>
-								<span>{order?.shippingAddress?.address}</span>
-								<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
+								<span>{order?.shippingAddress?.line1}</span>
+								<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.state}, ${order?.shippingAddress?.postalCode}`}</span>
 							</address>
 						</div>
 					</div>

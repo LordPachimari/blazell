@@ -6,8 +6,8 @@ import { NeonDatabaseError } from "@blazell/validators";
 
 export const cartCVD: GetRowsWTableName = ({ fullRows }) => {
 	return Effect.gen(function* () {
-		const { headers } = yield* Cloudflare;
-		const cartID = headers.get("x-cart-id");
+		const { request } = yield* Cloudflare;
+		const cartID = request.headers.get("x-cart-id");
 		if (!cartID) return [];
 		const { manager } = yield* Database;
 		const cvd = yield* pipe(

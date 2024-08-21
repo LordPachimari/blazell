@@ -120,6 +120,9 @@ function CustomersTable({
 											<h3 className="text-lg text-slate-11 font-freeman tracking-tight">
 												You have no customers
 											</h3>
+											<p className="text-sm text-muted-foreground">
+												We all start from zero.
+											</p>
 										</div>
 									</TableCell>
 								</TableRow>

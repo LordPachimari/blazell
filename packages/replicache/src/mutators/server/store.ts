@@ -154,20 +154,12 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 						HttpClient.fetch,
 						Effect.retry({ times: 3 }),
 						Effect.scoped,
-						Effect.catchTags({
-							RequestError: (e) =>
-								Effect.gen(function* () {
-									yield* Console.error("Error deleting image", e.message);
-
-									return yield* Effect.succeed({});
-								}),
-							ResponseError: (e) =>
-								Effect.gen(function* () {
-									yield* Console.error("Error deleting image", e.message);
-
-									return yield* Effect.succeed({});
-								}),
-						}),
+						Effect.catchAll((e) =>
+							Effect.gen(function* () {
+								yield* Console.error("Error deleting image", e.message);
+								return {};
+							}),
+						),
 					);
 				}),
 
@@ -197,6 +189,7 @@ const updateStore = zod(UpdateStoreSchema, (input) =>
 					tableMutator.update(
 						store.id,
 						{
+							...(updates.name && { name: updates.name }),
 							...(updates.description && { description: updates.description }),
 							...(updates.currencyCodes && {
 								currencyCodes: updates.currencyCodes,
@@ -265,7 +258,12 @@ const deleteStoreImage = zod(DeleteStoreImageSchema, (input) =>
 				HttpClient.fetch,
 				Effect.retry({ times: 3 }),
 				Effect.scoped,
-				Effect.orDie,
+				Effect.catchAll((e) =>
+					Effect.gen(function* () {
+						yield* Console.error("Error deleting image", e.message);
+						return {};
+					}),
+				),
 			);
 	}),
 );

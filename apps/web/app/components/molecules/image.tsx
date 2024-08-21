@@ -1,6 +1,7 @@
 import { cn } from "@blazell/ui";
 import React from "react";
 import ImagePlaceholder from "./image-placeholder";
+import { useRequestInfo } from "~/hooks/use-request-info";
 
 type Fit = "cover" | "contain" | "fill" | "inside" | "outside";
 
@@ -16,6 +17,7 @@ const Image = React.forwardRef<
 		fit?: Fit;
 	}
 >(({ className, fit, quality, width, height, alt, src, ...props }, ref) => {
+	const { origin } = useRequestInfo();
 	if (!src)
 		return (
 			<div
@@ -53,10 +55,8 @@ const Image = React.forwardRef<
 	}
 
 	params.append("image", src);
-	const MEDIA_URL =
-		"https://blazell-media-development.pachimari.workers.dev/transform";
 
-	const url = new URL(MEDIA_URL);
+	const url = new URL(`${origin}/api/images/transform`);
 	url.search = params.toString();
 	if (!fit && !width && !height) {
 		return (

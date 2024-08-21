@@ -200,7 +200,7 @@ export function Media({
 																	className="border brightness-75 w-full h-full aspect-square object-contain border-border   rounded-md"
 																/>
 																<div className="absolute inset-0 flex items-center justify-center">
-																	<LoadingSpinner />
+																	<LoadingSpinner className="text-slate-2 size-10" />
 																</div>
 															</>
 														)}

@@ -1,3 +1,4 @@
+import { parseWithZod } from "@conform-to/zod";
 import {
 	json,
 	redirect,
@@ -5,25 +6,18 @@ import {
 	type LoaderFunction,
 } from "@remix-run/cloudflare";
 import { useSearchParams } from "@remix-run/react";
-import { UsersAPI } from "@blazell/validators";
-import { parseWithZod } from "@conform-to/zod";
-import {
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
-import { Effect } from "effect";
 import { AnimatePresence } from "framer-motion";
+import { createCaller } from "server/trpc";
 import { checkHoneypot } from "~/server/honeypot.server";
 import { Onboard, UserOnboardSchema } from "./onboard";
-import { SESSION_KEY } from "@blazell/auth/src";
 
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
-	const { user } = context;
-	if (!user) {
+	const { authUser } = context;
+	if (!authUser) {
 		return redirect("/login");
 	}
+	if (authUser.username) return redirect("/dashboard");
 	return json({});
 };
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -36,22 +30,23 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	if (submission.status !== "success") {
 		return json({ result: submission.reply() });
 	}
+	if (!context.authUser)
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					username: ["Unauthorized."],
+				},
+			}),
+		});
 	const url = new URL(request.url);
-	const origin = url.origin;
 	const redirectTo = url.searchParams.get("redirectTo");
-	const { username } = await Effect.runPromise(
-		HttpClientRequest.get(
-			`${origin}/api/users/username/${submission.value.username}`,
-		).pipe(
-			HttpClient.fetchOk,
-			Effect.flatMap(
-				HttpClientResponse.schemaBodyJson(UsersAPI.UsernameSchema),
-			),
-			Effect.scoped,
-			Effect.orDie,
-		),
-	);
-	if (username) {
+	const user = await createCaller({
+		authUser: null,
+		bindings: context.cloudflare.bindings,
+		env: context.cloudflare.env,
+		request,
+	}).users.username({ username: submission.value.username });
+	if (user?.username) {
 		return json({
 			result: submission.reply({
 				fieldErrors: {
@@ -60,42 +55,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			}),
 		});
 	}
-	const session = context.session;
-	const sessionID = session.get(SESSION_KEY);
-	const { status } = await Effect.runPromise(
-		HttpClientRequest.post(`${origin}/api/users/onboard`)
-			.pipe(
-				HttpClientRequest.setHeader("Authorization", `Bearer ${sessionID}`),
-				HttpClientRequest.jsonBody({
-					username: submission.value.username,
-					countryCode: submission.value.countryCode,
-				}),
-				Effect.andThen(HttpClient.fetchOk),
-				Effect.flatMap(
-					HttpClientResponse.schemaBodyJson(UsersAPI.OnboardSchema),
-				),
-				Effect.scoped,
-			)
-			.pipe(
-				Effect.catchAll((error) =>
-					Effect.sync(() => {
-						console.error(error.toString());
-						return {
-							status: "error",
-						};
-					}),
-				),
-			),
-	);
-	if (status === "error") {
+	const result = await createCaller({
+		authUser: context.authUser,
+		bindings: context.cloudflare.bindings,
+		env: context.cloudflare.env,
+		request,
+	}).users.onboard({
+		username: submission.value.username,
+		countryCode: submission.value.countryCode,
+	});
+	if (result.status === "error") {
 		return json({
 			result: submission.reply({
 				fieldErrors: {
-					username: ["Something wrong happened. Please try again later."],
+					username: [result.message],
 				},
 			}),
 		});
 	}
+	console.log("ARE YOU HERE?", result);
 	return redirectTo ? redirect(redirectTo) : redirect("/dashboard");
 }
 

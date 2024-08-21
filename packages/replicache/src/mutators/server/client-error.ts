@@ -10,11 +10,11 @@ const createClientError = zod(
 	z.object({ title: z.string(), message: z.string() }),
 	(input) =>
 		Effect.gen(function* () {
-			const { headers } = yield* Cloudflare;
+			const { request } = yield* Cloudflare;
 			const { title, message } = input;
 
-			const userID = headers.get("x-user-id");
-			const globalID = headers.get("x-global-id");
+			const userID = request.headers.get("x-user-id");
+			const globalID = request.headers.get("x-global-id");
 			const id = userID ?? globalID;
 			if (!id) {
 				return;

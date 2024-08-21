@@ -1,5 +1,4 @@
 import { cn } from "@blazell/ui";
-import { Icons } from "@blazell/ui/icons";
 import { ScrollArea } from "@blazell/ui/scroll-area";
 import { ToggleGroup, ToggleGroupItem } from "@blazell/ui/toggle-group";
 import type {
@@ -9,7 +8,7 @@ import type {
 	PublishedVariant,
 	Variant,
 } from "@blazell/validators/client";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "~/components/molecules/image";
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { toImageURL } from "~/utils/helpers";
@@ -27,6 +26,7 @@ interface ProductOverviewProps {
 	cartID?: string | undefined;
 	defaultVariant: Variant | PublishedVariant | undefined;
 	setView?: (value: "preview" | "input") => void;
+	isScrolled?: boolean;
 }
 
 const ProductOverview = ({
@@ -39,13 +39,14 @@ const ProductOverview = ({
 	cartID,
 	defaultVariant,
 	setView,
+	isScrolled,
 }: ProductOverviewProps) => {
-	const [isShaking, setIsShaking] = useState(false);
-
+	const [isShaking, setIsShaking] = React.useState(false);
 	return (
 		<main className="relative h-[calc(100vh + 70vh] flex flex-col lg:flex-row w-full">
 			<MobileGallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
+				{...(isScrolled && { isScrolled: isScrolled })}
 			/>
 			<DesktopGallery
 				images={selectedVariant?.images ?? defaultVariant?.images ?? []}
@@ -69,6 +70,7 @@ const ProductOverview = ({
 					<div className="p-4 h-full w-full">
 						<GeneralInfo
 							defaultVariant={defaultVariant}
+							product={product}
 							{...(setView && { setView })}
 						/>
 						<Actions
@@ -95,7 +97,6 @@ const ProductOverview = ({
 							isDashboard={isDashboard}
 							isShaking={isShaking}
 						/>
-						<DeliveryOptions />
 					</div>
 				</ScrollArea>
 			</div>
@@ -279,34 +280,5 @@ const ProductOptions = ({
 				);
 			})}
 		</section>
-	);
-};
-const DeliveryOptions = () => {
-	return (
-		<div className="w-full py-4 pb-10 ">
-			<h2 className="flex min-w-[4rem] py-2 items-center font-semibold text-base">
-				Delivery options
-			</h2>
-			<ToggleGroup
-				className="flex flex-col gap-1"
-				type="single"
-				/* eslint-disable */ // field has onChange method so it shouldn't be passed to radio group
-				onChange={() => {}}
-				onClick={(e) => e.stopPropagation()}
-			>
-				{Array.from({ length: 3 }).map((_, index) => (
-					<ToggleGroupItem
-						key={index}
-						value={index.toString()}
-						className="group w-full"
-					>
-						<div className="flex w-full items-center justify-between">
-							<p className="">Delivery option {index + 1}</p>
-							<Icons.CircleCheck className="size-6 text-white fill-brand-9 opacity-0 transition group-data-[checked]:opacity-100" />
-						</div>
-					</ToggleGroupItem>
-				))}
-			</ToggleGroup>
-		</div>
 	);
 };

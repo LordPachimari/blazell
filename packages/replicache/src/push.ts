@@ -5,6 +5,7 @@ import { AuthContext, Database, type Cloudflare } from "@blazell/shared";
 import {
 	MutatorNotFoundError,
 	NeonDatabaseError,
+	type StripeError,
 	type InvalidValue,
 	type Mutation,
 	type NotFound,
@@ -50,7 +51,8 @@ export const push = ({
 	| NeonDatabaseError
 	| NotFound
 	| InvalidValue
-	| MutatorNotFoundError,
+	| MutatorNotFoundError
+	| StripeError,
 	Scope | Cloudflare | ReplicacheContext | AuthContext
 > =>
 	Effect.gen(function* () {
@@ -58,7 +60,7 @@ export const push = ({
 
 		yield* Effect.log(`PROCESSING PUSH: ${JSON.stringify(push, null, "")}`);
 		const { spaceID } = yield* ReplicacheContext;
-		const { auth } = yield* AuthContext;
+		const { authUser } = yield* AuthContext;
 
 		const startTime = yield* Clock.currentTimeMillis;
 		const mutators =
@@ -71,7 +73,7 @@ export const push = ({
 
 		yield* Effect.forEach(push.mutations, (mutation) =>
 			Effect.gen(function* () {
-				if (!auth.user && !publicMutators.has(mutation.name)) return;
+				if (!authUser && !publicMutators.has(mutation.name)) return;
 				// 1: START TRANSACTION FOR EACH MUTATION
 				const mutationEffect = yield* Effect.tryPromise(() =>
 					db.transaction(

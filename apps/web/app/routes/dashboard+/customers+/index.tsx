@@ -12,7 +12,7 @@ import { ScrollArea } from "@blazell/ui/scroll-area";
 import { Skeleton } from "@blazell/ui/skeleton";
 import type { Customer } from "@blazell/validators/client";
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { isString } from "remeda";
 import { PageHeader } from "~/components/page-header";
 import type {
@@ -21,6 +21,7 @@ import type {
 } from "~/worker/search";
 import { useDashboardStore } from "~/zustand/store";
 import { CustomersTable } from "./customers-table/table";
+import { cn } from "@blazell/ui";
 
 export default function CustomersPage() {
 	const customers = useDashboardStore((state) => state.customers);
@@ -68,12 +69,14 @@ export default function CustomersPage() {
 		}
 	}, [searchWorker]);
 	return (
-		<main className="w-full p-4 md:py-6 flex justify-center  pb-16 lg:pb-3">
+		<main className="w-full p-2 sm:p-3 flex justify-center pb-16 sm:pb-16 lg:pb-3">
 			<div className="justify-center flex flex-col lg:flex-row gap-6 w-full max-w-7xl">
 				<section className="w-full ">
-					<div className="flex flex-col pb-3">
-						<div className="flex gap-4">
-							<Stat description="This month" number={200} />
+					<div className="flex flex-col pb-2 sm:pb-3">
+						<div className="flex gap-2 sm:gap-4">
+							<Stat type="daily" customers={customers} />
+							<Stat type="weekly" customers={customers} />
+							<Stat type="monthly" customers={customers} />
 						</div>
 					</div>
 					<div className="flex w-full gap-3 flex-col lg:flex-row">
@@ -99,25 +102,6 @@ export default function CustomersPage() {
 	);
 }
 
-function Stat({
-	description,
-	number,
-}: { description: string; number: number }) {
-	return (
-		<Card>
-			<CardHeader className="pb-2">
-				<CardDescription>{description}</CardDescription>
-				<CardTitle className="text-4xl">+{number}</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<div className="text-xs text-muted-foreground">+25% from last </div>
-			</CardContent>
-			<CardFooter className="pt-2">
-				<Progress value={25} aria-label="25% increase" />
-			</CardFooter>
-		</Card>
-	);
-}
 function CustomersInfo() {
 	const customers = useDashboardStore((state) => state.customers);
 	const isInitialized = useDashboardStore((state) => state.isInitialized);
@@ -147,7 +131,7 @@ function CustomersInfo() {
 							</Avatar>
 							<div className="grid gap-1">
 								<p className="text-sm font-medium leading-none">
-									{customer.username ?? customer.fullName}
+									{customer.user?.username ?? "Unknown"}
 								</p>
 								<p className="text-sm text-muted-foreground">
 									{customer.email}
@@ -161,3 +145,139 @@ function CustomersInfo() {
 		</Card>
 	);
 }
+
+function Stat({
+	type,
+	customers,
+}: { type: "daily" | "weekly" | "monthly"; customers: Customer[] }) {
+	const today = new Date().toISOString().split("T")[0]!;
+
+	// Utility function to calculate percentage increase
+	const calculatePercentageIncrease = (current: number, previous: number) => {
+		if (previous === 0) return current > 0 ? 100 : 0;
+		return ((current - previous) / previous) * 100;
+	};
+
+	// Aggregate data for required ranges
+	const todayCustomers = React.useMemo(
+		() => aggregateDataForRange(customers, today, today),
+		[customers, today],
+	);
+	const yesterdayCustomers = React.useMemo(
+		() =>
+			aggregateDataForRange(customers, getDateNDaysAgo(1), getDateNDaysAgo(1)),
+		[customers],
+	);
+	const weekAgoCustomers = React.useMemo(
+		() => aggregateDataForRange(customers, getDateNDaysAgo(6), today),
+		[customers, today],
+	);
+	const lastWeekCustomers = React.useMemo(
+		() =>
+			aggregateDataForRange(customers, getDateNDaysAgo(13), getDateNDaysAgo(7)),
+		[customers],
+	);
+	const monthAgoCustomers = React.useMemo(
+		() => aggregateDataForRange(customers, getDateNDaysAgo(29), today),
+		[customers, today],
+	);
+	const lastMonthCustomers = React.useMemo(
+		() =>
+			aggregateDataForRange(
+				customers,
+				getDateNDaysAgo(59),
+				getDateNDaysAgo(30),
+			),
+		[customers],
+	);
+
+	// Get amount based on type
+	const getNumber = (type: "daily" | "weekly" | "monthly") => {
+		switch (type) {
+			case "daily":
+				return todayCustomers;
+			case "weekly":
+				return weekAgoCustomers;
+			case "monthly":
+				return monthAgoCustomers;
+			default:
+				return 0;
+		}
+	};
+
+	// Calculate percentage increase based on type
+	const getPercentageIncreaseFromLast = (
+		type: "daily" | "weekly" | "monthly",
+	) => {
+		switch (type) {
+			case "daily":
+				return calculatePercentageIncrease(todayCustomers, yesterdayCustomers);
+			case "weekly":
+				return calculatePercentageIncrease(weekAgoCustomers, lastWeekCustomers);
+			case "monthly":
+				return calculatePercentageIncrease(
+					monthAgoCustomers,
+					lastMonthCustomers,
+				);
+			default:
+				return 0;
+		}
+	};
+
+	const percentageIncrease = getPercentageIncreaseFromLast(type);
+
+	return (
+		<Card
+			className={cn("max-w-sm", {
+				"hidden sm:block": type === "monthly",
+			})}
+		>
+			<CardHeader className="pb-2">
+				<CardDescription>
+					{type === "daily"
+						? "Daily"
+						: type === "weekly"
+							? "Weekly"
+							: "Monthly"}{" "}
+					<span className="font-bold">new customers</span>
+				</CardDescription>
+				<CardTitle className="text-4xl">{`${getNumber(type)}`}</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<div className="text-xs text-muted-foreground">
+					{percentageIncrease >= 0 ? "+" : ""}
+					{percentageIncrease.toFixed(2)}% from last{" "}
+					{type === "daily" ? "day" : type === "weekly" ? "week" : "month"}
+				</div>
+			</CardContent>
+			<CardFooter className="pt-2">
+				<Progress
+					value={percentageIncrease}
+					aria-label={`${percentageIncrease.toFixed(2)}% increase`}
+				/>
+			</CardFooter>
+		</Card>
+	);
+}
+
+const getDateNDaysAgo = (n: number): string => {
+	const date = new Date();
+	date.setDate(date.getDate() - n);
+	return date.toISOString().split("T")[0]!;
+};
+
+const aggregateDataForRange = (
+	customers: Customer[],
+	startDate: string,
+	endDate: string,
+): number => {
+	return customers
+		.filter((customer) => {
+			const joinedDate = customer.createdAt.split("T")[0]!;
+			return joinedDate >= startDate && joinedDate <= endDate;
+		})
+		.reduce((acc) => {
+			acc++;
+			return acc;
+		}, 0);
+};

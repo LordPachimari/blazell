@@ -7,16 +7,16 @@ import type { GetRowsWTableName } from "../types";
 
 export const notificationsCVD: GetRowsWTableName = ({ fullRows = false }) => {
 	return Effect.gen(function* () {
-		const { headers } = yield* Cloudflare;
-		const userID = headers.get("x-user-id");
-		const globalID = headers.get("x-global-id");
+		const { request } = yield* Cloudflare;
+		const userID = request.headers.get("x-user-id");
+		const globalID = request.headers.get("x-global-id");
 		const id = userID ?? globalID;
 		if (!id) return [];
 		const { manager } = yield* Database;
 
 		const store = yield* Effect.tryPromise(() =>
 			manager.query.stores.findFirst({
-				where: (stores, { eq }) => eq(stores.founderID, id),
+				where: (stores, { eq }) => eq(stores.ownerID, id),
 			}),
 		).pipe(
 			Effect.catchTags({

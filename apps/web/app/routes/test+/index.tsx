@@ -1,14 +1,8 @@
-import { Button } from "@blazell/ui/button";
-import { LoadingSpinner } from "@blazell/ui/loading";
+import { type LoaderFunction, json } from "@remix-run/cloudflare";
 
-const Test = () => {
-	return (
-		<div className="w-screen h-screen flex justify-center items-center">
-			<Button>
-				<LoadingSpinner className="text-white size-4 mr-2" />
-				Pending
-			</Button>
-		</div>
-	);
+export const loader: LoaderFunction = async () => {
+	return json({});
 };
-export default Test;
+export default function Test() {
+	return <div>Test</div>;
+}

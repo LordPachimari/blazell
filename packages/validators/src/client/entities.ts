@@ -1,6 +1,7 @@
 // TYPE DEFINITIONS FOR CLIENT.
 import type { Image } from "@blazell/db";
 import type * as Server from "../server/entities";
+import type { AccountBalance } from "../shared";
 export type Variant = Server.Variant & {
 	product?: Product;
 	prices?: Server.Price[];
@@ -21,8 +22,9 @@ export type Product = Server.Product & {
 	options?: ProductOption[];
 	collection: Server.Collection;
 	defaultVariant: Variant;
+	store: Server.Store;
 };
-export type PublishedProduct = Server.Product & {
+export type PublishedProduct = Product & {
 	variants: Variant[];
 	options: ProductOption[];
 	collection: Server.Collection;
@@ -33,18 +35,17 @@ export type ProductOption = Server.ProductOption & {
 	optionValues?: ProductOptionValue[];
 };
 export type Store = Server.Store & {
-	products?: Product[];
-	founder?: Server.User;
+	products?: (Product | PublishedProduct)[];
+	owner?: Server.User;
 };
 export type Price = Server.Price;
 export type ProductOptionValue = Server.ProductOptionValue & {
 	option: ProductOption;
 };
 export type User = Server.User;
-export type Customer = Pick<
-	User,
-	"id" | "fullName" | "username" | "email" | "phone"
->;
+export type Customer = Server.Customer & {
+	user?: User;
+};
 export type Address = Server.Address;
 export type LineItem = Server.LineItem & {
 	variant: PublishedVariant;
@@ -64,3 +65,9 @@ export type Order = Server.Order & {
 	items: LineItem[];
 };
 export type Notification = Server.Notification;
+export type PaymentProfile = Server.PaymentProfile & {
+	stripe?: StripeAccount & {
+		balance?: AccountBalance;
+	};
+};
+export type StripeAccount = Server.StripeAccount;

@@ -1,6 +1,6 @@
 import type { Product } from "@blazell/validators/client";
 import { useSearchParams } from "@remix-run/react";
-import { ProductOverview } from "~/components/templates/product/product-overview";
+import { StoreProductOverview } from "~/components/templates/product/store-product-overview";
 import { useDashboardStore } from "~/zustand/store";
 
 interface ProductPreviewProps {
@@ -34,7 +34,7 @@ const ProductPreview = ({ product, setView }: ProductPreviewProps) => {
 		: undefined;
 	return (
 		<div className="w-full h-full relative">
-			<ProductOverview
+			<StoreProductOverview
 				product={product}
 				variants={variants}
 				selectedVariant={selectedVariant}

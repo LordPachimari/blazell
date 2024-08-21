@@ -172,7 +172,7 @@ export function DashboardSearchCombobox() {
 						aria-hidden="true"
 					/>
 					<div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4">
+						<div className="flex justify-center p-4">
 							<TransitionChild
 								enter="ease-out duration-300"
 								enterFrom="opacity-0 transform-[scale(95%)]"
@@ -181,7 +181,7 @@ export function DashboardSearchCombobox() {
 								leaveFrom="opacity-100 transform-[scale(100%)]"
 								leaveTo="opacity-0 transform-[scale(95%)]"
 							>
-								<DialogPanel className="w-full md:w-[600px] rounded-lg backdrop-blur-2xl">
+								<DialogPanel className="w-full md:w-[600px] lg:w-[700px] rounded-lg backdrop-blur-2xl">
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus
@@ -327,12 +327,15 @@ export function DashboardSearchCombobox() {
 																				<div className="flex flex-col">
 																					<HighlightedText
 																						searchTerm={query}
-																						text={customer.username ?? "Anonym"}
+																						text={
+																							customer.user?.username ??
+																							"Anonym"
+																						}
 																						className="font-bold text-base"
 																					/>
 																					<HighlightedText
 																						searchTerm={query}
-																						text={customer.fullName ?? ""}
+																						text={customer.user?.fullName ?? ""}
 																						className="line-clamp-2"
 																					/>
 																					<HighlightedText

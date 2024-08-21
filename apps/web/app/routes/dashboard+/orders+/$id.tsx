@@ -51,8 +51,8 @@ const CustomerInfo = ({ order }: { order: Order | undefined | null }) => {
 			</CardHeader>
 			<CardContent className="p-4 border-b border-border flex justify-center">
 				<div>
-					<Avatar className="h-36 w-38">
-						<AvatarImage src="https://github.com/shadcn.png" />
+					<Avatar className="size-36">
+						<AvatarImage src={order?.user?.avatar ?? undefined} />
 						<AvatarFallback>
 							{order?.user?.username?.slice(0, 2).toUpperCase() ??
 								order?.fullName?.slice(0, 2).toUpperCase()}
@@ -88,16 +88,16 @@ const CustomerInfo = ({ order }: { order: Order | undefined | null }) => {
 						<div className="font-semibold">Shipping Information</div>
 						<address className="grid gap-0.5 not-italic text-slate-11">
 							<span>{order?.fullName}</span>
-							<span>{order?.shippingAddress?.address}</span>
-							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
+							<span>{order?.shippingAddress?.line1}</span>
+							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.state}, ${order?.shippingAddress?.postalCode}`}</span>
 						</address>
 					</div>
 					<div className="grid gap-3">
 						<div className="font-semibold">Billing Information</div>
 						<address className="grid gap-0.5 not-italic text-slate-11">
 							<span>{order?.fullName}</span>
-							<span>{order?.shippingAddress?.address}</span>
-							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.province}, ${order?.shippingAddress?.postalCode}`}</span>
+							<span>{order?.shippingAddress?.line1}</span>
+							<span>{`${order?.shippingAddress?.city}, ${order?.shippingAddress?.state}, ${order?.shippingAddress?.postalCode}`}</span>
 						</address>
 					</div>
 				</div>

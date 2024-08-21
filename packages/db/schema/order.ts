@@ -1,8 +1,8 @@
 import { index, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
-import { users } from "./user";
-import { addresses } from "./address";
 import { relations } from "drizzle-orm";
+import { addresses } from "./address";
+import { customers } from "./customer";
 import { lineItems } from "./line-item";
 import { stores } from "./store";
 
@@ -24,11 +24,12 @@ export const orders = pgTable(
 
 		countryCode: varchar("country_code", { length: 2 }).notNull(),
 		currencyCode: varchar("currency_code", { length: 3 })
+
 			.notNull()
 			.default("USD"),
-		userID: varchar("user_id")
+		customerID: varchar("customer_id")
 			.notNull()
-			.references(() => users.id),
+			.references(() => customers.id),
 		subtotal: integer("subtotal"),
 		total: integer("total"),
 		shippingAddressID: varchar("shipping_address_id").references(
@@ -48,7 +49,7 @@ export const orders = pgTable(
 		version: integer("version").notNull().default(0),
 	},
 	(orders) => ({
-		userIDIndex: index("user_id_index_2").on(orders.userID),
+		userIDIndex: index("customer_id_index").on(orders.customerID),
 		shippingAddressIndex: index("shipping_address_id_1").on(
 			orders.shippingAddressID,
 		),
@@ -60,9 +61,9 @@ export const orders = pgTable(
 	}),
 );
 export const ordersRelations = relations(orders, ({ one, many }) => ({
-	user: one(users, {
-		fields: [orders.userID],
-		references: [users.id],
+	customer: one(customers, {
+		fields: [orders.customerID],
+		references: [customers.id],
 	}),
 	items: many(lineItems),
 	shippingAddress: one(addresses, {

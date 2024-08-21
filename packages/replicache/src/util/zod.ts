@@ -7,9 +7,10 @@ import type {
 	InvalidValue,
 	NeonDatabaseError,
 	NotFound,
+	StripeError,
 	TableNotFound,
 } from "@blazell/validators";
-import type { Cloudflare, Database } from "@blazell/shared";
+import type { AuthContext, Cloudflare, Database } from "@blazell/shared";
 import type { TableMutator } from "../context/table-mutator";
 
 export function zod<Schema extends z.ZodSchema>(
@@ -24,8 +25,9 @@ export function zod<Schema extends z.ZodSchema>(
 		| NeonDatabaseError
 		| NotFound
 		| ImageUploadError
-		| InvalidValue,
-		TableMutator | Database | Cloudflare
+		| InvalidValue
+		| StripeError,
+		TableMutator | Database | Cloudflare | AuthContext
 	>,
 ) {
 	const result = (input: z.infer<Schema>) => {

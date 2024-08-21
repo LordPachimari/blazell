@@ -3,16 +3,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "@blazell/ui/avatar";
 import { Button } from "@blazell/ui/button";
 import { truncateString } from "@blazell/utils";
 import type { PublishedVariant } from "@blazell/validators";
-import type { Variant } from "@blazell/validators/client";
+import type {
+	Product,
+	PublishedProduct,
+	Variant,
+} from "@blazell/validators/client";
+import { Link } from "@remix-run/react";
 import { useState } from "react";
 import Price from "~/components/molecules/price";
 
 interface GeneralInfoProps {
+	product: Product | PublishedProduct | undefined;
 	defaultVariant: Variant | PublishedVariant | undefined | null;
 	setView?: (value: "preview" | "input") => void;
+	isDashboard?: boolean;
 }
 
-function GeneralInfo({ defaultVariant, setView }: GeneralInfoProps) {
+function GeneralInfo({
+	defaultVariant,
+	setView,
+	product,
+	isDashboard,
+}: GeneralInfoProps) {
 	const [isTruncated, setIsTruncated] = useState(true);
 
 	const handleToggle = () => {
@@ -23,15 +35,18 @@ function GeneralInfo({ defaultVariant, setView }: GeneralInfoProps) {
 		? truncateString(defaultVariant?.description ?? "", 200)
 		: defaultVariant?.description ?? "";
 	return (
-		<section className="flex flex-col ">
+		<Link
+			to={isDashboard ? "/store" : `/stores/${product?.store.name}`}
+			className="flex flex-col "
+		>
 			<div className="w-full flex gap-2">
 				<Avatar className="h-16 w-16">
-					<AvatarImage src="https://github.com/shadcn.png" />
+					<AvatarImage src={product?.store.storeImage?.croppedImage?.url} />
 					<AvatarFallback>N</AvatarFallback>
 				</Avatar>
 
 				<div className="flex gap-2 justify-between w-full">
-					<p className="font-medium text-lg">{"Store name"}</p>
+					<p className="font-medium text-lg">{product?.store.name}</p>
 					{setView && (
 						<Button
 							variant="outline"
@@ -78,7 +93,7 @@ function GeneralInfo({ defaultVariant, setView }: GeneralInfoProps) {
 				amount={defaultVariant?.prices?.[0]?.amount ?? 0}
 				currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "USD"}
 			/>
-		</section>
+		</Link>
 	);
 }
 

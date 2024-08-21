@@ -8,9 +8,8 @@ import { Hero } from "~/components/templates/landing/hero";
 import Footer from "~/components/templates/layouts/footer";
 
 export const loader: LoaderFunction = async ({ context }) => {
-	const { user } = context;
-	console.log("user from marketing", user);
-	if (user) return redirect("/marketplace");
+	const { authUser } = context;
+	if (authUser) return redirect("/marketplace");
 	return json({});
 };
 export const meta: MetaFunction = () => {

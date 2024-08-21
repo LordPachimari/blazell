@@ -139,7 +139,7 @@ export function GlobalSearchCombobox() {
 			</Button>
 			<button
 				type="button"
-				className="flex lg:hidden rounded-full hover:bg-slate-a-2 p-2"
+				className="flex px-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring lg:hidden rounded-lg hover:bg-slate-a-2 p-2"
 				onClick={() => open()}
 			>
 				<Icons.MagnifyingGlassIcon className="text-slate-11 hover:text-brand-9 size-6" />
@@ -155,7 +155,7 @@ export function GlobalSearchCombobox() {
 						aria-hidden="true"
 					/>
 					<div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-						<div className="flex min-h-full items-center justify-center p-4">
+						<div className="flex justify-center p-4">
 							<TransitionChild
 								enter="ease-out duration-300"
 								enterFrom="opacity-0 transform-[scale(95%)]"
@@ -164,7 +164,7 @@ export function GlobalSearchCombobox() {
 								leaveFrom="opacity-100 transform-[scale(100%)]"
 								leaveTo="opacity-0 transform-[scale(95%)]"
 							>
-								<DialogPanel className="w-full md:w-[600px] rounded-lg backdrop-blur-2xl">
+								<DialogPanel className="w-full md:w-[600px] lg:w-[700px] rounded-lg backdrop-blur-2xl">
 									<Command className="rounded-lg border bg-component  shadow-md w-full">
 										<Input
 											autoFocus

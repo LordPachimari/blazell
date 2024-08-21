@@ -4,8 +4,8 @@ import { Context } from "effect";
 class Cloudflare extends Context.Tag("Cloudflare")<
 	Cloudflare,
 	{
-		readonly env: Env & Bindings;
-		readonly headers: Headers;
+		readonly env: Env;
+		readonly bindings: Bindings;
 		readonly request: Request;
 	}
 >() {}

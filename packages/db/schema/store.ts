@@ -24,7 +24,7 @@ export const stores = pgTable(
 			alt: string;
 		}>(),
 		currencyCodes: json("currencies").$type<string[]>(),
-		founderID: varchar("founder_id")
+		ownerID: varchar("owner_id")
 			.references(() => users.id)
 			.notNull(),
 		storeImage: json("store_image").$type<Image>(),
@@ -37,15 +37,15 @@ export const stores = pgTable(
 	},
 	(t) => ({
 		storeNameIndex: index("store_name_index").on(t.name),
-		founderIDIndex: index("founder_id_index").on(t.founderID),
+		ownerIDIndex: index("owner_id_index").on(t.ownerID),
 		countryCodeIndex: index("country_code_index").on(t.countryCode),
 	}),
 );
 export const storesRelations = relations(stores, ({ one, many }) => ({
-	founder: one(users, {
-		fields: [stores.founderID],
+	owner: one(users, {
+		fields: [stores.ownerID],
 		references: [users.id],
-		relationName: "founder.stores",
+		relationName: "owner.stores",
 	}),
 	admins: many(adminsToStores),
 	products: many(products),

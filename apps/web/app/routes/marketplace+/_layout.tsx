@@ -1,9 +1,16 @@
 import { cn } from "@blazell/ui";
 import { Card, CardContent, CardFooter } from "@blazell/ui/card";
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from "@blazell/ui/hover-card";
 import { Noise } from "@blazell/ui/noise";
 import { Skeleton } from "@blazell/ui/skeleton";
-import type { Product, Store } from "@blazell/validators/client";
-import { Outlet } from "@remix-run/react";
+import { truncateString } from "@blazell/utils";
+import type { PublishedVariant } from "@blazell/validators";
+import type { PublishedProduct, Store } from "@blazell/validators/client";
+import { Link, Outlet } from "@remix-run/react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import Image from "~/components/molecules/image";
@@ -103,7 +110,7 @@ const Featured3 = ({ stores }: { stores: Store[] }) => {
 
 	return (
 		<div className="mb-10 hidden lg:block">
-			<div className="relative h-[410px] overflow-hidden">
+			<div className="relative h-[410px]">
 				<AnimatePresence initial={false} custom={{ direction }}>
 					{[-1, 0, 1].map((offset) => {
 						const index =
@@ -228,7 +235,7 @@ const Featured5 = ({ stores }: { stores: Store[] }) => {
 
 	return (
 		<div className="mb-10 hidden lg:block">
-			<div className="relative h-[410px] overflow-hidden">
+			<div className="relative h-[410px] ">
 				<AnimatePresence initial={false} custom={{ direction }}>
 					{[-2, -1, 0, 1, 2].map((offset) => {
 						const index =
@@ -285,7 +292,7 @@ const StoreComponent = ({ store }: { store: Store }) => {
 			<CardContent>
 				<div
 					className={cn(
-						"max-h-[120px] md:min-h-[120px] h-fit w-full overflow-hidden rounded-lg p-0 relative grid grid-cols-1",
+						"max-h-[120px] md:min-h-[120px] h-fit w-full rounded-lg p-0 relative grid grid-cols-1",
 					)}
 				>
 					{!isInitialized && <Skeleton className="w-full h-[120px]" />}
@@ -307,12 +314,13 @@ const StoreComponent = ({ store }: { store: Store }) => {
 					productCount={store.products?.length ?? 0}
 					isInitialized={isInitialized}
 					size="small"
+					storeURL={`/stores/${store.name}`}
 				/>
 			</CardContent>
 			<CardFooter className="p-0 pt-2">
 				<ProductSection
 					isInitialized={isInitialized}
-					products={store.products ?? []}
+					products={(store.products as PublishedProduct[]) ?? []}
 				/>
 			</CardFooter>
 		</Card>
@@ -322,7 +330,7 @@ const ProductSection = ({
 	products,
 	isInitialized,
 }: {
-	products: Product[];
+	products: PublishedProduct[];
 	isInitialized: boolean;
 }) => {
 	const slicedProducts = React.useMemo(
@@ -349,36 +357,105 @@ const ProductSection = ({
 const ProductCard = ({
 	product,
 }: {
-	product: Product;
+	product: PublishedProduct;
 }) => {
 	const variantMap = useMarketplaceStore((state) => state.variantMap);
 
 	const defaultVariant = variantMap.get(product.defaultVariantID);
 	return (
-		<div className="relative aspect-square p-0">
-			<CardContent className="relative flex h-full w-full flex-col gap-4">
-				<section className="flex h-full w-full  border border-border	  overflow-hidden rounded-lg items-center justify-center">
-					{!defaultVariant?.thumbnail?.url ? (
-						<ImagePlaceholder />
-					) : (
-						<Image
-							src={defaultVariant?.thumbnail?.url}
-							alt={defaultVariant?.thumbnail?.name ?? "Product image"}
-							className="rounded-lg"
-							fit="cover"
-						/>
-					)}
-				</section>
-			</CardContent>
+		<HoverCard openDelay={100}>
+			<HoverCardTrigger>
+				<Link
+					to={`/stores/${product.store.name}/products/${product.defaultVariant.handle}`}
+					prefetch="intent"
+					className="relative aspect-square p-0"
+				>
+					<CardContent className="relative flex h-full w-full flex-col gap-4">
+						<section className="flex h-full w-full  border border-border	   rounded-lg items-center justify-center">
+							{!defaultVariant?.thumbnail?.url ? (
+								<ImagePlaceholder />
+							) : (
+								<Image
+									src={defaultVariant?.thumbnail?.url}
+									alt={defaultVariant?.thumbnail?.name ?? "Product image"}
+									className="rounded-lg"
+									fit="cover"
+								/>
+							)}
+						</section>
+					</CardContent>
 
-			<span className="absolute top-1 right-1 text-brand-9 font-freeman flex gap-2 text-sm md:text-base border border-brand-9 bg-brand-3 rounded-lg p-1">
+					<span className="absolute top-1 right-1 text-brand-9 font-freeman flex gap-2 text-sm md:text-base border border-brand-9 bg-brand-3 rounded-lg p-1">
+						<Price
+							className="text-xs md:text-sm font-freeman flex-none text-brand-9 rounded-lg"
+							amount={defaultVariant?.prices?.[0]?.amount ?? 0}
+							currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "AUD"}
+							currencyCodeClassName="hidden @[275px]/label:inline"
+						/>
+					</span>
+				</Link>
+			</HoverCardTrigger>
+			<HoverCardContent align="center" side="right" className="p-2">
+				<MiniProductOverview variant={defaultVariant} />
+			</HoverCardContent>
+		</HoverCard>
+	);
+};
+
+const MiniProductOverview = ({
+	variant,
+}: {
+	variant: PublishedVariant | undefined;
+}) => {
+	const [isTruncated, setIsTruncated] = useState(true);
+	const displayText = isTruncated
+		? truncateString(variant?.description ?? "", 200)
+		: variant?.description ?? "";
+	const handleToggle = () => {
+		setIsTruncated(!isTruncated);
+	};
+	return (
+		<div className="flex gap-2">
+			<div>
+				{!variant?.thumbnail?.url ? (
+					<ImagePlaceholder />
+				) : (
+					<Image
+						src={variant?.thumbnail?.url}
+						alt={variant?.thumbnail?.name ?? "Product image"}
+						className="rounded-lg size-40 border border-border"
+						width={100}
+						height={100}
+						fit="cover"
+					/>
+				)}
+			</div>
+			<div className="w-[100px]">
+				<div className="flex flex-col gap-3 ">
+					<h1 className="font-bold text-lg ">{`${
+						variant?.title ?? "Untitled"
+					}`}</h1>
+					<p>
+						{displayText}
+						<span
+							onClick={handleToggle}
+							onKeyDown={handleToggle}
+							className={cn(
+								"pl-1 underline cursor-pointer bg-transparent transition text-slate-11",
+								displayText.length < 200 && "hidden",
+							)}
+						>
+							{isTruncated ? "Reveal" : "Hide"}
+						</span>
+					</p>
+				</div>
+
 				<Price
-					className="text-xs md:text-sm font-freeman flex-none text-brand-9 rounded-lg"
-					amount={defaultVariant?.prices?.[0]?.amount ?? 0}
-					currencyCode={defaultVariant?.prices?.[0]?.currencyCode ?? "AUD"}
-					currencyCodeClassName="hidden @[275px]/label:inline"
+					className="text-sm py-4 font-black"
+					amount={variant?.prices?.[0]?.amount ?? 0}
+					currencyCode={variant?.prices?.[0]?.currencyCode ?? "USD"}
 				/>
-			</span>
+			</div>
 		</div>
 	);
 };

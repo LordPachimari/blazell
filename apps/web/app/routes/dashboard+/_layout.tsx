@@ -19,17 +19,22 @@ import { useRequestInfo } from "~/hooks/use-request-info";
 import { DashboardStoreProvider } from "~/zustand/store";
 import { DashboardStoreMutator } from "~/zustand/store-mutator";
 import { DashboardSearchCombobox } from "./search";
+import { Button } from "@blazell/ui/button";
+import { cn } from "@blazell/ui";
+import { useDashboardState } from "~/zustand/state";
+import { Icons, strokeWidth } from "@blazell/ui/icons";
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
-	const { user } = context;
+	const { authUser } = context;
 
-	if (!user) {
+	if (!authUser) {
+		console.log("authUser not found", authUser);
 		return redirect("/login");
 	}
-	if (!user.username) {
+	if (!authUser.username) {
 		return redirect("/onboarding");
 	}
-	return json(user);
+	return json(authUser);
 };
 
 export default function DashboardLayout() {
@@ -39,11 +44,9 @@ export default function DashboardLayout() {
 				<SidebarLayoutWrapper>
 					<DashboardSidebarMobile />
 					<DashboardSidebar>
-						<div className="relative md:pl-40 pt-14 w-full ">
-							<DashboardNav />
+						<DashboardNav />
 
-							<Outlet />
-						</div>
+						<Outlet />
 					</DashboardSidebar>
 				</SidebarLayoutWrapper>
 			</DashboardStoreMutator>
@@ -52,10 +55,30 @@ export default function DashboardLayout() {
 }
 const DashboardNav = () => {
 	const { userContext } = useRequestInfo();
-	const { user } = userContext;
+	const { authUser } = userContext;
+	const location = useLocation();
+
+	const splitPath = location.pathname.split("/");
+	const mainPath = splitPath[1];
+
+	const opened = useDashboardState((state) => state.opened);
+	const setOpened = useDashboardState((state) => state.setOpened);
 	return (
 		<div className="h-14 flex items-center w-full fixed top-0 border-b bg-background border-border z-20 px-3">
 			<div className="flex items-center flex-1">
+				<Button
+					variant="ghost"
+					size="icon"
+					className={cn(
+						"bottom-4 bg-transparent left-3 size-10 z-50 md:hidden",
+						{
+							hidden: mainPath !== "dashboard",
+						},
+					)}
+					onClick={() => setOpened(!opened)}
+				>
+					<Icons.Menu size={20} strokeWidth={strokeWidth} />
+				</Button>
 				<DynamicBreadcrumb />
 			</div>
 
@@ -63,9 +86,11 @@ const DashboardNav = () => {
 				<DashboardSearchCombobox />
 			</div>
 
-			<div className="flex-1 flex justify-start items-center gap-2 px-4">
-				<ThemeToggle />
-				{user && <ProfileDropdown user={user as AuthUser} />}
+			<div className="flex-1 flex justify-start items-center gap-2">
+				<div className="hidden sm:block">
+					<ThemeToggle />
+				</div>
+				{authUser && <ProfileDropdown authUser={authUser as AuthUser} />}
 			</div>
 		</div>
 	);
@@ -100,7 +125,10 @@ export function DynamicBreadcrumb() {
 								</BreadcrumbPage>
 							) : (
 								<>
-									<Link to={routeTo}>
+									<Link
+										to={routeTo}
+										className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+									>
 										<BreadcrumbLink className="text-slate-10 overflow-hidden text-ellipsis w-[100px]">
 											<p className="text-ellipsis max-w-[100px] text-nowrap overflow-hidden">
 												{`${name[0]?.toUpperCase()}${name.substring(1)}`}
