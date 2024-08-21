@@ -11,6 +11,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 	const error = url.searchParams.get("error");
 
 	if (error) {
+		console.error("Google OAuth error", error);
 		return redirect("/login");
 	}
 	const stateCookie = session.get("google_oauth_state") ?? null;

@@ -19,6 +19,8 @@ import {
 	clientErrors,
 	notifications,
 	customers,
+	paymentProfiles,
+	stripe,
 } from "./schema";
 
 type UserTable = typeof users;
@@ -56,6 +58,10 @@ type ClientErrorTable = typeof clientErrors;
 type CustomerTable = typeof customers;
 
 type NotificationTable = typeof notifications;
+
+type PaymentProfileTable = typeof paymentProfiles;
+
+type StripeTable = typeof stripe;
 export type JsonTable = typeof jsonTable;
 export type Table =
 	| UserTable
@@ -76,7 +82,9 @@ export type Table =
 	| OrderTable
 	| ClientErrorTable
 	| NotificationTable
-	| CustomerTable;
+	| CustomerTable
+	| PaymentProfileTable
+	| StripeTable;
 export const tableNameToTableMap: Record<TableName, Table> = {
 	users,
 	products,
@@ -97,5 +105,7 @@ export const tableNameToTableMap: Record<TableName, Table> = {
 	clientErrors,
 	notifications,
 	customers,
+	paymentProfiles,
+	stripe,
 };
 export type TableNameToTableMap = typeof tableNameToTableMap;

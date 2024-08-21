@@ -23,3 +23,5 @@ export type Notification = InferSelectModel<typeof schema.notifications>;
 export type Verification = InferSelectModel<typeof schema.verifications>;
 export type Session = InferSelectModel<typeof schema.sessions>;
 export type Customer = InferSelectModel<typeof schema.customers>;
+export type PaymentProfile = InferSelectModel<typeof schema.paymentProfiles>;
+export type StripeAccount = InferSelectModel<typeof schema.stripe>;

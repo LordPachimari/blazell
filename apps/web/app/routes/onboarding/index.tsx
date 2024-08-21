@@ -13,10 +13,11 @@ import { Onboard, UserOnboardSchema } from "./onboard";
 
 export const loader: LoaderFunction = async (args) => {
 	const { context } = args;
-	const { user } = context;
-	if (!user) {
+	const { authUser } = context;
+	if (!authUser) {
 		return redirect("/login");
 	}
+	if (authUser.username) return redirect("/dashboard");
 	return json({});
 };
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -29,6 +30,14 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	if (submission.status !== "success") {
 		return json({ result: submission.reply() });
 	}
+	if (!context.authUser)
+		return json({
+			result: submission.reply({
+				fieldErrors: {
+					username: ["Unauthorized."],
+				},
+			}),
+		});
 	const url = new URL(request.url);
 	const redirectTo = url.searchParams.get("redirectTo");
 	const user = await createCaller({
@@ -47,7 +56,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		});
 	}
 	const result = await createCaller({
-		authUser: null,
+		authUser: context.authUser,
 		bindings: context.cloudflare.bindings,
 		env: context.cloudflare.env,
 		request,
@@ -64,6 +73,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 			}),
 		});
 	}
+	console.log("ARE YOU HERE?", result);
 	return redirectTo ? redirect(redirectTo) : redirect("/dashboard");
 }
 

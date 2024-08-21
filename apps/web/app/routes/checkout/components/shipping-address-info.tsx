@@ -35,8 +35,12 @@ export const ShippingAddressInfo = ({
 			<FieldErrorMessage message={form.errors?.[0]} />
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<Input
-					placeholder="Address"
-					{...getInputProps(address.address, { type: "text" })}
+					placeholder="Address line 1"
+					{...getInputProps(address.line1, { type: "text" })}
+				/>
+				<Input
+					placeholder="Address line 2"
+					{...getInputProps(address.line2, { type: "text" })}
 				/>
 				{/* @ts-ignore */}
 				<Select {...getSelectProps(address.countryCode)}>
@@ -69,7 +73,7 @@ export const ShippingAddressInfo = ({
 				<div>
 					<Input
 						placeholder="Province"
-						{...getInputProps(address.province, { type: "text" })}
+						{...getInputProps(address.state, { type: "text" })}
 					/>
 				</div>
 			</div>

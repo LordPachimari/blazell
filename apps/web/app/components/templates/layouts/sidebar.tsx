@@ -38,12 +38,12 @@ const items: SidebarItem[] = [
 	// 	icon: "Billing",
 	// 	items: [],
 	// },
-	// {
-	// 	title: "Settings",
-	// 	href: "/settings",
-	// 	icon: "Settings",
-	// 	items: [],
-	// },
+	{
+		title: "Settings",
+		href: "/settings",
+		icon: "Settings",
+		items: [],
+	},
 ];
 
 const noSidebarPaths = new Set(["/", "/onboarding", "/login", "/verify"]);

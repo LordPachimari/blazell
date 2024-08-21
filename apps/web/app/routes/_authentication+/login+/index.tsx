@@ -16,6 +16,11 @@ const schema = z.object({
 	email: EmailSchema,
 	redirectTo: z.string().optional(),
 });
+export const loader = async ({ context }: ActionFunctionArgs) => {
+	const { authUser } = context;
+	if (authUser) return redirect("/dashboard");
+	return json({});
+};
 export async function action({ request, context }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	checkHoneypot(formData, context.cloudflare.env.HONEYPOT_SECRET);

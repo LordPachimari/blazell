@@ -5,6 +5,7 @@ import { AuthContext, Database, type Cloudflare } from "@blazell/shared";
 import {
 	MutatorNotFoundError,
 	NeonDatabaseError,
+	type StripeError,
 	type InvalidValue,
 	type Mutation,
 	type NotFound,
@@ -50,7 +51,8 @@ export const push = ({
 	| NeonDatabaseError
 	| NotFound
 	| InvalidValue
-	| MutatorNotFoundError,
+	| MutatorNotFoundError
+	| StripeError,
 	Scope | Cloudflare | ReplicacheContext | AuthContext
 > =>
 	Effect.gen(function* () {

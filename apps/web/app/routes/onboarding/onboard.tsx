@@ -42,7 +42,6 @@ export function Onboard() {
 			const result = parseWithZod(formData, {
 				schema: UserOnboardSchema,
 			});
-			console.log("result", result.status, result.payload);
 			return result;
 		},
 	});

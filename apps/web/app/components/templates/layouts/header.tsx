@@ -29,7 +29,6 @@ function Header() {
 
 	const windowSize = useWindowSize(100);
 	if (isRootPage) return null;
-	console.log("auth user", authUser);
 
 	return (
 		<Navbar>

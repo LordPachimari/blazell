@@ -4,6 +4,7 @@ import type {
 	LineItem,
 	Notification,
 	Order,
+	PaymentProfile,
 	Product,
 	PublishedProduct,
 	PublishedVariant,
@@ -81,6 +82,7 @@ function commonDiffReducer({
 interface DashboardStore {
 	searchWorker: Worker | undefined;
 	isInitialized: boolean;
+	paymentProfile: PaymentProfile | null;
 	activeStoreID: string | null;
 	products: Product[];
 	stores: Store[];
@@ -95,6 +97,7 @@ interface DashboardStore {
 	terminateSearchWorker(): void;
 	setActiveStoreID(newValue: string | null): void;
 	setIsInitialized(newValue: boolean): void;
+	setPaymentProfile(newValue: PaymentProfile | null): void;
 	diffProducts(diff: ExperimentalDiff): void;
 	diffOrders(diff: ExperimentalDiff): void;
 	diffCustomers(diff: ExperimentalDiff): void;
@@ -106,6 +109,7 @@ const createDashboardStore = () =>
 		searchWorker: undefined,
 		isInitialized: false,
 		activeStoreID: null,
+		paymentProfile: null,
 		stores: [],
 		products: [],
 		notifications: [],
@@ -120,6 +124,9 @@ const createDashboardStore = () =>
 		notificationMap: new Map(),
 		setActiveStoreID(newValue: string | null) {
 			set({ activeStoreID: newValue });
+		},
+		setPaymentProfile(newValue: PaymentProfile | null) {
+			set({ paymentProfile: newValue });
 		},
 		setIsInitialized(newValue: boolean) {
 			set({ isInitialized: newValue });

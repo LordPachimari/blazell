@@ -19,6 +19,8 @@ const EnvSchema = z.object({
 	ACCOUNT_ID: z.string(),
 	GOOGLE_CLIENT_ID: z.string(),
 	GOOGLE_CLIENT_SECRET: z.string(),
+	STRIPE_PUBLISHABLE_KEY: z.string(),
+	STRIPE_SECRET_KEY: z.string(),
 });
 
 type Env = z.infer<typeof EnvSchema>;

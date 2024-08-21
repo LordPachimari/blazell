@@ -7,9 +7,10 @@ export const AddressSchema = createInsertSchema(schema.addresses);
 export type InsertAddress = z.infer<typeof AddressSchema>;
 export const UpdateAddressSchema = z.object({
 	updates: AddressSchema.pick({
-		address: true,
+		line1: true,
+		line2: true,
 		postalCode: true,
-		province: true,
+		state: true,
 		city: true,
 	}).extend({
 		countryCode: z.string().optional(),

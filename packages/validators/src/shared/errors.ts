@@ -98,3 +98,6 @@ export class ImageUploadError extends Data.TaggedError("ImageUploadError")<{
 export class ClientMutatorError extends Data.TaggedError("ClientMutatorError")<{
 	readonly message: string;
 }> {}
+export class StripeError extends Data.TaggedError("StripeError")<{
+	readonly message: string;
+}> {}

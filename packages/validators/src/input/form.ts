@@ -8,9 +8,10 @@ export const FormResponseSchema = z.object({
 export type FormResponse = z.infer<typeof FormResponseSchema>;
 
 export const ShippingAddressSchema = z.object({
-	address: z.string().min(1, { message: "Must contain at least 1 char" }),
+	line1: z.string().min(1, { message: "Must contain at least 1 char" }),
+	line2: z.string().min(1, { message: "Must contain at least 1 char" }),
 	city: z.string().min(1, { message: "Must contain at least 1 char" }),
-	province: z.string().min(1, { message: "Must contain at least 1 char" }),
+	state: z.string().min(1, { message: "Must contain at least 1 char" }),
 	postalCode: z.string().min(1, { message: "Must contain at least 1 char" }),
 	countryCode: z.string(),
 });

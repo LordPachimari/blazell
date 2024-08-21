@@ -7,6 +7,7 @@ import {
 	useGlobalStore,
 	useMarketplaceStore,
 } from "./store";
+import type { PaymentProfile } from "@blazell/validators/client";
 
 export const GlobalStoreMutator = ({
 	children,
@@ -111,6 +112,9 @@ export const DashboardStoreMutator = ({
 	const diffOrders = useDashboardStore((state) => state.diffOrders);
 	const diffProducts = useDashboardStore((state) => state.diffProducts);
 	const diffVariants = useDashboardStore((state) => state.diffVariants);
+	const setPaymentProfile = useDashboardStore(
+		(state) => state.setPaymentProfile,
+	);
 
 	const setActiveStoreID = useDashboardStore((state) => state.setActiveStoreID);
 
@@ -120,12 +124,18 @@ export const DashboardStoreMutator = ({
 		rep,
 		async (tx) => {
 			const isInitialized = await tx.get<string>("init");
+			const [paymentProfile] = await tx
+				.scan<PaymentProfile>({ prefix: "payment_profile" })
+				.values()
+				.toArray();
 			const [activeStoreID] = await tx
 				.scan<ActiveStoreID>({ prefix: "active" })
 				.values()
 				.toArray();
 			setIsInitialized(!!isInitialized);
 			setActiveStoreID(activeStoreID?.value ?? null);
+			//@ts-ignore
+			setPaymentProfile(paymentProfile ?? null);
 		},
 		{ dependencies: [], default: null },
 	);

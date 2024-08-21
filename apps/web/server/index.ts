@@ -1,9 +1,4 @@
-import {
-	EnvSchema,
-	type Auth,
-	type Bindings,
-	type Env,
-} from "@blazell/validators";
+import { EnvSchema, type Bindings, type Env } from "@blazell/validators";
 import { trpcServer } from "@hono/trpc-server";
 import type { AppLoadContext, RequestHandler } from "@remix-run/cloudflare";
 import { createWorkersKVSessionStorage } from "@remix-run/cloudflare";
@@ -15,8 +10,8 @@ import { remix } from "remix-hono/handler";
 import { getSession, session } from "remix-hono/session";
 import { getAuthUser } from "./lib/get-user";
 import images from "./routes/images";
-import stores from "./routes/stores";
 import replicache from "./routes/replicache";
+import stores from "./routes/stores";
 import { appRouter, type TRPCContext } from "./trpc";
 
 const app = new Hono<{ Bindings: Bindings & Env }>();
@@ -76,8 +71,6 @@ app
 		}),
 	)
 	.post("/api/test", (c) => {
-		const auth = c.get("auth" as never) as Auth;
-		console.log("auth from test", auth);
 		return c.text("hello");
 	})
 	.route("/api/replicache", replicache)

@@ -35,6 +35,11 @@ const items: DashboardSidebarItem[] = [
 		href: "/dashboard/customers",
 		icon: "Customer",
 	},
+	{
+		title: "Settings",
+		href: "/dashboard/settings",
+		icon: "Settings",
+	},
 ];
 interface DashboardSidebarProps {
 	children: React.ReactNode;
@@ -103,7 +108,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
 				<div />
 				<div />
 			</nav>
-			{children}
+			<div className="relative md:pl-40 pt-14 w-full ">{children}</div>
 		</div>
 	);
 };

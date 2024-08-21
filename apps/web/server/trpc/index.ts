@@ -8,6 +8,7 @@ import {
 	CheckoutFormSchema,
 	NeonDatabaseError,
 	PrepareVerificationSchema,
+	StripeUpdatesSchema,
 	type AuthUser,
 	type Env,
 	type GoogleProfile,
@@ -195,6 +196,7 @@ const authRouter = router({
 				valid: true,
 				onboard: !authUser.username,
 				session,
+				authUser,
 			};
 		}),
 	google: procedure.query(async ({ ctx }) => {
@@ -314,6 +316,7 @@ const authRouter = router({
 					status: "success" as const,
 					onboard,
 					session,
+					authUser,
 				};
 			} catch (error) {
 				console.error(error);
@@ -363,36 +366,37 @@ const userRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
 			const { username, countryCode } = input;
-			const auth = ctx.authUser;
-			if (!auth) {
+			const authUser = ctx.authUser;
+			if (!authUser) {
 				return { status: "error" as const, message: "Unauthorized" };
 			}
-
 			const result = await Effect.runPromise(
 				Effect.gen(function* () {
-					const onboard = yield* Effect.tryPromise(() =>
+					yield* Effect.tryPromise(() =>
 						db.transaction(async (tx) =>
 							UserService.onboardUser({
 								countryCode,
 								username,
-							}).pipe(
-								Effect.provideService(Database, Database.of({ manager: tx })),
-								Effect.provideService(
-									AuthContext,
-									AuthContext.of({ authUser: auth }),
-								),
-							),
+							})
+								.pipe(
+									Effect.provideService(Database, Database.of({ manager: tx })),
+									Effect.provideService(
+										AuthContext,
+										AuthContext.of({ authUser }),
+									),
+								)
+								.pipe(Effect.orDie),
 						),
 					).pipe(
-						Effect.map(() => ({ status: "success" as const })),
+						Effect.flatMap((_) => _),
 						Effect.retry({ times: 3 }),
 						Effect.catchAll((e) =>
 							Effect.gen(function* () {
 								yield* Console.log(e.message);
-								return {
-									status: "error" as const,
-									message: "Error onboarding users.",
-								};
+								yield* Effect.succeed({
+									status: "error",
+									message: "Failed to onboard user",
+								});
 							}),
 						),
 						Effect.zipLeft(
@@ -413,16 +417,13 @@ const userRouter = router({
 									Effect.retry({ times: 3 }),
 									Effect.scoped,
 								),
-							]).pipe(
-								Effect.catchAll((e) =>
-									Effect.sync(() => {
-										console.error(e);
-									}),
-								),
-							),
+							]),
 						),
 					);
-					return onboard;
+					return {
+						status: "success",
+						message: "User onboarded.",
+					};
 				}),
 			);
 
@@ -581,11 +582,12 @@ const cartRouter = router({
 									yield* Effect.tryPromise(() =>
 										transaction.insert(schema.addresses).values({
 											id: newShippingAddressID,
-											address: checkoutInfo.shippingAddress.address,
+											line1: checkoutInfo.shippingAddress.line1,
+											line2: checkoutInfo.shippingAddress.line2,
 											city: checkoutInfo.shippingAddress.city,
 											countryCode: checkoutInfo.shippingAddress.countryCode,
 											postalCode: checkoutInfo.shippingAddress.postalCode,
-											province: checkoutInfo.shippingAddress.province,
+											state: checkoutInfo.shippingAddress.state,
 											version: 0,
 											createdAt: new Date().toISOString(),
 											userID: existingUser ? existingUser.id : newUserID,
@@ -952,6 +954,27 @@ const storeRouter = router({
 				.where(eq(schema.stores.id, id));
 		}),
 });
+
+const stripeRoute = router({
+	updateStripeAccount: procedure
+		.input(
+			z.object({ stripeAccountID: z.string(), updates: StripeUpdatesSchema }),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const db = getDB({ connectionString: ctx.env.DATABASE_URL });
+			const { stripeAccountID, updates } = input;
+			const authUser = ctx.authUser;
+			if (!authUser) {
+				return { status: "error", message: "You are not authorized" };
+			}
+			await db
+				.update(schema.stripe)
+				// @ts-ignore
+				.set({ ...updates, version: sql`${schema.stripe.version} + 1` })
+				.where(eq(schema.stripe.id, stripeAccountID));
+			return { status: "success" };
+		}),
+});
 export const appRouter = router({
 	hello: helloRouter,
 	auth: authRouter,
@@ -960,6 +983,7 @@ export const appRouter = router({
 	orders: orderRouter,
 	products: productRouter,
 	stores: storeRouter,
+	stripe: stripeRoute,
 });
 
 export const createCaller = createCallerFactory(appRouter);

@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Console, Effect, pipe } from "effect";
 
 import { AuthContext, Database } from "@blazell/shared";
 import { NeonDatabaseError, type RowsWTableName } from "@blazell/validators";
@@ -212,6 +212,10 @@ export const storeCVD: GetRowsWTableName = ({ fullRows }) => {
 				});
 			},
 			{ concurrency: "unbounded" },
+		);
+		yield* Console.log(
+			"rowsWTableName from STORE DASHBOARD",
+			JSON.stringify(rowsWTableName),
 		);
 
 		return rowsWTableName;

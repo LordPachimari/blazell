@@ -41,6 +41,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 			valid,
 			onboard,
 			session: userSession,
+			authUser,
 		} = await createCaller({
 			env: context.cloudflare.env,
 			request,
@@ -51,7 +52,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 			target,
 		});
 
-		if (!valid) {
+		if (!valid || !authUser) {
 			console.log("INVALID");
 			return json({});
 		}

@@ -196,6 +196,7 @@ const diffSpaceRecords = ({
 											const prevVersion = prevClientViewRecord[id];
 
 											if (
+												version < 0 ||
 												!isDefined.strict(prevVersion) ||
 												prevVersion < version
 											) {

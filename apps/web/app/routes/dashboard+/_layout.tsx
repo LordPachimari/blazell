@@ -28,6 +28,7 @@ export const loader: LoaderFunction = async (args) => {
 	const { authUser } = context;
 
 	if (!authUser) {
+		console.log("authUser not found", authUser);
 		return redirect("/login");
 	}
 	if (!authUser.username) {
@@ -43,11 +44,9 @@ export default function DashboardLayout() {
 				<SidebarLayoutWrapper>
 					<DashboardSidebarMobile />
 					<DashboardSidebar>
-						<div className="relative md:pl-40 pt-14 w-full ">
-							<DashboardNav />
+						<DashboardNav />
 
-							<Outlet />
-						</div>
+						<Outlet />
 					</DashboardSidebar>
 				</SidebarLayoutWrapper>
 			</DashboardStoreMutator>
@@ -126,7 +125,10 @@ export function DynamicBreadcrumb() {
 								</BreadcrumbPage>
 							) : (
 								<>
-									<Link to={routeTo}>
+									<Link
+										to={routeTo}
+										className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+									>
 										<BreadcrumbLink className="text-slate-10 overflow-hidden text-ellipsis w-[100px]">
 											<p className="text-ellipsis max-w-[100px] text-nowrap overflow-hidden">
 												{`${name[0]?.toUpperCase()}${name.substring(1)}`}

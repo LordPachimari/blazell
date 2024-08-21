@@ -8,12 +8,13 @@ import {
 	type Onboard,
 } from "@blazell/validators";
 import { sql } from "drizzle-orm";
-import { Effect } from "effect";
+import { Console, Effect } from "effect";
 const onboardUser = (props: Onboard) =>
 	Effect.gen(function* () {
 		const { countryCode, username } = props;
 		const { manager } = yield* Database;
 		const { authUser } = yield* AuthContext;
+		yield* Console.log("AUTH AUTH AUTH AUTH ", authUser, username);
 		if (!authUser) return;
 		const user: InsertUser = {
 			id: generateID({ prefix: "auth" }),
@@ -49,6 +50,7 @@ const onboardUser = (props: Onboard) =>
 					},
 				}),
 		);
+		yield* Console.log("USER USER USER USER USER ", username);
 		yield* Effect.all(
 			[
 				Effect.tryPromise(() =>

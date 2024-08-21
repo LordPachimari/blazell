@@ -37,7 +37,7 @@ export const users = pgTable(
 		fullNameIndex: uniqueIndex("full_name_index1").on(users.fullName),
 		phoneIndex: uniqueIndex("phone_index").on(users.phone),
 		usernameIndex: uniqueIndex("username_index1").on(users.username),
-		authIDIndex: uniqueIndex("auth_id_index1").on(users.authID),
+		authIDIndex: uniqueIndex("auth_id_index").on(users.authID),
 	}),
 );
 export const userRelations = relations(users, ({ many, one }) => ({

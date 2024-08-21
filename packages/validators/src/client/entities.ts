@@ -1,6 +1,7 @@
 // TYPE DEFINITIONS FOR CLIENT.
 import type { Image } from "@blazell/db";
 import type * as Server from "../server/entities";
+import type { AccountBalance } from "../shared";
 export type Variant = Server.Variant & {
 	product?: Product;
 	prices?: Server.Price[];
@@ -64,3 +65,9 @@ export type Order = Server.Order & {
 	items: LineItem[];
 };
 export type Notification = Server.Notification;
+export type PaymentProfile = Server.PaymentProfile & {
+	stripe?: StripeAccount & {
+		balance?: AccountBalance;
+	};
+};
+export type StripeAccount = Server.StripeAccount;
